@@ -40,6 +40,13 @@ singularity-shell:
 	-module load singularity/3.3.0 && \
 	singularity shell "$(SINGULARITY_SIF)"
 
+FACETS_DOCKERTAG:=stevekm/facets-suite:dev
+FACETS_SIF:=stevekm_facets-suite:dev.sif
+singularity-pull-facets:
+	unset SINGULARITY_CACHEDIR && \
+	module load singularity/3.3.0 && \
+	singularity pull --force --name "$(FACETS_SIF)" docker://$(FACETS_DOCKERTAG)
+
 
 
 # ~~~~~ Setup Up and Run the CWL Workflow ~~~~~ #
@@ -281,6 +288,7 @@ facets: facets-input.json $(FACETS_OUTPUT_DIR)
 	module load singularity/3.3.0
 	module load cwl/cwltool
 	module load python/3.7.1
+	if [ ! -e $(FACETS_SIF) ]; then $(MAKE) singularity-pull-facets; fi
 	cwl-runner \
 	--parallel \
 	--leave-tmpdir \
