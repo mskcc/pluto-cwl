@@ -281,7 +281,7 @@ $(ANALYSIS_INPUT_JSON): mutation_maf_files.txt facets_hisens_seg_files.txt facet
 
 .PHONY: $(ANALYSIS_INPUT_JSON)
 # run the analysis workflow only
-analysis:  $(ANALYSIS_INPUT_JSON)
+analysis:  $(ANALYSIS_INPUT_JSON) $(OUTPUT_DIR)
 	module load singularity/3.3.0 && \
 	module load cwl/cwltool && \
 	module load python/3.7.1 && \
@@ -295,6 +295,82 @@ analysis:  $(ANALYSIS_INPUT_JSON)
 	--singularity \
 	--preserve-environment SINGULARITY_CACHEDIR \
 	cwl/analysis-workflow.cwl $(ANALYSIS_INPUT_JSON)
+
+
+
+# ~~~~~ Run Portal CWL Workflow ~~~~~ #
+# run just the cBioPortal portion of the workflow
+PORTAL_INPUT_JSON:=portal-input.json
+$(PORTAL_INPUT_JSON): mutation_maf_files.txt facets_hisens_seg_files.txt facets_hisens_cncf_files.txt mutation_svs_txt_files.txt
+	if [ "$$(cat mutation_maf_files.txt | wc -l)" -eq "0" ]; then echo ">>> ERROR: File mutation_maf_files.txt is empty"; exit 1; fi
+	if [ "$$(cat facets_hisens_seg_files.txt | wc -l)" -eq "0" ]; then echo ">>> ERROR: File facets_hisens_seg_files.txt is empty"; exit 1; fi
+	if [ "$$(cat facets_hisens_cncf_files.txt | wc -l)" -eq "0" ]; then echo ">>> ERROR: File facets_hisens_cncf_files.txt is empty"; exit 1; fi
+	if [ "$$(cat mutation_svs_txt_files.txt | wc -l)" -eq "0" ]; then echo ">>> ERROR: File mutation_svs_txt_files.txt is empty"; exit 1; fi
+	module load jq/1.6 && \
+	jq -n \
+	--slurpfile mutation_maf_files mutation_maf_files.txt \
+	--slurpfile facets_hisens_seg_files facets_hisens_seg_files.txt \
+	--slurpfile facets_hisens_cncf_files facets_hisens_cncf_files.txt \
+	--slurpfile mutation_svs_txt_files mutation_svs_txt_files.txt \
+	--arg helix_filter_version "$(HELIX_FILTER_VERSION)" \
+	--arg project_id "$(PROJ_ID)" \
+	--arg project_pi "$(PROJ_PI)" \
+	--arg request_pi "$(REQUEST_PI)" \
+	--arg project_short_name "$(PROJ_SHORT_NAME)" \
+	--arg project_name "$(PROJ_NAME)" \
+	--arg project_description "$(PROJ_DESC)" \
+	--arg cancer_type "$(CANCER_TYPE)" \
+	--arg cancer_study_identifier "$(CANCER_STUDY_IDENTIFIER)" \
+	--arg argos_version_string "$(ARGOS_VERSION_STRING)" \
+	--arg is_impact "$(IS_IMPACT)" \
+	--arg cbio_segment_data_filename "$(CBIO_SEGMENT_DATA_FILENAME)" \
+	--arg cbio_meta_cna_segments_filename "$(CBIO_META_CNA_SEGMENTS_FILENAME)" \
+	--arg targets_list "$(TARGETS_LIST)" \
+	--arg known_fusions_file "$(KNOWN_FUSIONS_FILE)" \
+	--arg data_clinical_file "$(DATA_CLINICAL_FILE)" \
+	--arg sample_summary_file "$(SAMPLE_SUMMARY_FILE)" \
+	'{
+	"mutation_maf_files": $$mutation_maf_files,
+	"facets_hisens_seg_files": $$facets_hisens_seg_files,
+	"facets_hisens_cncf_files": $$facets_hisens_cncf_files,
+	"mutation_svs_txt_files": $$mutation_svs_txt_files,
+	"project_id": $$project_id,
+	"project_pi": $$project_pi,
+	"request_pi": $$request_pi,
+	"project_short_name": $$project_short_name,
+	"project_name": $$project_name,
+	"project_description": $$project_description,
+	"cancer_type": $$cancer_type,
+	"cancer_study_identifier": $$cancer_study_identifier,
+	"argos_version_string": $$argos_version_string,
+	"helix_filter_version": $$helix_filter_version,
+	"is_impact": $$is_impact,
+	"cbio_segment_data_filename": $$cbio_segment_data_filename,
+	"cbio_meta_cna_segments_filename": $$cbio_meta_cna_segments_filename,
+	"targets_list": {"class": "File", "path": $$targets_list},
+	"known_fusions_file": {"class": "File", "path": $$known_fusions_file},
+	"data_clinical_file": {"class": "File", "path": $$data_clinical_file},
+	"sample_summary_file": {"class": "File", "path": $$sample_summary_file}
+	}
+	' > $(PORTAL_INPUT_JSON)
+.PHONY: $(PORTAL_INPUT_JSON)
+
+portal: $(PORTAL_INPUT_JSON) $(OUTPUT_DIR)
+	module load singularity/3.3.0 && \
+	module load cwl/cwltool && \
+	module load python/3.7.1 && \
+	if [ ! -e "$(SINGULARITY_SIF)" ]; then $(MAKE) singularity-pull; fi && \
+	cwl-runner $(DEBUG) \
+	--leave-tmpdir \
+	--tmpdir-prefix $(TMP_DIR) \
+	--outdir $(OUTPUT_DIR) \
+	--cachedir $(CACHE_DIR) \
+	--copy-outputs \
+	--singularity \
+	--preserve-environment SINGULARITY_CACHEDIR \
+	cwl/portal-workflow.cwl $(PORTAL_INPUT_JSON)
+
+
 
 # ~~~~~ Run Facets CWL Workflow ~~~~~ #
 FACETS_SNPS_VCF:=/juno/work/ci/resources/genomes/GRCh37/facets_snps/dbsnp_137.b37__RmDupsClean__plusPseudo50__DROP_SORT.vcf
