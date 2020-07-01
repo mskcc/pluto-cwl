@@ -239,7 +239,9 @@ inputs:
   data_clinical_file:
     type: File
   sample_summary_file:
-    type: File
+    type: 
+    - "null"
+    - File
 
 steps:
 
