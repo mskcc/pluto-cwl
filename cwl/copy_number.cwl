@@ -36,10 +36,10 @@ inputs:
       position: 3
       prefix: -f
   output_cna_ascna_filename:
-    type: ["null", string]
+    type: string
     default: "data_CNA.ascna.txt"
   output_cna_scna_filename:
-    type: ["null", string]
+    type: string
     default: "data_CNA.scna.txt"
 outputs:
   output_cna_file:

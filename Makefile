@@ -25,11 +25,10 @@ help:
 # ~~~~~ Container ~~~~~ #
 # pull the Docker container and convert it to Singularity container image file
 export SINGULARITY_CACHEDIR:=/juno/work/ci/singularity_images
-GIT_NAME:=helix_filters_01
-GIT_TAG:=$(shell git describe --tags --abbrev=0)
-DOCKER_TAG:=mskcc/$(GIT_NAME):$(GIT_TAG)
+# GIT_TAG:=$(shell git describe --tags --abbrev=0)
+DOCKER_TAG:=mskcc/helix_filters_01:20.06.2
 # NOTE: you cannot use a filename with a ':' as a Makefile target
-SINGULARITY_SIF:=mskcc_$(GIT_NAME):$(GIT_TAG).sif
+SINGULARITY_SIF:=mskcc_helix_filters_01:20.06.2.sif
 singularity-pull:
 	unset SINGULARITY_CACHEDIR && \
 	module load singularity/3.3.0 && \
@@ -241,6 +240,61 @@ run: $(INPUT_JSON) $(OUTPUT_DIR)
 	cwl/workflow.cwl $(INPUT_JSON)
 # --parallel \
 
+
+# ~~~~~ Run Analysis CWL Workflow ~~~~~ #
+ANALYSIS_INPUT_JSON:=analysis-input.json
+$(ANALYSIS_INPUT_JSON): mutation_maf_files.txt facets_hisens_seg_files.txt facets_hisens_cncf_files.txt mutation_svs_maf_files.txt
+	if [ "$$(cat mutation_maf_files.txt | wc -l)" -eq "0" ]; then echo ">>> ERROR: File mutation_maf_files.txt is empty"; exit 1; fi
+	if [ "$$(cat facets_hisens_seg_files.txt | wc -l)" -eq "0" ]; then echo ">>> ERROR: File facets_hisens_seg_files.txt is empty"; exit 1; fi
+	if [ "$$(cat facets_hisens_cncf_files.txt | wc -l)" -eq "0" ]; then echo ">>> ERROR: File facets_hisens_cncf_files.txt is empty"; exit 1; fi
+	if [ "$$(cat mutation_svs_maf_files.txt | wc -l)" -eq "0" ]; then echo ">>> ERROR: File mutation_svs_maf_files.txt is empty"; exit 1; fi
+	module load jq/1.6
+	jq -n \
+	--slurpfile mutation_maf_files mutation_maf_files.txt \
+	--slurpfile facets_hisens_seg_files facets_hisens_seg_files.txt \
+	--slurpfile facets_hisens_cncf_files facets_hisens_cncf_files.txt \
+	--slurpfile mutation_svs_maf_files mutation_svs_maf_files.txt \
+	--arg helix_filter_version "$(HELIX_FILTER_VERSION)" \
+	--arg argos_version_string "$(ARGOS_VERSION_STRING)" \
+	--arg is_impact "$(IS_IMPACT)" \
+	--arg analysis_segment_cna_filename "$(ANALYSIS_SEGMENT_CNA_FILE)" \
+	--arg analysis_sv_filename "$(ANALYSIS_SV_FILE)" \
+	--arg analysis_gene_cna_filename "$(ANALYSIS_GENE_CNA_FILENAME)" \
+	--arg analysis_mutations_filename "$(ANALYSIS_MUTATIONS_FILENAME)" \
+	--arg targets_list "$(TARGETS_LIST)" \
+	'{
+	"mutation_maf_files": $$mutation_maf_files,
+	"facets_hisens_seg_files": $$facets_hisens_seg_files,
+	"facets_hisens_cncf_files": $$facets_hisens_cncf_files,
+	"mutation_svs_maf_files": $$mutation_svs_maf_files,
+	"argos_version_string": $$argos_version_string,
+	"helix_filter_version": $$helix_filter_version,
+	"is_impact": $$is_impact,
+	"analysis_segment_cna_filename": $$analysis_segment_cna_filename,
+	"analysis_sv_filename": $$analysis_sv_filename,
+	"analysis_gene_cna_filename": $$analysis_gene_cna_filename,
+	"analysis_mutations_filename": $$analysis_mutations_filename,
+	"targets_list": {"class": "File", "path": $$targets_list},
+	}
+	' > $(ANALYSIS_INPUT_JSON)
+
+
+.PHONY: $(ANALYSIS_INPUT_JSON)
+# run the analysis workflow only
+analysis:  $(ANALYSIS_INPUT_JSON)
+	module load singularity/3.3.0 && \
+	module load cwl/cwltool && \
+	module load python/3.7.1 && \
+	if [ ! -e "$(SINGULARITY_SIF)" ]; then $(MAKE) singularity-pull; fi && \
+	cwl-runner $(DEBUG) \
+	--leave-tmpdir \
+	--tmpdir-prefix $(TMP_DIR) \
+	--outdir $(OUTPUT_DIR) \
+	--cachedir $(CACHE_DIR) \
+	--copy-outputs \
+	--singularity \
+	--preserve-environment SINGULARITY_CACHEDIR \
+	cwl/analysis-workflow.cwl $(ANALYSIS_INPUT_JSON)
 
 # ~~~~~ Run Facets CWL Workflow ~~~~~ #
 FACETS_SNPS_VCF:=/juno/work/ci/resources/genomes/GRCh37/facets_snps/dbsnp_137.b37__RmDupsClean__plusPseudo50__DROP_SORT.vcf
