@@ -10,3 +10,6 @@ cache/
 *.pyc
 facets-input.json
 facets-pairs.txt
+analysis-input.json
+output*
+portal-input.json

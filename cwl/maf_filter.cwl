@@ -25,11 +25,13 @@ inputs:
     inputBinding:
       position: 3
   analysis_mutations_filename:
-    type: string
+    type: ["null", string]
+    default: "analysis.muts.maf"
     inputBinding:
       position: 4
   cbio_mutation_data_filename:
-    type: string
+    type: ["null", string]
+    default: "data_mutations_extended.txt"
     inputBinding:
       position: 5
 outputs:
