@@ -47,7 +47,9 @@ class TestFacetsWorkflow(unittest.TestCase):
                         "path": pair_maf,
                         "class": "File"
                     },
-                    "pair_id": "Sample24.Sample23"
+                    "pair_id": "Sample24.Sample23",
+                    "normal_id": "Sample23",
+                    "tumor_id": "Sample24"
                 }
             ]
         }
@@ -79,9 +81,70 @@ class TestFacetsWorkflow(unittest.TestCase):
             self.assertEqual(returncode, 0)
 
             output_json = json.loads(proc_stdout)
-            print(output_json)
+
+            expected_output = {'annotated_maf': [{'basename': 'Sample24.Sample23_hisens.ccf.portal.maf',
+                     'checksum': 'sha1$d91a8e15c66429b09f1b7db41bc38bdfa0b84c64',
+                     'class': 'File',
+                     'location': 'file://' + os.path.join(output_dir, 'Sample24.Sample23_hisens.ccf.portal.maf'),
+                     'path': os.path.join(output_dir, 'Sample24.Sample23_hisens.ccf.portal.maf'),
+                     'size': 11996607}],
+  'arm_level_txt': [{'basename': 'Sample24.Sample23.arm_level.txt',
+                     'checksum': 'sha1$9f89c90a0f196ab2771f5e9aadc5893a5e509609',
+                     'class': 'File',
+                     'location': 'file://' + os.path.join(output_dir, 'Sample24.Sample23.arm_level.txt'),
+                     'path': os.path.join(output_dir, 'Sample24.Sample23.arm_level.txt'),
+                     'size': 2148}],
+  'facets_txt': [{'basename': 'Sample24.Sample23.txt',
+                  'checksum': 'sha1$b1cc75293a4bddfe36540a6ea4248a44acae6db0',
+                  'class': 'File',
+                  'location': 'file://' + os.path.join(output_dir, 'Sample24.Sample23.txt'),
+                  'path': os.path.join(output_dir, 'Sample24.Sample23.txt'),
+                  'size': 498}],
+  'gene_level_txt': [{'basename': 'Sample24.Sample23.gene_level.txt',
+                      'checksum': 'sha1$f056daac29597163fecb90e69d801953a74c7619',
+                      'class': 'File',
+                      'location': 'file://' + os.path.join(output_dir, 'Sample24.Sample23.gene_level.txt'),
+                      'path': os.path.join(output_dir, 'Sample24.Sample23.gene_level.txt'),
+                      'size': 156007}],
+  'hisens_rds': [{'basename': 'Sample24.Sample23_hisens.rds',
+                  'checksum': 'sha1$6bfd6c7f29c49ec8ef538dd468a3b4626b05bda2',
+                  'class': 'File',
+                  'location': 'file://' + os.path.join(output_dir, 'Sample24.Sample23_hisens.rds'),
+                  'path': os.path.join(output_dir, 'Sample24.Sample23_hisens.rds'),
+                  'size': 213986}],
+  'hisens_seg': [{'basename': 'Sample24.Sample23_hisens.seg',
+                  'checksum': 'sha1$1ddb1a4a43c5707188ae597792c372eee2910d1c',
+                  'class': 'File',
+                  'location': 'file://' + os.path.join(output_dir, 'Sample24.Sample23_hisens.seg'),
+                  'path': os.path.join(output_dir, 'Sample24.Sample23_hisens.seg'),
+                  'size': 2221}],
+  'purity_rds': [{'basename': 'Sample24.Sample23_purity.rds',
+                  'checksum': 'sha1$dd8b967f84b191ff76214c6110db8d0e65f6514c',
+                  'class': 'File',
+                  'location': 'file://' + os.path.join(output_dir, 'Sample24.Sample23_purity.rds'),
+                  'path': os.path.join(output_dir, 'Sample24.Sample23_purity.rds'),
+                  'size': 213356}],
+  'purity_seg': [{'basename': 'Sample24.Sample23_purity.seg',
+                  'checksum': 'sha1$dadb691707754772520a82c9148620d428281328',
+                  'class': 'File',
+                  'location': 'file://' + os.path.join(output_dir, 'Sample24.Sample23_purity.seg'),
+                  'path': os.path.join(output_dir, 'Sample24.Sample23_purity.seg'),
+                  'size': 1501}],
+  'qc_txt': [{'basename': 'Sample24.Sample23.qc.txt',
+              'checksum': 'sha1$704180fe9d6ccf38a7332d40b524bea3a2d3ff98',
+              'class': 'File',
+              'location': 'file://' + os.path.join(output_dir, 'Sample24.Sample23.qc.txt'),
+              'path': os.path.join(output_dir, 'Sample24.Sample23.qc.txt'),
+              'size': 1357}],
+  'snp_pileup': [{'basename': 'Sample24.Sample23.snp_pileup.gz',
+                  'checksum': 'sha1$755a8b64f45c819b4e2c481e64bf2fe36d1f5361',
+                  'class': 'File',
+                  'location': 'file://' + os.path.join(output_dir, 'Sample24.Sample23.snp_pileup.gz'),
+                  'path': os.path.join(output_dir, 'Sample24.Sample23.snp_pileup.gz'),
+                  'size': 34851004}]}
+
             self.maxDiff = None
-            self.assertDictEqual(output_json, {})
+            self.assertDictEqual(output_json, expected_output)
 
 if __name__ == "__main__":
     unittest.main()
