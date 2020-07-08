@@ -12,6 +12,8 @@ inputs:
   pair_maf: File
   pair_id: string
   snps_vcf: File
+  tumor_id: string
+  normal_id: string
 
 steps:
   snp_pileup:
@@ -41,6 +43,52 @@ steps:
         valueFrom: $(inputs.pair_id)_hisens.ccf.maf
     out:
       [ output_file ]
+
+  # need to apply some extra column labels to the maf file for downstream ease of use
+  label_maf_sample:
+    run: paste-col.cwl
+    in:
+      pair_id: pair_id
+      tumor_id: tumor_id
+      input_file: annotate_maf/output_file
+      output_filename:
+        valueFrom: $(inputs.pair_id)_hisens.ccf.sample.maf
+      header:
+        valueFrom: ${ return "sample"; }
+      value:
+        valueFrom: $(inputs.tumor_id)
+    out:
+      [ output_file ]
+
+  label_maf_normal:
+    run: paste-col.cwl
+    in:
+      pair_id: pair_id
+      normal_id: normal_id
+      input_file: label_maf_sample/output_file
+      output_filename:
+        valueFrom: $(inputs.pair_id)_hisens.ccf.sample.normal.maf
+      header:
+        valueFrom: ${ return "normal"; }
+      value:
+        valueFrom: $(inputs.normal_id)
+    out:
+      [ output_file ]
+
+  # need to add some extra columns to the maf file from the facets output for use with cBioPortal
+  update_maf:
+    run: update_cBioPortal_data.cwl
+    in:
+      pair_id: pair_id
+      subcommand:
+        valueFrom: ${ return "mutations"; }
+      input_file: label_maf_normal/output_file
+      output_filename:
+        valueFrom: $(inputs.pair_id)_hisens.ccf.portal.maf
+      facets_txt: run_facets/output_txt
+    out:
+      [ output_file ]
+
 
 outputs:
   pair_id:
@@ -75,4 +123,4 @@ outputs:
     outputSource: run_facets/hisens_rds
   annotated_maf:
     type: File
-    outputSource: annotate_maf/output_file
+    outputSource: update_maf/output_file

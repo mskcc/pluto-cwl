@@ -90,6 +90,8 @@ inputs:
           normal_bam: File
           pair_maf: File
           pair_id: string
+          tumor_id: string
+          normal_id: string
   snps_vcf:
     type: File
 
@@ -108,6 +110,10 @@ steps:
         valueFrom: ${ return inputs.pair['pair_maf']; }
       pair_id:
         valueFrom: ${ return inputs.pair['pair_id']; }
+      tumor_id:
+        valueFrom: ${ return inputs.pair['tumor_id']; }
+      normal_id:
+        valueFrom: ${ return inputs.pair['normal_id']; }
     out:
       [
       pair_id,

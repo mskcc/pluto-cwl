@@ -74,6 +74,18 @@ class TestPasteCol(unittest.TestCase):
             expected_lines = ['HEADER1\tHEADER2', 'foo1\tfoo2', 'bar1\tfoo2']
             self.assertEqual(output_lines, expected_lines)
 
+            expected_output = {
+                'output_file': {
+                    'location': 'file://' + os.path.join(output_dir, 'output.txt'),
+                    'basename': 'output.txt',
+                    'class': 'File',
+                    'checksum': 'sha1$34753fd98b2355d54740f3fdfc6490262c15dd59',
+                    'size': 36,
+                    'path': os.path.join(output_dir, 'output.txt')
+                    }
+                }
+            self.assertDictEqual(output_json, expected_output)
+
 
 
 if __name__ == "__main__":

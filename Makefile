@@ -380,8 +380,8 @@ portal: $(PORTAL_INPUT_JSON) $(OUTPUT_DIR)
 
 
 # ~~~~~ Run Facets CWL Workflow ~~~~~ #
-# run with only a single pair; full request takes an hour to run
 FACETS_SNPS_VCF:=/juno/work/ci/resources/genomes/GRCh37/facets_snps/dbsnp_137.b37__RmDupsClean__plusPseudo50__DROP_SORT.vcf
+# run with only a single pair; full request takes an hour to run
 PAIRING_FILE:=$(INPUTS_DIR)/$(PROJ_ID)_sample_pairing.1.txt
 FACETS_OUTPUT_DIR:=$(OUTPUT_DIR)/facets-suite
 $(FACETS_OUTPUT_DIR):
@@ -400,11 +400,15 @@ facets-pairs.txt: $(PAIRING_FILE)
 	--arg normal_bam "$${normal_bam}" \
 	--arg pair_id "$${pair_id}" \
 	--arg pair_maf "$${pair_maf}" \
+	--arg normal_id "$${normal}" \
+	--arg tumor_id "$${tumor}" \
 	'{
 	"tumor_bam": { "class": "File", "path": $$tumor_bam },
 	"normal_bam": { "class": "File", "path": $$normal_bam },
 	"pair_maf": { "class": "File", "path": $$pair_maf },
-	"pair_id": $$pair_id
+	"pair_id": $$pair_id,
+	"normal_id": $$normal_id,
+	"tumor_id": $$tumor_id
 	}
 	'
 	done > facets-pairs.txt
