@@ -373,8 +373,9 @@ portal: $(PORTAL_INPUT_JSON) $(OUTPUT_DIR)
 
 
 # ~~~~~ Run Facets CWL Workflow ~~~~~ #
+# run with only a single pair; full request takes an hour to run
 FACETS_SNPS_VCF:=/juno/work/ci/resources/genomes/GRCh37/facets_snps/dbsnp_137.b37__RmDupsClean__plusPseudo50__DROP_SORT.vcf
-PAIRING_FILE:=$(INPUTS_DIR)/$(PROJ_ID)_sample_pairing.txt
+PAIRING_FILE:=$(INPUTS_DIR)/$(PROJ_ID)_sample_pairing.1.txt
 FACETS_OUTPUT_DIR:=$(OUTPUT_DIR)/facets-suite
 $(FACETS_OUTPUT_DIR):
 	mkdir -p "$(FACETS_OUTPUT_DIR)"
