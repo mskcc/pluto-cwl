@@ -39,8 +39,8 @@ singularity-shell:
 	-module load singularity/3.3.0 && \
 	singularity shell "$(SINGULARITY_SIF)"
 
-FACETS_DOCKERTAG:=stevekm/facets-suite:dev
-FACETS_SIF:=stevekm_facets-suite:dev.sif
+FACETS_DOCKERTAG:=stevekm/facets-suite:2.0.6
+FACETS_SIF:=stevekm_facets-suite:2.0.6.sif
 singularity-pull-facets:
 	unset SINGULARITY_CACHEDIR && \
 	module load singularity/3.3.0 && \

@@ -12,7 +12,7 @@ baseCommand: ['snp-pileup-wrapper.R']
 
 requirements:
   DockerRequirement:
-    dockerPull: stevekm/facets-suite:dev
+    dockerPull: stevekm/facets-suite:2.0.6
 
 inputs:
   snps_vcf:

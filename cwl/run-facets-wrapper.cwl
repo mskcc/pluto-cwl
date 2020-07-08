@@ -18,7 +18,7 @@ baseCommand: ['run-facets-wrapper.R', '--everything', '-D', '.', '--facets-lib-p
 
 requirements:
   DockerRequirement:
-    dockerPull: stevekm/facets-suite:dev
+    dockerPull: stevekm/facets-suite:2.0.6
 
 inputs:
   snp_pileup:
