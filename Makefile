@@ -27,12 +27,19 @@ help:
 export SINGULARITY_CACHEDIR:=/juno/work/ci/singularity_images
 # GIT_TAG:=$(shell git describe --tags --abbrev=0)
 DOCKER_TAG:=mskcc/helix_filters_01:20.06.2
+DOCKER_DEV_TAG:=mskcc/helix_filters_01:update-portal-data
 # NOTE: you cannot use a filename with a ':' as a Makefile target
 SINGULARITY_SIF:=mskcc_helix_filters_01:20.06.2.sif
+SINGULARITY_DEV_SIF:=mskcc_helix_filters_01:update-portal-data.sif
 singularity-pull:
 	unset SINGULARITY_CACHEDIR && \
 	module load singularity/3.3.0 && \
 	singularity pull --force --name "$(SINGULARITY_SIF)" docker://$(DOCKER_TAG)
+
+singularity-pull-dev:
+	unset SINGULARITY_CACHEDIR && \
+	module load singularity/3.3.0 && \
+	singularity pull --force --name "$(SINGULARITY_DEV_SIF)" docker://$(DOCKER_DEV_TAG)
 
 # shell into the Singularity container to check that it looks right
 singularity-shell:
@@ -420,6 +427,7 @@ facets: facets-input.json $(FACETS_OUTPUT_DIR)
 	module load cwl/cwltool
 	module load python/3.7.1
 	if [ ! -e $(FACETS_SIF) ]; then $(MAKE) singularity-pull-facets; fi
+	if [ ! -e $(SINGULARITY_DEV_SIF) ]; then $(MAKE) singularity-pull-dev; fi
 	cwl-runner \
 	--parallel \
 	--leave-tmpdir \
