@@ -30,7 +30,7 @@ steps:
     run: run-facets-wrapper.cwl
     in:
       snp_pileup: snp_pileup/output_file
-      sample_id: pair_id
+      sample_id: tumor_id
     out: [ purity_seg, hisens_seg, qc_txt, gene_level_txt, arm_level_txt, output_txt, purity_rds, hisens_rds ]
 
   annotate_maf:
@@ -41,6 +41,36 @@ steps:
       facets_rds: run_facets/hisens_rds
       output_filename:
         valueFrom: $(inputs.pair_id)_hisens.ccf.maf
+    out:
+      [ output_file ]
+
+  # need to apply some extra column labels to the facets suite .txt file for downstream ease of use
+  label_facets_txt_tumor:
+    run: paste-col.cwl
+    in:
+      tumor_id: tumor_id
+      input_file: run_facets/output_txt
+      output_filename:
+        valueFrom: $(inputs.tumor_id).tumor.txt
+      header:
+        valueFrom: ${ return "tumor"; }
+      value:
+        valueFrom: $(inputs.tumor_id)
+    out:
+      [ output_file ]
+
+  label_facets_txt_normal:
+    run: paste-col.cwl
+    in:
+      tumor_id: tumor_id
+      normal_id: normal_id
+      input_file: label_facets_txt_tumor/output_file
+      output_filename:
+        valueFrom: $(inputs.tumor_id).txt
+      header:
+        valueFrom: ${ return "normal"; }
+      value:
+        valueFrom: $(inputs.normal_id)
     out:
       [ output_file ]
 
@@ -114,7 +144,7 @@ outputs:
     outputSource: run_facets/arm_level_txt
   facets_txt:
     type: File
-    outputSource: run_facets/output_txt
+    outputSource: label_facets_txt_normal/output_file
   purity_rds:
     type: File
     outputSource: run_facets/purity_rds
