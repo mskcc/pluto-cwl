@@ -35,7 +35,7 @@ class TestAnnotateMafWrapperCWL(unittest.TestCase):
                 "path": input_rds,
                 "class": "File"
             },
-            "output_filename": "Sample1.Sample2_hisens.ccf.maf"
+            "output_filename": "Sample1_hisens.ccf.maf"
         }
         with TemporaryDirectory() as tmpdir:
             input_json_file = os.path.join(tmpdir, "input.json")
@@ -65,12 +65,12 @@ class TestAnnotateMafWrapperCWL(unittest.TestCase):
 
             expected_output = {
                 'output_file': {
-                    'location': 'file://' + os.path.join(output_dir, 'Sample1.Sample2_hisens.ccf.maf'),
-                    'basename': 'Sample1.Sample2_hisens.ccf.maf',
+                    'location': 'file://' + os.path.join(output_dir, 'Sample1_hisens.ccf.maf'),
+                    'basename': 'Sample1_hisens.ccf.maf',
                     'class': 'File',
                     'checksum': 'sha1$7e478a8a44d27735f26e368989c672ed6ef5d52a',
                     'size': 19217199,
-                    'path': os.path.join(output_dir, 'Sample1.Sample2_hisens.ccf.maf')
+                    'path': os.path.join(output_dir, 'Sample1_hisens.ccf.maf')
                 }
             }
             self.maxDiff = None

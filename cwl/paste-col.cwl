@@ -1,33 +1,31 @@
 #!/usr/bin/env cwl-runner
 
-# $ concat_with_comments.sh comment_label comment_value output.txt input1.txt input2.txt ... inputn.txt
-
 cwlVersion: v1.0
 class: CommandLineTool
-baseCommand: [ 'concat_with_comments.sh' ]
-
+baseCommand: [ "paste-col.py" ]
 requirements:
   DockerRequirement:
     dockerPull: mskcc/helix_filters_01:20.07.1
-
 inputs:
-  comment_label:
-    type: ["null", string]
-    default: "helix_filters_01"
+  input_file:
+    type: File
     inputBinding:
+      prefix: -i
       position: 1
-  comment_value:
+  output_filename:
     type: string
     inputBinding:
+      prefix: -o
       position: 2
-  output_filename:
-    type: ["null", string]
-    default: "output.txt"
+  header:
+    type: string
     inputBinding:
+      prefix: --header
       position: 3
-  input_files:
-    type: File[]
+  value:
+    type: string
     inputBinding:
+      prefix: --value
       position: 4
 
 outputs:

@@ -48,7 +48,9 @@ class TestFacetsWorkflow(unittest.TestCase):
                         "path": pair_maf,
                         "class": "File"
                     },
-                    "pair_id": "Sample24.Sample23"
+                    "pair_id": "Sample24.Sample23",
+                    "normal_id": "Sample23",
+                    "tumor_id": "Sample24"
                 }
             ]
         }
@@ -164,6 +166,7 @@ class TestFacetsWorkflow(unittest.TestCase):
                 'path': os.path.join(output_dir, 'Sample24.Sample23.snp_pileup.gz')
             }]
             }
+
             self.assertDictEqual(output_json, expected_output)
 
 if __name__ == "__main__":
