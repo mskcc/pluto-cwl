@@ -85,77 +85,85 @@ class TestFacetsWorkflow(unittest.TestCase):
 
             self.maxDiff = None
             expected_output = {
+            'aggregated_facets_txt': {
+                'basename': 'Proj_08390_G.facets.txt',
+                'checksum': 'sha1$caa3d269573b8bf9eda46e2095d718fa581ec11e',
+                'class': 'File',
+                'location': 'file://' + os.path.join(output_dir, 'Proj_08390_G.facets.txt'),
+                'path': os.path.join(output_dir, 'Proj_08390_G.facets.txt'),
+                'size': 534
+            },
             'annotated_maf': [{
-                'location': 'file://' + os.path.join(output_dir, 'Sample24.Sample23_hisens.ccf.maf'),
-                 'basename': 'Sample24.Sample23_hisens.ccf.maf',
+                'location': 'file://' + os.path.join(output_dir, 'Sample24.Sample23_hisens.ccf.portal.maf'),
+                 'basename': 'Sample24.Sample23_hisens.ccf.portal.maf',
                  'class': 'File',
-                'checksum': 'sha1$2ed85216b48d7261adb1b1854258fd64f3b8ac70',
-                 'size': 11627176,
-                 'path': os.path.join(output_dir, 'Sample24.Sample23_hisens.ccf.maf')
+                'checksum': 'sha1$d91a8e15c66429b09f1b7db41bc38bdfa0b84c64',
+                 'size': 11996607,
+                 'path': os.path.join(output_dir, 'Sample24.Sample23_hisens.ccf.portal.maf')
             }],
             'arm_level_txt': [{
-                'location': 'file://' + os.path.join(output_dir, 'Sample24.Sample23.arm_level.txt'),
-                'basename': 'Sample24.Sample23.arm_level.txt',
+                'location': 'file://' + os.path.join(output_dir, 'Sample24.arm_level.txt'),
+                'basename': 'Sample24.arm_level.txt',
                 'class': 'File',
-                'checksum': 'sha1$9f89c90a0f196ab2771f5e9aadc5893a5e509609',
-                'size': 2148,
-                'path': os.path.join(output_dir, 'Sample24.Sample23.arm_level.txt')
+                'checksum': 'sha1$df37c54ae4969257e436a7a7a595c42ef19ecbb5',
+                'size': 1824,
+                'path': os.path.join(output_dir, 'Sample24.arm_level.txt')
             }],
             'facets_txt': [{
-                'location': 'file://' + os.path.join(output_dir, 'Sample24.Sample23.txt'),
-                'basename': 'Sample24.Sample23.txt',
+                'location': 'file://' + os.path.join(output_dir, 'Sample24.txt'),
+                'basename': 'Sample24.txt',
                 'class': 'File',
-                'checksum': 'sha1$b1cc75293a4bddfe36540a6ea4248a44acae6db0',
-                'size': 498,
-                'path': os.path.join(output_dir, 'Sample24.Sample23.txt')
+                'checksum': 'sha1$a0fb3df832efc18a66a8a54e5609666da5f4d7d7',
+                'size': 529,
+                'path': os.path.join(output_dir, 'Sample24.txt')
             }],
             'gene_level_txt': [{
-                'location': 'file://' + os.path.join(output_dir, 'Sample24.Sample23.gene_level.txt'),
-                'basename': 'Sample24.Sample23.gene_level.txt',
+                'location': 'file://' + os.path.join(output_dir, 'Sample24.gene_level.txt'),
+                'basename': 'Sample24.gene_level.txt',
                 'class': 'File',
-                'checksum': 'sha1$f056daac29597163fecb90e69d801953a74c7619',
-                'size': 156007,
-                'path': os.path.join(output_dir, 'Sample24.Sample23.gene_level.txt')
+                'checksum': 'sha1$4e916a52458151007486bf536acfff539fdc2ecc',
+                'size': 148195,
+                'path': os.path.join(output_dir, 'Sample24.gene_level.txt')
             }],
             'hisens_rds': [{
-                'location': 'file://' + os.path.join(output_dir, 'Sample24.Sample23_hisens.rds'),
-                'basename': 'Sample24.Sample23_hisens.rds',
+                'location': 'file://' + os.path.join(output_dir, 'Sample24_hisens.rds'),
+                'basename': 'Sample24_hisens.rds',
                 'class': 'File',
                 'checksum': 'sha1$6bfd6c7f29c49ec8ef538dd468a3b4626b05bda2',
                 'size': 213986,
-                'path': os.path.join(output_dir, 'Sample24.Sample23_hisens.rds')
+                'path': os.path.join(output_dir, 'Sample24_hisens.rds')
             }],
             'hisens_seg': [{
-                'location': 'file://' + os.path.join(output_dir, 'Sample24.Sample23_hisens.seg'),
-                'basename': 'Sample24.Sample23_hisens.seg',
+                'location': 'file://' + os.path.join(output_dir, 'Sample24_hisens.seg'),
+                'basename': 'Sample24_hisens.seg',
                 'class': 'File',
-                'checksum': 'sha1$1ddb1a4a43c5707188ae597792c372eee2910d1c',
-                'size': 2221,
-                'path': os.path.join(output_dir, 'Sample24.Sample23_hisens.seg')
+                'checksum': 'sha1$652f9c6d0245af49bac6ca67a089af7d4e46801b',
+                'size': 1897,
+                'path': os.path.join(output_dir, 'Sample24_hisens.seg')
             }],
             'purity_rds': [{
-                'location': 'file://' + os.path.join(output_dir, 'Sample24.Sample23_purity.rds'),
-                'basename': 'Sample24.Sample23_purity.rds',
+                'location': 'file://' + os.path.join(output_dir, 'Sample24_purity.rds'),
+                'basename': 'Sample24_purity.rds',
                 'class': 'File',
                 'checksum': 'sha1$dd8b967f84b191ff76214c6110db8d0e65f6514c',
                 'size': 213356,
-                'path': os.path.join(output_dir, 'Sample24.Sample23_purity.rds')
+                'path': os.path.join(output_dir, 'Sample24_purity.rds')
             }],
             'purity_seg': [{
-                'location': 'file://' + os.path.join(output_dir, 'Sample24.Sample23_purity.seg'),
-                'basename': 'Sample24.Sample23_purity.seg',
+                'location': 'file://' + os.path.join(output_dir, 'Sample24_purity.seg'),
+                'basename': 'Sample24_purity.seg',
                 'class': 'File',
-                'checksum': 'sha1$dadb691707754772520a82c9148620d428281328',
-                'size': 1501,
-                'path': os.path.join(output_dir, 'Sample24.Sample23_purity.seg')
+                'checksum': 'sha1$591e6d8b432e1e910fe4fb4b1814508131f960c9',
+                'size': 1285,
+                'path': os.path.join(output_dir, 'Sample24_purity.seg')
             }],
             'qc_txt': [{
-                'location': 'file://' + os.path.join(output_dir, 'Sample24.Sample23.qc.txt'),
-                'basename': 'Sample24.Sample23.qc.txt',
+                'location': 'file://' + os.path.join(output_dir, 'Sample24.qc.txt'),
+                'basename': 'Sample24.qc.txt',
                 'class': 'File',
-                'checksum': 'sha1$704180fe9d6ccf38a7332d40b524bea3a2d3ff98',
-                'size': 1357,
-                'path': os.path.join(output_dir, 'Sample24.Sample23.qc.txt')
+                'checksum': 'sha1$d4a36726a5fcb7b268aae02d97ce4e382e42d9f6',
+                'size': 1339,
+                'path': os.path.join(output_dir, 'Sample24.qc.txt')
             }],
             'snp_pileup': [{
                 'location': 'file://' + os.path.join(output_dir, 'Sample24.Sample23.snp_pileup.gz'),
