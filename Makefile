@@ -26,13 +26,20 @@ help:
 # pull the Docker container and convert it to Singularity container image file
 export SINGULARITY_CACHEDIR:=/juno/work/ci/singularity_images
 # GIT_TAG:=$(shell git describe --tags --abbrev=0)
-DOCKER_TAG:=mskcc/helix_filters_01:20.06.2
+DOCKER_TAG:=mskcc/helix_filters_01:20.07.1
+DOCKER_DEV_TAG:=mskcc/helix_filters_01:update-portal-data
 # NOTE: you cannot use a filename with a ':' as a Makefile target
-SINGULARITY_SIF:=mskcc_helix_filters_01:20.06.2.sif
+SINGULARITY_SIF:=mskcc_helix_filters_01:20.07.1.sif
+SINGULARITY_DEV_SIF:=mskcc_helix_filters_01:update-portal-data.sif
 singularity-pull:
 	unset SINGULARITY_CACHEDIR && \
 	module load singularity/3.3.0 && \
 	singularity pull --force --name "$(SINGULARITY_SIF)" docker://$(DOCKER_TAG)
+
+singularity-pull-dev:
+	unset SINGULARITY_CACHEDIR && \
+	module load singularity/3.3.0 && \
+	singularity pull --force --name "$(SINGULARITY_DEV_SIF)" docker://$(DOCKER_DEV_TAG)
 
 # shell into the Singularity container to check that it looks right
 singularity-shell:
@@ -46,6 +53,12 @@ singularity-pull-facets:
 	module load singularity/3.3.0 && \
 	singularity pull --force --name "$(FACETS_SIF)" docker://$(FACETS_DOCKERTAG)
 
+OLD_TAG:=20.06.1
+NEW_TAG:=20.06.2
+update-container-tags:
+	for i in $$(find cwl -type f -exec grep -l 'dockerPull: mskcc/helix_filters_01' {} \;); do \
+	perl -i -pe 's/$(OLD_TAG)/$(NEW_TAG)/g' $$i ; \
+	done
 
 
 # ~~~~~ Setup Up and Run the CWL Workflow ~~~~~ #
@@ -106,6 +119,8 @@ QC_DIR:=$(DATA_DIR)/qc
 MAF_DIR:=$(DATA_DIR)/maf
 BAM_DIR:=$(DATA_DIR)/bam
 FACETS_DIR:=$(DATA_DIR)/facets
+FACETS_SUITE_DIR:=$(DATA_DIR)/facets-suite
+FACETS_AGGREGATE_FILE:=$(DATA_DIR)/facets-suite/$(PROJ_ID).facets.txt
 DATA_CLINICAL_FILE:=$(INPUTS_DIR)/$(PROJ_ID)_sample_data_clinical.txt
 SAMPLE_SUMMARY_FILE:=$(QC_DIR)/$(PROJ_ID)_SampleSummary.txt
 # Need to create some psuedo-JSON files for use in creating the input.json
@@ -116,6 +131,9 @@ mutation_maf_files.txt:
 	find $(MAF_DIR) -type f -name "*.muts.maf" | \
 	xargs -I{} jq -n --arg path "{}" '{"class": "File", "path":$$path}' > mutation_maf_files.txt
 .PHONY: mutation_maf_files.txt
+
+# find $(MAF_DIR) -type f -name "*.muts.maf" | \
+# find $(FACETS_SUITE_DIR) -type f -name "*.maf" | \
 
 # the segmented copy number files hisens.seg.txt
 facets_hisens_seg_files.txt:
@@ -179,6 +197,7 @@ input.json: mutation_maf_files.txt facets_hisens_seg_files.txt facets_hisens_cnc
 	--arg known_fusions_file "$(KNOWN_FUSIONS_FILE)" \
 	--arg data_clinical_file "$(DATA_CLINICAL_FILE)" \
 	--arg sample_summary_file "$(SAMPLE_SUMMARY_FILE)" \
+	--arg facets_aggregate_file "$(FACETS_AGGREGATE_FILE)" \
 	'{
 	"mutation_maf_files": $$mutation_maf_files,
 	"facets_hisens_seg_files": $$facets_hisens_seg_files,
@@ -205,7 +224,8 @@ input.json: mutation_maf_files.txt facets_hisens_seg_files.txt facets_hisens_cnc
 	"targets_list": {"class": "File", "path": $$targets_list},
 	"known_fusions_file": {"class": "File", "path": $$known_fusions_file},
 	"data_clinical_file": {"class": "File", "path": $$data_clinical_file},
-	"sample_summary_file": {"class": "File", "path": $$sample_summary_file}
+	"sample_summary_file": {"class": "File", "path": $$sample_summary_file},
+	"facets_aggregate_file": {"class": "File", "path": $$facets_aggregate_file}
 	}
 	' > input.json
 .PHONY: input.json
@@ -229,6 +249,7 @@ run: $(INPUT_JSON) $(OUTPUT_DIR)
 	module load cwl/cwltool && \
 	module load python/3.7.1 && \
 	if [ ! -e "$(SINGULARITY_SIF)" ]; then $(MAKE) singularity-pull; fi && \
+	if [ ! -e $(SINGULARITY_DEV_SIF) ]; then $(MAKE) singularity-pull-dev; fi && \
 	cwl-runner $(DEBUG) \
 	--leave-tmpdir \
 	--tmpdir-prefix $(TMP_DIR) \
@@ -373,10 +394,11 @@ portal: $(PORTAL_INPUT_JSON) $(OUTPUT_DIR)
 
 
 # ~~~~~ Run Facets CWL Workflow ~~~~~ #
-# run with only a single pair; full request takes an hour to run
 FACETS_SNPS_VCF:=/juno/work/ci/resources/genomes/GRCh37/facets_snps/dbsnp_137.b37__RmDupsClean__plusPseudo50__DROP_SORT.vcf
+# run with only a single pair; full request takes an hour to run
 PAIRING_FILE:=$(INPUTS_DIR)/$(PROJ_ID)_sample_pairing.1.txt
 FACETS_OUTPUT_DIR:=$(OUTPUT_DIR)/facets-suite
+FACETS_AGGREGATE_FILENAME:=$(PROJ_ID).facets.txt
 $(FACETS_OUTPUT_DIR):
 	mkdir -p "$(FACETS_OUTPUT_DIR)"
 # file to hold facets pairing json data
@@ -393,11 +415,15 @@ facets-pairs.txt: $(PAIRING_FILE)
 	--arg normal_bam "$${normal_bam}" \
 	--arg pair_id "$${pair_id}" \
 	--arg pair_maf "$${pair_maf}" \
+	--arg normal_id "$${normal}" \
+	--arg tumor_id "$${tumor}" \
 	'{
 	"tumor_bam": { "class": "File", "path": $$tumor_bam },
 	"normal_bam": { "class": "File", "path": $$normal_bam },
 	"pair_maf": { "class": "File", "path": $$pair_maf },
-	"pair_id": $$pair_id
+	"pair_id": $$pair_id,
+	"normal_id": $$normal_id,
+	"tumor_id": $$tumor_id
 	}
 	'
 	done > facets-pairs.txt
@@ -408,9 +434,11 @@ facets-input.json: facets-pairs.txt
 	jq -n \
 	--slurpfile pairs facets-pairs.txt \
 	--arg snps_vcf "$(FACETS_SNPS_VCF)" \
+	--arg facets_aggregate_filename "$(FACETS_AGGREGATE_FILENAME)" \
 	'{
 	"pairs" :$$pairs,
-	"snps_vcf": { "class": "File", "path": $$snps_vcf }
+	"snps_vcf": { "class": "File", "path": $$snps_vcf },
+	"facets_aggregate_filename": $$facets_aggregate_filename
 	}
 	' > facets-input.json
 .PHONY:facets-input.json
@@ -420,6 +448,7 @@ facets: facets-input.json $(FACETS_OUTPUT_DIR)
 	module load cwl/cwltool
 	module load python/3.7.1
 	if [ ! -e $(FACETS_SIF) ]; then $(MAKE) singularity-pull-facets; fi
+	if [ ! -e $(SINGULARITY_DEV_SIF) ]; then $(MAKE) singularity-pull-dev; fi
 	cwl-runner \
 	--parallel \
 	--leave-tmpdir \
@@ -443,6 +472,14 @@ test:
 	module load cwl/cwltool && \
 	if [ ! -e "$(SINGULARITY_SIF)" ]; then $(MAKE) singularity-pull; fi && \
 	python3 test.py
+
+# for some reason the test recipe is not running all tests....
+test2:
+	export PATH=/opt/local/singularity/3.3.0/bin:$(PATH) && \
+	module load python/3.7.1 && \
+	module load cwl/cwltool && \
+	if [ ! -e "$(SINGULARITY_SIF)" ]; then $(MAKE) singularity-pull; fi && \
+	for i in tests/test_*.py; do echo $$i; $$i; done
 
 # interactive session with environment populated
 bash:
