@@ -26,10 +26,10 @@ help:
 # pull the Docker container and convert it to Singularity container image file
 export SINGULARITY_CACHEDIR:=/juno/work/ci/singularity_images
 # GIT_TAG:=$(shell git describe --tags --abbrev=0)
-DOCKER_TAG:=mskcc/helix_filters_01:20.06.2
+DOCKER_TAG:=mskcc/helix_filters_01:20.07.1
 DOCKER_DEV_TAG:=mskcc/helix_filters_01:update-portal-data
 # NOTE: you cannot use a filename with a ':' as a Makefile target
-SINGULARITY_SIF:=mskcc_helix_filters_01:20.06.2.sif
+SINGULARITY_SIF:=mskcc_helix_filters_01:20.07.1.sif
 SINGULARITY_DEV_SIF:=mskcc_helix_filters_01:update-portal-data.sif
 singularity-pull:
 	unset SINGULARITY_CACHEDIR && \
@@ -53,6 +53,12 @@ singularity-pull-facets:
 	module load singularity/3.3.0 && \
 	singularity pull --force --name "$(FACETS_SIF)" docker://$(FACETS_DOCKERTAG)
 
+OLD_TAG:=20.06.1
+NEW_TAG:=20.06.2
+update-container-tags:
+	for i in $$(find cwl -type f -exec grep -l 'dockerPull: mskcc/helix_filters_01' {} \;); do \
+	perl -i -pe 's/$(OLD_TAG)/$(NEW_TAG)/g' $$i ; \
+	done
 
 
 # ~~~~~ Setup Up and Run the CWL Workflow ~~~~~ #
