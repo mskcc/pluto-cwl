@@ -1,43 +1,44 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-unit tests for the replace.cwl file
+unit tests for the paste-col.cwl
 """
 import os
 import json
 import unittest
 from tempfile import TemporaryDirectory, NamedTemporaryFile
 
-
 # relative imports, from CLI and from parent project
 if __name__ != "__main__":
     from .tools import run_command
-    from .settings import CWL_DIR, CWL_ARGS, FACETS_SNPS_VCF, DATA_SETS
+    from .settings import CWL_DIR, CWL_ARGS
 
 if __name__ == "__main__":
     from tools import run_command
-    from settings import CWL_DIR, CWL_ARGS, FACETS_SNPS_VCF, DATA_SETS
+    from settings import CWL_DIR, CWL_ARGS
 
-cwl_file = os.path.join(CWL_DIR, 'replace.cwl')
+cwl_file = os.path.join(CWL_DIR, 'paste-col.cwl')
 
-class TestReplace(unittest.TestCase):
-    def test_replace1(self):
+class TestPasteCol(unittest.TestCase):
+    def test_paste_col_1(self):
         """
-        Test that strings get replaced
         """
         with TemporaryDirectory() as tmpdir:
             # make a dummy file with some lines
-            input_lines = ["HEADER", "foo", "ILLOGICAL", "baz"]
+            input_lines = ["HEADER1", "foo1", "bar1"]
             input_file = os.path.join(tmpdir, "input.txt")
             with open(input_file, "w") as fout:
                 for line in input_lines:
                     fout.write(line + '\n')
 
             input_json = {
-                "input_file":{
+                "input_file": {
                       "class": "File",
                       "path": input_file
                     },
+                "output_filename": "output.txt",
+                "header": "HEADER2",
+                "value": "foo2"
                 }
             input_json_file = os.path.join(tmpdir, "input.json")
             with open(input_json_file, "w") as input_json_file_data:
@@ -70,7 +71,7 @@ class TestReplace(unittest.TestCase):
             with open(output_file) as fin:
                 output_lines = [ line.strip() for line in fin ]
 
-            expected_lines = ["HEADER", "foo", "NA", "baz"]
+            expected_lines = ['HEADER1\tHEADER2', 'foo1\tfoo2', 'bar1\tfoo2']
             self.assertEqual(output_lines, expected_lines)
 
             expected_output = {
@@ -78,12 +79,13 @@ class TestReplace(unittest.TestCase):
                     'location': 'file://' + os.path.join(output_dir, 'output.txt'),
                     'basename': 'output.txt',
                     'class': 'File',
-                    'checksum': 'sha1$62255c8ee13b8ba6e01c7e17262a8ba1f174e5cb',
-                    'size': 18,
+                    'checksum': 'sha1$34753fd98b2355d54740f3fdfc6490262c15dd59',
+                    'size': 36,
                     'path': os.path.join(output_dir, 'output.txt')
                     }
                 }
             self.assertDictEqual(output_json, expected_output)
+
 
 
 if __name__ == "__main__":

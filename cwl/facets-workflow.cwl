@@ -90,10 +90,15 @@ inputs:
           normal_bam: File
           pair_maf: File
           pair_id: string
+          tumor_id: string
+          normal_id: string
   snps_vcf:
     type: File
+  facets_aggregate_filename:
+    type: string
 
 steps:
+  # run the facets suite wrapper set on each tumor normal pair
   facets_suite:
     run: facets-suite-workflow.cwl
     scatter: pair
@@ -108,6 +113,10 @@ steps:
         valueFrom: ${ return inputs.pair['pair_maf']; }
       pair_id:
         valueFrom: ${ return inputs.pair['pair_id']; }
+      tumor_id:
+        valueFrom: ${ return inputs.pair['tumor_id']; }
+      normal_id:
+        valueFrom: ${ return inputs.pair['normal_id']; }
     out:
       [
       pair_id,
@@ -122,6 +131,15 @@ steps:
       hisens_rds,
       annotated_maf
       ]
+
+  # aggregate all of the Facets Suite .txt output files for downsteam useage
+  aggregate_facets_txt:
+    run: concat-tables.cwl
+    in:
+      output_filename: facets_aggregate_filename
+      input_files: facets_suite/facets_txt
+    out:
+      [ output_file ]
 
 
 outputs:
@@ -175,3 +193,6 @@ outputs:
       type: array
       items: File
     outputSource: facets_suite/annotated_maf
+  aggregated_facets_txt:
+    type: File
+    outputSource: aggregate_facets_txt/output_file

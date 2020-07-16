@@ -145,6 +145,11 @@ inputs:
     type:
     - "null"
     - File
+  facets_aggregate_file:
+    doc: "Facets Suite .txt file aggregated for all samples in the request"
+    type:
+      - "null"
+      - File
 
 steps:
   # meta_clinical_sample.txt (cbio_clinical_sample_meta_filename; meta_clinical_sample_file)
@@ -181,6 +186,7 @@ steps:
       output_filename: cbio_clinical_sample_data_filename
       project_pi: project_pi
       request_pi: request_pi
+      facets_aggregate_file: facets_aggregate_file
     out:
       [output_file]
 
