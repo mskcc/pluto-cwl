@@ -25,7 +25,7 @@ class TestAnnotateMafWrapperCWL(unittest.TestCase):
         """
         """
         input_maf = os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample1.Sample2.muts.maf")
-        input_rds = os.path.join(DATA_SETS['Proj_08390_G']['FACETS_SUITE_DIR'], "Sample1.Sample2_hisens.rds")
+        input_rds = os.path.join(DATA_SETS['Proj_08390_G']['FACETS_SUITE_DIR'], "Sample1_hisens.rds")
         input_json = {
             "maf_file": {
                 "path": input_maf,
