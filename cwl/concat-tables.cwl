@@ -5,7 +5,7 @@ class: CommandLineTool
 baseCommand: [ "concat-tables.py" ]
 requirements:
   DockerRequirement:
-    dockerPull: mskcc/helix_filters_01:update-portal-data
+    dockerPull: mskcc/helix_filters_01:20.07.1
 inputs:
   output_filename:
     type: string

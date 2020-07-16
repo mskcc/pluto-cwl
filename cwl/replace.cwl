@@ -8,7 +8,7 @@ baseCommand: [ 'sed', 's/ILLOGICAL/NA/g' ]
 
 requirements:
   DockerRequirement:
-    dockerPull: mskcc/helix_filters_01:20.06.2
+    dockerPull: mskcc/helix_filters_01:20.07.1
 
 stdout: $(inputs.output_filename)
 
