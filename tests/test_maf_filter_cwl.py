@@ -6,32 +6,18 @@ unit tests for the maf_filter.cwl
 import os
 import json
 import unittest
-import csv
 from tempfile import TemporaryDirectory, NamedTemporaryFile
 
 # relative imports, from CLI and from parent project
 if __name__ != "__main__":
-    from .tools import run_command, parse_header_comments
+    from .tools import run_command, load_mutations
     from .settings import CWL_DIR, CWL_ARGS, DATA_SETS, ARGOS_VERSION_STRING, IS_IMPACT
 
 if __name__ == "__main__":
-    from tools import run_command, parse_header_comments
+    from tools import run_command, load_mutations
     from settings import CWL_DIR, CWL_ARGS, DATA_SETS, ARGOS_VERSION_STRING, IS_IMPACT
 
 cwl_file = os.path.join(CWL_DIR, 'maf_filter.cwl')
-
-def load_mutations(filename):
-    """
-    Load the mutations from a file to use for testing
-    """
-    comments, start_line = parse_header_comments(filename)
-    with open(filename) as fin:
-        while start_line > 0:
-            next(fin)
-            start_line -= 1
-        reader = csv.DictReader(fin, delimiter = '\t')
-        mutations = [ row for row in reader ]
-    return(comments, mutations)
 
 class TestMafFilter(unittest.TestCase):
     def test_filter_a_maf_file(self):
@@ -290,6 +276,75 @@ class TestMafFilter(unittest.TestCase):
                     }
                 }
             self.assertDictEqual(output_json, expected_output)
+
+    def test_large_maf_file(self):
+        """
+        Test that a giant maf file with tons of variants gets filtered as expected
+        """
+        input_maf = os.path.join(DATA_SETS['Proj_08390_G']['MAF_FILTER_DIR'], "Proj_08390_G", "Proj_08390_G.muts.maf")
+
+        with TemporaryDirectory() as tmpdir:
+            output_dir = os.path.join(tmpdir, "output")
+            input_json = {
+                "maf_file": {
+                      "class": "File",
+                      "path": input_maf
+                    },
+                "argos_version_string": "2.x",
+                "is_impact": "True",
+                "analysis_mutations_filename": "Proj_08390_G.muts.maf",
+                "cbio_mutation_data_filename": 'data_mutations_extended.txt'
+            }
+            input_json_file = os.path.join(tmpdir, "input.json")
+            with open(input_json_file, "w") as input_json_file_data:
+                json.dump(input_json, input_json_file_data)
+
+            output_dir = os.path.join(tmpdir, "output")
+            tmp_dir = os.path.join(tmpdir, "tmp")
+            cache_dir = os.path.join(tmpdir, "cache")
+
+            command = [
+            "cwl-runner",
+            *CWL_ARGS,
+            "--outdir", output_dir,
+            "--tmpdir-prefix", tmp_dir,
+            "--cachedir", cache_dir,
+            cwl_file, input_json_file
+            ]
+
+            returncode, proc_stdout, proc_stderr = run_command(command)
+
+            if returncode != 0:
+                print(proc_stderr)
+
+            self.assertEqual(returncode, 0)
+
+            output_json = json.loads(proc_stdout)
+
+            with open(output_json['analysis_mutations_file']['path']) as fin:
+                output_maf_lines = len(fin.readlines())
+            self.assertEqual(output_maf_lines, 1664)
+
+            with open(output_json['cbio_mutation_data_file']['path']) as fin:
+                output_maf_lines = len(fin.readlines())
+            self.assertEqual(output_maf_lines, 1141)
+
+            # validate output mutation file contents
+            comments, mutations = load_mutations(output_json['analysis_mutations_file']['path'])
+            expected_comments, expected_mutations = load_mutations(os.path.join(DATA_SETS['Proj_08390_G']['MAF_FILTER_DIR'], "Proj_08390_G", "analyst_file.txt"))
+
+            for mutation in expected_mutations:
+                self.assertTrue(mutation in mutations)
+
+            self.assertEqual(len(mutations), len(expected_mutations))
+
+            comments, mutations = load_mutations(output_json['cbio_mutation_data_file']['path'])
+            expected_comments, expected_mutations = load_mutations(os.path.join(DATA_SETS['Proj_08390_G']['MAF_FILTER_DIR'], "Proj_08390_G", "portal_file.txt"))
+
+            for mutation in expected_mutations:
+                self.assertTrue(mutation in mutations)
+
+            self.assertEqual(len(mutations), len(expected_mutations))
 
 
 if __name__ == "__main__":

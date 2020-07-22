@@ -2,6 +2,7 @@
 Helper functions for running tests
 """
 import subprocess as sp
+import csv
 
 def run_command(args):
     """
@@ -40,3 +41,16 @@ def parse_header_comments(filename):
                 comments.append(line.strip())
                 start_line += 1
     return(comments, start_line)
+
+def load_mutations(filename):
+    """
+    Load the mutations from a file to use for testing
+    """
+    comments, start_line = parse_header_comments(filename)
+    with open(filename) as fin:
+        while start_line > 0:
+            next(fin)
+            start_line -= 1
+        reader = csv.DictReader(fin, delimiter = '\t')
+        mutations = [ row for row in reader ]
+    return(comments, mutations)

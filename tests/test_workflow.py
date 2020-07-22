@@ -140,8 +140,8 @@ class TestWorkflow(unittest.TestCase):
                             'location': 'file://' + os.path.join(output_dir, 'analysis/Proj_08390_G.muts.maf'),
                             'basename': 'Proj_08390_G.muts.maf',
                             'class': 'File',
-                            'checksum': 'sha1$99d2b44a2a65fa909c5816c997ab1275c6656fe1',
-                            'size': 27944,
+                            'checksum': 'sha1$a57361e6e6b27de33c711511e0cef6f4b4c868d2',
+                            'size': 28106,
                             'path': os.path.join(output_dir, 'analysis/Proj_08390_G.muts.maf')
                         },
                         {
@@ -452,8 +452,8 @@ class TestWorkflow(unittest.TestCase):
                         {'location': 'file://' + os.path.join(output_dir, 'analysis/Proj_08390_G.muts.maf'),
                         'basename': 'Proj_08390_G.muts.maf',
                         'class': 'File',
-                        'checksum': 'sha1$d8ff47d86ac944ccc24bf5f3e6881940d8da1ce4',
-                        'size': 46738,
+                        'checksum': 'sha1$fef597a1edf474d382dc39e84f0f07ebc58db35a',
+                        'size': 46900,
                         'path': os.path.join(output_dir, 'analysis/Proj_08390_G.muts.maf')},
                         {'location': 'file://' + os.path.join(output_dir, 'analysis/Proj_08390_G.seg.cna.txt'),
                         'basename': 'Proj_08390_G.seg.cna.txt',
