@@ -6,24 +6,39 @@ unit tests for the maf_filter.cwl
 import os
 import json
 import unittest
+import csv
 from tempfile import TemporaryDirectory, NamedTemporaryFile
 
 # relative imports, from CLI and from parent project
 if __name__ != "__main__":
-    from .tools import run_command
+    from .tools import run_command, parse_header_comments
     from .settings import CWL_DIR, CWL_ARGS, DATA_SETS, ARGOS_VERSION_STRING, IS_IMPACT
 
 if __name__ == "__main__":
-    from tools import run_command
+    from tools import run_command, parse_header_comments
     from settings import CWL_DIR, CWL_ARGS, DATA_SETS, ARGOS_VERSION_STRING, IS_IMPACT
 
 cwl_file = os.path.join(CWL_DIR, 'maf_filter.cwl')
+
+def load_mutations(filename):
+    """
+    Load the mutations from a file to use for testing
+    """
+    comments, start_line = parse_header_comments(filename)
+    with open(filename) as fin:
+        while start_line > 0:
+            next(fin)
+            start_line -= 1
+        reader = csv.DictReader(fin, delimiter = '\t')
+        mutations = [ row for row in reader ]
+    return(comments, mutations)
 
 class TestMafFilter(unittest.TestCase):
     def test_filter_a_maf_file(self):
         """
         Test that a filtered maf file comes out as expected
         """
+        self.maxDiff = None
         input_maf = os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample1.Sample2.muts.maf")
 
         with open(input_maf) as fin:
@@ -71,23 +86,40 @@ class TestMafFilter(unittest.TestCase):
 
             with open(output_json['analysis_mutations_file']['path']) as fin:
                 output_maf_lines = len(fin.readlines())
-            self.assertEqual(output_maf_lines, 24)
+            self.assertEqual(output_maf_lines, 27)
+
+            # validate output mutation file contents
+            comments, mutations = load_mutations(output_json['analysis_mutations_file']['path'])
+            expected_comments, expected_mutations = load_mutations(os.path.join(DATA_SETS['Proj_08390_G']['MAF_FILTER_DIR'], "Sample1", "analyst_file.txt"))
+
+            for mutation in expected_mutations:
+                self.assertTrue(mutation in mutations)
+
+            self.assertEqual(len(mutations), len(expected_mutations))
+
+            comments, mutations = load_mutations(output_json['cbio_mutation_data_file']['path'])
+            expected_comments, expected_mutations = load_mutations(os.path.join(DATA_SETS['Proj_08390_G']['MAF_FILTER_DIR'], "Sample1", "portal_file.txt"))
+
+            for mutation in expected_mutations:
+                self.assertTrue(mutation in mutations)
+
+            self.assertEqual(len(mutations), len(expected_mutations))
 
             expected_output = {
                 'analysis_mutations_file': {
                     'location': 'file://' + os.path.join(output_dir, "Proj_08390_G.muts.maf"),
                     'basename': "Proj_08390_G.muts.maf",
                     'class': 'File',
-                    'checksum': 'sha1$49086adcecc296905ed210ce512bf71a56a4e71a',
-                    'size': 27917,
+                    'checksum': 'sha1$24421ab8d1a39a71f48eecbb0dd167d5d9f5c529',
+                    'size': 28079,
                     'path': os.path.join(output_dir, "Proj_08390_G.muts.maf")
                     },
                 'cbio_mutation_data_file': {
                     'location': 'file://' + os.path.join(output_dir, 'data_mutations_extended.txt'),
                     'basename': 'data_mutations_extended.txt',
                     'class': 'File',
-                    'checksum': 'sha1$f35288b7d321e34f17abbcb02e29df942e308601',
-                    'size': 4372,
+                    'checksum': 'sha1$6131494536ce956d741c820378e7e2ce1c714403',
+                    'size': 4534,
                     'path': os.path.join(output_dir, 'data_mutations_extended.txt')
                     }
                 }
@@ -97,6 +129,7 @@ class TestMafFilter(unittest.TestCase):
         """
         Test the maf filter script results when used with argos_version_string 3.2.0
         """
+        self.maxDiff = None
         input_maf = os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample1.Sample2.muts.maf")
 
         with open(input_maf) as fin:
@@ -142,28 +175,45 @@ class TestMafFilter(unittest.TestCase):
 
             output_json = json.loads(proc_stdout)
 
+            # validate output mutation file contents
+            comments, mutations = load_mutations(output_json['analysis_mutations_file']['path'])
+            expected_comments, expected_mutations = load_mutations(os.path.join(DATA_SETS['Proj_08390_G']['MAF_FILTER_DIR'], "Sample1", "analyst_file.txt"))
+
+            for mutation in expected_mutations:
+                self.assertTrue(mutation in mutations)
+
+            self.assertEqual(len(mutations), len(expected_mutations))
+
+            comments, mutations = load_mutations(output_json['cbio_mutation_data_file']['path'])
+            expected_comments, expected_mutations = load_mutations(os.path.join(DATA_SETS['Proj_08390_G']['MAF_FILTER_DIR'], "Sample1", "portal_file.txt"))
+
+            for mutation in expected_mutations:
+                self.assertTrue(mutation in mutations)
+
+            self.assertEqual(len(mutations), len(expected_mutations))
+
             expected_output = {
                 'analysis_mutations_file': {
                     'location': 'file://' + os.path.join(output_dir, "Proj_08390_G.muts.maf"),
                     'basename': "Proj_08390_G.muts.maf",
                     'class': 'File',
-                    'checksum': 'sha1$d9e2e80b925857252097c28d37e1aa0d879058c4',
-                    'size': 27919,
+                    'checksum': 'sha1$fd78842c9410e7e622dee270ec9c0e7628811f18',
+                    'size': 28081,
                     'path': os.path.join(output_dir, "Proj_08390_G.muts.maf")
                     },
                 'cbio_mutation_data_file': {
                     'location': 'file://' + os.path.join(output_dir, 'data_mutations_extended.txt'),
                     'basename': 'data_mutations_extended.txt',
                     'class': 'File',
-                    'checksum': 'sha1$7f34d57cf40cec8ce8e0d9d5306380e5abfb4b70',
-                    'size': 4374,
+                    'checksum': 'sha1$47e716eabbfda3408b2d9a08b9bb432b2cb8fce8',
+                    'size': 4536,
                     'path': os.path.join(output_dir, 'data_mutations_extended.txt')
                     }
                 }
 
             with open(output_json['analysis_mutations_file']['path']) as fin:
                 output_maf_lines = len(fin.readlines())
-            self.assertEqual(output_maf_lines, 24)
+            self.assertEqual(output_maf_lines, 27)
 
             self.assertDictEqual(output_json, expected_output)
 
@@ -171,6 +221,7 @@ class TestMafFilter(unittest.TestCase):
         """
         Test that a filtered maf file comes out as expected
         """
+        self.maxDiff = None
         input_maf = os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample1.Sample2.muts.maf")
 
         with open(input_maf) as fin:
@@ -218,23 +269,23 @@ class TestMafFilter(unittest.TestCase):
 
             with open(output_json['analysis_mutations_file']['path']) as fin:
                 output_maf_lines = len(fin.readlines())
-            self.assertEqual(output_maf_lines, 20)
+            self.assertEqual(output_maf_lines, 23)
 
             expected_output = {
                 'analysis_mutations_file': {
                     'location': 'file://' + os.path.join(output_dir, "Proj_08390_G.muts.maf"),
                     'basename': "Proj_08390_G.muts.maf",
                     'class': 'File',
-                    'checksum': 'sha1$1f9ad9aec62836740f39732ea193591a725891f6',
-                    'size': 24362,
+                    'checksum': 'sha1$9fb9d43c71e546750ddec6aea2313dda28547b3a',
+                    'size': 24524,
                     'path': os.path.join(output_dir, "Proj_08390_G.muts.maf")
                     },
                 'cbio_mutation_data_file': {
                     'location': 'file://' + os.path.join(output_dir, 'data_mutations_extended.txt'),
                     'basename': 'data_mutations_extended.txt',
                     'class': 'File',
-                    'checksum': 'sha1$93fa92e4da62c072dbe8f0aa2d5ca733f3d44213',
-                    'size': 3769,
+                    'checksum': 'sha1$15ca06249511c32c32e058c246a757ec8df11d83',
+                    'size': 3931,
                     'path': os.path.join(output_dir, 'data_mutations_extended.txt')
                     }
                 }

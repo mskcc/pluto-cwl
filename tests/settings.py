@@ -38,5 +38,6 @@ DATA_SETS = {
         "targets_list": "/juno/work/ci/resources/roslin_resources/targets/HemePACT_v4/b37/HemePACT_v4_b37_targets.ilist",
         "analyst_file": "Proj_08390_G.muts.maf", # TODO: deprecate this
         "analysis_gene_cna_file": "Proj_08390_G.gene.cna.txt", # TODO: deprecate this
+        "MAF_FILTER_DIR": os.path.join(FIXTURES_DIR, "Proj_08390_G", "maf_filter")
     }
 }

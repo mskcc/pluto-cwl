@@ -26,11 +26,11 @@ help:
 # pull the Docker container and convert it to Singularity container image file
 export SINGULARITY_CACHEDIR:=/juno/work/ci/singularity_images
 # GIT_TAG:=$(shell git describe --tags --abbrev=0)
-DOCKER_TAG:=mskcc/helix_filters_01:20.07.1
-DOCKER_DEV_TAG:=mskcc/helix_filters_01:update-portal-data
+DOCKER_TAG:=mskcc/helix_filters_01:20.07.2
+DOCKER_DEV_TAG:=mskcc/helix_filters_01:dev
 # NOTE: you cannot use a filename with a ':' as a Makefile target
-SINGULARITY_SIF:=mskcc_helix_filters_01:20.07.1.sif
-SINGULARITY_DEV_SIF:=mskcc_helix_filters_01:update-portal-data.sif
+SINGULARITY_SIF:=mskcc_helix_filters_01:20.07.2.sif
+SINGULARITY_DEV_SIF:=mskcc_helix_filters_01:dev.sif
 singularity-pull:
 	unset SINGULARITY_CACHEDIR && \
 	module load singularity/3.3.0 && \
@@ -128,7 +128,7 @@ SAMPLE_SUMMARY_FILE:=$(QC_DIR)/$(PROJ_ID)_SampleSummary.txt
 # .maf input files JSON muts.maf.txt
 mutation_maf_files.txt:
 	module load jq/1.6 && \
-	find $(MAF_DIR) -type f -name "*.muts.maf" | \
+	find $(FACETS_SUITE_DIR) -type f -name "*.maf" | \
 	xargs -I{} jq -n --arg path "{}" '{"class": "File", "path":$$path}' > mutation_maf_files.txt
 .PHONY: mutation_maf_files.txt
 
@@ -467,7 +467,7 @@ facets: facets-input.json $(FACETS_OUTPUT_DIR)
 # Run the test suite
 export FIXTURES_DIR:=/juno/work/ci/helix_filters_01/fixtures
 test:
-	export PATH=/opt/local/singularity/3.3.0/bin:$(PATH) && \
+	module load singularity/3.3.0 && \
 	module load python/3.7.1 && \
 	module load cwl/cwltool && \
 	if [ ! -e "$(SINGULARITY_SIF)" ]; then $(MAKE) singularity-pull; fi && \
@@ -475,7 +475,7 @@ test:
 
 # for some reason the test recipe is not running all tests....
 test2:
-	export PATH=/opt/local/singularity/3.3.0/bin:$(PATH) && \
+	module load singularity/3.3.0 && \
 	module load python/3.7.1 && \
 	module load cwl/cwltool && \
 	if [ ! -e "$(SINGULARITY_SIF)" ]; then $(MAKE) singularity-pull; fi && \
