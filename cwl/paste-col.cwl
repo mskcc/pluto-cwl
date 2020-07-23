@@ -5,7 +5,7 @@ class: CommandLineTool
 baseCommand: [ "paste-col.py" ]
 requirements:
   DockerRequirement:
-    dockerPull: mskcc/helix_filters_01:20.07.2
+    dockerPull: mskcc/helix_filters_01:20.07.3
 inputs:
   input_file:
     type: File
