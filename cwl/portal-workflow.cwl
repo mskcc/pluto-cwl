@@ -135,6 +135,10 @@ inputs:
   mutation_svs_txt_files:
     type: File[]
     doc: "cbio_fusion_data_filename (CBIO_FUSION_DATA_FILENAME; data_fusions.txt): (MAF_DIR)/*.svs.pass.vep.portal.txt"
+  facets_suite_txt_files:
+    type:
+      - "null"
+      - File[]
   targets_list:
     type: File
   known_fusions_file:
@@ -145,11 +149,11 @@ inputs:
     type:
     - "null"
     - File
-  facets_aggregate_file:
-    doc: "Facets Suite .txt file aggregated for all samples in the request"
-    type:
-      - "null"
-      - File
+  # facets_aggregate_file:
+  #   doc: "Facets Suite .txt file aggregated for all samples in the request"
+  #   type:
+  #     - "null"
+  #     - File
 
 steps:
   # meta_clinical_sample.txt (cbio_clinical_sample_meta_filename; meta_clinical_sample_file)
@@ -186,7 +190,7 @@ steps:
       output_filename: cbio_clinical_sample_data_filename
       project_pi: project_pi
       request_pi: request_pi
-      facets_aggregate_file: facets_aggregate_file
+      facets_txt_files: facets_suite_txt_files
     out:
       [output_file]
 

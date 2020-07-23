@@ -94,8 +94,6 @@ inputs:
           normal_id: string
   snps_vcf:
     type: File
-  facets_aggregate_filename:
-    type: string
 
 steps:
   # run the facets suite wrapper set on each tumor normal pair
@@ -131,16 +129,6 @@ steps:
       hisens_rds,
       annotated_maf
       ]
-
-  # aggregate all of the Facets Suite .txt output files for downsteam useage
-  aggregate_facets_txt:
-    run: concat-tables.cwl
-    in:
-      output_filename: facets_aggregate_filename
-      input_files: facets_suite/facets_txt
-    out:
-      [ output_file ]
-
 
 outputs:
   snp_pileup:
@@ -193,6 +181,3 @@ outputs:
       type: array
       items: File
     outputSource: facets_suite/annotated_maf
-  aggregated_facets_txt:
-    type: File
-    outputSource: aggregate_facets_txt/output_file

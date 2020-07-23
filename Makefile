@@ -131,9 +131,14 @@ mutation_maf_files.txt:
 	find $(FACETS_SUITE_DIR) -type f -name "*.maf" | \
 	xargs -I{} jq -n --arg path "{}" '{"class": "File", "path":$$path}' > mutation_maf_files.txt
 .PHONY: mutation_maf_files.txt
-
 # find $(MAF_DIR) -type f -name "*.muts.maf" | \
 # find $(FACETS_SUITE_DIR) -type f -name "*.maf" | \
+
+facets_suite_txt_files.txt:
+	module load jq/1.6 && \
+	find $(FACETS_SUITE_DIR) -type f -name "*.txt" ! -name "*.*.txt" | \
+	xargs -I{} jq -n --arg path "{}" '{"class":"File", "path": $$path}' > facets_suite_txt_files.txt
+.PHONY: facets_suite_txt_files.txt
 
 # the segmented copy number files hisens.seg.txt
 facets_hisens_seg_files.txt:
@@ -163,12 +168,13 @@ mutation_svs_maf_files.txt:
 
 
 # input file for the CWL workflow; omits some workflow.cwl input fields that have static default values
-input.json: mutation_maf_files.txt facets_hisens_seg_files.txt facets_hisens_cncf_files.txt mutation_svs_txt_files.txt mutation_svs_maf_files.txt
+input.json: mutation_maf_files.txt facets_hisens_seg_files.txt facets_hisens_cncf_files.txt mutation_svs_txt_files.txt mutation_svs_maf_files.txt facets_suite_txt_files.txt
 	if [ "$$(cat mutation_maf_files.txt | wc -l)" -eq "0" ]; then echo ">>> ERROR: File mutation_maf_files.txt is empty"; exit 1; fi
 	if [ "$$(cat facets_hisens_seg_files.txt | wc -l)" -eq "0" ]; then echo ">>> ERROR: File facets_hisens_seg_files.txt is empty"; exit 1; fi
 	if [ "$$(cat facets_hisens_cncf_files.txt | wc -l)" -eq "0" ]; then echo ">>> ERROR: File facets_hisens_cncf_files.txt is empty"; exit 1; fi
 	if [ "$$(cat mutation_svs_txt_files.txt | wc -l)" -eq "0" ]; then echo ">>> ERROR: File mutation_svs_txt_files.txt is empty"; exit 1; fi
 	if [ "$$(cat mutation_svs_maf_files.txt | wc -l)" -eq "0" ]; then echo ">>> ERROR: File mutation_svs_maf_files.txt is empty"; exit 1; fi
+	if [ "$$(cat facets_suite_txt_files.txt | wc -l)" -eq "0" ]; then echo ">>> ERROR: File facets_suite_txt_files.txt is empty"; exit 1; fi
 	module load jq/1.6 && \
 	jq -n \
 	--slurpfile mutation_maf_files mutation_maf_files.txt \
@@ -176,6 +182,7 @@ input.json: mutation_maf_files.txt facets_hisens_seg_files.txt facets_hisens_cnc
 	--slurpfile facets_hisens_cncf_files facets_hisens_cncf_files.txt \
 	--slurpfile mutation_svs_txt_files mutation_svs_txt_files.txt \
 	--slurpfile mutation_svs_maf_files mutation_svs_maf_files.txt \
+	--slurpfile facets_suite_txt_files facets_suite_txt_files.txt \
 	--arg helix_filter_version "$(HELIX_FILTER_VERSION)" \
 	--arg project_id "$(PROJ_ID)" \
 	--arg project_pi "$(PROJ_PI)" \
@@ -204,6 +211,7 @@ input.json: mutation_maf_files.txt facets_hisens_seg_files.txt facets_hisens_cnc
 	"facets_hisens_cncf_files": $$facets_hisens_cncf_files,
 	"mutation_svs_txt_files": $$mutation_svs_txt_files,
 	"mutation_svs_maf_files": $$mutation_svs_maf_files,
+	"facets_suite_txt_files": $$facets_suite_txt_files,
 	"project_id": $$project_id,
 	"project_pi": $$project_pi,
 	"request_pi": $$request_pi,
@@ -398,7 +406,7 @@ FACETS_SNPS_VCF:=/juno/work/ci/resources/genomes/GRCh37/facets_snps/dbsnp_137.b3
 # run with only a single pair; full request takes an hour to run
 PAIRING_FILE:=$(INPUTS_DIR)/$(PROJ_ID)_sample_pairing.1.txt
 FACETS_OUTPUT_DIR:=$(OUTPUT_DIR)/facets-suite
-FACETS_AGGREGATE_FILENAME:=$(PROJ_ID).facets.txt
+# FACETS_AGGREGATE_FILENAME:=$(PROJ_ID).facets.txt
 $(FACETS_OUTPUT_DIR):
 	mkdir -p "$(FACETS_OUTPUT_DIR)"
 # file to hold facets pairing json data
@@ -434,11 +442,9 @@ facets-input.json: facets-pairs.txt
 	jq -n \
 	--slurpfile pairs facets-pairs.txt \
 	--arg snps_vcf "$(FACETS_SNPS_VCF)" \
-	--arg facets_aggregate_filename "$(FACETS_AGGREGATE_FILENAME)" \
 	'{
 	"pairs" :$$pairs,
-	"snps_vcf": { "class": "File", "path": $$snps_vcf },
-	"facets_aggregate_filename": $$facets_aggregate_filename
+	"snps_vcf": { "class": "File", "path": $$snps_vcf }
 	}
 	' > facets-input.json
 .PHONY:facets-input.json

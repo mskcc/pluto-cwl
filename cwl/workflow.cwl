@@ -232,11 +232,16 @@ inputs:
   mutation_svs_maf_files:
     type: File[]
     doc: "analysis_sv_filename (ANALYSIS_SV_FILE; <project_id>.svs.maf): (MAF_DIR)/*.svs.pass.vep.maf"
-  facets_aggregate_file:
-    doc: "Facets Suite .txt file aggregated for all samples in the request"
+  facets_suite_txt_files:
     type:
       - "null"
-      - File
+      - File[]
+    doc: "Facets Suite .txt files for all samples in the request"
+  # facets_aggregate_file:
+  #   doc: "Facets Suite .txt file aggregated for all samples in the request"
+  #   type:
+  #     - "null"
+  #     - File
   targets_list:
     type: File
   known_fusions_file:
@@ -309,7 +314,7 @@ steps:
       known_fusions_file: known_fusions_file
       data_clinical_file: data_clinical_file
       sample_summary_file: sample_summary_file
-      facets_aggregate_file: facets_aggregate_file
+      facets_suite_txt_files: facets_suite_txt_files
     out:
       [ portal_dir ]
 

@@ -33,7 +33,6 @@ class TestFacetsWorkflow(unittest.TestCase):
                 "path": FACETS_SNPS_VCF,
                 "class": "File"
             },
-            "facets_aggregate_filename": "Proj_08390_G.facets.txt",
             "pairs": [
                 {
                     "normal_bam": {
@@ -85,14 +84,6 @@ class TestFacetsWorkflow(unittest.TestCase):
 
             self.maxDiff = None
             expected_output = {
-            'aggregated_facets_txt': {
-                'basename': 'Proj_08390_G.facets.txt',
-                'checksum': 'sha1$caa3d269573b8bf9eda46e2095d718fa581ec11e',
-                'class': 'File',
-                'location': 'file://' + os.path.join(output_dir, 'Proj_08390_G.facets.txt'),
-                'path': os.path.join(output_dir, 'Proj_08390_G.facets.txt'),
-                'size': 534
-            },
             'annotated_maf': [{
                 'location': 'file://' + os.path.join(output_dir, 'Sample24.Sample23_hisens.ccf.portal.maf'),
                  'basename': 'Sample24.Sample23_hisens.ccf.portal.maf',
