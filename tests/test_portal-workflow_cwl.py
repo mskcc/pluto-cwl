@@ -1098,12 +1098,6 @@ class TestPortalWorkflow(unittest.TestCase):
             ]
             for colname in some_required_colnames:
                 self.assertTrue(colname in colnames)
-            # for k in :
-            #     print(k)
-
-
-
-
 
 if __name__ == "__main__":
     unittest.main()
