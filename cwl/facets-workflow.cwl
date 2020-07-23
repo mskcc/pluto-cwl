@@ -86,14 +86,11 @@ inputs:
       items:
         type: record
         fields:
-          tumor_bam: File
-          normal_bam: File
           pair_maf: File
+          snp_pileup: File
           pair_id: string
           tumor_id: string
           normal_id: string
-  snps_vcf:
-    type: File
 
 steps:
   # run the facets suite wrapper set on each tumor normal pair
@@ -102,11 +99,8 @@ steps:
     scatter: pair
     in:
       pair: pairs
-      snps_vcf: snps_vcf
-      tumor_bam:
-        valueFrom: ${ return inputs.pair['tumor_bam']; }
-      normal_bam:
-        valueFrom: ${ return inputs.pair['normal_bam']; }
+      snp_pileup:
+        valueFrom: ${ return inputs.pair['snp_pileup']; }
       pair_maf:
         valueFrom: ${ return inputs.pair['pair_maf']; }
       pair_id:
@@ -118,7 +112,6 @@ steps:
     out:
       [
       pair_id,
-      snp_pileup,
       purity_seg,
       hisens_seg,
       qc_txt,
@@ -131,11 +124,6 @@ steps:
       ]
 
 outputs:
-  snp_pileup:
-    type:
-      type: array
-      items: File
-    outputSource: facets_suite/snp_pileup
   purity_seg:
     type:
       type: array

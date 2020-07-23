@@ -25,26 +25,17 @@ class TestFacetsWorkflow(unittest.TestCase):
         """
         """
         # the smallest pair of bam files in the test dataset
-        tumor_bam = os.path.join(DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample24.rg.md.abra.printreads.bam")
-        normal_bam = os.path.join(DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample23.rg.md.abra.printreads.bam")
         pair_maf = os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample24.Sample23.muts.maf")
+        snp_pileup = os.path.join(DATA_SETS['Proj_08390_G']['SNP_PILEUP_DIR'], "Sample24.Sample23.snp_pileup.gz")
         input_json = {
-            "snps_vcf": {
-                "path": FACETS_SNPS_VCF,
-                "class": "File"
-            },
             "pairs": [
                 {
-                    "normal_bam": {
-                        "path": normal_bam,
-                        "class": "File"
-                    },
-                    "tumor_bam": {
-                        "path": tumor_bam,
-                        "class": "File"
-                    },
                     "pair_maf": {
                         "path": pair_maf,
+                        "class": "File"
+                    },
+                    "snp_pileup": {
+                        "path": snp_pileup,
                         "class": "File"
                     },
                     "pair_id": "Sample24.Sample23",
@@ -155,14 +146,6 @@ class TestFacetsWorkflow(unittest.TestCase):
                 'checksum': 'sha1$d4a36726a5fcb7b268aae02d97ce4e382e42d9f6',
                 'size': 1339,
                 'path': os.path.join(output_dir, 'Sample24.qc.txt')
-            }],
-            'snp_pileup': [{
-                'location': 'file://' + os.path.join(output_dir, 'Sample24.Sample23.snp_pileup.gz'),
-                'basename': 'Sample24.Sample23.snp_pileup.gz',
-                'class': 'File',
-                'checksum': 'sha1$755a8b64f45c819b4e2c481e64bf2fe36d1f5361',
-                'size': 34851004,
-                'path': os.path.join(output_dir, 'Sample24.Sample23.snp_pileup.gz')
             }]
             }
 

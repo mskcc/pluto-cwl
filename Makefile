@@ -120,6 +120,7 @@ MAF_DIR:=$(DATA_DIR)/maf
 BAM_DIR:=$(DATA_DIR)/bam
 FACETS_DIR:=$(DATA_DIR)/facets
 FACETS_SUITE_DIR:=$(DATA_DIR)/facets-suite
+SNP_PILEUP_DIR:=$(DATA_DIR)/snp-pileup
 FACETS_AGGREGATE_FILE:=$(DATA_DIR)/facets-suite/$(PROJ_ID).facets.txt
 DATA_CLINICAL_FILE:=$(INPUTS_DIR)/$(PROJ_ID)_sample_data_clinical.txt
 SAMPLE_SUMMARY_FILE:=$(QC_DIR)/$(PROJ_ID)_SampleSummary.txt
@@ -415,20 +416,17 @@ facets-pairs.txt: $(PAIRING_FILE)
 	module load jq
 	cat $(PAIRING_FILE) | while IFS="$$(printf '\t')" read -r normal tumor; do
 	pair_id="$${tumor}.$${normal}"
-	tumor_bam="$(BAM_DIR)/$$tumor.rg.md.abra.printreads.bam"
-	normal_bam="$(BAM_DIR)/$$normal.rg.md.abra.printreads.bam"
 	pair_maf="$(MAF_DIR)/$${pair_id}.muts.maf"
+	snp_pileup="$(SNP_PILEUP_DIR)/$${pair_id}.snp_pileup.gz"
 	jq -n \
-	--arg tumor_bam "$${tumor_bam}" \
-	--arg normal_bam "$${normal_bam}" \
 	--arg pair_id "$${pair_id}" \
 	--arg pair_maf "$${pair_maf}" \
 	--arg normal_id "$${normal}" \
 	--arg tumor_id "$${tumor}" \
+	--arg snp_pileup "$${snp_pileup}" \
 	'{
-	"tumor_bam": { "class": "File", "path": $$tumor_bam },
-	"normal_bam": { "class": "File", "path": $$normal_bam },
 	"pair_maf": { "class": "File", "path": $$pair_maf },
+	"snp_pileup": { "class": "File", "path": $$snp_pileup },
 	"pair_id": $$pair_id,
 	"normal_id": $$normal_id,
 	"tumor_id": $$tumor_id
@@ -441,10 +439,8 @@ facets-input.json: facets-pairs.txt
 	module load jq
 	jq -n \
 	--slurpfile pairs facets-pairs.txt \
-	--arg snps_vcf "$(FACETS_SNPS_VCF)" \
 	'{
-	"pairs" :$$pairs,
-	"snps_vcf": { "class": "File", "path": $$snps_vcf }
+	"pairs" :$$pairs
 	}
 	' > facets-input.json
 .PHONY:facets-input.json
