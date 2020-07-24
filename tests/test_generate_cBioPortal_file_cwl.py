@@ -16,7 +16,7 @@ if __name__ != "__main__":
 
 if __name__ == "__main__":
     from tools import run_command
-    from settings import CWL_DIR, CWL_ARGS, DATA_SETS 
+    from settings import CWL_DIR, CWL_ARGS, DATA_SETS
 
 cwl_file = os.path.join(CWL_DIR, 'generate_cBioPortal_file.cwl')
 
@@ -196,6 +196,85 @@ class TestGenerateCbioFilesCWL(unittest.TestCase):
             }
             self.maxDiff = None
             self.assertDictEqual(output_json, expected_output)
+
+    def test_test_generate_data_clinical_sample_with_facets(self):
+        """
+        Test that the data clinical sample file is generated correctly when multiple Facets files are provided
+        """
+        data_clinical_file = os.path.join(DATA_SETS['Proj_08390_G']['INPUTS_DIR'], 'Proj_08390_G_sample_data_clinical.2.txt')
+        facets_txt_file1 = os.path.join(DATA_SETS['Proj_08390_G']['FACETS_SUITE_DIR'], 'Sample46.txt')
+        facets_txt_file2 = os.path.join(DATA_SETS['Proj_08390_G']['FACETS_SUITE_DIR'], 'Sample44.txt')
+        input_json = {
+        "subcommand": "sample",
+        "data_clinical_file": {
+            "path": data_clinical_file,
+            "class": "File"
+            },
+        "output_filename": "data_clinical_sample.txt",
+        "project_pi": "jonesd",
+        "request_pi": "franklind",
+        "facets_txt_files": [
+            {
+                "path": facets_txt_file1,
+                "class": "File"
+            },
+            {
+                "path": facets_txt_file2,
+                "class": "File"
+            }
+        ]
+        }
+        with TemporaryDirectory() as tmpdir:
+            input_json_file = os.path.join(tmpdir, "input.json")
+            with open(input_json_file, "w") as json_out:
+                json.dump(input_json, json_out)
+
+            output_dir = os.path.join(tmpdir, "output")
+            tmp_dir = os.path.join(tmpdir, "tmp")
+            cache_dir = os.path.join(tmpdir, "cache")
+
+            command = [
+                "cwl-runner",
+                *CWL_ARGS,
+                "--outdir", output_dir,
+                "--tmpdir-prefix", tmp_dir,
+                "--cachedir", cache_dir,
+                cwl_file, input_json_file
+                ]
+            returncode, proc_stdout, proc_stderr = run_command(command)
+
+            if returncode != 0:
+                print(proc_stderr)
+
+            self.assertEqual(returncode, 0)
+
+            output_json = json.loads(proc_stdout)
+            expected_output = {
+                'output_file': {
+                    'location': 'file://' + os.path.join(output_dir, 'data_clinical_sample.txt'),
+                    'basename': 'data_clinical_sample.txt',
+                    'class': 'File',
+                    'checksum': 'sha1$1a1aee93048facdfb3b25598e3b560a9b6b2856a',
+                    'size': 1289,
+                    'path': os.path.join(output_dir, 'data_clinical_sample.txt')
+                }
+            }
+            self.assertDictEqual(output_json, expected_output)
+
+            with open(os.path.join(output_dir, 'data_clinical_sample.txt')) as fin:
+                lines = [ line.strip().split('\t') for line in fin ]
+            expected_lines = [
+            ['#SAMPLE_ID', 'IGO_ID', 'PATIENT_ID', 'COLLAB_ID', 'SAMPLE_TYPE', 'SAMPLE_CLASS', 'GENE_PANEL', 'ONCOTREE_CODE', 'SPECIMEN_PRESERVATION_TYPE', 'TISSUE_SITE', 'REQUEST_ID', 'PROJECT_ID', 'PIPELINE', 'PIPELINE_VERSION', 'PROJECT_PI', 'REQUEST_PI', 'genome_doubled', 'ASCN_PURITY', 'ASCN_PLOIDY', 'ASCN_VERSION', 'ASCN_WGD'],
+            ['#SAMPLE_ID', 'IGO_ID', 'PATIENT_ID', 'COLLAB_ID', 'SAMPLE_TYPE', 'SAMPLE_CLASS', 'GENE_PANEL', 'ONCOTREE_CODE', 'SPECIMEN_PRESERVATION_TYPE', 'TISSUE_SITE', 'REQUEST_ID', 'PROJECT_ID', 'PIPELINE', 'PIPELINE_VERSION', 'PROJECT_PI', 'REQUEST_PI', 'genome_doubled', 'ASCN_PURITY', 'ASCN_PLOIDY', 'ASCN_VERSION', 'ASCN_WGD'],
+            ['#STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'NUMBER', 'NUMBER', 'STRING', 'STRING'],
+            ['#1', '1', '1', '0', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '0', '1', '1', '0', '1'],
+            ['SAMPLE_ID', 'IGO_ID', 'PATIENT_ID', 'COLLAB_ID', 'SAMPLE_TYPE', 'SAMPLE_CLASS', 'GENE_PANEL', 'ONCOTREE_CODE', 'SPECIMEN_PRESERVATION_TYPE', 'TISSUE_SITE', 'REQUEST_ID', 'PROJECT_ID', 'PIPELINE', 'PIPELINE_VERSION', 'PROJECT_PI', 'REQUEST_PI', 'genome_doubled', 'ASCN_PURITY', 'ASCN_PLOIDY', 'ASCN_VERSION', 'ASCN_WGD'],
+            ['Sample46', '08390_G_95', 'p_C_00001', 'COLLAB-01-T', 'Primary', 'Biopsy', 'IMPACT468+08390_Hg19', 'MEL', 'FFPE', '', '08390_G', '08390', 'roslin', '2.5.7', 'jonesd', 'franklind', 'FALSE', '0.36', '2.6', '0.5.14', 'no WGD'],
+            ['Sample44', '08390_G_93', 'p_C_00002', 'COLLAB-01-T', 'Primary', 'Biopsy', 'IMPACT468+08390_Hg19', 'MEL', 'FFPE', '', '08390_G', '08390', 'roslin', '2.5.7', 'jonesd', 'franklind', 'FALSE', '0.51', '1.6', '0.5.14', 'no WGD']
+            ]
+            self.assertEqual(lines, expected_lines)
+
+
 
     def test_generate_meta_study(self):
         """

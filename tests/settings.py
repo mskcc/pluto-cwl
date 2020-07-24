@@ -30,7 +30,7 @@ DATA_SETS = {
         "DIR": os.path.join(FIXTURES_DIR, "Proj_08390_G"),
         "MAF_DIR": os.path.join(FIXTURES_DIR, "Proj_08390_G", "maf"),
         "BAM_DIR": os.path.join(FIXTURES_DIR, "Proj_08390_G", "bam"),
-        "SNP_PILEUP_DIR": os.path.join(FIXTURES_DIR, "Proj_08390_G", "snp_pileup"),
+        # "SNP_PILEUP_DIR": os.path.join(FIXTURES_DIR, "Proj_08390_G", "snp_pileup"),
         "FACETS_DIR": os.path.join(FIXTURES_DIR, "Proj_08390_G", "facets"),
         "FACETS_SUITE_DIR": os.path.join(FIXTURES_DIR, "Proj_08390_G", "facets-suite"),
         "INPUTS_DIR": os.path.join(FIXTURES_DIR, "Proj_08390_G", "inputs"),
@@ -38,5 +38,7 @@ DATA_SETS = {
         "targets_list": "/juno/work/ci/resources/roslin_resources/targets/HemePACT_v4/b37/HemePACT_v4_b37_targets.ilist",
         "analyst_file": "Proj_08390_G.muts.maf", # TODO: deprecate this
         "analysis_gene_cna_file": "Proj_08390_G.gene.cna.txt", # TODO: deprecate this
+        "MAF_FILTER_DIR": os.path.join(FIXTURES_DIR, "Proj_08390_G", "maf_filter"),
+        "SNP_PILEUP_DIR": os.path.join(FIXTURES_DIR, "Proj_08390_G", "snp-pileup")
     }
 }

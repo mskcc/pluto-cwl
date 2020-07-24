@@ -5,7 +5,7 @@ class: CommandLineTool
 baseCommand: [ "concat-tables.py" ]
 requirements:
   DockerRequirement:
-    dockerPull: mskcc/helix_filters_01:20.07.1
+    dockerPull: mskcc/helix_filters_01:20.07.3
 inputs:
   output_filename:
     type: string
@@ -18,10 +18,15 @@ inputs:
     inputBinding:
       prefix: -n
       position: 2
+  comments:
+    type: [ "null", boolean ]
+    inputBinding:
+      prefix: --comments
+      position: 3
   input_files:
     type: File[]
     inputBinding:
-      position: 3
+      position: 4
 
 outputs:
   output_file:

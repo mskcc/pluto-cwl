@@ -6,7 +6,7 @@ baseCommand: [ "update_cBioPortal_data.py" ]
 
 requirements:
   DockerRequirement:
-    dockerPull: mskcc/helix_filters_01:20.07.1
+    dockerPull: mskcc/helix_filters_01:20.07.3
 
 inputs:
   # required for every invocation

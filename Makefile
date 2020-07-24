@@ -26,11 +26,11 @@ help:
 # pull the Docker container and convert it to Singularity container image file
 export SINGULARITY_CACHEDIR:=/juno/work/ci/singularity_images
 # GIT_TAG:=$(shell git describe --tags --abbrev=0)
-DOCKER_TAG:=mskcc/helix_filters_01:20.07.1
-DOCKER_DEV_TAG:=mskcc/helix_filters_01:update-portal-data
+DOCKER_TAG:=mskcc/helix_filters_01:20.07.3
+DOCKER_DEV_TAG:=mskcc/helix_filters_01:dev
 # NOTE: you cannot use a filename with a ':' as a Makefile target
-SINGULARITY_SIF:=mskcc_helix_filters_01:20.07.1.sif
-SINGULARITY_DEV_SIF:=mskcc_helix_filters_01:update-portal-data.sif
+SINGULARITY_SIF:=mskcc_helix_filters_01:20.07.3.sif
+SINGULARITY_DEV_SIF:=mskcc_helix_filters_01:dev.sif
 singularity-pull:
 	unset SINGULARITY_CACHEDIR && \
 	module load singularity/3.3.0 && \
@@ -120,6 +120,7 @@ MAF_DIR:=$(DATA_DIR)/maf
 BAM_DIR:=$(DATA_DIR)/bam
 FACETS_DIR:=$(DATA_DIR)/facets
 FACETS_SUITE_DIR:=$(DATA_DIR)/facets-suite
+SNP_PILEUP_DIR:=$(DATA_DIR)/snp-pileup
 FACETS_AGGREGATE_FILE:=$(DATA_DIR)/facets-suite/$(PROJ_ID).facets.txt
 DATA_CLINICAL_FILE:=$(INPUTS_DIR)/$(PROJ_ID)_sample_data_clinical.txt
 SAMPLE_SUMMARY_FILE:=$(QC_DIR)/$(PROJ_ID)_SampleSummary.txt
@@ -128,12 +129,17 @@ SAMPLE_SUMMARY_FILE:=$(QC_DIR)/$(PROJ_ID)_SampleSummary.txt
 # .maf input files JSON muts.maf.txt
 mutation_maf_files.txt:
 	module load jq/1.6 && \
-	find $(MAF_DIR) -type f -name "*.muts.maf" | \
+	find $(FACETS_SUITE_DIR) -type f -name "*.maf" | \
 	xargs -I{} jq -n --arg path "{}" '{"class": "File", "path":$$path}' > mutation_maf_files.txt
 .PHONY: mutation_maf_files.txt
-
 # find $(MAF_DIR) -type f -name "*.muts.maf" | \
 # find $(FACETS_SUITE_DIR) -type f -name "*.maf" | \
+
+facets_suite_txt_files.txt:
+	module load jq/1.6 && \
+	find $(FACETS_SUITE_DIR) -type f -name "*.txt" ! -name "*.*.txt" | \
+	xargs -I{} jq -n --arg path "{}" '{"class":"File", "path": $$path}' > facets_suite_txt_files.txt
+.PHONY: facets_suite_txt_files.txt
 
 # the segmented copy number files hisens.seg.txt
 facets_hisens_seg_files.txt:
@@ -163,12 +169,13 @@ mutation_svs_maf_files.txt:
 
 
 # input file for the CWL workflow; omits some workflow.cwl input fields that have static default values
-input.json: mutation_maf_files.txt facets_hisens_seg_files.txt facets_hisens_cncf_files.txt mutation_svs_txt_files.txt mutation_svs_maf_files.txt
+input.json: mutation_maf_files.txt facets_hisens_seg_files.txt facets_hisens_cncf_files.txt mutation_svs_txt_files.txt mutation_svs_maf_files.txt facets_suite_txt_files.txt
 	if [ "$$(cat mutation_maf_files.txt | wc -l)" -eq "0" ]; then echo ">>> ERROR: File mutation_maf_files.txt is empty"; exit 1; fi
 	if [ "$$(cat facets_hisens_seg_files.txt | wc -l)" -eq "0" ]; then echo ">>> ERROR: File facets_hisens_seg_files.txt is empty"; exit 1; fi
 	if [ "$$(cat facets_hisens_cncf_files.txt | wc -l)" -eq "0" ]; then echo ">>> ERROR: File facets_hisens_cncf_files.txt is empty"; exit 1; fi
 	if [ "$$(cat mutation_svs_txt_files.txt | wc -l)" -eq "0" ]; then echo ">>> ERROR: File mutation_svs_txt_files.txt is empty"; exit 1; fi
 	if [ "$$(cat mutation_svs_maf_files.txt | wc -l)" -eq "0" ]; then echo ">>> ERROR: File mutation_svs_maf_files.txt is empty"; exit 1; fi
+	if [ "$$(cat facets_suite_txt_files.txt | wc -l)" -eq "0" ]; then echo ">>> ERROR: File facets_suite_txt_files.txt is empty"; exit 1; fi
 	module load jq/1.6 && \
 	jq -n \
 	--slurpfile mutation_maf_files mutation_maf_files.txt \
@@ -176,6 +183,7 @@ input.json: mutation_maf_files.txt facets_hisens_seg_files.txt facets_hisens_cnc
 	--slurpfile facets_hisens_cncf_files facets_hisens_cncf_files.txt \
 	--slurpfile mutation_svs_txt_files mutation_svs_txt_files.txt \
 	--slurpfile mutation_svs_maf_files mutation_svs_maf_files.txt \
+	--slurpfile facets_suite_txt_files facets_suite_txt_files.txt \
 	--arg helix_filter_version "$(HELIX_FILTER_VERSION)" \
 	--arg project_id "$(PROJ_ID)" \
 	--arg project_pi "$(PROJ_PI)" \
@@ -204,6 +212,7 @@ input.json: mutation_maf_files.txt facets_hisens_seg_files.txt facets_hisens_cnc
 	"facets_hisens_cncf_files": $$facets_hisens_cncf_files,
 	"mutation_svs_txt_files": $$mutation_svs_txt_files,
 	"mutation_svs_maf_files": $$mutation_svs_maf_files,
+	"facets_suite_txt_files": $$facets_suite_txt_files,
 	"project_id": $$project_id,
 	"project_pi": $$project_pi,
 	"request_pi": $$request_pi,
@@ -398,7 +407,7 @@ FACETS_SNPS_VCF:=/juno/work/ci/resources/genomes/GRCh37/facets_snps/dbsnp_137.b3
 # run with only a single pair; full request takes an hour to run
 PAIRING_FILE:=$(INPUTS_DIR)/$(PROJ_ID)_sample_pairing.1.txt
 FACETS_OUTPUT_DIR:=$(OUTPUT_DIR)/facets-suite
-FACETS_AGGREGATE_FILENAME:=$(PROJ_ID).facets.txt
+# FACETS_AGGREGATE_FILENAME:=$(PROJ_ID).facets.txt
 $(FACETS_OUTPUT_DIR):
 	mkdir -p "$(FACETS_OUTPUT_DIR)"
 # file to hold facets pairing json data
@@ -407,20 +416,17 @@ facets-pairs.txt: $(PAIRING_FILE)
 	module load jq
 	cat $(PAIRING_FILE) | while IFS="$$(printf '\t')" read -r normal tumor; do
 	pair_id="$${tumor}.$${normal}"
-	tumor_bam="$(BAM_DIR)/$$tumor.rg.md.abra.printreads.bam"
-	normal_bam="$(BAM_DIR)/$$normal.rg.md.abra.printreads.bam"
 	pair_maf="$(MAF_DIR)/$${pair_id}.muts.maf"
+	snp_pileup="$(SNP_PILEUP_DIR)/$${pair_id}.snp_pileup.gz"
 	jq -n \
-	--arg tumor_bam "$${tumor_bam}" \
-	--arg normal_bam "$${normal_bam}" \
 	--arg pair_id "$${pair_id}" \
 	--arg pair_maf "$${pair_maf}" \
 	--arg normal_id "$${normal}" \
 	--arg tumor_id "$${tumor}" \
+	--arg snp_pileup "$${snp_pileup}" \
 	'{
-	"tumor_bam": { "class": "File", "path": $$tumor_bam },
-	"normal_bam": { "class": "File", "path": $$normal_bam },
 	"pair_maf": { "class": "File", "path": $$pair_maf },
+	"snp_pileup": { "class": "File", "path": $$snp_pileup },
 	"pair_id": $$pair_id,
 	"normal_id": $$normal_id,
 	"tumor_id": $$tumor_id
@@ -433,12 +439,8 @@ facets-input.json: facets-pairs.txt
 	module load jq
 	jq -n \
 	--slurpfile pairs facets-pairs.txt \
-	--arg snps_vcf "$(FACETS_SNPS_VCF)" \
-	--arg facets_aggregate_filename "$(FACETS_AGGREGATE_FILENAME)" \
 	'{
-	"pairs" :$$pairs,
-	"snps_vcf": { "class": "File", "path": $$snps_vcf },
-	"facets_aggregate_filename": $$facets_aggregate_filename
+	"pairs" :$$pairs
 	}
 	' > facets-input.json
 .PHONY:facets-input.json
@@ -467,7 +469,7 @@ facets: facets-input.json $(FACETS_OUTPUT_DIR)
 # Run the test suite
 export FIXTURES_DIR:=/juno/work/ci/helix_filters_01/fixtures
 test:
-	export PATH=/opt/local/singularity/3.3.0/bin:$(PATH) && \
+	module load singularity/3.3.0 && \
 	module load python/3.7.1 && \
 	module load cwl/cwltool && \
 	if [ ! -e "$(SINGULARITY_SIF)" ]; then $(MAKE) singularity-pull; fi && \
@@ -475,7 +477,7 @@ test:
 
 # for some reason the test recipe is not running all tests....
 test2:
-	export PATH=/opt/local/singularity/3.3.0/bin:$(PATH) && \
+	module load singularity/3.3.0 && \
 	module load python/3.7.1 && \
 	module load cwl/cwltool && \
 	if [ ! -e "$(SINGULARITY_SIF)" ]; then $(MAKE) singularity-pull; fi && \
