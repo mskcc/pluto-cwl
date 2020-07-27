@@ -135,6 +135,8 @@ class TestAnalysisWorkflow(unittest.TestCase):
                 }
             self.maxDiff = None
             self.assertDictEqual(output_json, expected_output)
+            comments, mutations = load_mutations(os.path.join(output_dir, 'analysis', 'Proj_08390_G.muts.maf'))
+            self.assertEqual(len(mutations), 22)
 
     def test_run_worflow_two_mafs(self):
         """
@@ -256,6 +258,8 @@ class TestAnalysisWorkflow(unittest.TestCase):
             }
             self.maxDiff = None
             self.assertDictEqual(output_json, expected_output)
+            comments, mutations = load_mutations(os.path.join(output_dir, 'analysis', 'Proj_08390_G.muts.maf'))
+            self.assertEqual(len(mutations), 34)
 
     def test_run_worflow_mixed_mafs(self):
         """
@@ -380,7 +384,6 @@ class TestAnalysisWorkflow(unittest.TestCase):
             self.assertDictEqual(output_json, expected_output)
 
             comments, mutations = load_mutations(os.path.join(output_dir, 'analysis', 'Proj_08390_G.muts.maf'))
-
             self.assertEqual(len(mutations), 34)
 
             colnames = mutations[0].keys()

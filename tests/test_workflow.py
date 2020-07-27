@@ -11,11 +11,11 @@ from tempfile import TemporaryDirectory, NamedTemporaryFile
 
 # relative imports, from CLI and from parent project
 if __name__ != "__main__":
-    from .tools import run_command
+    from .tools import run_command, load_mutations
     from .settings import CWL_DIR, CWL_ARGS, DATA_SETS, KNOWN_FUSIONS_FILE
 
 if __name__ == "__main__":
-    from tools import run_command
+    from tools import run_command, load_mutations
     from settings import CWL_DIR, CWL_ARGS, DATA_SETS, KNOWN_FUSIONS_FILE
 
 cwl_file = os.path.join(CWL_DIR, 'workflow.cwl')
@@ -140,8 +140,8 @@ class TestWorkflow(unittest.TestCase):
                             'location': 'file://' + os.path.join(output_dir, 'analysis/Proj_08390_G.muts.maf'),
                             'basename': 'Proj_08390_G.muts.maf',
                             'class': 'File',
-                            'checksum': 'sha1$a57361e6e6b27de33c711511e0cef6f4b4c868d2',
-                            'size': 28106,
+                            'checksum': 'sha1$9b506f93b744ea6dd35c7ef9ba29b4f91cb92de1',
+                            'size': 31943,
                             'path': os.path.join(output_dir, 'analysis/Proj_08390_G.muts.maf')
                         },
                         {
@@ -260,8 +260,8 @@ class TestWorkflow(unittest.TestCase):
                                 'location': 'file://' + os.path.join(output_dir, 'portal/data_mutations_extended.txt'),
                                 'basename': 'data_mutations_extended.txt',
                                 'class': 'File',
-                                'checksum': 'sha1$09c224d3e4724e652000bac02c69cc4014e885d4',
-                                'size': 4356,
+                                'checksum': 'sha1$e713516cf04750a3e3f1ef932b1c7202d4b75bf2',
+                                'size': 5106,
                                 'path': os.path.join(output_dir, 'portal/data_mutations_extended.txt')
                             },
                             {
@@ -317,6 +317,10 @@ class TestWorkflow(unittest.TestCase):
                 }
             self.maxDiff = None
             self.assertDictEqual(output_json, expected_output)
+            comments, mutations = load_mutations(os.path.join(output_dir, 'analysis', 'Proj_08390_G.muts.maf'))
+            self.assertEqual(len(mutations), 22)
+            comments, mutations = load_mutations(os.path.join(output_dir, 'portal', 'data_mutations_extended.txt'))
+            self.assertEqual(len(mutations), 17)
 
     def test_run_worflow_two_mafs(self):
         """
@@ -452,8 +456,8 @@ class TestWorkflow(unittest.TestCase):
                         {'location': 'file://' + os.path.join(output_dir, 'analysis/Proj_08390_G.muts.maf'),
                         'basename': 'Proj_08390_G.muts.maf',
                         'class': 'File',
-                        'checksum': 'sha1$fef597a1edf474d382dc39e84f0f07ebc58db35a',
-                        'size': 46900,
+                        'checksum': 'sha1$aea0871b7acf07ced0621340c78a41bad52c20bc',
+                        'size': 52475,
                         'path': os.path.join(output_dir, 'analysis/Proj_08390_G.muts.maf')},
                         {'location': 'file://' + os.path.join(output_dir, 'analysis/Proj_08390_G.seg.cna.txt'),
                         'basename': 'Proj_08390_G.seg.cna.txt',
@@ -544,8 +548,8 @@ class TestWorkflow(unittest.TestCase):
                         {'location': 'file://' + os.path.join(output_dir, 'portal/data_mutations_extended.txt'),
                         'basename': 'data_mutations_extended.txt',
                         'class': 'File',
-                        'checksum': 'sha1$f44d199313ea505bf13c12fd235867af0a9c1392',
-                        'size': 6457,
+                        'checksum': 'sha1$43469aa0f9125d3dca6217ee02641638c3a92e24',
+                        'size': 7539,
                         'path': os.path.join(output_dir, 'portal/data_mutations_extended.txt')},
                         {'location': 'file://' + os.path.join(output_dir, 'portal/Proj_08390_G_data_cna_hg19.seg'),
                         'basename': 'Proj_08390_G_data_cna_hg19.seg',
@@ -592,6 +596,10 @@ class TestWorkflow(unittest.TestCase):
             }
             self.maxDiff = None
             self.assertDictEqual(output_json, expected_output)
+            comments, mutations = load_mutations(os.path.join(output_dir, 'analysis', 'Proj_08390_G.muts.maf'))
+            self.assertEqual(len(mutations), 34)
+            comments, mutations = load_mutations(os.path.join(output_dir, 'portal', 'data_mutations_extended.txt'))
+            self.assertEqual(len(mutations), 27)
 
 if __name__ == "__main__":
     unittest.main()
