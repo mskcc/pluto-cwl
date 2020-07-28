@@ -64,19 +64,19 @@ inputs:
       position: 7
       prefix: '--purity-min-nhet'
 
-# s_C_YX2WXJ_P001_d_s_C_YX2WXJ_N001_d_purity.seg
-# s_C_YX2WXJ_P001_d_s_C_YX2WXJ_N001_d_purity.CNCF.png
-# s_C_YX2WXJ_P001_d_s_C_YX2WXJ_N001_d_hisens.seg
-# s_C_YX2WXJ_P001_d_s_C_YX2WXJ_N001_d_hisens.CNCF.png
-# s_C_YX2WXJ_P001_d_s_C_YX2WXJ_N001_d.qc.txt
-# s_C_YX2WXJ_P001_d_s_C_YX2WXJ_N001_d.gene_level.txt
-# s_C_YX2WXJ_P001_d_s_C_YX2WXJ_N001_d.arm_level.txt
-# s_C_YX2WXJ_P001_d_s_C_YX2WXJ_N001_d_hisens.cncf.txt
-# s_C_YX2WXJ_P001_d_s_C_YX2WXJ_N001_d_hisens.Rdata
-# s_C_YX2WXJ_P001_d_s_C_YX2WXJ_N001_d_hisens.out
-# s_C_YX2WXJ_P001_d_s_C_YX2WXJ_N001_d_purity.cncf.txt
-# s_C_YX2WXJ_P001_d_s_C_YX2WXJ_N001_d_purity.Rdata
-# s_C_YX2WXJ_P001_d_s_C_YX2WXJ_N001_d_purity.out
+# s_C_ABCD_P001_d_s_C_ABCD_N001_d_purity.seg
+# s_C_ABCD_P001_d_s_C_ABCD_N001_d_purity.CNCF.png
+# s_C_ABCD_P001_d_s_C_ABCD_N001_d_hisens.seg
+# s_C_ABCD_P001_d_s_C_ABCD_N001_d_hisens.CNCF.png
+# s_C_ABCD_P001_d_s_C_ABCD_N001_d.qc.txt
+# s_C_ABCD_P001_d_s_C_ABCD_N001_d.gene_level.txt
+# s_C_ABCD_P001_d_s_C_ABCD_N001_d.arm_level.txt
+# s_C_ABCD_P001_d_s_C_ABCD_N001_d_hisens.cncf.txt
+# s_C_ABCD_P001_d_s_C_ABCD_N001_d_hisens.Rdata
+# s_C_ABCD_P001_d_s_C_ABCD_N001_d_hisens.out
+# s_C_ABCD_P001_d_s_C_ABCD_N001_d_purity.cncf.txt
+# s_C_ABCD_P001_d_s_C_ABCD_N001_d_purity.Rdata
+# s_C_ABCD_P001_d_s_C_ABCD_N001_d_purity.out
 outputs:
   purity_seg:
     type: File
