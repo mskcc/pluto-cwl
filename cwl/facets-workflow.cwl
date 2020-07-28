@@ -120,7 +120,8 @@ steps:
       facets_txt,
       purity_rds,
       hisens_rds,
-      annotated_maf
+      annotated_maf,
+      hisens_cncf_txt
       ]
 
 outputs:
@@ -169,3 +170,8 @@ outputs:
       type: array
       items: File
     outputSource: facets_suite/annotated_maf
+  hisens_cncf_txt:
+    type:
+      type: array
+      items: File
+    outputSource: facets_suite/hisens_cncf_txt

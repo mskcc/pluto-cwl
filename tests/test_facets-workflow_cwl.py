@@ -146,7 +146,15 @@ class TestFacetsWorkflow(unittest.TestCase):
                 'checksum': 'sha1$d4a36726a5fcb7b268aae02d97ce4e382e42d9f6',
                 'size': 1339,
                 'path': os.path.join(output_dir, 'Sample24.qc.txt')
-            }]
+            }],
+            'hisens_cncf_txt': [{
+                'basename': 'Sample24_hisens.cncf.txt',
+                'checksum': 'sha1$db9131a33889a1cac82e3bd6b3f0e5e182c65105',
+                'class': 'File',
+                'location': 'file://' + os.path.join(output_dir, 'Sample24_hisens.cncf.txt'),
+                'path': os.path.join(output_dir, 'Sample24_hisens.cncf.txt'),
+                'size': 5238
+               }],
             }
 
             self.assertDictEqual(output_json, expected_output)

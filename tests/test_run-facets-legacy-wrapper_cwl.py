@@ -18,7 +18,7 @@ if __name__ == "__main__":
     from tools import run_command
     from settings import CWL_DIR, CWL_ARGS, DATA_SETS
 
-cwl_file = os.path.join(CWL_DIR, 'run-facets-wrapper.cwl')
+cwl_file = os.path.join(CWL_DIR, 'run-facets-legacy-wrapper.cwl')
 
 class TestRunFacetsWrapperCWL(unittest.TestCase):
     def test_run_facets_wrapper(self):
@@ -74,13 +74,13 @@ class TestRunFacetsWrapperCWL(unittest.TestCase):
                     'size': 148195,
                     'path': os.path.join(output_dir, 'Sample24.gene_level.txt')
                 },
-                'hisens_rds': {
-                    'location': 'file://' + os.path.join(output_dir, 'Sample24_hisens.rds'),
-                    'basename': 'Sample24_hisens.rds',
+                'hisens_Rdata': {
+                    'location': 'file://' + os.path.join(output_dir, 'Sample24_hisens.Rdata'),
+                    'basename': 'Sample24_hisens.Rdata',
                     'class': 'File',
-                    'checksum': 'sha1$6bfd6c7f29c49ec8ef538dd468a3b4626b05bda2',
-                    'size': 213986,
-                    'path': os.path.join(output_dir, 'Sample24_hisens.rds')
+                    'checksum': 'sha1$6cc3fd1fad17111e32c7c88b259a523092539181',
+                    'size': 214260,
+                    'path': os.path.join(output_dir, 'Sample24_hisens.Rdata')
                 },
                 'hisens_seg': {
                     'location': 'file://' + os.path.join(output_dir, 'Sample24_hisens.seg'),
@@ -90,21 +90,13 @@ class TestRunFacetsWrapperCWL(unittest.TestCase):
                     'size': 1897,
                     'path': os.path.join(output_dir, 'Sample24_hisens.seg')
                 },
-                'output_txt': {
-                    'location': 'file://' + os.path.join(output_dir, 'Sample24.txt'),
-                    'basename': 'Sample24.txt',
+                'purity_Rdata': {
+                    'location': 'file://' + os.path.join(output_dir, 'Sample24_purity.Rdata'),
+                    'basename': 'Sample24_purity.Rdata',
                     'class': 'File',
-                    'checksum': 'sha1$4769dc7b8d4b127383e1936c07cdba1e2e09aecb',
-                    'size': 480,
-                    'path': os.path.join(output_dir, 'Sample24.txt')
-                },
-                'purity_rds': {
-                    'location': 'file://' + os.path.join(output_dir, 'Sample24_purity.rds'),
-                    'basename': 'Sample24_purity.rds',
-                    'class': 'File',
-                    'checksum': 'sha1$dd8b967f84b191ff76214c6110db8d0e65f6514c',
-                    'size': 213356,
-                    'path': os.path.join(output_dir, 'Sample24_purity.rds')
+                    'checksum': 'sha1$ca2c46ceebbb960a02fb960134ba1711983e71c8',
+                    'size': 213542,
+                    'path': os.path.join(output_dir, 'Sample24_purity.Rdata')
                 },
                 'purity_seg': {
                     'location': 'file://' + os.path.join(output_dir, 'Sample24_purity.seg'),
@@ -121,15 +113,29 @@ class TestRunFacetsWrapperCWL(unittest.TestCase):
                     'checksum': 'sha1$d4a36726a5fcb7b268aae02d97ce4e382e42d9f6',
                     'size': 1339,
                     'path': os.path.join(output_dir, 'Sample24.qc.txt')
-                }
+                },
+                'hisens_cncf_txt': {
+                    'basename': 'Sample24_hisens.cncf.txt',
+                    'checksum': 'sha1$db9131a33889a1cac82e3bd6b3f0e5e182c65105',
+                    'class': 'File',
+                    'location': 'file://' + os.path.join(output_dir, 'Sample24_hisens.cncf.txt'),
+                    'path': os.path.join(output_dir, 'Sample24_hisens.cncf.txt'),
+                    'size': 5238
+                },
+                'purity_cncf_txt': {
+                    'basename': 'Sample24_purity.cncf.txt',
+                    'checksum': 'sha1$b331530e1e46b5ba1bdcedeb67f2aa82da6ebc5f',
+                    'class': 'File',
+                    'location': 'file://' + os.path.join(output_dir, 'Sample24_purity.cncf.txt'),
+                    'path': os.path.join(output_dir, 'Sample24_purity.cncf.txt'),
+                    'size': 3630
+                },
             }
             self.maxDiff = None
             self.assertDictEqual(output_json, expected_output)
 
-            with open(os.path.join(output_dir, 'Sample24_hisens.seg')) as fin:
+            with open(os.path.join(output_dir, 'Sample24_hisens.cncf.txt')) as fin:
                 self.assertEqual(len(fin.readlines()), 37)
-            with open(os.path.join(output_dir, 'Sample24_purity.seg')) as fin:
-                self.assertEqual(len(fin.readlines()), 25)
 
 if __name__ == "__main__":
     unittest.main()
