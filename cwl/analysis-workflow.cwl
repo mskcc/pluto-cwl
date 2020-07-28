@@ -75,13 +75,25 @@ steps:
     out: [ analysis_mutations_file ]
     # concat all the maf files into a single table
   concat_analysis_muts_maf:
-    run: concat_with_comments.cwl
+    run: concat-tables.cwl
     in:
       input_files: muts_maf_filter/analysis_mutations_file
-      comment_value: helix_filter_version
       output_filename: analysis_mutations_filename # <project_id>.muts.maf
+      comments:
+        valueFrom: ${ return true; }
     out:
       [ output_file ]
+  # Need to add a version label to the maf file as per Nick's request
+  add_maf_comment:
+      run: concat_with_comments.cwl
+      in:
+        some_file: concat_analysis_muts_maf/output_file
+        input_files:
+          valueFrom: ${ return [ inputs.some_file ]; }
+        comment_value: helix_filter_version
+        output_filename: analysis_mutations_filename # <project_id>.muts.maf
+      out:
+        [ output_file ]
 
   # <project_id>.seg.cna.txt (analysis_segment_cna_filename)
   # need to reduce the number of significant figures in the hisens_segs files
@@ -130,7 +142,7 @@ steps:
     run: put_in_dir.cwl
     in:
       gene_cna_file: generate_cna_data/output_cna_file # <project_id>.gene.cna.txt
-      muts_maf_file: concat_analysis_muts_maf/output_file # <project_id>.muts.maf
+      muts_maf_file: add_maf_comment/output_file # <project_id>.muts.maf
       hisens_segs: rename_analysis_hisens_segs/output_file # <project_id>.seg.cna.txt
       svs_maf_file: rename_analysis_svs_maf/output_file # <project_id>.svs.maf
       output_directory_name:

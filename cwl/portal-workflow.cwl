@@ -149,11 +149,6 @@ inputs:
     type:
     - "null"
     - File
-  # facets_aggregate_file:
-  #   doc: "Facets Suite .txt file aggregated for all samples in the request"
-  #   type:
-  #     - "null"
-  #     - File
 
 steps:
   # meta_clinical_sample.txt (cbio_clinical_sample_meta_filename; meta_clinical_sample_file)
@@ -357,20 +352,14 @@ steps:
     out: [ cbio_mutation_data_file ]
     # concat all the maf files into a single table
   concat_cbio_muts_maf:
-    run: concat.cwl
+    run: concat-tables.cwl
     in:
       input_files: muts_maf_filter/cbio_mutation_data_file
-    out:
-      [output_file]
-  # set the concatenated file output names correctly
-  rename_cbio_muts_maf:
-    run: cp.cwl
-    in:
-      input_file: concat_cbio_muts_maf/output_file
       output_filename: cbio_mutation_data_filename # data_mutations_extended.txt
+      comments:
+        valueFrom: ${ return true; }
     out:
       [output_file]
-
 
   # <project_id>_data_cna_hg19.seg (cbio_segment_data_filename)
   # need to reduce the number of significant figures in the hisens_segs files
@@ -449,7 +438,7 @@ steps:
       meta_cna_segments_file: generate_meta_cna_segments/output_file  # <project_id>_meta_cna_hg19_seg.txt
       cna_data_file: replace_illogical_values/output_file # data_CNA.txt
       cna_ascna_file: generate_cna_data/output_cna_ascna_file # data_CNA.ascna.txt
-      muts_file: rename_cbio_muts_maf/output_file # data_mutations_extended.txt
+      muts_file: concat_cbio_muts_maf/output_file # data_mutations_extended.txt
       hisens_segs: rename_cbio_hisens_segs/output_file # # <project_id>_data_cna_hg19.seg
       fusions_data_file: filter_cbio_fusions/output_file # data_fusions.txt
       case_list_dir: make_case_list_dir/directory

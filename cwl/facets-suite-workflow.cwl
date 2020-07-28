@@ -21,6 +21,15 @@ steps:
       sample_id: tumor_id
     out: [ purity_seg, hisens_seg, qc_txt, gene_level_txt, arm_level_txt, output_txt, purity_rds, hisens_rds ]
 
+  # need to run in legacy mode to get the .cncf files for downstream usages
+  run_facets_legacy:
+    run: run-facets-legacy-wrapper.cwl
+    in:
+      snp_pileup: snp_pileup
+      sample_id: tumor_id
+    out:
+      [ hisens_cncf_txt ]
+
   annotate_maf:
     run: annotate-maf-wrapper.cwl
     in:
@@ -112,9 +121,9 @@ outputs:
   pair_id:
     type: string
     outputSource: pair_id
-  # snp_pileup:
-  #   type: File
-  #   outputSource: snp_pileup/output_file
+  hisens_cncf_txt:
+    type: File
+    outputSource: run_facets_legacy/hisens_cncf_txt
   purity_seg:
     type: File
     outputSource: run_facets/purity_seg
