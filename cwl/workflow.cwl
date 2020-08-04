@@ -22,6 +22,7 @@ argos_version_string
 helix_filter_version
 is_impact
 extra_pi_groups
+pairs
 
 
 The following filenames are required:

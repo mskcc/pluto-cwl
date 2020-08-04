@@ -70,7 +70,10 @@ output
   ├── Tumor2.Normal2_purity.seg
   ├── Tumor2.Normal2.qc.txt
   ├── Tumor2.Normal2.snp_pileup.gz
-  └── Tumor2.Normal2.txt
+  ├── Tumor2.Normal2.txt
+  └── logs
+    ├── success
+    └── failed
 '
 
 requirements:
