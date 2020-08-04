@@ -252,8 +252,25 @@ inputs:
     type:
     - "null"
     - File
+  pairs:
+    type:
+      type: array
+      items:
+        type: record
+        fields:
+          pair_maf: File
+          snp_pileup: File
+          pair_id: string
+          tumor_id: string
+          normal_id: string
 
 steps:
+  run_facets:
+    run: facets-workflow.cwl
+    in:
+      pairs: pairs
+    out:
+      [ purity_seg,hisens_seg,qc_txt,gene_level_txt,arm_level_txt,facets_txt,purity_rds,hisens_rds,annotated_maf,hisens_cncf_txt,log_files,failed_pairs ]
   run_analysis_workflow:
     run: analysis-workflow.cwl
     in:
@@ -326,3 +343,11 @@ outputs:
   analysis_dir:
     type: Directory
     outputSource: run_analysis_workflow/analysis_dir
+
+  log_dir:
+    type: Directory
+    outputSource: run_facets/log_files
+
+  facets_failed_pairs:
+    type: string[]
+    outputSource: run_facets/failed_pairs
