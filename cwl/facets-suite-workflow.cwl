@@ -154,9 +154,102 @@ steps:
       input_file: label_maf_normal/output_file
       output_filename:
         valueFrom: $(inputs.pair_id)_hisens.ccf.portal.maf
-      facets_txt: run_facets/output_txt
+      facets_txt: check_facets/facets_txt
+    scatter: [input_file,facets_txt]
+    scatterMethod: dotproduct
     out:
-      [ output_file ]
+      [ output_file, stdout_txt, stderr_txt ]
+
+  check_results:
+      in:
+        pair_id: pair_id
+        hisens_cncf_txt: run_facets_legacy/hisens_cncf_txt
+        purity_seg: run_facets/purity_seg
+        hisens_seg: run_facets/hisens_seg
+        qc_txt: run_facets/qc_txt
+        gene_level_txt: run_facets/gene_level_txt
+        arm_level_txt: run_facets/arm_level_txt
+        facets_txt: label_facets_txt_normal/output_file
+        purity_rds: run_facets/purity_rds
+        hisens_rds: run_facets/hisens_rds
+        annotated_maf: update_maf/output_file
+        log_files:
+          source: [ run_facets/stdout_txt,run_facets_legacy/stdout_txt,annotate_maf/stdout_txt,label_facets_txt_tumor/stdout_txt,label_facets_txt_normal/stdout_txt,label_maf_sample/stdout_txt,label_maf_normal/stdout_txt,update_maf/stdout_txt,run_facets/stderr_txt,run_facets_legacy/stderr_txt,annotate_maf/stderr_txt,label_facets_txt_tumor/stderr_txt,label_facets_txt_normal/stderr_txt,label_maf_sample/stderr_txt,label_maf_normal/stderr_txt,update_maf/stderr_txt]
+          linkMerge: merge_flattened
+      out: [ hisens_cncf_txt,purity_seg,hisens_seg,qc_txt,gene_level_txt,arm_level_txt,facets_txt,purity_rds,hisens_rds,annotated_maf,log_files, results_passed ]
+      run:
+          class: ExpressionTool
+          id: check_results
+          inputs:
+            pair_id: string
+            hisens_cncf_txt: File?
+            purity_seg: File?
+            hisens_seg: File?
+            qc_txt: File?
+            gene_level_txt: File?
+            arm_level_txt: File?
+            facets_txt:
+              type:
+                type: array
+                items: ['null', File]
+            purity_rds: File?
+            hisens_rds: File?
+            annotated_maf:
+              type:
+                type: array
+                items: ['null', File]
+            log_files:
+              type:
+                type: array
+                items: ['null', File]
+          outputs:
+            hisens_cncf_txt: File?
+            purity_seg: File?
+            hisens_seg: File?
+            qc_txt: File?
+            gene_level_txt: File?
+            arm_level_txt: File?
+            facets_txt: File?
+            purity_rds: File?
+            hisens_rds: File?
+            annotated_maf: File?
+            log_files: Directory?
+            results_passed: boolean
+          expression: "${ var output_object = {};
+            var results_passed = true;
+            for(var key in inputs){
+              var output_value = inputs[key];
+              if (key == 'annotated_maf' || key == 'facets_txt'){
+                if (!Array.isArray(output_value) || !output_value.length) {
+                  results_passed = false;
+                  output_object[key] = null;
+                }
+                else{
+                  output_object[key] = output_value[0];
+                }
+              }
+              else if (key == 'log_files'){
+                output_object['log_files'] = {
+                  'class': 'Directory',
+                  'basename': inputs.pair_id,
+                  'listing': output_value
+                }
+              }
+              else {
+                if ( ! output_value || Object.keys(output_value).length === 0 ){
+                  results_passed = false;
+                  output_object[key] = null
+                }
+                else{
+                  output_object[key] = output_value;
+                }
+              }
+
+            }
+
+            output_object['results_passed'] = results_passed;
+            return output_object;
+          }"
 
 
 outputs:
