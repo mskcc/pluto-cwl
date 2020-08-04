@@ -319,9 +319,7 @@ steps:
       known_fusions_file: known_fusions_file
       data_clinical_file: data_clinical_file
       sample_summary_file: sample_summary_file
-      facets_suite_txt_files:
-        source: [ run_facets/qc_txt,run_facets/gene_level_txt,run_facets/arm_level_txt,run_facets/facets_txt,run_facets/hisens_cncf_txt ]
-        linkMerge: merge_flattened
+      facets_suite_txt_files: run_facets/facets_txt
     out:
       [ portal_dir ]
 
