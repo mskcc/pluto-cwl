@@ -87,6 +87,7 @@ output
 "
 
 requirements:
+  MultipleInputFeatureRequirement: {}
   ScatterFeatureRequirement: {}
   StepInputExpressionRequirement: {}
   InlineJavascriptRequirement: {}
@@ -224,11 +225,6 @@ inputs:
   mutation_svs_maf_files:
     type: File[]
     doc: "analysis_sv_filename (ANALYSIS_SV_FILE; <project_id>.svs.maf): (MAF_DIR)/*.svs.pass.vep.maf"
-  facets_suite_txt_files:
-    type:
-      - "null"
-      - File[]
-    doc: "Facets Suite .txt files for all samples in the request"
   # facets_aggregate_file:
   #   doc: "Facets Suite .txt file aggregated for all samples in the request"
   #   type:
@@ -270,9 +266,9 @@ steps:
       analysis_sv_filename: analysis_sv_filename
       analysis_gene_cna_filename: analysis_gene_cna_filename
       analysis_mutations_filename: analysis_mutations_filename
-      mutation_maf_files: mutation_maf_files
-      facets_hisens_seg_files: facets_hisens_seg_files
-      facets_hisens_cncf_files: facets_hisens_cncf_files
+      mutation_maf_files: run_facets/annotated_maf
+      facets_hisens_seg_files: run_facets/hisens_seg
+      facets_hisens_cncf_files: run_facets/hisens_cncf_txt
       mutation_svs_maf_files: mutation_svs_maf_files
       targets_list: targets_list
       argos_version_string: argos_version_string
@@ -315,15 +311,17 @@ steps:
       cbio_cna_data_filename: cbio_cna_data_filename
       cbio_cna_ascna_data_filename: cbio_cna_ascna_data_filename
       cbio_cna_scna_data_filename: cbio_cna_scna_data_filename
-      mutation_maf_files: mutation_maf_files
-      facets_hisens_seg_files: facets_hisens_seg_files
-      facets_hisens_cncf_files: facets_hisens_cncf_files
+      mutation_maf_files: run_facets/annotated_maf
+      facets_hisens_seg_files: run_facets/hisens_seg
+      facets_hisens_cncf_files: run_facets/hisens_cncf_txt
       mutation_svs_txt_files: mutation_svs_txt_files
       targets_list: targets_list
       known_fusions_file: known_fusions_file
       data_clinical_file: data_clinical_file
       sample_summary_file: sample_summary_file
-      facets_suite_txt_files: facets_suite_txt_files
+      facets_suite_txt_files:
+        source: [ run_facets/qc_txt,run_facets/gene_level_txt,run_facets/arm_level_txt,run_facets/facets_txt,run_facets/hisens_cncf_txt ]
+        linkMerge: merge_flattened
     out:
       [ portal_dir ]
 
