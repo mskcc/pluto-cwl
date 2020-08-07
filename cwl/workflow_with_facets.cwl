@@ -307,8 +307,8 @@ steps:
       known_fusions_file: known_fusions_file
       data_clinical_file: data_clinical_file
       sample_summary_file: sample_summary_file
-  out:
-    [portal_dir, analysis_dir]
+    out:
+      [portal_dir, analysis_dir]
 
 outputs:
   portal_dir:
