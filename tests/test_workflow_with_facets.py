@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-unit tests for the workflow.cwl
+unit tests for the workflow_with_facets.cwl
 """
 import os
 import json
@@ -18,7 +18,7 @@ if __name__ == "__main__":
     from tools import run_command, load_mutations
     from settings import CWL_DIR, CWL_ARGS, DATA_SETS, KNOWN_FUSIONS_FILE
 
-cwl_file = os.path.join(CWL_DIR, 'workflow.cwl')
+cwl_file = os.path.join(CWL_DIR, 'workflow_with_facets.cwl')
 
 class TestWorkflow(unittest.TestCase):
     def test_run_worflow_one_maf(self):
@@ -61,12 +61,6 @@ class TestWorkflow(unittest.TestCase):
                 "path": KNOWN_FUSIONS_FILE,
                 "class": "File"
             },
-            "mutation_maf_files": [
-                {
-                    "path": os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample1.Sample2.muts.maf"),
-                    "class": "File"
-                }
-            ],
             "mutation_svs_txt_files": [
                 {
                     "path": os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample1.Sample2.svs.pass.vep.portal.txt"),
@@ -79,18 +73,21 @@ class TestWorkflow(unittest.TestCase):
                     "class": "File"
                 }
             ],
-            "facets_hisens_cncf_files": [
+            "pairs": [
                 {
-                    "path": os.path.join(DATA_SETS['Proj_08390_G']['FACETS_DIR'], "Sample2.rg.md.abra.printreads__Sample1.rg.md.abra.printreads_hisens.cncf.txt"),
-                    "class": "File"
+                    "pair_maf": {
+                        "path": os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample1.Sample2.muts.maf"),
+                        "class": "File"
+                    },
+                    "snp_pileup": {
+                         "path": os.path.join(DATA_SETS['Proj_08390_G']['FACETS_DIR'], "Sample2.rg.md.abra.printreads__Sample1.rg.md.abra.printreads.dat.gz"),
+                         "class": "File"
+                    },
+                    "pair_id": "Sample1.Sample2",
+                    "tumor_id": "Sample1",
+                    "normal_id": "Sample2"
                 }
-            ],
-            "facets_hisens_seg_files": [
-                {
-                    "path": os.path.join(DATA_SETS['Proj_08390_G']['FACETS_DIR'], "Sample2.rg.md.abra.printreads__Sample1.rg.md.abra.printreads_hisens.seg"),
-                "class": "File"
-                }
-            ],
+            ]
         }
 
         with TemporaryDirectory() as tmpdir:
@@ -362,16 +359,6 @@ class TestWorkflow(unittest.TestCase):
                 "path": KNOWN_FUSIONS_FILE,
                 "class": "File"
             },
-            "mutation_maf_files": [
-                {
-                    "path": os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample1.Sample2.muts.maf"),
-                    "class": "File"
-                },
-                {
-                    "path": os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample4.Sample3.muts.maf"),
-                    "class": "File"
-                }
-            ],
             "mutation_svs_txt_files": [
                 {
                     "path": os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample1.Sample2.svs.pass.vep.portal.txt"),
@@ -392,24 +379,32 @@ class TestWorkflow(unittest.TestCase):
                     "class": "File"
                 }
             ],
-            "facets_hisens_cncf_files": [
+            "pairs": [
                 {
-                    "path": os.path.join(DATA_SETS['Proj_08390_G']['FACETS_DIR'], "Sample2.rg.md.abra.printreads__Sample1.rg.md.abra.printreads_hisens.cncf.txt"),
-                    "class": "File"
+                    "pair_maf": {
+                        "path": os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample1.Sample2.muts.maf"),
+                        "class": "File"
+                    },
+                    "snp_pileup": {
+                         "path": os.path.join(DATA_SETS['Proj_08390_G']['FACETS_DIR'], "Sample2.rg.md.abra.printreads__Sample1.rg.md.abra.printreads.dat.gz"),
+                         "class": "File"
+                    },
+                    "pair_id": "Sample1.Sample2",
+                    "tumor_id": "Sample1",
+                    "normal_id": "Sample2"
                 },
                 {
-                    "path": os.path.join(DATA_SETS['Proj_08390_G']['FACETS_DIR'], "Sample3.rg.md.abra.printreads__Sample4.rg.md.abra.printreads_hisens.cncf.txt"),
-                    "class": "File"
-                }
-            ],
-            "facets_hisens_seg_files": [
-                {
-                    "path": os.path.join(DATA_SETS['Proj_08390_G']['FACETS_DIR'], "Sample2.rg.md.abra.printreads__Sample1.rg.md.abra.printreads_hisens.seg"),
-                "class": "File"
-                },
-                {
-                    "path": os.path.join(DATA_SETS['Proj_08390_G']['FACETS_DIR'], "Sample3.rg.md.abra.printreads__Sample4.rg.md.abra.printreads_hisens.seg"),
-                    "class": "File"
+                    "pair_maf": {
+                        "path": os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample4.Sample3.muts.maf"),
+                        "class": "File"
+                    },
+                    "snp_pileup": {
+                         "path": os.path.join(DATA_SETS['Proj_08390_G']['FACETS_DIR'], "Sample3.rg.md.abra.printreads__Sample4.rg.md.abra.printreads.dat.gz"),
+                         "class": "File"
+                    },
+                    "pair_id": "Sample4.Sample3",
+                    "tumor_id": "Sample4",
+                    "normal_id": "Sample3"
                 }
             ]
         }
