@@ -125,7 +125,7 @@ steps:
       hisens_rds,
       annotated_maf,
       hisens_cncf_txt,
-      log_files,
+      output_dir,
       results_passed
       ]
 
@@ -142,9 +142,9 @@ steps:
         hisens_rds: facets_suite/hisens_rds
         annotated_maf: facets_suite/annotated_maf
         hisens_cncf_txt: facets_suite/hisens_cncf_txt
-        log_files: facets_suite/log_files
+        output_dir: facets_suite/output_dir
         results_passed: facets_suite/results_passed
-      out: [ purity_seg,hisens_seg,qc_txt,gene_level_txt,arm_level_txt,facets_txt,purity_rds,hisens_rds,annotated_maf,hisens_cncf_txt,log_files,failed_pairs]
+      out: [ purity_seg,hisens_seg,qc_txt,gene_level_txt,arm_level_txt,facets_txt,purity_rds,hisens_rds,annotated_maf,hisens_cncf_txt,output_dir,failed_pairs]
       run:
           class: ExpressionTool
           id: check_facets_suite
@@ -190,10 +190,10 @@ steps:
               type:
                 type: array
                 items: ['null', File]
-            log_files:
+            output_dir:
               type:
                 type: array
-                items: ['null', Directory]
+                items: [Directory]
             results_passed:
               type:
                 type: array
@@ -239,13 +239,12 @@ steps:
               type:
                 type: array
                 items: ['null', File]
-            log_files: Directory?
+            output_dir: Directory
             failed_pairs: string[]?
           expression: "${ var output_object = {};
             var passed_list = inputs.results_passed;
             var failed_list = [];
-            var passed_log_dir = [];
-            var failed_log_dir = [];
+            var output_list = [];
             output_object = {
               purity_seg: [],
               hisens_seg: [],
@@ -270,29 +269,18 @@ steps:
                 output_object['hisens_rds'].push(inputs.hisens_rds[pair_index]);
                 output_object['annotated_maf'].push(inputs.annotated_maf[pair_index]);
                 output_object['hisens_cncf_txt'].push(inputs.hisens_cncf_txt[pair_index]);
-                passed_log_dir.push(inputs.log_files[pair_index])
 
               }
               else{
                 failed_list.push(inputs.pair_id[pair_index]);
-                failed_log_dir.push(inputs.log_files[pair_index]);
               }
+              output_list.push(inputs.output_dir[pair_index])
 
             }
-            var success_directory = {
+            output_object['output_dir'] = {
                   'class': 'Directory',
-                  'basename': 'success',
-                  'listing': passed_log_dir
-            };
-            var failed_directory = {
-                  'class': 'Directory',
-                  'basename': 'failed',
-                  'listing': failed_log_dir
-            };
-            output_object['log_files'] = {
-                  'class': 'Directory',
-                  'basename': 'logs',
-                  'listing': [success_directory, failed_directory]
+                  'basename': 'facets',
+                  'listing': output_list
             };
             output_object['failed_pairs'] = failed_list;
             return output_object;
@@ -349,9 +337,9 @@ outputs:
       type: array
       items: ['null', File]
     outputSource: check_facets_suite/hisens_cncf_txt
-  log_files:
+  output_dir:
     type: Directory
-    outputSource: check_facets_suite/log_files
+    outputSource: check_facets_suite/output_dir
   failed_pairs:
     type: string[]
     outputSource: check_facets_suite/failed_pairs

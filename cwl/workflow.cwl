@@ -258,7 +258,7 @@ steps:
     in:
       pairs: pairs
     out:
-      [ purity_seg,hisens_seg,qc_txt,gene_level_txt,arm_level_txt,facets_txt,purity_rds,hisens_rds,annotated_maf,hisens_cncf_txt,log_files,failed_pairs ]
+      [ purity_seg,hisens_seg,qc_txt,gene_level_txt,arm_level_txt,facets_txt,purity_rds,hisens_rds,annotated_maf,hisens_cncf_txt,output_dir,failed_pairs ]
   run_analysis_workflow:
     run: analysis-workflow.cwl
     in:
@@ -332,9 +332,9 @@ outputs:
     type: Directory
     outputSource: run_analysis_workflow/analysis_dir
 
-  log_dir:
+  facets_dir:
     type: Directory
-    outputSource: run_facets/log_files
+    outputSource: run_facets/output_dir
 
   facets_failed_pairs:
     type: string[]

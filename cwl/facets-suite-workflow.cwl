@@ -519,37 +519,52 @@ steps:
             purity_rds: File?
             hisens_rds: File?
             annotated_maf: File?
-            log_files: Directory?
+            output_dir: Directory
             results_passed: boolean
           expression: "${ var output_object = {};
             var results_passed = true;
+            var facets_files = [];
             for(var key in inputs){
               var output_value = inputs[key];
-              if (key == 'annotated_maf' || key == 'facets_txt'){
+              if (key == 'annotated_maf' || key == 'facets_txt' || key == 'hisens_rds'){
                 if (!Array.isArray(output_value) || !output_value.length) {
                   results_passed = false;
                   output_object[key] = null;
                 }
                 else{
                   output_object[key] = output_value[0];
+                  facets_files.push(output_value[0]);
                 }
               }
-              else if (key == 'log_files'){
-                output_object['log_files'] = {
-                  'class': 'Directory',
-                  'basename': inputs.pair_id,
-                  'listing': output_value
-                }
-              }
-              else {
+              else if (key != 'log_files'){
                 if ( ! output_value || Object.keys(output_value).length === 0 ){
                   results_passed = false;
-                  output_object[key] = null
+                  output_object[key] = null;
                 }
                 else{
                   output_object[key] = output_value;
+                  if ( key != 'pair_id' ){
+                    facets_files.push(output_value);
+                  }
                 }
               }
+
+            }
+
+            if( results_passed == true ){
+              output_object['output_dir'] = {
+                  'class': 'Directory',
+                  'basename': inputs.pair_id,
+                  'listing': facets_files
+                }
+
+            }
+            else{
+              output_object['output_dir'] = {
+                  'class': 'Directory',
+                  'basename': inputs.pair_id,
+                  'listing': inputs.log_files
+                }
 
             }
 
@@ -592,9 +607,9 @@ outputs:
   annotated_maf:
     type: File?
     outputSource: check_results/annotated_maf
-  log_files:
+  output_dir:
     type: Directory
-    outputSource: check_results/log_files
+    outputSource: check_results/output_dir
   results_passed:
     type: boolean
     outputSource: check_results/results_passed
