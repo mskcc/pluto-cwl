@@ -63,6 +63,11 @@ output
 │   ├── <project_id>.muts.maf
 │   ├── <project_id>.seg.cna.txt
 │   └── <project_id>.svs.maf
+├── facets
+│   ├── <tumor_id>.<normal_id> (passed)
+│   │   └── <facets_files>
+│   └── <tumor_id>.<normal_id> (failed)
+│       └── <log_files>
 └── portal
     ├── case_list
     │   ├── cases_all.txt
