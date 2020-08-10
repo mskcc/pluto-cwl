@@ -133,7 +133,6 @@ class TestRunFacetsWrapperCWL(unittest.TestCase):
                 },
                 'stderr_txt': {
                     'basename': 'facets_legacy_stderr.txt',
-                    'checksum': 'sha1$c85edeaaf165ce25f609fa425a24164c2439c784',
                     'class': 'File',
                     'location': 'file://' + os.path.join(output_dir, 'facets_legacy_stderr.txt'),
                     'path': os.path.join(output_dir, 'facets_legacy_stderr.txt'),
@@ -148,6 +147,7 @@ class TestRunFacetsWrapperCWL(unittest.TestCase):
                     'size': 77}
             }
             self.maxDiff = None
+            output_json['stderr_txt'].pop('checksum')
             self.assertDictEqual(output_json, expected_output)
 
             with open(os.path.join(output_dir, 'Sample24_hisens.cncf.txt')) as fin:
