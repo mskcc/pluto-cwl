@@ -64,6 +64,7 @@ class TestAnnotateMafWrapperCWL(unittest.TestCase):
             output_json = json.loads(proc_stdout)
 
             expected_output = {
+                'failed_txt': None,
                 'output_file': {
                     'location': 'file://' + os.path.join(output_dir, 'Sample1_hisens.ccf.maf'),
                     'basename': 'Sample1_hisens.ccf.maf',
@@ -71,6 +72,22 @@ class TestAnnotateMafWrapperCWL(unittest.TestCase):
                     'checksum': 'sha1$7e478a8a44d27735f26e368989c672ed6ef5d52a',
                     'size': 19217199,
                     'path': os.path.join(output_dir, 'Sample1_hisens.ccf.maf')
+                },
+                'stderr_txt': {
+                    'basename': 'annotate_maf_stderr.txt',
+                    'checksum': 'sha1$2e672f99c23a2d827c1d33e06377870cdd9c8090',
+                    'class': 'File',
+                    'location': 'file://' + os.path.join(output_dir,'annotate_maf_stderr.txt'),
+                    'path': os.path.join(output_dir,'annotate_maf_stderr.txt'),
+                    'size': 105
+                },
+               'stdout_txt': {
+                    'basename': 'annotate_maf_stdout.txt',
+                    'checksum': 'sha1$da39a3ee5e6b4b0d3255bfef95601890afd80709',
+                    'class': 'File',
+                    'location': 'file://' + os.path.join(output_dir,'annotate_maf_stdout.txt'),
+                    'path': os.path.join(output_dir,'annotate_maf_stdout.txt'),
+                    'size': 0
                 }
             }
             self.maxDiff = None

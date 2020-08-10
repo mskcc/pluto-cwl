@@ -66,6 +66,7 @@ class TestRunFacetsWrapperCWL(unittest.TestCase):
                     'size': 1824,
                     'path': os.path.join(output_dir, 'Sample24.arm_level.txt')
                     },
+                'failed_txt': None,
                 'gene_level_txt': {
                     'location': 'file://' + os.path.join(output_dir, 'Sample24.gene_level.txt'),
                     'basename': 'Sample24.gene_level.txt',
@@ -130,6 +131,21 @@ class TestRunFacetsWrapperCWL(unittest.TestCase):
                     'path': os.path.join(output_dir, 'Sample24_purity.cncf.txt'),
                     'size': 3630
                 },
+                'stderr_txt': {
+                    'basename': 'facets_legacy_stderr.txt',
+                    'checksum': 'sha1$c85edeaaf165ce25f609fa425a24164c2439c784',
+                    'class': 'File',
+                    'location': 'file://' + os.path.join(output_dir, 'facets_legacy_stderr.txt'),
+                    'path': os.path.join(output_dir, 'facets_legacy_stderr.txt'),
+                    'size': 142
+                },
+                'stdout_txt': {
+                    'basename': 'facets_legacy_stdout.txt',
+                    'checksum': 'sha1$b9d9dcc1e039c79e1ee79a397ac8d37e8aa47fa6',
+                    'class': 'File',
+                    'location': 'file://' + os.path.join(output_dir, 'facets_legacy_stdout.txt'),
+                    'path': os.path.join(output_dir, 'facets_legacy_stdout.txt'),
+                    'size': 77}
             }
             self.maxDiff = None
             self.assertDictEqual(output_json, expected_output)

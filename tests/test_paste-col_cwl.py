@@ -75,6 +75,7 @@ class TestPasteCol(unittest.TestCase):
             self.assertEqual(output_lines, expected_lines)
 
             expected_output = {
+                'failed_txt': None,
                 'output_file': {
                     'location': 'file://' + os.path.join(output_dir, 'output.txt'),
                     'basename': 'output.txt',
@@ -82,8 +83,25 @@ class TestPasteCol(unittest.TestCase):
                     'checksum': 'sha1$34753fd98b2355d54740f3fdfc6490262c15dd59',
                     'size': 36,
                     'path': os.path.join(output_dir, 'output.txt')
-                    }
+                    },
+                'stderr_txt': {
+                    'basename': 'output.txt_stderr.txt',
+                    'checksum': 'sha1$da39a3ee5e6b4b0d3255bfef95601890afd80709',
+                    'class': 'File',
+                    'location': 'file://' + os.path.join(output_dir, 'output.txt_stderr.txt'),
+                    'path': os.path.join(output_dir, 'output.txt_stderr.txt'),
+                    'size': 0
+                },
+                'stdout_txt': {
+                    'basename': 'output.txt_stdout.txt',
+                    'checksum': 'sha1$da39a3ee5e6b4b0d3255bfef95601890afd80709',
+                    'class': 'File',
+                    'location': 'file://' + os.path.join(output_dir, 'output.txt_stdout.txt'),
+                    'path': os.path.join(output_dir, 'output.txt_stdout.txt'),
+                    'size': 0
                 }
+            }
+
             self.assertDictEqual(output_json, expected_output)
 
 
