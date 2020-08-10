@@ -24,7 +24,7 @@ help:
 
 # ~~~~~ Container ~~~~~ #
 # pull the Docker container and convert it to Singularity container image file
-export SINGULARITY_CACHEDIR:=/juno/work/ci/singularity_images
+export SINGULARITY_CACHEDIR:=/juno/work/ci/pluto-cwl-test/cache
 # GIT_TAG:=$(shell git describe --tags --abbrev=0)
 DOCKER_TAG:=mskcc/helix_filters_01:20.07.3
 DOCKER_DEV_TAG:=mskcc/helix_filters_01:dev
