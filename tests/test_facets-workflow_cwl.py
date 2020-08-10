@@ -99,6 +99,7 @@ class TestFacetsWorkflow(unittest.TestCase):
                 'size': 529,
                 'path': os.path.join(output_dir, 'facets/Sample24.Sample23/Sample24.txt')
             }],
+            'failed_pairs': [],
             'gene_level_txt': [{
                 'location': 'file://' + os.path.join(output_dir, 'facets/Sample24.Sample23/Sample24.gene_level.txt'),
                 'basename': 'Sample24.gene_level.txt',
