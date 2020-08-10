@@ -468,7 +468,7 @@ facets: facets-input.json $(FACETS_OUTPUT_DIR)
 # ~~~~~ Debug & Development ~~~~~ #
 # Run the test suite
 export FIXTURES_DIR:=/juno/work/ci/helix_filters_01/fixtures
-test:
+test2:
 	module load singularity/3.3.0 && \
 	module load python/3.7.1 && \
 	module load cwl/cwltool && \
@@ -476,7 +476,7 @@ test:
 	python3 test.py
 
 # for some reason the test recipe is not running all tests....
-test2:
+test:
 	module load singularity/3.3.0 && \
 	module load python/3.7.1 && \
 	module load cwl/cwltool && \
