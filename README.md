@@ -55,4 +55,4 @@ make test
 
 ## Related
 
-`pluto-cwl` is a migration of the CWL workflows that were originally included with the `helix_filters_01` repository; https://github.com/mskcc/helix_filters_01 
+`pluto-cwl` is a migration of the CWL workflows that were originally included with the `helix_filters_01` repository; https://github.com/mskcc/helix_filters_01
