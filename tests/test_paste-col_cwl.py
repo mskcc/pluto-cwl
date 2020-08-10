@@ -101,7 +101,7 @@ class TestPasteCol(unittest.TestCase):
                     'size': 0
                 }
             }
-
+            self.maxDiff = None
             self.assertDictEqual(output_json, expected_output)
 
 
