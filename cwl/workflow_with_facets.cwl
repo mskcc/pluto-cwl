@@ -130,8 +130,8 @@ inputs:
     type: string
     doc: "the version label of this helix filter repo (HELIX_FILTER_VERSION; git describe --all --long)"
   is_impact:
-    default: "True"
-    type: string
+    default: True
+    type: boolean
     doc: "whether or not the project is an IMPACT project; should be the value 'True' if so, otherwise any other value means 'False' (IS_IMPACT)"
   # TODO: this shouild actually be type: string[]
   extra_pi_groups:
