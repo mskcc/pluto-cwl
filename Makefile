@@ -14,6 +14,10 @@ Run the workflow against the demo dataset with
 
 make run
 
+Run the Facets Suite workflow against the demo dataset with
+
+make facets
+
 endef
 export help
 help:
@@ -24,12 +28,12 @@ help:
 
 # ~~~~~ Container ~~~~~ #
 # pull the Docker container and convert it to Singularity container image file
-export SINGULARITY_CACHEDIR:=/juno/work/ci/singularity_images
+export SINGULARITY_CACHEDIR:=/juno/work/ci/pluto-cwl-test/cache
 # GIT_TAG:=$(shell git describe --tags --abbrev=0)
-DOCKER_TAG:=mskcc/helix_filters_01:20.07.3
+DOCKER_TAG:=mskcc/helix_filters_01:20.08.1
 DOCKER_DEV_TAG:=mskcc/helix_filters_01:dev
 # NOTE: you cannot use a filename with a ':' as a Makefile target
-SINGULARITY_SIF:=mskcc_helix_filters_01:20.07.3.sif
+SINGULARITY_SIF:=mskcc_helix_filters_01:20.08.1.sif
 SINGULARITY_DEV_SIF:=mskcc_helix_filters_01:dev.sif
 singularity-pull:
 	unset SINGULARITY_CACHEDIR && \
@@ -84,7 +88,7 @@ CANCER_STUDY_IDENTIFIER:=$(PROJ_ID)
 # argos_version_string
 ARGOS_VERSION_STRING:=2.x
 # is_impact
-IS_IMPACT:=True
+IS_IMPACT:=true
 # extra_pi_groups
 # EXTRA_PI_GROUPS:=
 # analysis_segment_cna_filename
@@ -194,7 +198,7 @@ input.json: mutation_maf_files.txt facets_hisens_seg_files.txt facets_hisens_cnc
 	--arg cancer_type "$(CANCER_TYPE)" \
 	--arg cancer_study_identifier "$(CANCER_STUDY_IDENTIFIER)" \
 	--arg argos_version_string "$(ARGOS_VERSION_STRING)" \
-	--arg is_impact "$(IS_IMPACT)" \
+	--argjson is_impact "$(IS_IMPACT)" \
 	--arg analysis_segment_cna_filename "$(ANALYSIS_SEGMENT_CNA_FILE)" \
 	--arg analysis_sv_filename "$(ANALYSIS_SV_FILE)" \
 	--arg analysis_gene_cna_filename "$(ANALYSIS_GENE_CNA_FILENAME)" \
@@ -286,7 +290,7 @@ $(ANALYSIS_INPUT_JSON): mutation_maf_files.txt facets_hisens_seg_files.txt facet
 	--slurpfile mutation_svs_maf_files mutation_svs_maf_files.txt \
 	--arg helix_filter_version "$(HELIX_FILTER_VERSION)" \
 	--arg argos_version_string "$(ARGOS_VERSION_STRING)" \
-	--arg is_impact "$(IS_IMPACT)" \
+	--argjson is_impact "$(IS_IMPACT)" \
 	--arg analysis_segment_cna_filename "$(ANALYSIS_SEGMENT_CNA_FILE)" \
 	--arg analysis_sv_filename "$(ANALYSIS_SV_FILE)" \
 	--arg analysis_gene_cna_filename "$(ANALYSIS_GENE_CNA_FILENAME)" \
@@ -352,7 +356,7 @@ $(PORTAL_INPUT_JSON): mutation_maf_files.txt facets_hisens_seg_files.txt facets_
 	--arg cancer_type "$(CANCER_TYPE)" \
 	--arg cancer_study_identifier "$(CANCER_STUDY_IDENTIFIER)" \
 	--arg argos_version_string "$(ARGOS_VERSION_STRING)" \
-	--arg is_impact "$(IS_IMPACT)" \
+	--argjson is_impact "$(IS_IMPACT)" \
 	--arg cbio_segment_data_filename "$(CBIO_SEGMENT_DATA_FILENAME)" \
 	--arg cbio_meta_cna_segments_filename "$(CBIO_META_CNA_SEGMENTS_FILENAME)" \
 	--arg targets_list "$(TARGETS_LIST)" \
@@ -468,20 +472,31 @@ facets: facets-input.json $(FACETS_OUTPUT_DIR)
 # ~~~~~ Debug & Development ~~~~~ #
 # Run the test suite
 export FIXTURES_DIR:=/juno/work/ci/helix_filters_01/fixtures
-test:
+# TODO: figure out why this is missing some tests
+test2:
 	module load singularity/3.3.0 && \
 	module load python/3.7.1 && \
 	module load cwl/cwltool && \
 	if [ ! -e "$(SINGULARITY_SIF)" ]; then $(MAKE) singularity-pull; fi && \
 	python3 test.py
 
+# TODO: figure out if we can run the tests in parallel or otherwise make it faster
 # for some reason the test recipe is not running all tests....
-test2:
+test:
 	module load singularity/3.3.0 && \
 	module load python/3.7.1 && \
 	module load cwl/cwltool && \
 	if [ ! -e "$(SINGULARITY_SIF)" ]; then $(MAKE) singularity-pull; fi && \
 	for i in tests/test_*.py; do echo $$i; $$i; done
+
+# run tests in parallel;
+# $ make test3 -j 4
+TESTS:=$(shell ls tests/test_*.py)
+$(TESTS):
+	module load singularity/3.3.0 && module load python/3.7.1 && module load cwl/cwltool && echo $@; python $@
+.PHONY:$(TESTS)
+test3:$(TESTS)
+
 
 # interactive session with environment populated
 bash:

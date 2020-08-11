@@ -22,6 +22,7 @@ argos_version_string
 helix_filter_version
 is_impact
 extra_pi_groups
+pairs
 
 
 The following filenames are required:
@@ -62,6 +63,11 @@ output
 │   ├── <project_id>.muts.maf
 │   ├── <project_id>.seg.cna.txt
 │   └── <project_id>.svs.maf
+├── facets
+│   ├── <tumor_id>.<normal_id> (passed)
+│   │   └── <facets_files>
+│   └── <tumor_id>.<normal_id> (failed)
+│       └── <log_files>
 └── portal
     ├── case_list
     │   ├── cases_all.txt
@@ -86,6 +92,7 @@ output
 "
 
 requirements:
+  MultipleInputFeatureRequirement: {}
   ScatterFeatureRequirement: {}
   StepInputExpressionRequirement: {}
   InlineJavascriptRequirement: {}
@@ -217,31 +224,12 @@ inputs:
     type: string
     default: data_CNA.scna.txt
     doc: "(CBIO_CNA_SCNA_DATA_FILE)"
-  mutation_maf_files:
-    type: File[]
-    doc: "analysis_mutations_filename (ANALYSIS_MUTATIONS_FILENAME) cbio_mutation_data_filename (CBIO_MUTATION_DATA_FILENAME): (MAF_DIR)/*.muts.maf"
-  facets_hisens_seg_files:
-    type: File[]
-    doc: "cbio_segment_data_filename (CBIO_SEGMENT_DATA_FILENAME; <project_id>_data_cna_hg19.seg) analysis_segment_cna_filename (ANALYSIS_SEGMENT_CNA_FILE; <project_id>.seg.cna.txt): (FACETS_DIR)/*_hisens.seg"
-  facets_hisens_cncf_files:
-    type: File[]
-    doc: "cbio_cna_data_filename (CBIO_CNA_DATA_FILENAME; data_CNA.txt) analysis_gene_cna_filename (ANALYSIS_GENE_CNA_FILENAME; <project_id>.gene.cna.txt): (FACETS_DIR)/*_hisens.cncf.txt"
   mutation_svs_txt_files:
     type: File[]
     doc: "cbio_fusion_data_filename (CBIO_FUSION_DATA_FILENAME; data_fusions.txt): (MAF_DIR)/*.svs.pass.vep.portal.txt"
   mutation_svs_maf_files:
     type: File[]
     doc: "analysis_sv_filename (ANALYSIS_SV_FILE; <project_id>.svs.maf): (MAF_DIR)/*.svs.pass.vep.maf"
-  facets_suite_txt_files:
-    type:
-      - "null"
-      - File[]
-    doc: "Facets Suite .txt files for all samples in the request"
-  # facets_aggregate_file:
-  #   doc: "Facets Suite .txt file aggregated for all samples in the request"
-  #   type:
-  #     - "null"
-  #     - File
   targets_list:
     type: File
   known_fusions_file:
@@ -252,28 +240,27 @@ inputs:
     type:
     - "null"
     - File
+  pairs:
+    type:
+      type: array
+      items:
+        type: record
+        fields:
+          pair_maf: File
+          snp_pileup: File
+          pair_id: string
+          tumor_id: string
+          normal_id: string
 
 steps:
-  run_analysis_workflow:
-    run: analysis-workflow.cwl
+  run_facets:
+    run: facets-workflow.cwl
     in:
-      analysis_segment_cna_filename: analysis_segment_cna_filename
-      analysis_sv_filename: analysis_sv_filename
-      analysis_gene_cna_filename: analysis_gene_cna_filename
-      analysis_mutations_filename: analysis_mutations_filename
-      mutation_maf_files: mutation_maf_files
-      facets_hisens_seg_files: facets_hisens_seg_files
-      facets_hisens_cncf_files: facets_hisens_cncf_files
-      mutation_svs_maf_files: mutation_svs_maf_files
-      targets_list: targets_list
-      argos_version_string: argos_version_string
-      is_impact: is_impact
-      helix_filter_version: helix_filter_version
+      pairs: pairs
     out:
-      [ analysis_dir ]
-
-  run_portal_workflow:
-    run: portal-workflow.cwl
+      [ purity_seg,hisens_seg,qc_txt,gene_level_txt,arm_level_txt,facets_txt,purity_rds,hisens_rds,annotated_maf,hisens_cncf_txt,output_dir,failed_pairs ]
+  run_workflow:
+    run: workflow.cwl
     in:
       project_id: project_id
       project_pi: project_pi
@@ -287,6 +274,10 @@ steps:
       helix_filter_version: helix_filter_version
       is_impact: is_impact
       extra_pi_groups: extra_pi_groups
+      analysis_segment_cna_filename: analysis_segment_cna_filename
+      analysis_sv_filename: analysis_sv_filename
+      analysis_gene_cna_filename: analysis_gene_cna_filename
+      analysis_mutations_filename: analysis_mutations_filename
       cbio_segment_data_filename: cbio_segment_data_filename
       cbio_meta_cna_segments_filename: cbio_meta_cna_segments_filename
       cbio_cases_sequenced_filename: cbio_cases_sequenced_filename
@@ -306,23 +297,32 @@ steps:
       cbio_cna_data_filename: cbio_cna_data_filename
       cbio_cna_ascna_data_filename: cbio_cna_ascna_data_filename
       cbio_cna_scna_data_filename: cbio_cna_scna_data_filename
-      mutation_maf_files: mutation_maf_files
-      facets_hisens_seg_files: facets_hisens_seg_files
-      facets_hisens_cncf_files: facets_hisens_cncf_files
+      mutation_maf_files: run_facets/annotated_maf
+      facets_hisens_seg_files: run_facets/hisens_seg
+      facets_hisens_cncf_files: run_facets/hisens_cncf_txt
       mutation_svs_txt_files: mutation_svs_txt_files
+      mutation_svs_maf_files: mutation_svs_maf_files
+      facets_suite_txt_files: run_facets/facets_txt
       targets_list: targets_list
       known_fusions_file: known_fusions_file
       data_clinical_file: data_clinical_file
       sample_summary_file: sample_summary_file
-      facets_suite_txt_files: facets_suite_txt_files
     out:
-      [ portal_dir ]
+      [portal_dir, analysis_dir]
 
 outputs:
   portal_dir:
     type: Directory
-    outputSource: run_portal_workflow/portal_dir
+    outputSource: run_workflow/portal_dir
 
   analysis_dir:
     type: Directory
-    outputSource: run_analysis_workflow/analysis_dir
+    outputSource: run_workflow/analysis_dir
+
+  facets_dir:
+    type: Directory
+    outputSource: run_facets/output_dir
+
+  facets_failed_pairs:
+    type: string[]
+    outputSource: run_facets/failed_pairs

@@ -26,7 +26,7 @@ class TestAnalysisWorkflow(unittest.TestCase):
         Test that the workflow works correctly when run with a single maf
         """
         input_json = {
-            "is_impact": "True",
+            "is_impact": True,
             "argos_version_string": "2.x",
             "analysis_gene_cna_filename": "Proj_08390_G.gene.cna.txt",
             "analysis_mutations_filename": "Proj_08390_G.muts.maf",
@@ -143,7 +143,7 @@ class TestAnalysisWorkflow(unittest.TestCase):
         Test that the workflow works correctly when run with two maf files
         """
         input_json = {
-            "is_impact": "True",
+            "is_impact": True,
             "argos_version_string": "2.x",
             "analysis_gene_cna_filename": "Proj_08390_G.gene.cna.txt",
             "analysis_mutations_filename": "Proj_08390_G.muts.maf",
@@ -267,7 +267,7 @@ class TestAnalysisWorkflow(unittest.TestCase):
         The Facets Suite maf files have extra columns that need to be retained in the output
         """
         input_json = {
-            "is_impact": "True",
+            "is_impact": True,
             "argos_version_string": "2.x",
             "analysis_gene_cna_filename": "Proj_08390_G.gene.cna.txt",
             "analysis_mutations_filename": "Proj_08390_G.muts.maf",
