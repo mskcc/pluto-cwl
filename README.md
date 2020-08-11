@@ -6,7 +6,7 @@ CWL files and workflows to accompany the *pluto* repo (in development)
 
 ## Usage
 
-The main workflows can be run from the included `Makefile`. These recipes are set up for usage on MSKCC `juno` and `silo` servers and might need some modification for usage elsewhere. 
+The main workflows can be run from the included `Makefile`. These recipes are set up for usage on MSKCC `juno` and `silo` servers and might need some modification for usage elsewhere.
 
 First, clone this repo;
 
@@ -21,7 +21,7 @@ The most recent instructions can be seen with
 make help
 ```
 
-The main workflow can be run against a test dataset saved on the `juno` server with the command 
+The main workflow can be run against a test dataset saved on the `juno` server with the command
 
 ```
 make run

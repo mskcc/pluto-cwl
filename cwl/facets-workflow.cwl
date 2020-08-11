@@ -70,7 +70,10 @@ output
   ├── Tumor2.Normal2_purity.seg
   ├── Tumor2.Normal2.qc.txt
   ├── Tumor2.Normal2.snp_pileup.gz
-  └── Tumor2.Normal2.txt
+  ├── Tumor2.Normal2.txt
+  └── logs
+    ├── success
+    └── failed
 '
 
 requirements:
@@ -121,57 +124,222 @@ steps:
       purity_rds,
       hisens_rds,
       annotated_maf,
-      hisens_cncf_txt
+      hisens_cncf_txt,
+      output_dir,
+      results_passed
       ]
+
+  check_facets_suite:
+      in:
+        pair_id: facets_suite/pair_id
+        purity_seg: facets_suite/purity_seg
+        hisens_seg: facets_suite/hisens_seg
+        qc_txt: facets_suite/qc_txt
+        gene_level_txt: facets_suite/gene_level_txt
+        arm_level_txt: facets_suite/arm_level_txt
+        facets_txt: facets_suite/facets_txt
+        purity_rds: facets_suite/purity_rds
+        hisens_rds: facets_suite/hisens_rds
+        annotated_maf: facets_suite/annotated_maf
+        hisens_cncf_txt: facets_suite/hisens_cncf_txt
+        output_dir: facets_suite/output_dir
+        results_passed: facets_suite/results_passed
+      out: [ purity_seg,hisens_seg,qc_txt,gene_level_txt,arm_level_txt,facets_txt,purity_rds,hisens_rds,annotated_maf,hisens_cncf_txt,output_dir,failed_pairs]
+      run:
+          class: ExpressionTool
+          id: check_facets_suite
+          inputs:
+            pair_id: string[]
+            purity_seg:
+              type:
+                type: array
+                items: ['null', File]
+            hisens_seg:
+              type:
+                type: array
+                items: ['null', File]
+            qc_txt:
+              type:
+                type: array
+                items: ['null', File]
+            gene_level_txt:
+              type:
+                type: array
+                items: ['null', File]
+            arm_level_txt:
+              type:
+                type: array
+                items: ['null', File]
+            facets_txt:
+              type:
+                type: array
+                items: ['null', File]
+            purity_rds:
+              type:
+                type: array
+                items: ['null', File]
+            hisens_rds:
+              type:
+                type: array
+                items: ['null', File]
+            annotated_maf:
+              type:
+                type: array
+                items: ['null', File]
+            hisens_cncf_txt:
+              type:
+                type: array
+                items: ['null', File]
+            output_dir:
+              type:
+                type: array
+                items: [Directory]
+            results_passed:
+              type:
+                type: array
+                items: ['null', boolean]
+          outputs:
+            purity_seg:
+              type:
+                type: array
+                items: ['null', File]
+            hisens_seg:
+              type:
+                type: array
+                items: ['null', File]
+            qc_txt:
+              type:
+                type: array
+                items: ['null', File]
+            gene_level_txt:
+              type:
+                type: array
+                items: ['null', File]
+            arm_level_txt:
+              type:
+                type: array
+                items: ['null', File]
+            facets_txt:
+              type:
+                type: array
+                items: ['null', File]
+            purity_rds:
+              type:
+                type: array
+                items: ['null', File]
+            hisens_rds:
+              type:
+                type: array
+                items: ['null', File]
+            annotated_maf:
+              type:
+                type: array
+                items: ['null', File]
+            hisens_cncf_txt:
+              type:
+                type: array
+                items: ['null', File]
+            output_dir: Directory
+            failed_pairs: string[]?
+          expression: "${ var output_object = {};
+            var passed_list = inputs.results_passed;
+            var failed_list = [];
+            var output_list = [];
+            output_object = {
+              purity_seg: [],
+              hisens_seg: [],
+              qc_txt: [],
+              gene_level_txt: [],
+              arm_level_txt: [],
+              facets_txt: [],
+              purity_rds: [],
+              hisens_rds: [],
+              annotated_maf: [],
+              hisens_cncf_txt: []
+            };
+            for (var pair_index in passed_list){
+              if( passed_list[pair_index] == true){
+                output_object['purity_seg'].push(inputs.purity_seg[pair_index]);
+                output_object['hisens_seg'].push(inputs.hisens_seg[pair_index]);
+                output_object['qc_txt'].push(inputs.qc_txt[pair_index]);
+                output_object['gene_level_txt'].push(inputs.gene_level_txt[pair_index]);
+                output_object['arm_level_txt'].push(inputs.arm_level_txt[pair_index]);
+                output_object['facets_txt'].push(inputs.facets_txt[pair_index]);
+                output_object['purity_rds'].push(inputs.purity_rds[pair_index]);
+                output_object['hisens_rds'].push(inputs.hisens_rds[pair_index]);
+                output_object['annotated_maf'].push(inputs.annotated_maf[pair_index]);
+                output_object['hisens_cncf_txt'].push(inputs.hisens_cncf_txt[pair_index]);
+
+              }
+              else{
+                failed_list.push(inputs.pair_id[pair_index]);
+              }
+              output_list.push(inputs.output_dir[pair_index])
+
+            }
+            output_object['output_dir'] = {
+                  'class': 'Directory',
+                  'basename': 'facets',
+                  'listing': output_list
+            };
+            output_object['failed_pairs'] = failed_list;
+            return output_object;
+          }"
 
 outputs:
   purity_seg:
     type:
       type: array
-      items: File
-    outputSource: facets_suite/purity_seg
+      items: ['null', File]
+    outputSource: check_facets_suite/purity_seg
   hisens_seg:
     type:
       type: array
-      items: File
-    outputSource: facets_suite/hisens_seg
+      items: ['null', File]
+    outputSource: check_facets_suite/hisens_seg
   qc_txt:
     type:
       type: array
-      items: File
-    outputSource: facets_suite/qc_txt
+      items: ['null', File]
+    outputSource: check_facets_suite/qc_txt
   gene_level_txt:
     type:
       type: array
-      items: File
-    outputSource: facets_suite/gene_level_txt
+      items: ['null', File]
+    outputSource: check_facets_suite/gene_level_txt
   arm_level_txt:
     type:
       type: array
-      items: File
-    outputSource: facets_suite/arm_level_txt
+      items: ['null', File]
+    outputSource: check_facets_suite/arm_level_txt
   facets_txt:
     type:
       type: array
-      items: File
-    outputSource: facets_suite/facets_txt
+      items: ['null', File]
+    outputSource: check_facets_suite/facets_txt
   purity_rds:
     type:
       type: array
-      items: File
-    outputSource: facets_suite/purity_rds
+      items: ['null', File]
+    outputSource: check_facets_suite/purity_rds
   hisens_rds:
     type:
       type: array
-      items: File
-    outputSource: facets_suite/hisens_rds
+      items: ['null', File]
+    outputSource: check_facets_suite/hisens_rds
   annotated_maf:
     type:
       type: array
-      items: File
-    outputSource: facets_suite/annotated_maf
+      items: ['null', File]
+    outputSource: check_facets_suite/annotated_maf
   hisens_cncf_txt:
     type:
       type: array
-      items: File
-    outputSource: facets_suite/hisens_cncf_txt
+      items: ['null', File]
+    outputSource: check_facets_suite/hisens_cncf_txt
+  output_dir:
+    type: Directory
+    outputSource: check_facets_suite/output_dir
+  failed_pairs:
+    type: string[]
+    outputSource: check_facets_suite/failed_pairs

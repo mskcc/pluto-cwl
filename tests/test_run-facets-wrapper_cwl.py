@@ -66,6 +66,7 @@ class TestRunFacetsWrapperCWL(unittest.TestCase):
                     'size': 1824,
                     'path': os.path.join(output_dir, 'Sample24.arm_level.txt')
                     },
+                'failed_txt': None,
                 'gene_level_txt': {
                     'location': 'file://' + os.path.join(output_dir, 'Sample24.gene_level.txt'),
                     'basename': 'Sample24.gene_level.txt',
@@ -121,9 +122,25 @@ class TestRunFacetsWrapperCWL(unittest.TestCase):
                     'checksum': 'sha1$d4a36726a5fcb7b268aae02d97ce4e382e42d9f6',
                     'size': 1339,
                     'path': os.path.join(output_dir, 'Sample24.qc.txt')
+                },
+                'stderr_txt': {
+                    'basename': 'facets_stderr.txt',
+                    'class': 'File',
+                    'location': 'file://' + os.path.join(output_dir, 'facets_stderr.txt'),
+                    'path': os.path.join(output_dir, 'facets_stderr.txt'),
+                    'size': 142
+                },
+                'stdout_txt': {
+                    'basename': 'facets_stdout.txt',
+                    'checksum': 'sha1$b9d9dcc1e039c79e1ee79a397ac8d37e8aa47fa6',
+                    'class': 'File',
+                    'location': 'file://' + os.path.join(output_dir, 'facets_stdout.txt'),
+                    'path': os.path.join(output_dir, 'facets_stdout.txt'),
+                    'size': 77
                 }
             }
             self.maxDiff = None
+            output_json['stderr_txt'].pop('checksum')
             self.assertDictEqual(output_json, expected_output)
 
             with open(os.path.join(output_dir, 'Sample24_hisens.seg')) as fin:
