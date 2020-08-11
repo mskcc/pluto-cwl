@@ -8,7 +8,7 @@ baseCommand: ["fusion_filter.py"]
 
 requirements:
   DockerRequirement:
-    dockerPull: mskcc/helix_filters_01:20.07.3
+    dockerPull: mskcc/helix_filters_01:20.08.1
 
 inputs:
   fusions_file:

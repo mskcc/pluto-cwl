@@ -40,8 +40,8 @@ inputs:
     type: string
     doc: "the version label of Roslin / Argos used to run the project analysis (ARGOS_VERSION_STRING)"
   is_impact:
-    default: "True"
-    type: string
+    default: true
+    type: boolean
     doc: "whether or not the project is an IMPACT project; should be the value 'True' if so, otherwise any other value means 'False' (IS_IMPACT)"
   helix_filter_version:
     type: string

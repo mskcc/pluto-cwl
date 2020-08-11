@@ -40,7 +40,7 @@ class TestMafFilter(unittest.TestCase):
                       "path": input_maf
                     },
                 "argos_version_string": ARGOS_VERSION_STRING,
-                "is_impact": IS_IMPACT,
+                "is_impact": True,
                 "analysis_mutations_filename": "Proj_08390_G.muts.maf",
                 "cbio_mutation_data_filename": 'data_mutations_extended.txt'
             }
@@ -107,6 +107,14 @@ class TestMafFilter(unittest.TestCase):
                     'checksum': 'sha1$6131494536ce956d741c820378e7e2ce1c714403',
                     'size': 4534,
                     'path': os.path.join(output_dir, 'data_mutations_extended.txt')
+                    },
+                'rejected_file': {
+                    'basename': 'rejected.muts.maf',
+                    'checksum': 'sha1$7b2506f00c1d8119885da317459df5d79acc5d07',
+                    'class': 'File',
+                    'location': 'file://' + os.path.join(output_dir, 'rejected.muts.maf'),
+                    'path': os.path.join(output_dir, 'rejected.muts.maf'),
+                    'size': 16666250
                     }
                 }
             self.assertDictEqual(output_json, expected_output)
@@ -131,7 +139,7 @@ class TestMafFilter(unittest.TestCase):
                       "path": input_maf
                     },
                 "argos_version_string": "3.2.0",
-                "is_impact": IS_IMPACT,
+                "is_impact": True,
                 "analysis_mutations_filename": "Proj_08390_G.muts.maf",
                 "cbio_mutation_data_filename": 'data_mutations_extended.txt'
             }
@@ -194,6 +202,14 @@ class TestMafFilter(unittest.TestCase):
                     'checksum': 'sha1$47e716eabbfda3408b2d9a08b9bb432b2cb8fce8',
                     'size': 4536,
                     'path': os.path.join(output_dir, 'data_mutations_extended.txt')
+                    },
+                    'rejected_file': {
+                        'basename': 'rejected.muts.maf',
+                        'checksum': 'sha1$7b2506f00c1d8119885da317459df5d79acc5d07',
+                        'class': 'File',
+                        'location': 'file://' + os.path.join(output_dir, 'rejected.muts.maf'),
+                        'path': os.path.join(output_dir, 'rejected.muts.maf'),
+                        'size': 16666250
                     }
                 }
 
@@ -223,7 +239,7 @@ class TestMafFilter(unittest.TestCase):
                       "path": input_maf
                     },
                 "argos_version_string": ARGOS_VERSION_STRING,
-                "is_impact": "False",
+                "is_impact": False,
                 "analysis_mutations_filename": "Proj_08390_G.muts.maf",
                 "cbio_mutation_data_filename": 'data_mutations_extended.txt'
             }
@@ -273,6 +289,14 @@ class TestMafFilter(unittest.TestCase):
                     'checksum': 'sha1$15ca06249511c32c32e058c246a757ec8df11d83',
                     'size': 3931,
                     'path': os.path.join(output_dir, 'data_mutations_extended.txt')
+                    },
+                'rejected_file': {
+                    'basename': 'rejected.muts.maf',
+                    'checksum': 'sha1$082706920cc1846a300359ea5a167b3a8b81b7cf',
+                    'class': 'File',
+                    'location': 'file://' + os.path.join(output_dir, 'rejected.muts.maf'),
+                    'path': os.path.join(output_dir, 'rejected.muts.maf'),
+                    'size': 16669732
                     }
                 }
             self.assertDictEqual(output_json, expected_output)
@@ -291,7 +315,7 @@ class TestMafFilter(unittest.TestCase):
                       "path": input_maf
                     },
                 "argos_version_string": "2.x",
-                "is_impact": "True",
+                "is_impact": True,
                 "analysis_mutations_filename": "Proj_08390_G.muts.maf",
                 "cbio_mutation_data_filename": 'data_mutations_extended.txt'
             }
