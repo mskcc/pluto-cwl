@@ -195,7 +195,7 @@ steps:
 
   # need to apply some extra column labels to the facets suite .txt file for downstream ease of use
   label_facets_txt_tumor:
-    run: paste-col.cwl
+    run: paste-col-wrapper.cwl
     in:
       tumor_id: tumor_id
       input_file: check_run_facets/facets_txt
@@ -248,7 +248,7 @@ steps:
           }"
 
   label_facets_txt_normal:
-    run: paste-col.cwl
+    run: paste-col-wrapper.cwl
     in:
       tumor_id: tumor_id
       normal_id: normal_id
@@ -303,7 +303,7 @@ steps:
 
   # need to apply some extra column labels to the maf file for downstream ease of use
   label_maf_sample:
-    run: paste-col.cwl
+    run: paste-col-wrapper.cwl
     in:
       pair_id: pair_id
       tumor_id: tumor_id
@@ -357,7 +357,7 @@ steps:
           }"
 
   label_maf_normal:
-    run: paste-col.cwl
+    run: paste-col-wrapper.cwl
     in:
       pair_id: pair_id
       normal_id: normal_id
