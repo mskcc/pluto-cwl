@@ -271,6 +271,21 @@ class TestPortalWorkflow(unittest.TestCase):
             comments, mutations = load_mutations(os.path.join(output_dir, 'portal', 'data_mutations_extended.txt'))
             self.assertEqual(len(mutations), 17)
 
+            # load the data_CNA.txt file
+            path = os.path.join(output_dir, 'portal/data_CNA.txt') # renamed from the data_CNA.scna.txt file ...
+            with open(path) as f:
+                header = next(f)
+            header_parts = header.split()
+            expected_header_parts = ['Hugo_Symbol', 's_C_VJ7F47_P001_d']
+            self.assertEqual(header_parts, expected_header_parts)
+
+            path = os.path.join(output_dir, 'portal/data_CNA.ascna.txt')
+            with open(path) as f:
+                header = next(f)
+            header_parts = header.split()
+            expected_header_parts = ['Hugo_Symbol', 's_C_VJ7F47_P001_d']
+            self.assertEqual(header_parts, expected_header_parts)
+
     def test_run_worflow_two_mafs(self):
         """
         Test that the workflow works correctly when run with two maf files
@@ -502,6 +517,21 @@ class TestPortalWorkflow(unittest.TestCase):
 
             comments, mutations = load_mutations(os.path.join(output_dir, 'portal', 'data_mutations_extended.txt'))
             self.assertEqual(len(mutations), 27)
+
+            # load the data_CNA.txt file
+            path = os.path.join(output_dir, 'portal/data_CNA.txt')
+            with open(path) as f:
+                header = next(f)
+            header_parts = header.split()
+            expected_header_parts = ['Hugo_Symbol', 's_C_VJ7F47_P001_d', 's_C_X50T9Y_P001_d']
+            self.assertEqual(header_parts, expected_header_parts)
+
+            path = os.path.join(output_dir, 'portal/data_CNA.ascna.txt')
+            with open(path) as f:
+                header = next(f)
+            header_parts = header.split()
+            expected_header_parts = ['Hugo_Symbol', 's_C_VJ7F47_P001_d', 's_C_X50T9Y_P001_d']
+            self.assertEqual(header_parts, expected_header_parts)
 
     def test_with_facets_txt(self):
         """
@@ -797,6 +827,21 @@ class TestPortalWorkflow(unittest.TestCase):
             ['Sample44', '08390_G_93', 'p_C_00002', 'COLLAB-01-T', 'Primary', 'Biopsy', 'IMPACT468+08390_Hg19', 'MEL', 'FFPE', '', '08390_G', '08390', 'roslin', '2.5.7', '502', 'Dr. Jones', 'Dr. Franklin', 'FALSE', '0.51', '1.6', '0.5.14', 'no WGD']
             ]
             self.assertEqual(lines, expected_lines)
+
+            # load the data_CNA.txt file
+            path = os.path.join(output_dir, 'portal/data_CNA.txt')
+            with open(path) as f:
+                header = next(f)
+            header_parts = header.split()
+            expected_header_parts = ['Hugo_Symbol', 's_C_A11NF2_P001_d', 's_C_A5NEWD_P001_d']
+            self.assertEqual(header_parts, expected_header_parts)
+
+            path = os.path.join(output_dir, 'portal/data_CNA.ascna.txt')
+            with open(path) as f:
+                header = next(f)
+            header_parts = header.split()
+            expected_header_parts = ['Hugo_Symbol', 's_C_A11NF2_P001_d', 's_C_A5NEWD_P001_d']
+            self.assertEqual(header_parts, expected_header_parts)
 
     def test_with_facets_txt_and_facets_mafs(self):
         """
@@ -1110,6 +1155,21 @@ class TestPortalWorkflow(unittest.TestCase):
             for colname in some_required_colnames:
                 self.assertTrue(colname in colnames)
 
+            # load the data_CNA.txt file
+            path = os.path.join(output_dir, 'portal/data_CNA.txt') # renamed from the data_CNA.scna.txt file ...
+            with open(path) as f:
+                header = next(f)
+            header_parts = header.split()
+            expected_header_parts = ['Hugo_Symbol', 's_C_A11NF2_P001_d', 's_C_A5NEWD_P001_d']
+            self.assertEqual(header_parts, expected_header_parts)
+
+            path = os.path.join(output_dir, 'portal/data_CNA.ascna.txt')
+            with open(path) as f:
+                header = next(f)
+            header_parts = header.split()
+            expected_header_parts = ['Hugo_Symbol', 's_C_A11NF2_P001_d', 's_C_A5NEWD_P001_d']
+            self.assertEqual(header_parts, expected_header_parts)
+
     def test_with_mixed_mafs(self):
         """
         Test that the workflow produces expected output when both Argos maf files and Facets Suite maf files are used in the workflow
@@ -1391,6 +1451,21 @@ class TestPortalWorkflow(unittest.TestCase):
 
             for colname in some_required_colnames:
                 self.assertTrue(colname in colnames, "Column label {} not present in the mutation file. Missing columns: {}".format(colname, [ c for c in some_required_colnames if c not in colnames ]))
+
+            # load the data_CNA.txt file
+            path = os.path.join(output_dir, 'portal/data_CNA.txt')
+            with open(path) as f:
+                header = next(f)
+            header_parts = header.split()
+            expected_header_parts = ['Hugo_Symbol', 's_C_A11NF2_P001_d', 's_C_A5NEWD_P001_d']
+            self.assertEqual(header_parts, expected_header_parts)
+
+            path = os.path.join(output_dir, 'portal/data_CNA.ascna.txt')
+            with open(path) as f:
+                header = next(f)
+            header_parts = header.split()
+            expected_header_parts = ['Hugo_Symbol', 's_C_A11NF2_P001_d', 's_C_A5NEWD_P001_d']
+            self.assertEqual(header_parts, expected_header_parts)
 
 if __name__ == "__main__":
     unittest.main()

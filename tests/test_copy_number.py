@@ -96,7 +96,6 @@ class TestCopyNumber(unittest.TestCase):
 
             # load the data_CNA.txt file
             path = output_json['output_cna_file']['path']
-            print('output_cna_file', path)
             with open(path) as f:
                 header = next(f)
             header_parts = header.split()
@@ -104,7 +103,6 @@ class TestCopyNumber(unittest.TestCase):
             self.assertEqual(header_parts, expected_header_parts)
 
             path = output_json['output_cna_ascna_file']['path']
-            print('output_cna_ascna_file', path)
             with open(path) as f:
                 header = next(f)
             header_parts = header.split()
@@ -112,7 +110,6 @@ class TestCopyNumber(unittest.TestCase):
             self.assertEqual(header_parts, expected_header_parts)
 
             path = output_json['output_cna_scna_file']['path']
-            print('output_cna_scna_file', path)
             with open(path) as f:
                 header = next(f)
             header_parts = header.split()
