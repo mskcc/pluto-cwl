@@ -322,6 +322,21 @@ class TestWorkflow(unittest.TestCase):
             comments, mutations = load_mutations(os.path.join(output_dir, 'portal', 'data_mutations_extended.txt'))
             self.assertEqual(len(mutations), 17)
 
+            # load the data_CNA.txt file
+            path = os.path.join(output_dir, 'portal/data_CNA.txt') # renamed from the data_CNA.scna.txt file ...
+            with open(path) as f:
+                header = next(f)
+            header_parts = header.split()
+            expected_header_parts = ['Hugo_Symbol', 's_C_VJ7F47_P001_d']
+            self.assertEqual(header_parts, expected_header_parts)
+
+            path = os.path.join(output_dir, 'portal/data_CNA.ascna.txt')
+            with open(path) as f:
+                header = next(f)
+            header_parts = header.split()
+            expected_header_parts = ['Hugo_Symbol', 's_C_VJ7F47_P001_d']
+            self.assertEqual(header_parts, expected_header_parts)
+
     def test_run_worflow_two_mafs(self):
         """
         Test that the workflow works correctly when run with two maf files
@@ -600,6 +615,21 @@ class TestWorkflow(unittest.TestCase):
             self.assertEqual(len(mutations), 34)
             comments, mutations = load_mutations(os.path.join(output_dir, 'portal', 'data_mutations_extended.txt'))
             self.assertEqual(len(mutations), 27)
+
+            # load the data_CNA.txt file
+            path = os.path.join(output_dir, 'portal/data_CNA.txt') # renamed from the data_CNA.scna.txt file ...
+            with open(path) as f:
+                header = next(f)
+            header_parts = header.split()
+            expected_header_parts = ['Hugo_Symbol', 's_C_VJ7F47_P001_d', 's_C_X50T9Y_P001_d']
+            self.assertEqual(header_parts, expected_header_parts)
+
+            path = os.path.join(output_dir, 'portal/data_CNA.ascna.txt')
+            with open(path) as f:
+                header = next(f)
+            header_parts = header.split()
+            expected_header_parts = ['Hugo_Symbol', 's_C_VJ7F47_P001_d', 's_C_X50T9Y_P001_d']
+            self.assertEqual(header_parts, expected_header_parts)
 
 if __name__ == "__main__":
     unittest.main()
