@@ -1,8 +1,11 @@
 """
 Helper functions for running tests
 """
+import os
 import subprocess as sp
 import csv
+import json
+from settings import CWL_ARGS
 
 def run_command(args):
     """
@@ -19,6 +22,51 @@ def run_command(args):
     proc_stdout = proc_stdout.strip()
     proc_stderr = proc_stderr.strip()
     return(returncode, proc_stdout, proc_stderr)
+
+def run_cwl(
+    testcase, # 'self' in the unittest.TestCase instance
+    tmpdir, # dir where execution is taking place and files are staged & written
+    input_json, # CWL input data
+    cwl_file, # CWL file to run
+    CWL_ARGS = CWL_ARGS, # default cwltool args to use
+    print_stdout = False,
+    print_command = False,
+    check_returncode = True
+    ):
+    """Run the CWL"""
+    input_json_file = os.path.join(tmpdir, "input.json")
+    with open(input_json_file, "w") as json_out:
+        json.dump(input_json, json_out)
+
+    output_dir = os.path.join(tmpdir, "output")
+    tmp_dir = os.path.join(tmpdir, "tmp")
+    cache_dir = os.path.join(tmpdir, "cache")
+
+    command = [
+        "cwl-runner",
+        *CWL_ARGS,
+        "--outdir", output_dir,
+        "--tmpdir-prefix", tmp_dir,
+        "--cachedir", cache_dir,
+        cwl_file, input_json_file
+        ]
+    if print_command:
+        print(command)
+
+    returncode, proc_stdout, proc_stderr = run_command(command)
+
+    if print_stdout:
+        print(proc_stdout)
+
+    if returncode != 0:
+        print(proc_stderr)
+
+    if check_returncode:
+        testcase.assertEqual(returncode, 0)
+
+    output_json = json.loads(proc_stdout)
+    return(output_json, output_dir)
+
 
 def parse_header_comments(filename):
     """

@@ -30,10 +30,10 @@ help:
 # pull the Docker container and convert it to Singularity container image file
 export SINGULARITY_CACHEDIR:=/juno/work/ci/pluto-cwl-test/cache
 # GIT_TAG:=$(shell git describe --tags --abbrev=0)
-DOCKER_TAG:=mskcc/helix_filters_01:20.08.1
+DOCKER_TAG:=mskcc/helix_filters_01:20.10.0
 DOCKER_DEV_TAG:=mskcc/helix_filters_01:dev
 # NOTE: you cannot use a filename with a ':' as a Makefile target
-SINGULARITY_SIF:=mskcc_helix_filters_01:20.08.1.sif
+SINGULARITY_SIF:=mskcc_helix_filters_01:20.10.0.sif
 SINGULARITY_DEV_SIF:=mskcc_helix_filters_01:dev.sif
 singularity-pull:
 	unset SINGULARITY_CACHEDIR && \

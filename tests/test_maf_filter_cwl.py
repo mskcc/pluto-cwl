@@ -10,11 +10,11 @@ from tempfile import TemporaryDirectory, NamedTemporaryFile
 
 # relative imports, from CLI and from parent project
 if __name__ != "__main__":
-    from .tools import run_command, load_mutations
+    from .tools import run_command, load_mutations, run_cwl
     from .settings import CWL_DIR, CWL_ARGS, DATA_SETS, ARGOS_VERSION_STRING, IS_IMPACT
 
 if __name__ == "__main__":
-    from tools import run_command, load_mutations
+    from tools import run_command, load_mutations, run_cwl
     from settings import CWL_DIR, CWL_ARGS, DATA_SETS, ARGOS_VERSION_STRING, IS_IMPACT
 
 cwl_file = os.path.join(CWL_DIR, 'maf_filter.cwl')
@@ -44,31 +44,12 @@ class TestMafFilter(unittest.TestCase):
                 "analysis_mutations_filename": "Proj_08390_G.muts.maf",
                 "cbio_mutation_data_filename": 'data_mutations_extended.txt'
             }
-            input_json_file = os.path.join(tmpdir, "input.json")
-            with open(input_json_file, "w") as input_json_file_data:
-                json.dump(input_json, input_json_file_data)
 
-            output_dir = os.path.join(tmpdir, "output")
-            tmp_dir = os.path.join(tmpdir, "tmp")
-            cache_dir = os.path.join(tmpdir, "cache")
-
-            command = [
-            "cwl-runner",
-            *CWL_ARGS,
-            "--outdir", output_dir,
-            "--tmpdir-prefix", tmp_dir,
-            "--cachedir", cache_dir,
-            cwl_file, input_json_file
-            ]
-
-            returncode, proc_stdout, proc_stderr = run_command(command)
-
-            if returncode != 0:
-                print(proc_stderr)
-
-            self.assertEqual(returncode, 0)
-
-            output_json = json.loads(proc_stdout)
+            output_json, output_dir = run_cwl(
+                testcase = self,
+                tmpdir = tmpdir,
+                input_json = input_json,
+                cwl_file = cwl_file)
 
             with open(output_json['analysis_mutations_file']['path']) as fin:
                 output_maf_lines = len(fin.readlines())
@@ -110,11 +91,11 @@ class TestMafFilter(unittest.TestCase):
                     },
                 'rejected_file': {
                     'basename': 'rejected.muts.maf',
-                    'checksum': 'sha1$7b2506f00c1d8119885da317459df5d79acc5d07',
+                    'checksum': 'sha1$a06789623715703c5006db6876ecb58b8498f938',
                     'class': 'File',
                     'location': 'file://' + os.path.join(output_dir, 'rejected.muts.maf'),
                     'path': os.path.join(output_dir, 'rejected.muts.maf'),
-                    'size': 16666250
+                    'size': 18627626
                     }
                 }
             self.assertDictEqual(output_json, expected_output)
@@ -143,31 +124,12 @@ class TestMafFilter(unittest.TestCase):
                 "analysis_mutations_filename": "Proj_08390_G.muts.maf",
                 "cbio_mutation_data_filename": 'data_mutations_extended.txt'
             }
-            input_json_file = os.path.join(tmpdir, "input.json")
-            with open(input_json_file, "w") as input_json_file_data:
-                json.dump(input_json, input_json_file_data)
 
-            output_dir = os.path.join(tmpdir, "output")
-            tmp_dir = os.path.join(tmpdir, "tmp")
-            cache_dir = os.path.join(tmpdir, "cache")
-
-            command = [
-            "cwl-runner",
-            *CWL_ARGS,
-            "--outdir", output_dir,
-            "--tmpdir-prefix", tmp_dir,
-            "--cachedir", cache_dir,
-            cwl_file, input_json_file
-            ]
-
-            returncode, proc_stdout, proc_stderr = run_command(command)
-
-            if returncode != 0:
-                print(proc_stderr)
-
-            self.assertEqual(returncode, 0)
-
-            output_json = json.loads(proc_stdout)
+            output_json, output_dir = run_cwl(
+                testcase = self,
+                tmpdir = tmpdir,
+                input_json = input_json,
+                cwl_file = cwl_file)
 
             # validate output mutation file contents
             comments, mutations = load_mutations(output_json['analysis_mutations_file']['path'])
@@ -203,13 +165,13 @@ class TestMafFilter(unittest.TestCase):
                     'size': 4536,
                     'path': os.path.join(output_dir, 'data_mutations_extended.txt')
                     },
-                    'rejected_file': {
-                        'basename': 'rejected.muts.maf',
-                        'checksum': 'sha1$7b2506f00c1d8119885da317459df5d79acc5d07',
-                        'class': 'File',
-                        'location': 'file://' + os.path.join(output_dir, 'rejected.muts.maf'),
-                        'path': os.path.join(output_dir, 'rejected.muts.maf'),
-                        'size': 16666250
+                'rejected_file': {
+                    'basename': 'rejected.muts.maf',
+                    'checksum': 'sha1$a06789623715703c5006db6876ecb58b8498f938',
+                    'class': 'File',
+                    'location': 'file://' + os.path.join(output_dir, 'rejected.muts.maf'),
+                    'path': os.path.join(output_dir, 'rejected.muts.maf'),
+                    'size': 18627626
                     }
                 }
 
@@ -243,31 +205,12 @@ class TestMafFilter(unittest.TestCase):
                 "analysis_mutations_filename": "Proj_08390_G.muts.maf",
                 "cbio_mutation_data_filename": 'data_mutations_extended.txt'
             }
-            input_json_file = os.path.join(tmpdir, "input.json")
-            with open(input_json_file, "w") as input_json_file_data:
-                json.dump(input_json, input_json_file_data)
 
-            output_dir = os.path.join(tmpdir, "output")
-            tmp_dir = os.path.join(tmpdir, "tmp")
-            cache_dir = os.path.join(tmpdir, "cache")
-
-            command = [
-            "cwl-runner",
-            *CWL_ARGS,
-            "--outdir", output_dir,
-            "--tmpdir-prefix", tmp_dir,
-            "--cachedir", cache_dir,
-            cwl_file, input_json_file
-            ]
-
-            returncode, proc_stdout, proc_stderr = run_command(command)
-
-            if returncode != 0:
-                print(proc_stderr)
-
-            self.assertEqual(returncode, 0)
-
-            output_json = json.loads(proc_stdout)
+            output_json, output_dir = run_cwl(
+                testcase = self,
+                tmpdir = tmpdir,
+                input_json = input_json,
+                cwl_file = cwl_file)
 
             with open(output_json['analysis_mutations_file']['path']) as fin:
                 output_maf_lines = len(fin.readlines())
@@ -292,11 +235,11 @@ class TestMafFilter(unittest.TestCase):
                     },
                 'rejected_file': {
                     'basename': 'rejected.muts.maf',
-                    'checksum': 'sha1$082706920cc1846a300359ea5a167b3a8b81b7cf',
+                    'checksum': 'sha1$e7441703699e82cef500d9557bfcbd3464ce8eab',
                     'class': 'File',
                     'location': 'file://' + os.path.join(output_dir, 'rejected.muts.maf'),
                     'path': os.path.join(output_dir, 'rejected.muts.maf'),
-                    'size': 16669732
+                    'size': 18790398
                     }
                 }
             self.assertDictEqual(output_json, expected_output)
@@ -319,31 +262,12 @@ class TestMafFilter(unittest.TestCase):
                 "analysis_mutations_filename": "Proj_08390_G.muts.maf",
                 "cbio_mutation_data_filename": 'data_mutations_extended.txt'
             }
-            input_json_file = os.path.join(tmpdir, "input.json")
-            with open(input_json_file, "w") as input_json_file_data:
-                json.dump(input_json, input_json_file_data)
 
-            output_dir = os.path.join(tmpdir, "output")
-            tmp_dir = os.path.join(tmpdir, "tmp")
-            cache_dir = os.path.join(tmpdir, "cache")
-
-            command = [
-            "cwl-runner",
-            *CWL_ARGS,
-            "--outdir", output_dir,
-            "--tmpdir-prefix", tmp_dir,
-            "--cachedir", cache_dir,
-            cwl_file, input_json_file
-            ]
-
-            returncode, proc_stdout, proc_stderr = run_command(command)
-
-            if returncode != 0:
-                print(proc_stderr)
-
-            self.assertEqual(returncode, 0)
-
-            output_json = json.loads(proc_stdout)
+            output_json, output_dir = run_cwl(
+                testcase = self,
+                tmpdir = tmpdir,
+                input_json = input_json,
+                cwl_file = cwl_file)
 
             with open(output_json['analysis_mutations_file']['path']) as fin:
                 output_maf_lines = len(fin.readlines())
