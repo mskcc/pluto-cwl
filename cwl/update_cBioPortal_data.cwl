@@ -9,7 +9,7 @@ baseCommand: ["bash","update_cBioPortal_data_wrapper.sh"]
 
 requirements:
   DockerRequirement:
-    dockerPull: mskcc/helix_filters_01:20.08.1
+    dockerPull: mskcc/helix_filters_01:20.10.0
   InitialWorkDirRequirement:
     listing:
       - entryname: update_cBioPortal_data_wrapper.sh

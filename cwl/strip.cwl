@@ -5,7 +5,7 @@ class: CommandLineTool
 baseCommand: [ grep, -v, '#' ]
 requirements:
   DockerRequirement:
-    dockerPull: mskcc/helix_filters_01:20.08.1
+    dockerPull: mskcc/helix_filters_01:20.10.0
 stdout: $(inputs.input_file.basename).strip.txt
 inputs:
   input_file:

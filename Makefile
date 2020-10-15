@@ -493,7 +493,7 @@ test:
 # $ make test3 -j 4
 TESTS:=$(shell ls tests/test_*.py)
 $(TESTS):
-	module load singularity/3.3.0 && module load python/3.7.1 && module load cwl/cwltool && echo $@; python $@
+	module load singularity/3.3.0 && module load python/3.7.1 && module load cwl/cwltool && echo $@; $@
 .PHONY:$(TESTS)
 test3:$(TESTS)
 
