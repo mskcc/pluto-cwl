@@ -5,7 +5,7 @@ class: CommandLineTool
 baseCommand: [ tail ]
 requirements:
   DockerRequirement:
-    dockerPull: mskcc/helix_filters_01:20.10.0
+    dockerPull: mskcc/helix_filters_01:20.10.1
 stdout: $(inputs.input_file.basename).tail.txt
 inputs:
   num_lines:
