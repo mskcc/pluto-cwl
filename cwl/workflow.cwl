@@ -143,6 +143,9 @@ inputs:
   analysis_mutations_filename:
     type: string
     doc: "(ANALYSIS_MUTATIONS_FILENAME; <project_id>.muts.maf)"
+  analysis_mutations_share_filename:
+    type: string
+    doc: "<project_id>.muts.share.maf)"
   cbio_segment_data_filename:
     type: string
     doc: "(CBIO_SEGMENT_DATA_FILENAME; <project_id>_data_cna_hg19.seg)"
@@ -261,6 +264,7 @@ steps:
       analysis_sv_filename: analysis_sv_filename
       analysis_gene_cna_filename: analysis_gene_cna_filename
       analysis_mutations_filename: analysis_mutations_filename
+      analysis_mutations_share_filename: analysis_mutations_share_filename
       mutation_maf_files: mutation_maf_files
       facets_hisens_seg_files: facets_hisens_seg_files
       facets_hisens_cncf_files: facets_hisens_cncf_files
