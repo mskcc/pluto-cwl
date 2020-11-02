@@ -22,6 +22,9 @@ inputs:
   analysis_mutations_filename:
     type: string
     doc: "(ANALYSIS_MUTATIONS_FILENAME; <project_id>.muts.maf)"
+  analysis_mutations_share_filename:
+    type: string
+    doc: "<project_id>.muts.share.maf"
   mutation_maf_files:
     type: File[]
     doc: "analysis_mutations_filename (ANALYSIS_MUTATIONS_FILENAME) cbio_mutation_data_filename (CBIO_MUTATION_DATA_FILENAME): (MAF_DIR)/*.muts.maf"
@@ -94,6 +97,14 @@ steps:
         output_filename: analysis_mutations_filename # <project_id>.muts.maf
       out:
         [ output_file ]
+  # create a version of the maf with fewer columns; shareable maf <project_id>.muts.share.maf
+  filter_maf_cols:
+    run: maf_col_filter.cwl
+    in:
+      input_file: add_maf_comment/output_file
+      output_filename: analysis_mutations_share_filename # <project_id>.muts.share.maf
+    out:
+      [ output_file ]
 
   # <project_id>.seg.cna.txt (analysis_segment_cna_filename)
   # need to reduce the number of significant figures in the hisens_segs files
@@ -143,6 +154,7 @@ steps:
     in:
       gene_cna_file: generate_cna_data/output_cna_file # <project_id>.gene.cna.txt
       muts_maf_file: add_maf_comment/output_file # <project_id>.muts.maf
+      muts_share_maf_file: filter_maf_cols/output_file
       hisens_segs: rename_analysis_hisens_segs/output_file # <project_id>.seg.cna.txt
       svs_maf_file: rename_analysis_svs_maf/output_file # <project_id>.svs.maf
       output_directory_name:
@@ -151,6 +163,7 @@ steps:
         valueFrom: ${ return [
           inputs.gene_cna_file,
           inputs.muts_maf_file,
+          inputs.muts_share_maf_file,
           inputs.hisens_segs,
           inputs.svs_maf_file
           ]}
