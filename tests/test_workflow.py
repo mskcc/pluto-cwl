@@ -11,11 +11,11 @@ from tempfile import TemporaryDirectory, NamedTemporaryFile
 
 # relative imports, from CLI and from parent project
 if __name__ != "__main__":
-    from .tools import run_command, load_mutations, run_cwl
+    from .tools import load_mutations, run_cwl
     from .settings import CWL_DIR, CWL_ARGS, DATA_SETS, KNOWN_FUSIONS_FILE
 
 if __name__ == "__main__":
-    from tools import run_command, load_mutations, run_cwl
+    from tools import load_mutations, run_cwl
     from settings import CWL_DIR, CWL_ARGS, DATA_SETS, KNOWN_FUSIONS_FILE
 
 cwl_file = os.path.join(CWL_DIR, 'workflow.cwl')
