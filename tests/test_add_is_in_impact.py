@@ -60,13 +60,16 @@ class TestMafFilter(unittest.TestCase):
             self.assertEqual(output_maf_lines, 12518)
 
             # validate output mutation file contents
-            comments, mutations = load_mutations(output_json['IMPACT_col_added_file']['path'])#output file here     # output_json['analysis_mutations_file']['path'])
+            input_comments,  input_mutations  = load_mutations(input_maf)
+            output_comments, output_mutations = load_mutations(output_json['IMPACT_col_added_file']['path'])
 
-            true_count=[row['is_in_impact'] for row in mutations].count('True')
-            false_count=[row['is_in_impact'] for row in mutations].count('False')
+            true_count=[row['is_in_impact'] for row in output_mutations].count('True')
+            false_count=[row['is_in_impact'] for row in output_mutations].count('False')
 
             self.assertTrue(true_count == 8367)
             self.assertTrue(false_count == 4147)
+
+            self.assertTrue(len(input_mutations[1])+1==len(output_mutations[1]))
 
 
 
