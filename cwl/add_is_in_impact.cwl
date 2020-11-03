@@ -17,7 +17,6 @@ inputs:
       position: 1
   output_filename:
     type: string
-    default: "default_file_name_here.maf"
     inputBinding:
       prefix: '--output_file'
       position: 2

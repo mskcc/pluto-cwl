@@ -11,39 +11,35 @@ from tempfile import TemporaryDirectory, NamedTemporaryFile
 # relative imports, from CLI and from parent project
 if __name__ != "__main__":
     from .tools import run_command, load_mutations, run_cwl
-    from .settings import CWL_DIR, CWL_ARGS, DATA_SETS, ARGOS_VERSION_STRING, IS_IMPACT
+    from .settings import CWL_DIR, CWL_ARGS, DATA_SETS, ARGOS_VERSION_STRING, IS_IMPACT, IMPACT_FILE
 
 if __name__ == "__main__":
     from tools import run_command, load_mutations, run_cwl
-    from settings import CWL_DIR, CWL_ARGS, DATA_SETS, ARGOS_VERSION_STRING, IS_IMPACT
+    from settings import CWL_DIR, CWL_ARGS, DATA_SETS, ARGOS_VERSION_STRING, IS_IMPACT, IMPACT_FILE
 
-cwl_file = os.path.join(CWL_DIR, 'maf_filter.cwl')
+cwl_file = os.path.join(CWL_DIR, 'add_is_in_impact.cwl')
 
 class TestMafFilter(unittest.TestCase):
     def test_filter_a_maf_file(self):
         """
-        Test that a filtered maf file comes out as expected
+        Test that a maf file with is_in_IMPACT column comes out as expected
         """
         self.maxDiff = None
         input_maf = os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample1.Sample2.muts.maf")
-        impact_file = os.path.join(, "") ##### <== add IMPACT file name here
+        impact_file = os.path.join(IMPACT_FILE)
+        output_maf='abcd.maf'
+
 
         with open(input_maf) as fin:
             input_maf_lines = len(fin.readlines())
-
         self.assertEqual(input_maf_lines, 12518)
 
         with TemporaryDirectory() as tmpdir:
             output_dir = os.path.join(tmpdir, "output")
             input_json = {
-                "input_file": {
-                      "class": "File",
-                      "path": input_maf
-                    },
-                "IMPACT_filename": {
-                      "class": "File",
-                      "path": impact_file
-                    },
+                "input_file": input_maf,
+                "IMPACT_filename": impact_file,
+                "output_filename": output_maf,
             }
 
             output_json, output_dir = run_cwl(
@@ -52,12 +48,12 @@ class TestMafFilter(unittest.TestCase):
                 input_json = input_json,
                 cwl_file = cwl_file)
 
-            with open(output_json['analysis_mutations_file']['path']) as fin:
+            with open(output_maf) as fin:
                 output_maf_lines = len(fin.readlines())
             self.assertEqual(output_maf_lines, 12518)
 
             # validate output mutation file contents
-            comments, mutations = load_mutations()#output file here     # output_json['analysis_mutations_file']['path'])
+            comments, mutations = load_mutations(output_maf)#output file here     # output_json['analysis_mutations_file']['path'])
 
             true_count=[row['is_in_impact'] for row in mutations].count('True')
             false_count=[row['is_in_impact'] for row in mutations].count('False')
