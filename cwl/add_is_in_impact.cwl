@@ -7,11 +7,11 @@ baseCommand: ['add_is_in_impact.py']
 
 requirements:
   DockerRequirement:
-    dockerPull: mskcc/helix_filters_01:20.10.1
+    dockerPull: mskcc/helix_filters_01:dev
 
 inputs:
   input_file:
-    type: string
+    type: File
     inputBinding:
       prefix: '--input_file'
       position: 1
@@ -21,7 +21,7 @@ inputs:
       prefix: '--output_file'
       position: 2
   IMPACT_filename:
-    type: string
+    type: File
     inputBinding:
       prefix: '--IMPACT_file'
       position: 3

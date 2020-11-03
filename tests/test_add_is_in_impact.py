@@ -27,7 +27,7 @@ class TestMafFilter(unittest.TestCase):
         self.maxDiff = None
         input_maf = os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample1.Sample2.muts.maf")
         impact_file = os.path.join(IMPACT_FILE)
-        output_maf='abcd.maf'
+        output_maf = 'output.maf'
 
 
         with open(input_maf) as fin:
@@ -37,55 +37,37 @@ class TestMafFilter(unittest.TestCase):
         with TemporaryDirectory() as tmpdir:
             output_dir = os.path.join(tmpdir, "output")
             input_json = {
-                "input_file": input_maf,
-                "IMPACT_filename": impact_file,
-                "output_filename": output_maf,
+                "input_file": {
+                      "class": "File",
+                      "path": input_maf
+                    },
+                "output_filename":  output_maf,
+                "IMPACT_filename": {
+                      "class": "File",
+                      "path": impact_file
+                    },
             }
 
             output_json, output_dir = run_cwl(
                 testcase = self,
                 tmpdir = tmpdir,
                 input_json = input_json,
-                cwl_file = cwl_file)
+                cwl_file = cwl_file
+                )
 
-            with open(output_maf) as fin:
+            with open(output_json['IMPACT_col_added_file']['path']) as fin:
                 output_maf_lines = len(fin.readlines())
             self.assertEqual(output_maf_lines, 12518)
 
             # validate output mutation file contents
-            comments, mutations = load_mutations(output_maf)#output file here     # output_json['analysis_mutations_file']['path'])
+            comments, mutations = load_mutations(output_json['IMPACT_col_added_file']['path'])#output file here     # output_json['analysis_mutations_file']['path'])
 
             true_count=[row['is_in_impact'] for row in mutations].count('True')
             false_count=[row['is_in_impact'] for row in mutations].count('False')
 
-            self.assertTrue(true_count == 56)  #count of True should be 56
-            self.assertTrue(false_count == 12458) #count of False should be 12458
+            self.assertTrue(true_count == 8367)
+            self.assertTrue(false_count == 4147)
 
-
-            # for mutation in expected_mutations:
-            #     self.assertTrue(mutation in mutations)
-            #
-            # self.assertEqual(len(mutations), len(expected_mutations))
-            #
-            # comments, mutations = load_mutations(output_json['cbio_mutation_data_file']['path'])
-            # expected_comments, expected_mutations = load_mutations(os.path.join(DATA_SETS['Proj_08390_G']['MAF_FILTER_DIR'], "Sample1", "portal_file.txt"))
-            #
-            # for mutation in expected_mutations:
-            #     self.assertTrue(mutation in mutations)
-            #
-            # self.assertEqual(len(mutations), len(expected_mutations))
-            #
-            # expected_output = {
-            #     'analysis_mutations_file': {
-            #         'location': 'file://' + os.path.join(output_dir, "Proj_08390_G.muts.maf"),
-            #         'basename': "Proj_08390_G.muts.maf",
-            #         'class': 'File',
-            #         'checksum': 'sha1$24421ab8d1a39a71f48eecbb0dd167d5d9f5c529',
-            #         'size': 28079,
-            #         'path': os.path.join(output_dir, "Proj_08390_G.muts.maf")
-            #         }
-            #     }
-            # self.assertDictEqual(output_json, expected_output)
 
 
 if __name__ == "__main__":
