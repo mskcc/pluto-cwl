@@ -11,11 +11,11 @@ from tempfile import TemporaryDirectory, NamedTemporaryFile
 
 # relative imports, from CLI and from parent project
 if __name__ != "__main__":
-    from .tools import run_command, load_mutations
+    from .tools import load_mutations, run_cwl
     from .settings import CWL_DIR, CWL_ARGS, DATA_SETS, KNOWN_FUSIONS_FILE
 
 if __name__ == "__main__":
-    from tools import run_command, load_mutations
+    from tools import load_mutations, run_cwl
     from settings import CWL_DIR, CWL_ARGS, DATA_SETS, KNOWN_FUSIONS_FILE
 
 cwl_file = os.path.join(CWL_DIR, 'workflow.cwl')
@@ -40,6 +40,7 @@ class TestWorkflow(unittest.TestCase):
             "cancer_study_identifier": 'Proj_08390_G',
             "analysis_gene_cna_filename": "Proj_08390_G.gene.cna.txt",
             "analysis_mutations_filename": "Proj_08390_G.muts.maf",
+            "analysis_mutations_share_filename": "Proj_08390_G.muts.share.maf",
             "analysis_segment_cna_filename": "Proj_08390_G.seg.cna.txt",
             "analysis_sv_filename": "Proj_08390_G.svs.maf",
             "cbio_meta_cna_segments_filename": "Proj_08390_G_meta_cna_hg19_seg.txt",
@@ -94,32 +95,11 @@ class TestWorkflow(unittest.TestCase):
         }
 
         with TemporaryDirectory() as tmpdir:
-
-            input_json_file = os.path.join(tmpdir, "input.json")
-            with open(input_json_file, "w") as json_out:
-                json.dump(input_json, json_out)
-
-            output_dir = os.path.join(tmpdir, "output")
-            tmp_dir = os.path.join(tmpdir, "tmp")
-            cache_dir = os.path.join(tmpdir, "cache")
-
-            command = [
-                "cwl-runner",
-                *CWL_ARGS,
-                "--outdir", output_dir,
-                "--tmpdir-prefix", tmp_dir,
-                "--cachedir", cache_dir,
-                cwl_file, input_json_file
-                ]
-
-            returncode, proc_stdout, proc_stderr = run_command(command)
-
-            if returncode != 0:
-                print(proc_stderr)
-
-            self.assertEqual(returncode, 0)
-
-            output_json = json.loads(proc_stdout)
+            output_json, output_dir = run_cwl(
+                testcase = self,
+                tmpdir = tmpdir,
+                input_json = input_json,
+                cwl_file = cwl_file)
 
             expected_output = {
                 'analysis_dir': {
@@ -143,6 +123,14 @@ class TestWorkflow(unittest.TestCase):
                             'checksum': 'sha1$9b506f93b744ea6dd35c7ef9ba29b4f91cb92de1',
                             'size': 31943,
                             'path': os.path.join(output_dir, 'analysis/Proj_08390_G.muts.maf')
+                        },
+                        {
+                            'location': 'file://' + os.path.join(output_dir, 'analysis/Proj_08390_G.muts.share.maf'),
+                            'basename': 'Proj_08390_G.muts.share.maf',
+                            'class': 'File',
+                            'checksum': 'sha1$3e68b4939613d7502f4c7fe791cf7eb2acb43506',
+                            'size': 6139,
+                            'path': os.path.join(output_dir, 'analysis/Proj_08390_G.muts.share.maf')
                         },
                         {
                             'location': 'file://' + os.path.join(output_dir, 'analysis/Proj_08390_G.seg.cna.txt'),
@@ -356,6 +344,7 @@ class TestWorkflow(unittest.TestCase):
             "cancer_study_identifier": 'Proj_08390_G',
             "analysis_gene_cna_filename": "Proj_08390_G.gene.cna.txt",
             "analysis_mutations_filename": "Proj_08390_G.muts.maf",
+            "analysis_mutations_share_filename": "Proj_08390_G.muts.share.maf",
             "analysis_segment_cna_filename": "Proj_08390_G.seg.cna.txt",
             "analysis_sv_filename": "Proj_08390_G.svs.maf",
             "cbio_meta_cna_segments_filename": "Proj_08390_G_meta_cna_hg19_seg.txt",
@@ -429,31 +418,11 @@ class TestWorkflow(unittest.TestCase):
             ]
         }
         with TemporaryDirectory() as tmpdir:
-            input_json_file = os.path.join(tmpdir, "input.json")
-            with open(input_json_file, "w") as json_out:
-                json.dump(input_json, json_out)
-
-            output_dir = os.path.join(tmpdir, "output")
-            tmp_dir = os.path.join(tmpdir, "tmp")
-            cache_dir = os.path.join(tmpdir, "cache")
-
-            command = [
-                "cwl-runner",
-                *CWL_ARGS,
-                "--outdir", output_dir,
-                "--tmpdir-prefix", tmp_dir,
-                "--cachedir", cache_dir,
-                cwl_file, input_json_file
-                ]
-
-            returncode, proc_stdout, proc_stderr = run_command(command)
-
-            if returncode != 0:
-                print(proc_stderr)
-
-            self.assertEqual(returncode, 0)
-
-            output_json = json.loads(proc_stdout)
+            output_json, output_dir = run_cwl(
+                testcase = self,
+                tmpdir = tmpdir,
+                input_json = input_json,
+                cwl_file = cwl_file)
 
             expected_output = {
                 'analysis_dir': {
@@ -474,6 +443,14 @@ class TestWorkflow(unittest.TestCase):
                         'checksum': 'sha1$aea0871b7acf07ced0621340c78a41bad52c20bc',
                         'size': 52475,
                         'path': os.path.join(output_dir, 'analysis/Proj_08390_G.muts.maf')},
+                        {
+                            'location': 'file://' + os.path.join(output_dir, 'analysis/Proj_08390_G.muts.share.maf'),
+                            'basename': 'Proj_08390_G.muts.share.maf',
+                            'class': 'File',
+                            'checksum': 'sha1$ca7daec2e00b0751a16505860213e1c6065f804b',
+                            'size': 8938,
+                            'path': os.path.join(output_dir, 'analysis/Proj_08390_G.muts.share.maf')
+                        },
                         {'location': 'file://' + os.path.join(output_dir, 'analysis/Proj_08390_G.seg.cna.txt'),
                         'basename': 'Proj_08390_G.seg.cna.txt',
                         'class': 'File',

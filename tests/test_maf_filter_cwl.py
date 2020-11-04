@@ -6,7 +6,7 @@ unit tests for the maf_filter.cwl
 import os
 import json
 import unittest
-from tempfile import TemporaryDirectory, NamedTemporaryFile
+from tempfile import TemporaryDirectory
 
 # relative imports, from CLI and from parent project
 if __name__ != "__main__":

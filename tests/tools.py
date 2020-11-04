@@ -103,3 +103,14 @@ def load_mutations(filename):
         reader = csv.DictReader(fin, delimiter = '\t')
         mutations = [ row for row in reader ]
     return(comments, mutations)
+
+def write_table(tmpdir, filename, lines, delimiter = '\t'):
+    """
+    Write a table to a temp location
+    """
+    filepath = os.path.join(tmpdir, filename)
+    with open(filepath, "w") as f:
+        for line in lines:
+            line_str = delimiter.join(line) + '\n'
+            f.write(line_str)
+    return(filepath)
