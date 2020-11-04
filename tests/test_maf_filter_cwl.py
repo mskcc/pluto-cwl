@@ -248,6 +248,7 @@ class TestMafFilter(unittest.TestCase):
         """
         Test that a giant maf file with tons of variants gets filtered as expected
         """
+        self.maxDiff = None
         input_maf = os.path.join(DATA_SETS['Proj_08390_G']['MAF_FILTER_DIR'], "Proj_08390_G", "Proj_08390_G.muts.maf")
 
         with TemporaryDirectory() as tmpdir:
@@ -268,6 +269,34 @@ class TestMafFilter(unittest.TestCase):
                 tmpdir = tmpdir,
                 input_json = input_json,
                 cwl_file = cwl_file)
+
+            expected_output = {
+                'analysis_mutations_file': {
+                    'location': 'file://' + os.path.join(output_dir, "Proj_08390_G.muts.maf"),
+                    'basename': "Proj_08390_G.muts.maf",
+                    'class': 'File',
+                    'checksum': 'sha1$4ef341ab4280140f9be15e65a0258a4170ff651d',
+                    'size': 2386906,
+                    'path': os.path.join(output_dir, "Proj_08390_G.muts.maf")
+                    },
+                'cbio_mutation_data_file': {
+                    'location': 'file://' + os.path.join(output_dir, 'data_mutations_extended.txt'),
+                    'basename': 'data_mutations_extended.txt',
+                    'class': 'File',
+                    'checksum': 'sha1$af36cf815820fdf41f1401578138b5cbd551a217',
+                    'size': 278458,
+                    'path': os.path.join(output_dir, 'data_mutations_extended.txt')
+                    },
+                'rejected_file': {
+                    'basename': 'rejected.muts.maf',
+                    'checksum': 'sha1$345953da2c7cb801fa08368260469cf7c153055f',
+                    'class': 'File',
+                    'location': 'file://' + os.path.join(output_dir, 'rejected.muts.maf'),
+                    'path': os.path.join(output_dir, 'rejected.muts.maf'),
+                    'size': 1047796463
+                    }
+                }
+            self.assertDictEqual(output_json, expected_output)
 
             with open(output_json['analysis_mutations_file']['path']) as fin:
                 output_maf_lines = len(fin.readlines())
