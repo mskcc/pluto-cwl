@@ -19,20 +19,14 @@ if __name__ == "__main__":
 
 cwl_file = os.path.join(CWL_DIR, 'add_is_in_impact.cwl')
 
-class TestMafFilter(unittest.TestCase):
-    def test_filter_a_maf_file(self):
+class TestAddImpactCWL(unittest.TestCase):
+    def test_add_impact_1(self):
         """
         Test that a maf file with is_in_IMPACT column comes out as expected
         """
         self.maxDiff = None
         input_maf = os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample1.Sample2.muts.maf")
         impact_file = os.path.join(IMPACT_FILE)
-        output_maf = 'output.maf'
-
-
-        with open(input_maf) as fin:
-            input_maf_lines = len(fin.readlines())
-        self.assertEqual(input_maf_lines, 12518)
 
         with TemporaryDirectory() as tmpdir:
             output_dir = os.path.join(tmpdir, "output")
@@ -41,7 +35,7 @@ class TestMafFilter(unittest.TestCase):
                       "class": "File",
                       "path": input_maf
                     },
-                "output_filename":  output_maf,
+                "output_filename":  'output.maf',
                 "IMPACT_filename": {
                       "class": "File",
                       "path": impact_file
