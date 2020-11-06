@@ -98,6 +98,18 @@ class TestMafColFilter(unittest.TestCase):
                 input_json = input_json,
                 cwl_file = cwl_file)
 
+            expected_output = {
+                'output_file': {
+                    'location': 'file://' + os.path.join(output_dir, 'output.maf'),
+                    'basename': 'output.maf',
+                    'class': 'File',
+                    'checksum': 'sha1$e55f7bdaa146f37b48d6c920ed27184e394ef1e6',
+                    'size': 46,
+                    'path': os.path.join(output_dir, 'output.maf')
+                    }
+                }
+            self.assertDictEqual(output_json, expected_output)
+
             # validate number of lines output
             with open(output_json['output_file']['path']) as fin:
                 output_maf_lines = len(fin.readlines())
@@ -133,6 +145,18 @@ class TestMafColFilter(unittest.TestCase):
                 input_json = input_json,
                 cwl_file = cwl_file)
 
+            expected_output = {
+                'output_file': {
+                    'location': 'file://' + os.path.join(output_dir, 'output.maf'),
+                    'basename': 'output.maf',
+                    'class': 'File',
+                    'checksum': 'sha1$a2f5b9f1533fd443b41561ca718ffca62ab45f36',
+                    'size': 2710681,
+                    'path': os.path.join(output_dir, 'output.maf')
+                    }
+                }
+            self.assertDictEqual(output_json, expected_output)
+
             # validate number of lines output
             with open(output_json['output_file']['path']) as fin:
                 output_maf_lines = len(fin.readlines())
@@ -146,6 +170,7 @@ class TestMafColFilter(unittest.TestCase):
             for key in mutations[0].keys():
                 self.assertTrue(key in cols_to_keep)
 
+            # make sure there are fewer than or equal to the number of columns in new output as there are entries to keep 
             self.assertTrue( len(mutations[0].keys()) <= len(cols_to_keep) )
 
 

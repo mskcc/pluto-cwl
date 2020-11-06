@@ -55,6 +55,7 @@ def run_cwl(
 
     returncode, proc_stdout, proc_stderr = run_command(command)
 
+
     if print_stdout:
         print(proc_stdout)
 
