@@ -97,11 +97,19 @@ steps:
         output_filename: analysis_mutations_filename # <project_id>.muts.maf
       out:
         [ output_file ]
+  # add the AF allele frequency column to the maf
+  add_af:
+    run: add_af.cwl
+    in:
+      input_file: add_maf_comment/output_file
+      output_filename: analysis_mutations_filename
+    out:
+      [ output_file ]
   # create a version of the maf with fewer columns; shareable maf <project_id>.muts.share.maf
   filter_maf_cols:
     run: maf_col_filter.cwl
     in:
-      input_file: add_maf_comment/output_file
+      input_file: add_af/output_file
       output_filename: analysis_mutations_share_filename # <project_id>.muts.share.maf
     out:
       [ output_file ]
@@ -153,7 +161,7 @@ steps:
     run: put_in_dir.cwl
     in:
       gene_cna_file: generate_cna_data/output_cna_file # <project_id>.gene.cna.txt
-      muts_maf_file: add_maf_comment/output_file # <project_id>.muts.maf
+      muts_maf_file: add_af/output_file # <project_id>.muts.maf
       muts_share_maf_file: filter_maf_cols/output_file
       hisens_segs: rename_analysis_hisens_segs/output_file # <project_id>.seg.cna.txt
       svs_maf_file: rename_analysis_svs_maf/output_file # <project_id>.svs.maf

@@ -117,16 +117,16 @@ class TestWorkflow(unittest.TestCase):
                             'location': 'file://' + os.path.join(output_dir, 'analysis/Proj_08390_G.muts.maf'),
                             'basename': 'Proj_08390_G.muts.maf',
                             'class': 'File',
-                            'checksum': 'sha1$ab415a160a0827449e5f084568058b1a0893c18b',
-                            'size': 38093,
+                            'checksum': 'sha1$b50be82f178a4be0cb4e1f6520e469034bc9c925',
+                            'size': 38484,
                             'path': os.path.join(output_dir, 'analysis/Proj_08390_G.muts.maf')
                         },
                         {
                             'location': 'file://' + os.path.join(output_dir, 'analysis/Proj_08390_G.muts.share.maf'),
                             'basename': 'Proj_08390_G.muts.share.maf',
                             'class': 'File',
-                            'checksum': 'sha1$2c487e5938b5982f386f6b68ff4379d15a2944e0',
-                            'size': 5977,
+                            'checksum': 'sha1$857155211a58d4e2a04db8f3aecde4be61629fda',
+                            'size': 6391,
                             'path': os.path.join(output_dir, 'analysis/Proj_08390_G.muts.share.maf')
                         },
                         {
@@ -507,15 +507,15 @@ class TestWorkflow(unittest.TestCase):
                         {'location': 'file://' + os.path.join(output_dir, 'analysis/Proj_08390_G.muts.maf'),
                         'basename': 'Proj_08390_G.muts.maf',
                         'class': 'File',
-                        'checksum': 'sha1$38ccb013d912dbf8ea4d508ac112513a6e44c88c',
-                        'size': 61631,
+                        'checksum': 'sha1$53c98a6c34d21146303f4b3d60e112e75eb76882',
+                        'size': 62228,
                         'path': os.path.join(output_dir, 'analysis/Proj_08390_G.muts.maf')},
                         {
                             'location': 'file://' + os.path.join(output_dir, 'analysis/Proj_08390_G.muts.share.maf'),
                             'basename': 'Proj_08390_G.muts.share.maf',
                             'class': 'File',
-                            'checksum': 'sha1$e9a5062bae0f15311c6562c0b78278095566d35c',
-                            'size': 8776,
+                            'checksum': 'sha1$a2debb89c411eed8620013c05b184e2e24e33984',
+                            'size': 9408,
                             'path': os.path.join(output_dir, 'analysis/Proj_08390_G.muts.share.maf')
                         },
                         {'location': 'file://' + os.path.join(output_dir, 'analysis/Proj_08390_G.seg.cna.txt'),

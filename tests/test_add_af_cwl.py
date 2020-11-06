@@ -4,23 +4,22 @@
 unit tests for the add_af.cwl
 """
 import os
-import json
 import unittest
 from tempfile import TemporaryDirectory
 
 # relative imports, from CLI and from parent project
 if __name__ != "__main__":
     from .tools import load_mutations, run_cwl, write_table
-    from .settings import CWL_DIR, DATA_SETS
+    from .settings import CWL_DIR
 
 if __name__ == "__main__":
     from tools import load_mutations, run_cwl, write_table
-    from settings import CWL_DIR, DATA_SETS
+    from settings import CWL_DIR
 
 cwl_file = os.path.join(CWL_DIR, 'add_af.cwl')
 
 class TestAddImpactCWL(unittest.TestCase):
-    def test_add_impact_0(self):
+    def test_add_af(self):
         """
         Test IMPACT CWL with tiny dataset
         """

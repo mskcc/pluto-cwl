@@ -12,11 +12,11 @@ from tempfile import TemporaryDirectory, NamedTemporaryFile
 # relative imports, from CLI and from parent project
 if __name__ != "__main__":
     from .tools import run_cwl, load_mutations
-    from .settings import CWL_DIR, CWL_ARGS, DATA_SETS, KNOWN_FUSIONS_FILE
+    from .settings import CWL_DIR, DATA_SETS
 
 if __name__ == "__main__":
     from tools import run_cwl, load_mutations
-    from settings import CWL_DIR, CWL_ARGS, DATA_SETS, KNOWN_FUSIONS_FILE
+    from settings import CWL_DIR, DATA_SETS
 
 cwl_file = os.path.join(CWL_DIR, 'analysis-workflow.cwl')
 
@@ -90,16 +90,16 @@ class TestAnalysisWorkflow(unittest.TestCase):
                             'location': 'file://' + os.path.join(output_dir, 'analysis/Proj_08390_G.muts.maf'),
                             'basename': 'Proj_08390_G.muts.maf',
                             'class': 'File',
-                            'checksum': 'sha1$9b506f93b744ea6dd35c7ef9ba29b4f91cb92de1',
-                            'size': 31943,
+                            'checksum': 'sha1$25247bee2d3fdf76dd64426e327736798660c6b4',
+                            'size': 32346,
                             'path': os.path.join(output_dir, 'analysis/Proj_08390_G.muts.maf')
                         },
                         {
                             'location': 'file://' + os.path.join(output_dir, 'analysis/Proj_08390_G.muts.share.maf'),
                             'basename': 'Proj_08390_G.muts.share.maf',
                             'class': 'File',
-                            'checksum': 'sha1$3e68b4939613d7502f4c7fe791cf7eb2acb43506',
-                            'size': 6139,
+                            'checksum': 'sha1$86a4932b612b73752ecdcda111d32b91f6c937d9',
+                            'size': 6565,
                             'path': os.path.join(output_dir, 'analysis/Proj_08390_G.muts.share.maf')
                         },
                         {
@@ -207,15 +207,15 @@ class TestAnalysisWorkflow(unittest.TestCase):
                         {'location': 'file://' + os.path.join(output_dir, 'analysis/Proj_08390_G.muts.maf'),
                         'basename': 'Proj_08390_G.muts.maf',
                         'class': 'File',
-                        'checksum': 'sha1$aea0871b7acf07ced0621340c78a41bad52c20bc',
-                        'size': 52475,
+                        'checksum': 'sha1$61a99e4c9ca4dbce12e52a3ed1c635738a162ffd',
+                        'size': 53071,
                         'path': os.path.join(output_dir, 'analysis/Proj_08390_G.muts.maf')},
                         {
                             'location': 'file://' + os.path.join(output_dir, 'analysis/Proj_08390_G.muts.share.maf'),
                             'basename': 'Proj_08390_G.muts.share.maf',
                             'class': 'File',
-                            'checksum': 'sha1$ca7daec2e00b0751a16505860213e1c6065f804b',
-                            'size': 8938,
+                            'checksum': 'sha1$c579fa93d8b096567d5d34bab09db9a5e1757302',
+                            'size': 9569,
                             'path': os.path.join(output_dir, 'analysis/Proj_08390_G.muts.share.maf')
                         },
                         {'location': 'file://' + os.path.join(output_dir, 'analysis/Proj_08390_G.seg.cna.txt'),
@@ -321,15 +321,15 @@ class TestAnalysisWorkflow(unittest.TestCase):
                         {'location': 'file://' + os.path.join(output_dir, 'analysis/Proj_08390_G.muts.maf'),
                         'basename': 'Proj_08390_G.muts.maf',
                         'class': 'File',
-                        'checksum': 'sha1$1a964935bb062e9c70a8dd02ca49ad82a9278af2',
-                        'size': 57919,
+                        'checksum': 'sha1$462310d9ca98e9475b75e601c75d2c6e2c3cf2ec',
+                        'size': 58528,
                         'path': os.path.join(output_dir, 'analysis/Proj_08390_G.muts.maf')},
                         {
                             'location': 'file://' + os.path.join(output_dir, 'analysis/Proj_08390_G.muts.share.maf'),
                             'basename': 'Proj_08390_G.muts.share.maf',
                             'class': 'File',
-                            'checksum': 'sha1$59e57bf90fbd61e9db000665b55ca9a842d726cc',
-                            'size': 8698,
+                            'checksum': 'sha1$5770ed1b1e386ce30b210b30c6cd3918868cf299',
+                            'size': 9342,
                             'path': os.path.join(output_dir, 'analysis/Proj_08390_G.muts.share.maf')
                         },
                         {'location': 'file://' + os.path.join(output_dir, 'analysis/Proj_08390_G.seg.cna.txt'),
@@ -367,6 +367,7 @@ class TestAnalysisWorkflow(unittest.TestCase):
             for colname in some_required_colnames:
                 self.assertTrue(colname in colnames, "Column label {} not present in the mutation file. Missing columns: {}".format(colname, [ c for c in some_required_colnames if c not in colnames ]))
 
+            self.assertEqual(mutations[0]['t_af'], '0.42953020134228187')
 
 if __name__ == "__main__":
     unittest.main()
