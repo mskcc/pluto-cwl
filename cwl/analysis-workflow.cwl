@@ -49,6 +49,9 @@ inputs:
   helix_filter_version:
     type: string
     doc: "the version label of this helix filter repo (HELIX_FILTER_VERSION; git describe --all --long)"
+  IMPACT_gene_list:
+    type: File
+    doc: "TSV file with gene labels and corresponding impact assays"
 
 steps:
   # <project_id>.gene.cna.txt (analysis_gene_cna_filename)
@@ -105,11 +108,20 @@ steps:
       output_filename: analysis_mutations_filename
     out:
       [ output_file ]
+  # label all the mutations that are in a gene covered by an IMPACT assay
+  add_is_in_impact:
+    run: add_is_in_impact.cwl
+    in:
+      input_file: add_af/output_file
+      output_filename: analysis_mutations_filename
+      IMPACT_file: IMPACT_gene_list
+    out:
+      [ IMPACT_col_added_file ]
   # create a version of the maf with fewer columns; shareable maf <project_id>.muts.share.maf
   filter_maf_cols:
     run: maf_col_filter.cwl
     in:
-      input_file: add_af/output_file
+      input_file: add_is_in_impact/IMPACT_col_added_file
       output_filename: analysis_mutations_share_filename # <project_id>.muts.share.maf
     out:
       [ output_file ]
@@ -161,7 +173,7 @@ steps:
     run: put_in_dir.cwl
     in:
       gene_cna_file: generate_cna_data/output_cna_file # <project_id>.gene.cna.txt
-      muts_maf_file: add_af/output_file # <project_id>.muts.maf
+      muts_maf_file: add_is_in_impact/IMPACT_col_added_file # <project_id>.muts.maf
       muts_share_maf_file: filter_maf_cols/output_file
       hisens_segs: rename_analysis_hisens_segs/output_file # <project_id>.seg.cna.txt
       svs_maf_file: rename_analysis_svs_maf/output_file # <project_id>.svs.maf

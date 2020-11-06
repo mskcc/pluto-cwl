@@ -20,7 +20,7 @@ inputs:
     inputBinding:
       prefix: '--output_file'
       position: 2
-  IMPACT_filename:
+  IMPACT_file: 
     type: File
     inputBinding:
       prefix: '--IMPACT_file'

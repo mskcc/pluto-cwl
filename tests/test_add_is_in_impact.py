@@ -48,7 +48,7 @@ class TestAddImpactCWL(unittest.TestCase):
                       "path": input_maf
                     },
                 "output_filename":  'output.maf',
-                "IMPACT_filename": {
+                "IMPACT_file": {
                       "class": "File",
                       "path": impact_file
                     },
@@ -90,19 +90,17 @@ class TestAddImpactCWL(unittest.TestCase):
         """
         self.maxDiff = None
         input_maf = os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample1.Sample2.muts.maf")
-        impact_file = os.path.join(IMPACT_FILE)
 
         with TemporaryDirectory() as tmpdir:
-            # output_dir = os.path.join(tmpdir, "output")
             input_json = {
                 "input_file": {
                       "class": "File",
                       "path": input_maf
                     },
                 "output_filename":  'output.maf',
-                "IMPACT_filename": {
+                "IMPACT_file": {
                       "class": "File",
-                      "path": impact_file
+                      "path": IMPACT_FILE
                     },
             }
 

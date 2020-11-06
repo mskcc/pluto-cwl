@@ -6,17 +6,17 @@ unit tests for the workflow.cwl
 import os
 import json
 import unittest
-from tempfile import TemporaryDirectory, NamedTemporaryFile
+from tempfile import TemporaryDirectory
 
 
 # relative imports, from CLI and from parent project
 if __name__ != "__main__":
     from .tools import load_mutations, run_cwl
-    from .settings import CWL_DIR, CWL_ARGS, DATA_SETS, KNOWN_FUSIONS_FILE
+    from .settings import CWL_DIR, DATA_SETS, KNOWN_FUSIONS_FILE, IMPACT_FILE
 
 if __name__ == "__main__":
     from tools import load_mutations, run_cwl
-    from settings import CWL_DIR, CWL_ARGS, DATA_SETS, KNOWN_FUSIONS_FILE
+    from settings import CWL_DIR, DATA_SETS, KNOWN_FUSIONS_FILE, IMPACT_FILE
 
 cwl_file = os.path.join(CWL_DIR, 'workflow.cwl')
 
@@ -46,6 +46,10 @@ class TestWorkflow(unittest.TestCase):
             "cbio_meta_cna_segments_filename": "Proj_08390_G_meta_cna_hg19_seg.txt",
             "cbio_segment_data_filename": "Proj_08390_G_data_cna_hg19.seg",
             "helix_filter_version": "20.06.1",
+            'IMPACT_gene_list': {
+                "path": IMPACT_FILE,
+                "class": "File"
+            },
             "data_clinical_file": {
                 "path": data_clinical_file,
                 "class": "File"
@@ -120,16 +124,16 @@ class TestWorkflow(unittest.TestCase):
                             'location': 'file://' + os.path.join(output_dir, 'analysis/Proj_08390_G.muts.maf'),
                             'basename': 'Proj_08390_G.muts.maf',
                             'class': 'File',
-                            'checksum': 'sha1$25247bee2d3fdf76dd64426e327736798660c6b4',
-                            'size': 32346,
+                            'checksum': 'sha1$2c8904927a917d6e935ef207582d995680574d16',
+                            'size': 33243,
                             'path': os.path.join(output_dir, 'analysis/Proj_08390_G.muts.maf')
                         },
                         {
                             'location': 'file://' + os.path.join(output_dir, 'analysis/Proj_08390_G.muts.share.maf'),
                             'basename': 'Proj_08390_G.muts.share.maf',
                             'class': 'File',
-                            'checksum': 'sha1$86a4932b612b73752ecdcda111d32b91f6c937d9',
-                            'size': 6565,
+                            'checksum': 'sha1$b5af4e0fcd89fecabf8095aa3d7690e5edb8dca1',
+                            'size': 7462,
                             'path': os.path.join(output_dir, 'analysis/Proj_08390_G.muts.share.maf')
                         },
                         {
@@ -350,6 +354,10 @@ class TestWorkflow(unittest.TestCase):
             "cbio_meta_cna_segments_filename": "Proj_08390_G_meta_cna_hg19_seg.txt",
             "cbio_segment_data_filename": "Proj_08390_G_data_cna_hg19.seg",
             "helix_filter_version": "20.06.1",
+            'IMPACT_gene_list': {
+                "path": IMPACT_FILE,
+                "class": "File"
+            },
             "data_clinical_file": {
                 "path": data_clinical_file,
                 "class": "File"
@@ -440,15 +448,15 @@ class TestWorkflow(unittest.TestCase):
                         {'location': 'file://' + os.path.join(output_dir, 'analysis/Proj_08390_G.muts.maf'),
                         'basename': 'Proj_08390_G.muts.maf',
                         'class': 'File',
-                        'checksum': 'sha1$61a99e4c9ca4dbce12e52a3ed1c635738a162ffd',
-                        'size': 53071,
+                        'checksum': 'sha1$d4352ee2b702877b84db2b632972ccad2441f3e0',
+                        'size': 54458,
                         'path': os.path.join(output_dir, 'analysis/Proj_08390_G.muts.maf')},
                         {
                             'location': 'file://' + os.path.join(output_dir, 'analysis/Proj_08390_G.muts.share.maf'),
                             'basename': 'Proj_08390_G.muts.share.maf',
                             'class': 'File',
-                            'checksum': 'sha1$c579fa93d8b096567d5d34bab09db9a5e1757302',
-                            'size': 9569,
+                            'checksum': 'sha1$086ce6517eae68e47160c8740c5f00d7c3454110',
+                            'size': 10956,
                             'path': os.path.join(output_dir, 'analysis/Proj_08390_G.muts.share.maf')
                         },
                         {'location': 'file://' + os.path.join(output_dir, 'analysis/Proj_08390_G.seg.cna.txt'),
@@ -593,6 +601,7 @@ class TestWorkflow(unittest.TestCase):
             comments, mutations = load_mutations(os.path.join(output_dir, 'portal', 'data_mutations_extended.txt'))
             self.assertEqual(len(mutations), 27)
 
+            # TODO: fix the Facets column headers so that this passes
             # load the data_CNA.txt file
             path = os.path.join(output_dir, 'portal/data_CNA.txt') # renamed from the data_CNA.scna.txt file ...
             with open(path) as f:

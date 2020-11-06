@@ -255,6 +255,9 @@ inputs:
     type:
     - "null"
     - File
+  IMPACT_gene_list:
+    type: File
+    doc: "TSV file with gene labels and corresponding impact assays"
 
 steps:
   run_analysis_workflow:
@@ -273,6 +276,7 @@ steps:
       argos_version_string: argos_version_string
       is_impact: is_impact
       helix_filter_version: helix_filter_version
+      IMPACT_gene_list: IMPACT_gene_list
     out:
       [ analysis_dir ]
 
