@@ -4,19 +4,18 @@
 unit tests for the portal-workflow.cwl
 """
 import os
-import json
 import unittest
-from tempfile import TemporaryDirectory, NamedTemporaryFile
+from tempfile import TemporaryDirectory
 
 
 # relative imports, from CLI and from parent project
 if __name__ != "__main__":
-    from .tools import run_command, load_mutations
-    from .settings import CWL_DIR, CWL_ARGS, DATA_SETS, KNOWN_FUSIONS_FILE
+    from .tools import load_mutations, run_cwl
+    from .settings import CWL_DIR, DATA_SETS, KNOWN_FUSIONS_FILE
 
 if __name__ == "__main__":
-    from tools import run_command, load_mutations
-    from settings import CWL_DIR, CWL_ARGS, DATA_SETS, KNOWN_FUSIONS_FILE
+    from tools import load_mutations, run_cwl
+    from settings import CWL_DIR, DATA_SETS, KNOWN_FUSIONS_FILE
 
 cwl_file = os.path.join(CWL_DIR, 'portal-workflow.cwl')
 
@@ -84,32 +83,12 @@ class TestPortalWorkflow(unittest.TestCase):
         }
 
         with TemporaryDirectory() as tmpdir:
-
-            input_json_file = os.path.join(tmpdir, "input.json")
-            with open(input_json_file, "w") as json_out:
-                json.dump(input_json, json_out)
-
-            output_dir = os.path.join(tmpdir, "output")
-            tmp_dir = os.path.join(tmpdir, "tmp")
-            cache_dir = os.path.join(tmpdir, "cache")
-
-            command = [
-                "cwl-runner",
-                *CWL_ARGS,
-                "--outdir", output_dir,
-                "--tmpdir-prefix", tmp_dir,
-                "--cachedir", cache_dir,
-                cwl_file, input_json_file
-                ]
-
-            returncode, proc_stdout, proc_stderr = run_command(command)
-
-            if returncode != 0:
-                print(proc_stderr)
-
-            self.assertEqual(returncode, 0)
-
-            output_json = json.loads(proc_stdout)
+            output_json, output_dir = run_cwl(
+                testcase = self,
+                tmpdir = tmpdir,
+                input_json = input_json,
+                cwl_file = cwl_file
+                )
 
             expected_output = {
                     'portal_dir': {
@@ -364,31 +343,12 @@ class TestPortalWorkflow(unittest.TestCase):
             ]
         }
         with TemporaryDirectory() as tmpdir:
-            input_json_file = os.path.join(tmpdir, "input.json")
-            with open(input_json_file, "w") as json_out:
-                json.dump(input_json, json_out)
-
-            output_dir = os.path.join(tmpdir, "output")
-            tmp_dir = os.path.join(tmpdir, "tmp")
-            cache_dir = os.path.join(tmpdir, "cache")
-
-            command = [
-                "cwl-runner",
-                *CWL_ARGS,
-                "--outdir", output_dir,
-                "--tmpdir-prefix", tmp_dir,
-                "--cachedir", cache_dir,
-                cwl_file, input_json_file
-                ]
-
-            returncode, proc_stdout, proc_stderr = run_command(command)
-
-            if returncode != 0:
-                print(proc_stderr)
-
-            self.assertEqual(returncode, 0)
-
-            output_json = json.loads(proc_stdout)
+            output_json, output_dir = run_cwl(
+                testcase = self,
+                tmpdir = tmpdir,
+                input_json = input_json,
+                cwl_file = cwl_file
+                )
 
             expected_output = {
                 'portal_dir': {
@@ -627,32 +587,12 @@ class TestPortalWorkflow(unittest.TestCase):
         }
 
         with TemporaryDirectory() as tmpdir:
-
-            input_json_file = os.path.join(tmpdir, "input.json")
-            with open(input_json_file, "w") as json_out:
-                json.dump(input_json, json_out)
-
-            output_dir = os.path.join(tmpdir, "output")
-            tmp_dir = os.path.join(tmpdir, "tmp")
-            cache_dir = os.path.join(tmpdir, "cache")
-
-            command = [
-                "cwl-runner",
-                *CWL_ARGS,
-                "--outdir", output_dir,
-                "--tmpdir-prefix", tmp_dir,
-                "--cachedir", cache_dir,
-                cwl_file, input_json_file
-                ]
-
-            returncode, proc_stdout, proc_stderr = run_command(command)
-
-            if returncode != 0:
-                print(proc_stderr)
-
-            self.assertEqual(returncode, 0)
-
-            output_json = json.loads(proc_stdout)
+            output_json, output_dir = run_cwl(
+                testcase = self,
+                tmpdir = tmpdir,
+                input_json = input_json,
+                cwl_file = cwl_file
+                )
 
             expected_output = {
                     'portal_dir': {
@@ -939,33 +879,12 @@ class TestPortalWorkflow(unittest.TestCase):
         }
 
         with TemporaryDirectory() as tmpdir:
-
-            input_json_file = os.path.join(tmpdir, "input.json")
-            with open(input_json_file, "w") as json_out:
-                json.dump(input_json, json_out)
-
-            output_dir = os.path.join(tmpdir, "output")
-            tmp_dir = os.path.join(tmpdir, "tmp")
-            cache_dir = os.path.join(tmpdir, "cache")
-
-            command = [
-                "cwl-runner",
-                *CWL_ARGS,
-                "--debug",
-                "--outdir", output_dir,
-                "--tmpdir-prefix", tmp_dir,
-                "--cachedir", cache_dir,
-                cwl_file, input_json_file
-                ]
-
-            returncode, proc_stdout, proc_stderr = run_command(command)
-
-            if returncode != 0:
-                print(proc_stderr)
-
-            self.assertEqual(returncode, 0)
-
-            output_json = json.loads(proc_stdout)
+            output_json, output_dir = run_cwl(
+                testcase = self,
+                tmpdir = tmpdir,
+                input_json = input_json,
+                cwl_file = cwl_file
+                )
 
             expected_output = {
                     'portal_dir': {
@@ -1249,33 +1168,12 @@ class TestPortalWorkflow(unittest.TestCase):
         }
 
         with TemporaryDirectory() as tmpdir:
-
-            input_json_file = os.path.join(tmpdir, "input.json")
-            with open(input_json_file, "w") as json_out:
-                json.dump(input_json, json_out)
-
-            output_dir = os.path.join(tmpdir, "output")
-            tmp_dir = os.path.join(tmpdir, "tmp")
-            cache_dir = os.path.join(tmpdir, "cache")
-
-            command = [
-                "cwl-runner",
-                *CWL_ARGS,
-                "--debug",
-                "--outdir", output_dir,
-                "--tmpdir-prefix", tmp_dir,
-                "--cachedir", cache_dir,
-                cwl_file, input_json_file
-                ]
-
-            returncode, proc_stdout, proc_stderr = run_command(command)
-
-            if returncode != 0:
-                print(proc_stderr)
-
-            self.assertEqual(returncode, 0)
-
-            output_json = json.loads(proc_stdout)
+            output_json, output_dir = run_cwl(
+                testcase = self,
+                tmpdir = tmpdir,
+                input_json = input_json,
+                cwl_file = cwl_file
+                )
 
             expected_output = {
                     'portal_dir': {

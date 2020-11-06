@@ -4,17 +4,16 @@
 unit tests for the generate_cbioPortal_file.cwl file
 """
 import os
-import json
 import unittest
 from tempfile import TemporaryDirectory
 
 # relative imports, from CLI and from parent project
 if __name__ != "__main__":
-    from .tools import run_cwl
+    from .tools import run_cwl, write_table
     from .settings import CWL_DIR, DATA_SETS
 
 if __name__ == "__main__":
-    from tools import run_cwl
+    from tools import run_cwl, write_table
     from settings import CWL_DIR, DATA_SETS
 
 cwl_file = os.path.join(CWL_DIR, 'generate_cBioPortal_file.cwl')
@@ -598,6 +597,52 @@ class TestGenerateCbioFilesCWL(unittest.TestCase):
             }
             self.maxDiff = None
             self.assertDictEqual(output_json, expected_output)
+
+    def test_clean_facets_suite_cna_data(self):
+        """
+        Test that we can clean up the bad headers on some Facets Suite CNA files
+        """
+        with TemporaryDirectory() as tmpdir:
+            cna_lines = [
+            ['Hugo_Symbol', 'sample1', 'sample2_hisens'],
+            ['ABL1', '3;1', '3;NA']
+            ]
+            input_file = write_table(tmpdir, "data_CNA.txt", cna_lines)
+
+            input_json = {
+                "subcommand": "clean_cna",
+                "output_filename": "output.txt",
+                "input_file": {
+                    "path": input_file,
+                    "class": "File"
+                    }
+            }
+
+            output_json, output_dir = run_cwl(
+                testcase = self,
+                tmpdir = tmpdir,
+                input_json = input_json,
+                cwl_file = cwl_file
+                )
+
+            output_file = os.path.join(output_dir, 'output.txt')
+            expected_output = {
+                'output_file': {
+                    'location': 'file://' + output_file,
+                    'basename': 'output.txt',
+                    'class': 'File',
+                    'checksum': 'sha1$a0ce27a97eca74902ac63638e3d34b0ed77da554',
+                    'size': 42,
+                    'path': output_file
+                }
+            }
+            self.maxDiff = None
+            self.assertDictEqual(output_json, expected_output)
+
+            with open(output_file) as fin:
+                lines = [ l for l in fin ]
+            expected_lines = ['Hugo_Symbol\tsample1\tsample2\n', 'ABL1\t3;1\t3;NA\n']
+            self.assertEqual(lines, expected_lines)
 
 if __name__ == "__main__":
     unittest.main()

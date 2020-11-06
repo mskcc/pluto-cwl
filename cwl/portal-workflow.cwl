@@ -337,6 +337,26 @@ steps:
       output_filename: cbio_cna_data_filename # data_CNA.txt
     out:
       [ output_file ]
+  # need to clean the header columns on some of the data_CNA.scna.txt and data_CNA.txt files
+  clean_cna_headers:
+    run: generate_cBioPortal_file.cwl
+    in:
+      subcommand:
+        valueFrom: ${ return "clean_cna" }
+      input_file:  replace_illogical_values/output_file
+      output_filename: cbio_cna_data_filename
+    out:
+      [output_file]
+  clean_ascna_headers:
+    run: generate_cBioPortal_file.cwl
+    in:
+      subcommand:
+        valueFrom: ${ return "clean_cna" }
+      input_file:  generate_cna_data/output_cna_ascna_file
+      output_filename: cbio_cna_ascna_data_filename  # data_CNA.ascna.txt
+    out:
+      [output_file]
+
 
 
   # data_mutations_extended.txt (cbio_mutation_data_filename)
@@ -436,8 +456,8 @@ steps:
       meta_fusions_file: generate_cbio_meta_fusions/output_file # meta_fusions.txt
       meta_mutations_extended_file: generate_meta_mutations_extended/output_file # meta_mutations_extended.txt
       meta_cna_segments_file: generate_meta_cna_segments/output_file  # <project_id>_meta_cna_hg19_seg.txt
-      cna_data_file: replace_illogical_values/output_file # data_CNA.txt
-      cna_ascna_file: generate_cna_data/output_cna_ascna_file # data_CNA.ascna.txt
+      cna_data_file: clean_cna_headers/output_file # data_CNA.txt
+      cna_ascna_file: clean_ascna_headers/output_file # data_CNA.ascna.txt
       muts_file: concat_cbio_muts_maf/output_file # data_mutations_extended.txt
       hisens_segs: rename_cbio_hisens_segs/output_file # # <project_id>_data_cna_hg19.seg
       fusions_data_file: filter_cbio_fusions/output_file # data_fusions.txt

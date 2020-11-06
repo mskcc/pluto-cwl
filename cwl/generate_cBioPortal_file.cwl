@@ -6,7 +6,7 @@ baseCommand: [ "generate_cbioPortal_files.py" ]
 
 requirements:
   DockerRequirement:
-    dockerPull: mskcc/helix_filters_01:20.10.1
+    dockerPull: mskcc/helix_filters_01:dev
 
 inputs:
   # required for every invocation
@@ -107,6 +107,11 @@ inputs:
     inputBinding:
       prefix: '--facets-txt-files'
       position: 20
+  input_file:
+    type: [ 'null', File ]
+    inputBinding:
+      prefix: '--input'
+      position: 21
 
 outputs:
   output_file:
