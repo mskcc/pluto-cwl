@@ -6,17 +6,16 @@ unit tests for the generate_cbioPortal_file.cwl file
 import os
 import json
 import unittest
-from tempfile import TemporaryDirectory, NamedTemporaryFile
-
+from tempfile import TemporaryDirectory
 
 # relative imports, from CLI and from parent project
 if __name__ != "__main__":
-    from .tools import run_command
-    from .settings import CWL_DIR, CWL_ARGS, DATA_SETS
+    from .tools import run_cwl
+    from .settings import CWL_DIR, DATA_SETS
 
 if __name__ == "__main__":
-    from tools import run_command
-    from settings import CWL_DIR, CWL_ARGS, DATA_SETS
+    from tools import run_cwl
+    from settings import CWL_DIR, DATA_SETS
 
 cwl_file = os.path.join(CWL_DIR, 'generate_cBioPortal_file.cwl')
 
@@ -32,30 +31,12 @@ class TestGenerateCbioFilesCWL(unittest.TestCase):
         "output_filename": "meta_clinical_sample.txt"
         }
         with TemporaryDirectory() as tmpdir:
-            input_json_file = os.path.join(tmpdir, "input.json")
-            with open(input_json_file, "w") as json_out:
-                json.dump(input_json, json_out)
-
-            output_dir = os.path.join(tmpdir, "output")
-            tmp_dir = os.path.join(tmpdir, "tmp")
-            cache_dir = os.path.join(tmpdir, "cache")
-
-            command = [
-                "cwl-runner",
-                *CWL_ARGS,
-                "--outdir", output_dir,
-                "--tmpdir-prefix", tmp_dir,
-                "--cachedir", cache_dir,
-                cwl_file, input_json_file
-                ]
-            returncode, proc_stdout, proc_stderr = run_command(command)
-
-            if returncode != 0:
-                print(proc_stderr)
-
-            self.assertEqual(returncode, 0)
-
-            output_json = json.loads(proc_stdout)
+            output_json, output_dir = run_cwl(
+                testcase = self,
+                tmpdir = tmpdir,
+                input_json = input_json,
+                cwl_file = cwl_file
+                )
 
             expected_output = {
                 'output_file': {
@@ -90,30 +71,12 @@ class TestGenerateCbioFilesCWL(unittest.TestCase):
         "output_filename": "data_clinical_patient.txt"
         }
         with TemporaryDirectory() as tmpdir:
-            input_json_file = os.path.join(tmpdir, "input.json")
-            with open(input_json_file, "w") as json_out:
-                json.dump(input_json, json_out)
-
-            output_dir = os.path.join(tmpdir, "output")
-            tmp_dir = os.path.join(tmpdir, "tmp")
-            cache_dir = os.path.join(tmpdir, "cache")
-
-            command = [
-                "cwl-runner",
-                *CWL_ARGS,
-                "--outdir", output_dir,
-                "--tmpdir-prefix", tmp_dir,
-                "--cachedir", cache_dir,
-                cwl_file, input_json_file
-                ]
-            returncode, proc_stdout, proc_stderr = run_command(command)
-
-            if returncode != 0:
-                print(proc_stderr)
-
-            self.assertEqual(returncode, 0)
-
-            output_json = json.loads(proc_stdout)
+            output_json, output_dir = run_cwl(
+                testcase = self,
+                tmpdir = tmpdir,
+                input_json = input_json,
+                cwl_file = cwl_file
+                )
 
             expected_output = {
                 'output_file': {
@@ -159,30 +122,12 @@ class TestGenerateCbioFilesCWL(unittest.TestCase):
         }
 
         with TemporaryDirectory() as tmpdir:
-            input_json_file = os.path.join(tmpdir, "input.json")
-            with open(input_json_file, "w") as json_out:
-                json.dump(input_json, json_out)
-
-            output_dir = os.path.join(tmpdir, "output")
-            tmp_dir = os.path.join(tmpdir, "tmp")
-            cache_dir = os.path.join(tmpdir, "cache")
-
-            command = [
-                "cwl-runner",
-                *CWL_ARGS,
-                "--outdir", output_dir,
-                "--tmpdir-prefix", tmp_dir,
-                "--cachedir", cache_dir,
-                cwl_file, input_json_file
-                ]
-            returncode, proc_stdout, proc_stderr = run_command(command)
-
-            if returncode != 0:
-                print(proc_stderr)
-
-            self.assertEqual(returncode, 0)
-
-            output_json = json.loads(proc_stdout)
+            output_json, output_dir = run_cwl(
+                testcase = self,
+                tmpdir = tmpdir,
+                input_json = input_json,
+                cwl_file = cwl_file
+                )
 
             expected_output = {
                 'output_file': {
@@ -225,30 +170,13 @@ class TestGenerateCbioFilesCWL(unittest.TestCase):
         ]
         }
         with TemporaryDirectory() as tmpdir:
-            input_json_file = os.path.join(tmpdir, "input.json")
-            with open(input_json_file, "w") as json_out:
-                json.dump(input_json, json_out)
+            output_json, output_dir = run_cwl(
+                testcase = self,
+                tmpdir = tmpdir,
+                input_json = input_json,
+                cwl_file = cwl_file
+                )
 
-            output_dir = os.path.join(tmpdir, "output")
-            tmp_dir = os.path.join(tmpdir, "tmp")
-            cache_dir = os.path.join(tmpdir, "cache")
-
-            command = [
-                "cwl-runner",
-                *CWL_ARGS,
-                "--outdir", output_dir,
-                "--tmpdir-prefix", tmp_dir,
-                "--cachedir", cache_dir,
-                cwl_file, input_json_file
-                ]
-            returncode, proc_stdout, proc_stderr = run_command(command)
-
-            if returncode != 0:
-                print(proc_stderr)
-
-            self.assertEqual(returncode, 0)
-
-            output_json = json.loads(proc_stdout)
             expected_output = {
                 'output_file': {
                     'location': 'file://' + os.path.join(output_dir, 'data_clinical_sample.txt'),
@@ -300,30 +228,12 @@ class TestGenerateCbioFilesCWL(unittest.TestCase):
         "extra_groups": "FOO1"
         }
         with TemporaryDirectory() as tmpdir:
-            input_json_file = os.path.join(tmpdir, "input.json")
-            with open(input_json_file, "w") as json_out:
-                json.dump(input_json, json_out)
-
-            output_dir = os.path.join(tmpdir, "output")
-            tmp_dir = os.path.join(tmpdir, "tmp")
-            cache_dir = os.path.join(tmpdir, "cache")
-
-            command = [
-                "cwl-runner",
-                *CWL_ARGS,
-                "--outdir", output_dir,
-                "--tmpdir-prefix", tmp_dir,
-                "--cachedir", cache_dir,
-                cwl_file, input_json_file
-                ]
-            returncode, proc_stdout, proc_stderr = run_command(command)
-
-            if returncode != 0:
-                print(proc_stderr)
-
-            self.assertEqual(returncode, 0)
-
-            output_json = json.loads(proc_stdout)
+            output_json, output_dir = run_cwl(
+                testcase = self,
+                tmpdir = tmpdir,
+                input_json = input_json,
+                cwl_file = cwl_file
+                )
 
             expected_output = {
                 'output_file': {
@@ -354,30 +264,12 @@ class TestGenerateCbioFilesCWL(unittest.TestCase):
         "patient_data_filename": "data_clinical_patient.txt"
         }
         with TemporaryDirectory() as tmpdir:
-            input_json_file = os.path.join(tmpdir, "input.json")
-            with open(input_json_file, "w") as json_out:
-                json.dump(input_json, json_out)
-
-            output_dir = os.path.join(tmpdir, "output")
-            tmp_dir = os.path.join(tmpdir, "tmp")
-            cache_dir = os.path.join(tmpdir, "cache")
-
-            command = [
-                "cwl-runner",
-                *CWL_ARGS,
-                "--outdir", output_dir,
-                "--tmpdir-prefix", tmp_dir,
-                "--cachedir", cache_dir,
-                cwl_file, input_json_file
-                ]
-            returncode, proc_stdout, proc_stderr = run_command(command)
-
-            if returncode != 0:
-                print(proc_stderr)
-
-            self.assertEqual(returncode, 0)
-
-            output_json = json.loads(proc_stdout)
+            output_json, output_dir = run_cwl(
+                testcase = self,
+                tmpdir = tmpdir,
+                input_json = input_json,
+                cwl_file = cwl_file
+                )
 
             expected_output = {
                 'output_file': {
@@ -408,30 +300,12 @@ class TestGenerateCbioFilesCWL(unittest.TestCase):
         "cna_data_filename": "data_CNA.txt"
         }
         with TemporaryDirectory() as tmpdir:
-            input_json_file = os.path.join(tmpdir, "input.json")
-            with open(input_json_file, "w") as json_out:
-                json.dump(input_json, json_out)
-
-            output_dir = os.path.join(tmpdir, "output")
-            tmp_dir = os.path.join(tmpdir, "tmp")
-            cache_dir = os.path.join(tmpdir, "cache")
-
-            command = [
-                "cwl-runner",
-                *CWL_ARGS,
-                "--outdir", output_dir,
-                "--tmpdir-prefix", tmp_dir,
-                "--cachedir", cache_dir,
-                cwl_file, input_json_file
-                ]
-            returncode, proc_stdout, proc_stderr = run_command(command)
-
-            if returncode != 0:
-                print(proc_stderr)
-
-            self.assertEqual(returncode, 0)
-
-            output_json = json.loads(proc_stdout)
+            output_json, output_dir = run_cwl(
+                testcase = self,
+                tmpdir = tmpdir,
+                input_json = input_json,
+                cwl_file = cwl_file
+                )
 
             expected_output = {
                 'output_file': {
@@ -463,30 +337,12 @@ class TestGenerateCbioFilesCWL(unittest.TestCase):
         "fusion_data_filename": "data_fusions.txt"
         }
         with TemporaryDirectory() as tmpdir:
-            input_json_file = os.path.join(tmpdir, "input.json")
-            with open(input_json_file, "w") as json_out:
-                json.dump(input_json, json_out)
-
-            output_dir = os.path.join(tmpdir, "output")
-            tmp_dir = os.path.join(tmpdir, "tmp")
-            cache_dir = os.path.join(tmpdir, "cache")
-
-            command = [
-                "cwl-runner",
-                *CWL_ARGS,
-                "--outdir", output_dir,
-                "--tmpdir-prefix", tmp_dir,
-                "--cachedir", cache_dir,
-                cwl_file, input_json_file
-                ]
-            returncode, proc_stdout, proc_stderr = run_command(command)
-
-            if returncode != 0:
-                print(proc_stderr)
-
-            self.assertEqual(returncode, 0)
-
-            output_json = json.loads(proc_stdout)
+            output_json, output_dir = run_cwl(
+                testcase = self,
+                tmpdir = tmpdir,
+                input_json = input_json,
+                cwl_file = cwl_file
+                )
 
             expected_output = {
                 'output_file': {
@@ -518,30 +374,12 @@ class TestGenerateCbioFilesCWL(unittest.TestCase):
         "mutations_data_filename": "data_mutations_extended.txt"
         }
         with TemporaryDirectory() as tmpdir:
-            input_json_file = os.path.join(tmpdir, "input.json")
-            with open(input_json_file, "w") as json_out:
-                json.dump(input_json, json_out)
-
-            output_dir = os.path.join(tmpdir, "output")
-            tmp_dir = os.path.join(tmpdir, "tmp")
-            cache_dir = os.path.join(tmpdir, "cache")
-
-            command = [
-                "cwl-runner",
-                *CWL_ARGS,
-                "--outdir", output_dir,
-                "--tmpdir-prefix", tmp_dir,
-                "--cachedir", cache_dir,
-                cwl_file, input_json_file
-                ]
-            returncode, proc_stdout, proc_stderr = run_command(command)
-
-            if returncode != 0:
-                print(proc_stderr)
-
-            self.assertEqual(returncode, 0)
-
-            output_json = json.loads(proc_stdout)
+            output_json, output_dir = run_cwl(
+                testcase = self,
+                tmpdir = tmpdir,
+                input_json = input_json,
+                cwl_file = cwl_file
+                )
 
             expected_output = {
                 'output_file': {
@@ -573,30 +411,12 @@ class TestGenerateCbioFilesCWL(unittest.TestCase):
         "segmented_data_filename": "Proj_08390_G_data_cna_hg19.seg"
         }
         with TemporaryDirectory() as tmpdir:
-            input_json_file = os.path.join(tmpdir, "input.json")
-            with open(input_json_file, "w") as json_out:
-                json.dump(input_json, json_out)
-
-            output_dir = os.path.join(tmpdir, "output")
-            tmp_dir = os.path.join(tmpdir, "tmp")
-            cache_dir = os.path.join(tmpdir, "cache")
-
-            command = [
-                "cwl-runner",
-                *CWL_ARGS,
-                "--outdir", output_dir,
-                "--tmpdir-prefix", tmp_dir,
-                "--cachedir", cache_dir,
-                cwl_file, input_json_file
-                ]
-            returncode, proc_stdout, proc_stderr = run_command(command)
-
-            if returncode != 0:
-                print(proc_stderr)
-
-            self.assertEqual(returncode, 0)
-
-            output_json = json.loads(proc_stdout)
+            output_json, output_dir = run_cwl(
+                testcase = self,
+                tmpdir = tmpdir,
+                input_json = input_json,
+                cwl_file = cwl_file
+                )
 
             expected_output = {
                 'output_file': {
@@ -633,30 +453,12 @@ class TestGenerateCbioFilesCWL(unittest.TestCase):
         }
 
         with TemporaryDirectory() as tmpdir:
-            input_json_file = os.path.join(tmpdir, "input.json")
-            with open(input_json_file, "w") as json_out:
-                json.dump(input_json, json_out)
-
-            output_dir = os.path.join(tmpdir, "output")
-            tmp_dir = os.path.join(tmpdir, "tmp")
-            cache_dir = os.path.join(tmpdir, "cache")
-
-            command = [
-                "cwl-runner",
-                *CWL_ARGS,
-                "--outdir", output_dir,
-                "--tmpdir-prefix", tmp_dir,
-                "--cachedir", cache_dir,
-                cwl_file, input_json_file
-                ]
-            returncode, proc_stdout, proc_stderr = run_command(command)
-
-            if returncode != 0:
-                print(proc_stderr)
-
-            self.assertEqual(returncode, 0)
-
-            output_json = json.loads(proc_stdout)
+            output_json, output_dir = run_cwl(
+                testcase = self,
+                tmpdir = tmpdir,
+                input_json = input_json,
+                cwl_file = cwl_file
+                )
 
             expected_output = {
                 'output_file': {
@@ -693,30 +495,12 @@ class TestGenerateCbioFilesCWL(unittest.TestCase):
         }
 
         with TemporaryDirectory() as tmpdir:
-            input_json_file = os.path.join(tmpdir, "input.json")
-            with open(input_json_file, "w") as json_out:
-                json.dump(input_json, json_out)
-
-            output_dir = os.path.join(tmpdir, "output")
-            tmp_dir = os.path.join(tmpdir, "tmp")
-            cache_dir = os.path.join(tmpdir, "cache")
-
-            command = [
-                "cwl-runner",
-                *CWL_ARGS,
-                "--outdir", output_dir,
-                "--tmpdir-prefix", tmp_dir,
-                "--cachedir", cache_dir,
-                cwl_file, input_json_file
-                ]
-            returncode, proc_stdout, proc_stderr = run_command(command)
-
-            if returncode != 0:
-                print(proc_stderr)
-
-            self.assertEqual(returncode, 0)
-
-            output_json = json.loads(proc_stdout)
+            output_json, output_dir = run_cwl(
+                testcase = self,
+                tmpdir = tmpdir,
+                input_json = input_json,
+                cwl_file = cwl_file
+                )
 
             expected_output = {
                 'output_file': {
@@ -753,30 +537,12 @@ class TestGenerateCbioFilesCWL(unittest.TestCase):
         }
 
         with TemporaryDirectory() as tmpdir:
-            input_json_file = os.path.join(tmpdir, "input.json")
-            with open(input_json_file, "w") as json_out:
-                json.dump(input_json, json_out)
-
-            output_dir = os.path.join(tmpdir, "output")
-            tmp_dir = os.path.join(tmpdir, "tmp")
-            cache_dir = os.path.join(tmpdir, "cache")
-
-            command = [
-                "cwl-runner",
-                *CWL_ARGS,
-                "--outdir", output_dir,
-                "--tmpdir-prefix", tmp_dir,
-                "--cachedir", cache_dir,
-                cwl_file, input_json_file
-                ]
-            returncode, proc_stdout, proc_stderr = run_command(command)
-
-            if returncode != 0:
-                print(proc_stderr)
-
-            self.assertEqual(returncode, 0)
-
-            output_json = json.loads(proc_stdout)
+            output_json, output_dir = run_cwl(
+                testcase = self,
+                tmpdir = tmpdir,
+                input_json = input_json,
+                cwl_file = cwl_file
+                )
 
             expected_output = {
                 'output_file': {
@@ -813,30 +579,12 @@ class TestGenerateCbioFilesCWL(unittest.TestCase):
         }
 
         with TemporaryDirectory() as tmpdir:
-            input_json_file = os.path.join(tmpdir, "input.json")
-            with open(input_json_file, "w") as json_out:
-                json.dump(input_json, json_out)
-
-            output_dir = os.path.join(tmpdir, "output")
-            tmp_dir = os.path.join(tmpdir, "tmp")
-            cache_dir = os.path.join(tmpdir, "cache")
-
-            command = [
-                "cwl-runner",
-                *CWL_ARGS,
-                "--outdir", output_dir,
-                "--tmpdir-prefix", tmp_dir,
-                "--cachedir", cache_dir,
-                cwl_file, input_json_file
-                ]
-            returncode, proc_stdout, proc_stderr = run_command(command)
-
-            if returncode != 0:
-                print(proc_stderr)
-
-            self.assertEqual(returncode, 0)
-
-            output_json = json.loads(proc_stdout)
+            output_json, output_dir = run_cwl(
+                testcase = self,
+                tmpdir = tmpdir,
+                input_json = input_json,
+                cwl_file = cwl_file
+                )
 
             expected_output = {
                 'output_file': {
@@ -850,7 +598,6 @@ class TestGenerateCbioFilesCWL(unittest.TestCase):
             }
             self.maxDiff = None
             self.assertDictEqual(output_json, expected_output)
-
 
 if __name__ == "__main__":
     unittest.main()
