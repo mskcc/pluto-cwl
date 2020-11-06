@@ -1,21 +1,21 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-unit tests for the maf_filter.cwl
+unit tests for the add_is_in_impact.cwl
 """
 import os
 import json
 import unittest
-from tempfile import TemporaryDirectory, NamedTemporaryFile
+from tempfile import TemporaryDirectory
 
 # relative imports, from CLI and from parent project
 if __name__ != "__main__":
-    from .tools import run_command, load_mutations, run_cwl, write_table
-    from .settings import CWL_DIR, CWL_ARGS, DATA_SETS, ARGOS_VERSION_STRING, IS_IMPACT, IMPACT_FILE
+    from .tools import load_mutations, run_cwl, write_table
+    from .settings import CWL_DIR, DATA_SETS, IMPACT_FILE
 
 if __name__ == "__main__":
-    from tools import run_command, load_mutations, run_cwl, write_table
-    from settings import CWL_DIR, CWL_ARGS, DATA_SETS, ARGOS_VERSION_STRING, IS_IMPACT, IMPACT_FILE
+    from tools import load_mutations, run_cwl, write_table
+    from settings import CWL_DIR, DATA_SETS, IMPACT_FILE
 
 cwl_file = os.path.join(CWL_DIR, 'add_is_in_impact.cwl')
 
