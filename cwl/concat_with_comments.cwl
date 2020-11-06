@@ -8,7 +8,7 @@ baseCommand: [ 'concat_with_comments.sh' ]
 
 requirements:
   DockerRequirement:
-    dockerPull: mskcc/helix_filters_01:20.10.1
+    dockerPull: mskcc/helix_filters_01:20.11.1
 
 inputs:
   comment_label:
