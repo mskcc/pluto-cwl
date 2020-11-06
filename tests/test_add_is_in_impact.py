@@ -29,11 +29,14 @@ class TestAddImpactCWL(unittest.TestCase):
             ['# comment 2'],
             ['Hugo_Symbol'],
             ['SUFU'],
-            ['GOT1']
+            ['GOT1'],
+            ['BRCA']
         ]
 
         impact_lines = [
-        ['SUFU']
+        ['BRCA', 'IMPACT468'],
+        ['SUFU', 'IMPACT468'],
+        ['SUFU', 'IMPACT505']
         ]
 
         with TemporaryDirectory() as tmpdir:
@@ -62,8 +65,8 @@ class TestAddImpactCWL(unittest.TestCase):
                     'location': 'file://' + os.path.join(output_dir, 'output.maf'),
                     'basename': 'output.maf',
                     'class': 'File',
-                    'checksum': 'sha1$6708055e2cadbbb9d409d828ec0d6c37d340274f',
-                    'size': 70,
+                    'checksum': 'sha1$5c61f3977dad29ebc74966e8fc40a0278f9aab12',
+                    'size': 126,
                     'path': os.path.join(output_dir, 'output.maf')
                     }
                 }
@@ -75,8 +78,9 @@ class TestAddImpactCWL(unittest.TestCase):
             self.assertEqual(comments, expected_comments)
 
             expected_mutations = [
-                {'Hugo_Symbol': 'SUFU', 'is_in_impact': 'True'},
-                {'Hugo_Symbol': 'GOT1', 'is_in_impact': 'False'}
+                {'Hugo_Symbol': 'SUFU', 'is_in_impact': 'True', 'impact_assays': 'IMPACT468,IMPACT505'},
+                {'Hugo_Symbol': 'GOT1', 'is_in_impact': 'False', 'impact_assays': '.'},
+                {'Hugo_Symbol': 'BRCA', 'is_in_impact': 'True', 'impact_assays': 'IMPACT468'}
                 ]
             self.assertEqual(mutations, expected_mutations)
 
@@ -114,8 +118,8 @@ class TestAddImpactCWL(unittest.TestCase):
                     'location': 'file://' + os.path.join(output_dir, 'output.maf'),
                     'basename': 'output.maf',
                     'class': 'File',
-                    'checksum': 'sha1$d94362b7f33c11c9b64bcc68ee356e933da56c1d',
-                    'size': 15323931,
+                    'checksum': 'sha1$1397fade2f877c2bcfca791407e328c5c48e6ff0',
+                    'size': 15629589,
                     'path': os.path.join(output_dir, 'output.maf')
                     }
                 }
@@ -135,8 +139,8 @@ class TestAddImpactCWL(unittest.TestCase):
             self.assertTrue(true_count == 8367)
             self.assertTrue(false_count == 4147)
 
-            # check that its got an extra column in the output
-            self.assertTrue(len(input_mutations[1])+1==len(output_mutations[1]))
+            # check that its got two extra columns in the output
+            self.assertTrue(len(input_mutations[1])+2==len(output_mutations[1]))
 
 if __name__ == "__main__":
     unittest.main()

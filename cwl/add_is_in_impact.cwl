@@ -3,7 +3,7 @@
 
 cwlVersion: v1.0
 class: CommandLineTool
-baseCommand: ['add_is_in_impact.py']
+baseCommand: ['add_is_in_impact.py', '--include-assay']
 
 requirements:
   DockerRequirement:
