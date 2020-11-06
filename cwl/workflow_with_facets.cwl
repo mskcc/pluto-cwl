@@ -254,6 +254,9 @@ inputs:
           pair_id: string
           tumor_id: string
           normal_id: string
+  IMPACT_gene_list:
+    type: File
+    doc: "TSV file with gene labels and corresponding impact assays"
 
 steps:
   run_facets:
@@ -311,6 +314,7 @@ steps:
       known_fusions_file: known_fusions_file
       data_clinical_file: data_clinical_file
       sample_summary_file: sample_summary_file
+      IMPACT_gene_list: IMPACT_gene_list
     out:
       [portal_dir, analysis_dir]
 
