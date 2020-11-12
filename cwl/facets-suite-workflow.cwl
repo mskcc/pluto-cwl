@@ -426,6 +426,21 @@ steps:
     out:
       [ output_file, failed_txt, stdout_txt, stderr_txt ]
 
+  merge_maf:
+    run: update_cBioPortal_data.cwl
+    in:
+      pair_id: pair_id
+      subcommand:
+        valueFrom: ${ return "merge"; }
+      input_file: check_label_maf_normal/output_file
+      output_filename:
+        valueFrom: $(inputs.pair_id)_hisens.ccf.portal.maf
+      facets_txt: check_run_facets/single_facets_txt
+    scatter: [input_file]
+    scatterMethod: dotproduct
+    out:
+      [ output_file, failed_txt, stdout_txt, stderr_txt ]
+
   check_update_maf:
       in:
         output_file: update_maf/output_file
