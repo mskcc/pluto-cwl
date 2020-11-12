@@ -37,7 +37,7 @@ inputs:
     inputBinding:
       prefix: '--facets-txt'
       position: 4
-  facets_txt:
+  facets_maf:
     type: ['null', File]
     inputBinding:
       prefix: '--facets-maf'

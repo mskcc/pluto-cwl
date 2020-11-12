@@ -431,7 +431,7 @@ steps:
     in:
       pair_id: pair_id
       subcommand:
-        valueFrom: ${ return "merge"; }
+        valueFrom: ${ return "merge_mafs"; }
       input_file: check_label_maf_normal/output_file
       output_filename:
         valueFrom: $(inputs.pair_id)_hisens.ccf.portal.maf
