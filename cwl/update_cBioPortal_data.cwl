@@ -33,10 +33,16 @@ inputs:
       prefix: '--output'
       position: 3
   facets_txt:
-    type: File
+    type: ['null', File]
     inputBinding:
       prefix: '--facets-txt'
       position: 4
+  facets_txt:
+    type: ['null', File]
+    inputBinding:
+      prefix: '--facets-maf'
+      position: 5
+
 
 outputs:
   output_file:
