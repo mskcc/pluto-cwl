@@ -23,23 +23,105 @@ class TestUpdate_cBioPortal_dataCWL(unittest.TestCase):
         """
         Test Update_cBioPortal_dataCW with tiny dataset
         """
-        maf_lines = [
-            ['# comment 1'],
-            ['# comment 2'],
-            ['Hugo_Symbol', 't_depth', 't_alt_count','tcn','lcn','expected_alt_copies','ccf_expected_copies','ccf_expected_copies_lower','ccf_expected_copies_upper'],
-            ['SUFU', '100', '75','4','0.127','0.615','0.375'],
-            ['GOT1', '100', '1' ,'4','0.127','0.615','0.375'], # need to change the values
-            ['SOX9', '100', '0' ,'4','0.127','0.615','0.375'],
+        # maf_lines = [
+        #     ['# comment 1'],
+        #     ['# comment 2'],
+        #     ['Hugo_Symbol', 't_depth', 't_alt_count','tcn','lcn','expected_alt_copies','ccf_expected_copies','ccf_expected_copies_lower','ccf_expected_copies_upper'],
+        #     ['SUFU', '100', '75','4','0.127','0.615','0.375'],
+        #     ['GOT1', '100', '1' ,'4','0.127','0.615','0.375'], # need to change the values
+        #     ['SOX9', '100', '0' ,'4','0.127','0.615','0.375'],
+        # ]
+
+def setUp(self):
+        self.maf_row1 = {
+        "Hugo_Symbol" : "FGF3",
+        "Entrez_Gene_Id" : "2248",
+        "Chromosome" : "11",
+        "Start_Position" : "69625447",
+        "End_Position": "69625448",
+        "Tumor_Sample_Barcode": "Sample1-T",
+        "Matched_Norm_Sample_Barcode": "Sample1-N",
+        "portal_val": "foo" # dummy value that would only be in portal data_mutations_extended.txt output maf file
+        }
+        self.maf_row2 = {
+        "Hugo_Symbol" : "PNISR",
+        "Entrez_Gene_Id" : "25957",
+        "Chromosome" : "6",
+        "Start_Position" : "99865784",
+        "End_Position": "99865785",
+        "Tumor_Sample_Barcode": "Sample1-T",
+        "Matched_Norm_Sample_Barcode": "Sample1-N",
+        "portal_val": "foo" # dummy value that would only be in portal data_mutations_extended.txt output maf file
+        }
+        self.maf_row3 = { # extra row with no match in facets
+        "Hugo_Symbol" : "PNISR",
+        "Entrez_Gene_Id" : "25957",
+        "Chromosome" : "6",
+        "Start_Position" : "99865788",
+        "End_Position": "99865789",
+        "Tumor_Sample_Barcode": "Sample1-T",
+        "Matched_Norm_Sample_Barcode": "Sample1-N",
+        "portal_val": "foo" # dummy value that would only be in portal data_mutations_extended.txt output maf file
+        }
+        self.facets_row1 = {
+        "Hugo_Symbol" : "FGF3",
+        "Entrez_Gene_Id" : "2248",
+        "Chromosome" : "11",
+        "Start_Position" : "69625447",
+        "End_Position": "69625448",
+        "Tumor_Sample_Barcode": "Sample1-T",
+        "Matched_Norm_Sample_Barcode": "Sample1-N",
+        "ASCN.TOTAL_COPY_NUMBER": "1" # dummy value that would only be in facets Tumor1.Normal1_hisens.ccf.maf output maf file
+        }
+        self.facets_row2 = {
+        "Hugo_Symbol" : "PNISR",
+        "Entrez_Gene_Id" : "25957",
+        "Chromosome" : "6",
+        "Start_Position" : "99865784",
+        "End_Position": "99865785",
+        "Tumor_Sample_Barcode": "Sample1-T",
+        "Matched_Norm_Sample_Barcode": "Sample1-N",
+        "ASCN.TOTAL_COPY_NUMBER": "2" # dummy value that would only be in facets Tumor1.Normal1_hisens.ccf.maf output maf file
+        }
+        self.facets_row3 = { # extra row with no match in maf
+        "Hugo_Symbol" : "PNISR2",
+        "Entrez_Gene_Id" : "25957",
+        "Chromosome" : "6",
+        "Start_Position" : "99865784",
+        "End_Position": "99865785",
+        "Tumor_Sample_Barcode": "Sample1-T",
+        "Matched_Norm_Sample_Barcode": "Sample1-N",
+        "ASCN.TOTAL_COPY_NUMBER": "2" # dummy value that would only be in facets Tumor1.Normal1_hisens.ccf.maf output maf file
+        }
+
+        self.demo_comments = [
+        ['# comment 1'],
+        ['# comment 2']
         ]
 
 
+
+
+        self.maxDiff = None
+        # make sets of lines to write to tables
+        maf_rows = [ self.maf_row1, self.maf_row2, self.maf_row3 ]
+        maf_lines = dicts2lines(dict_list = maf_rows, comment_list = self.demo_comments)
+
+        facets_rows = [ self.facets_row1, self.facets_row2, self.facets_row3 ]
+        facets_lines = dicts2lines(dict_list = facets_rows, comment_list = self.demo_comments)
+
         with TemporaryDirectory() as tmpdir:
             input_maf = write_table(tmpdir = tmpdir, filename = 'input.maf', lines = maf_lines)
+            input_facets_file = write_table(tmpdir, filename = "facets.maf", lines = facets_lines)
             input_json = {
                 "subcommand": "merge_mafs",
                 "input_file": {
                       "class": "File",
                       "path": input_maf
+                    },
+                "facets_maf":{
+                      "class": "File",
+                      "path": input_facets_file
                     },
                 "output_filename":  'output.maf',
                 }
@@ -63,7 +145,7 @@ class TestUpdate_cBioPortal_dataCWL(unittest.TestCase):
                 }
 
             print('#######')
-            print(output_json)
+            print(input_json)
             print('#######')
 
             self.assertDictEqual(output_json, expected_output)
