@@ -9,30 +9,18 @@ from tempfile import TemporaryDirectory
 
 # relative imports, from CLI and from parent project
 if __name__ != "__main__":
-    from .tools import load_mutations, run_cwl, write_table
+    from .tools import load_mutations, run_cwl, write_table, dicts2lines
     from .settings import CWL_DIR
 
 if __name__ == "__main__":
-    from tools import load_mutations, run_cwl, write_table
+    from tools import load_mutations, run_cwl, write_table, dicts2lines
     from settings import CWL_DIR
 
 cwl_file = os.path.join(CWL_DIR, 'update_cBioPortal_data.cwl')
 
 class TestUpdate_cBioPortal_dataCWL(unittest.TestCase):
-    def test_add_af(self):
-        """
-        Test Update_cBioPortal_dataCW with tiny dataset
-        """
-        # maf_lines = [
-        #     ['# comment 1'],
-        #     ['# comment 2'],
-        #     ['Hugo_Symbol', 't_depth', 't_alt_count','tcn','lcn','expected_alt_copies','ccf_expected_copies','ccf_expected_copies_lower','ccf_expected_copies_upper'],
-        #     ['SUFU', '100', '75','4','0.127','0.615','0.375'],
-        #     ['GOT1', '100', '1' ,'4','0.127','0.615','0.375'], # need to change the values
-        #     ['SOX9', '100', '0' ,'4','0.127','0.615','0.375'],
-        # ]
 
-def setUp(self):
+    def setUp(self):
         self.maf_row1 = {
         "Hugo_Symbol" : "FGF3",
         "Entrez_Gene_Id" : "2248",
@@ -100,7 +88,10 @@ def setUp(self):
         ]
 
 
-
+    def test_add_af(self):
+        """
+        Test Update_cBioPortal_dataCW with tiny dataset
+        """
 
         self.maxDiff = None
         # make sets of lines to write to tables
@@ -148,20 +139,56 @@ def setUp(self):
             print(input_json)
             print('#######')
 
+
+            print(output_json)
+            print('#######')
+
+
+            input()
+
             self.assertDictEqual(output_json, expected_output)
 
             comments, mutations = load_mutations(output_json['output_file']['path'])
 
             expected_comments = ['# comment 1', '# comment 2']
-            self.assertEqual(comments, expected_comments)
+            # self.assertEqual(comments, expected_comments)
 
             expected_mutations = [
-                {'Hugo_Symbol': 'SUFU', 't_depth': '100', 't_alt_count':'75', 't_af': '0.75','tcn':'2', 'lcn':'1' ,'expected_alt_copies':'4','ccf_expected_copies':"0.127",'ccf_expected_copies_lower':"0.615",'ccf_expected_copies_upper':"0.375",'ASCN.TOTAL_COPY_NUMBER': "2",'ASCN.MINOR_COPY_NUMBER': "1",'ASCN.EXPECTED_ALT_COPIES': "4","ASCN.CCF_EXPECTED_COPIES": "0.127","ASCN.CCF_EXPECTED_COPIES_LOWER": "0.615","ASCN.CCF_EXPECTED_COPIES_UPPER": "0.375","ASCN.ASCN_METHOD": "FACETS","ASCN.ASCN_INTEGER_COPY_NUMBER": 'NA' },
-                {'Hugo_Symbol': 'GOT1', 't_depth': '100', 't_alt_count':'1','t_af': '0.75','tcn':'2', 'lcn':'1' ,'expected_alt_copies':'4','ccf_expected_copies':"0.127",'ccf_expected_copies_lower':"0.615",'ccf_expected_copies_upper':"0.375",'ASCN.TOTAL_COPY_NUMBER': "2",'ASCN.MINOR_COPY_NUMBER': "1",'ASCN.EXPECTED_ALT_COPIES': "4","ASCN.CCF_EXPECTED_COPIES": "0.127","ASCN.CCF_EXPECTED_COPIES_LOWER": "0.615","ASCN.CCF_EXPECTED_COPIES_UPPER": "0.375","ASCN.ASCN_METHOD": "FACETS","ASCN.ASCN_INTEGER_COPY_NUMBER": 'NA' },
-                {'Hugo_Symbol': 'SOX9', 't_depth': '100', 't_alt_count':'0','t_af': '0.75','tcn':'2', 'lcn':'1' ,'expected_alt_copies':'4','ccf_expected_copies':"0.127",'ccf_expected_copies_lower':"0.615",'ccf_expected_copies_upper':"0.375",'ASCN.TOTAL_COPY_NUMBER': "2",'ASCN.MINOR_COPY_NUMBER': "1",'ASCN.EXPECTED_ALT_COPIES': "4","ASCN.CCF_EXPECTED_COPIES": "0.127","ASCN.CCF_EXPECTED_COPIES_LOWER": "0.615","ASCN.CCF_EXPECTED_COPIES_UPPER": "0.375","ASCN.ASCN_METHOD": "FACETS","ASCN.ASCN_INTEGER_COPY_NUMBER": 'NA' }
-                ]
+                {
+                "Hugo_Symbol" : "FGF3",
+                "Entrez_Gene_Id" : "2248",
+                "Chromosome" : "11",
+                "Start_Position" : "69625447",
+                "End_Position": "69625448",
+                "Tumor_Sample_Barcode": "Sample1-T",
+                "Matched_Norm_Sample_Barcode": "Sample1-N",
+                "portal_val": "foo",
+                "ASCN.CLONAL": "1"
+                },
+                {
+                "Hugo_Symbol" : "PNISR",
+                "Entrez_Gene_Id" : "25957",
+                "Chromosome" : "6",
+                "Start_Position" : "99865784",
+                "End_Position": "99865785",
+                "Tumor_Sample_Barcode": "Sample1-T",
+                "Matched_Norm_Sample_Barcode": "Sample1-N",
+                "portal_val": "foo",
+                "ASCN.CLONAL": "2"
+                },
+                {
+                "Hugo_Symbol" : "PNISR",
+                "Entrez_Gene_Id" : "25957",
+                "Chromosome" : "6",
+                "Start_Position" : "99865788",
+                "End_Position": "99865789",
+                "Tumor_Sample_Barcode": "Sample1-T",
+                "Matched_Norm_Sample_Barcode": "Sample1-N",
+                "portal_val": "foo",
+                "ASCN.CLONAL": "."
+                }
+            ]
             self.assertEqual(mutations, expected_mutations)
-
 
 if __name__ == "__main__":
     unittest.main()

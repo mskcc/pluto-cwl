@@ -6,6 +6,8 @@ import subprocess as sp
 import csv
 import json
 from settings import CWL_ARGS
+from collections import OrderedDict
+
 
 def run_command(args):
     """
@@ -114,3 +116,25 @@ def write_table(tmpdir, filename, lines, delimiter = '\t'):
             line_str = delimiter.join(line) + '\n'
             f.write(line_str)
     return(filepath)
+
+def dicts2lines(dict_list, comment_list = None):
+    """
+    Helper function to convert a list of dicts into a list of lines to use with write_table
+    create a list of line parts to pass for write_table;
+    [ ['# comment1'], ['col1', 'col2'], ['val1', 'val2'], ... ]
+    """
+    fieldnames = OrderedDict() # use as an ordered set
+    # get the ordered fieldnames
+    for row in dict_list:
+        for key in row.keys():
+            fieldnames[key] = ''
+    # list to hold the lines to be written out
+    demo_maf_lines = []
+    if comment_list:
+        for line in comment_list:
+            demo_maf_lines.append(line)
+    fieldnames = [ f for f in fieldnames.keys() ]
+    demo_maf_lines.append(fieldnames)
+    for row in dict_list:
+        demo_maf_lines.append([ v for v in row.values() ])
+    return(demo_maf_lines)
