@@ -50,6 +50,7 @@ def run_cwl(
         "--outdir", output_dir,
         "--tmpdir-prefix", tmp_dir,
         "--cachedir", cache_dir,
+        "--debug",
         cwl_file, input_json_file
         ]
     if print_command:

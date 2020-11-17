@@ -121,37 +121,43 @@ class TestUpdate_cBioPortal_dataCWL(unittest.TestCase):
                 tmpdir = tmpdir,
                 input_json = input_json,
                 cwl_file = cwl_file,
-                print_command = True
+                print_command = False,
                 )
 
             expected_output = {
+                'failed_txt': None,
                 'output_file': {
                     'location': 'file://' + os.path.join(output_dir, 'output.maf'),
                     'basename': 'output.maf',
                     'class': 'File',
-                    #'checksum': 'sha1$39de59ad5d736db692504012ce86d3395685112e',
-                    #'size': 109,
+                    'checksum': 'sha1$73273a9ac68aa9a1b6e8d8747f268ea009bf7f0d',
+                    'size': 335,
                     'path': os.path.join(output_dir, 'output.maf')
-                    }
+                    },
+                'stderr_txt': {
+                    'location': 'file://' + os.path.join(output_dir, 'output.maf_stderr.txt'),
+                    'basename': 'output.maf_stderr.txt',
+                    'class': 'File',
+                    'checksum': 'sha1$da39a3ee5e6b4b0d3255bfef95601890afd80709',
+                    'size': 0,
+                    'path': os.path.join(output_dir, 'output.maf_stderr.txt')
+                    },
+                'stdout_txt':{
+                    'location': 'file://' + os.path.join(output_dir, 'output.maf_stdout.txt'),
+                    'basename': 'output.maf_stdout.txt',
+                    'class': 'File',
+                    'checksum': 'sha1$da39a3ee5e6b4b0d3255bfef95601890afd80709',
+                    'size': 0,
+                    'path': os.path.join(output_dir, 'output.maf_stdout.txt')}
+
                 }
-
-            print('#######')
-            print(input_json)
-            print('#######')
-
-
-            print(output_json)
-            print('#######')
-
-
-            input()
 
             self.assertDictEqual(output_json, expected_output)
 
             comments, mutations = load_mutations(output_json['output_file']['path'])
 
             expected_comments = ['# comment 1', '# comment 2']
-            # self.assertEqual(comments, expected_comments)
+            self.assertEqual(comments, expected_comments)
 
             expected_mutations = [
                 {
