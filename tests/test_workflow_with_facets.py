@@ -801,6 +801,10 @@ class TestWorkflow(unittest.TestCase):
             comments, mutations = load_mutations(os.path.join(output_dir, 'portal', 'data_mutations_extended.txt'))
             self.assertEqual(len(mutations), 27)
 
+            # the clonality column needs to have been added in the workflow output
+            for mut in mutations:
+                self.assertTrue('ASCN.CLONAL' in mut)
+
             # load the data_CNA.txt file
             path = os.path.join(output_dir, 'portal/data_CNA.txt') # renamed from the data_CNA.scna.txt file ...
             with open(path) as f:
