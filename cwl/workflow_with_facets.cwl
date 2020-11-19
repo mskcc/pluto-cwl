@@ -5,6 +5,8 @@ class: Workflow
 doc: "
 CWL workflow for generating Roslin / Argos post pipeline analysis files and cBioPortal data and metadata files
 
+This workflow includes Facets and Facets Suite usages
+
 Inputs
 ------
 
@@ -264,9 +266,43 @@ steps:
     in:
       pairs: pairs
     out:
-      [ purity_seg,hisens_seg,qc_txt,gene_level_txt,arm_level_txt,facets_txt,purity_rds,hisens_rds,annotated_maf,hisens_cncf_txt,output_dir,failed_pairs ]
-  run_workflow:
-    run: workflow.cwl
+      [
+        purity_seg,
+        hisens_seg,
+        qc_txt,
+        gene_level_txt,
+        arm_level_txt,
+        facets_txt,
+        purity_rds,
+        hisens_rds,
+        annotated_maf,
+        hisens_cncf_txt,
+        output_dir,
+        failed_pairs
+      ]
+
+  run_analysis_workflow:
+    run: analysis-workflow.cwl
+    in:
+      analysis_segment_cna_filename: analysis_segment_cna_filename
+      analysis_sv_filename: analysis_sv_filename
+      analysis_gene_cna_filename: analysis_gene_cna_filename
+      analysis_mutations_filename: analysis_mutations_filename
+      analysis_mutations_share_filename: analysis_mutations_share_filename
+      mutation_maf_files: run_facets/annotated_maf
+      facets_hisens_seg_files: run_facets/hisens_seg
+      facets_hisens_cncf_files: run_facets/hisens_cncf_txt
+      mutation_svs_maf_files: mutation_svs_maf_files
+      targets_list: targets_list
+      argos_version_string: argos_version_string
+      is_impact: is_impact
+      helix_filter_version: helix_filter_version
+      IMPACT_gene_list: IMPACT_gene_list
+    out:
+      [ analysis_dir ]
+
+  run_portal_workflow:
+    run: portal-workflow.cwl
     in:
       project_id: project_id
       project_pi: project_pi
@@ -280,11 +316,6 @@ steps:
       helix_filter_version: helix_filter_version
       is_impact: is_impact
       extra_pi_groups: extra_pi_groups
-      analysis_segment_cna_filename: analysis_segment_cna_filename
-      analysis_sv_filename: analysis_sv_filename
-      analysis_gene_cna_filename: analysis_gene_cna_filename
-      analysis_mutations_filename: analysis_mutations_filename
-      analysis_mutations_share_filename: analysis_mutations_share_filename
       cbio_segment_data_filename: cbio_segment_data_filename
       cbio_meta_cna_segments_filename: cbio_meta_cna_segments_filename
       cbio_cases_sequenced_filename: cbio_cases_sequenced_filename
@@ -308,24 +339,79 @@ steps:
       facets_hisens_seg_files: run_facets/hisens_seg
       facets_hisens_cncf_files: run_facets/hisens_cncf_txt
       mutation_svs_txt_files: mutation_svs_txt_files
-      mutation_svs_maf_files: mutation_svs_maf_files
-      facets_suite_txt_files: run_facets/facets_txt
       targets_list: targets_list
       known_fusions_file: known_fusions_file
       data_clinical_file: data_clinical_file
       sample_summary_file: sample_summary_file
-      IMPACT_gene_list: IMPACT_gene_list
+      facets_suite_txt_files: run_facets/facets_txt
     out:
-      [portal_dir, analysis_dir]
+      [
+      portal_meta_clinical_sample_file, # meta_clinical_sample.txt
+      portal_data_clinical_patient_file, # data_clinical_patient.txt
+      portal_data_clinical_sample_file, # data_clinical_sample.txt
+      portal_meta_study_file, # meta_study.txt
+      portal_clinical_patient_meta_file, # meta_clinical_patient.txt
+      portal_meta_cna_file, # meta_CNA.txt
+      portal_meta_fusions_file, # meta_fusions.txt
+      portal_meta_mutations_extended_file, # meta_mutations_extended.txt
+      portal_meta_cna_segments_file, # <project_id>_meta_cna_hg19_seg.txt
+      portal_cna_data_file, # data_CNA.txt
+      portal_cna_ascna_file, # data_CNA.ascna.txt
+      portal_muts_file, # data_mutations_extended.txt
+      portal_hisens_segs, # <project_id>_data_cna_hg19.seg
+      portal_fusions_data_file, # data_fusions.txt
+      portal_case_list_dir
+      ]
+
+  # create the "portal" directory in the output dir and put cBioPortal files in it
+  make_portal_dir:
+    run: put_in_dir.cwl
+    in:
+      portal_meta_clinical_sample_file: run_portal_workflow/portal_meta_clinical_sample_file # meta_clinical_sample.txt
+      portal_data_clinical_patient_file: run_portal_workflow/portal_data_clinical_patient_file # data_clinical_patient.txt
+      portal_data_clinical_sample_file: run_portal_workflow/portal_data_clinical_sample_file # data_clinical_sample.txt
+      portal_meta_study_file: run_portal_workflow/portal_meta_study_file # meta_study.txt
+      portal_clinical_patient_meta_file: run_portal_workflow/portal_clinical_patient_meta_file # meta_clinical_patient.txt
+      portal_meta_cna_file: run_portal_workflow/portal_meta_cna_file # meta_CNA.txt
+      portal_meta_fusions_file: run_portal_workflow/portal_meta_fusions_file # meta_fusions.txt
+      portal_meta_mutations_extended_file: run_portal_workflow/portal_meta_mutations_extended_file # meta_mutations_extended.txt
+      portal_meta_cna_segments_file: run_portal_workflow/portal_meta_cna_segments_file  # <project_id>_meta_cna_hg19_seg.txt
+      portal_cna_data_file: run_portal_workflow/portal_cna_data_file # data_CNA.txt
+      portal_cna_ascna_file: run_portal_workflow/portal_cna_ascna_file # data_CNA.ascna.txt
+      portal_muts_file: run_portal_workflow/portal_muts_file # data_mutations_extended.txt
+      portal_hisens_segs: run_portal_workflow/portal_hisens_segs # # <project_id>_data_cna_hg19.seg
+      portal_fusions_data_file: run_portal_workflow/portal_fusions_data_file # data_fusions.txt
+      portal_case_list_dir: run_portal_workflow/portal_case_list_dir
+      output_directory_name:
+        valueFrom: ${ return "portal"; }
+      files:
+        valueFrom: ${return [
+          inputs.portal_meta_clinical_sample_file,
+          inputs.portal_data_clinical_patient_file,
+          inputs.portal_data_clinical_sample_file,
+          inputs.portal_meta_study_file,
+          inputs.portal_clinical_patient_meta_file,
+          inputs.portal_meta_cna_file,
+          inputs.portal_meta_fusions_file,
+          inputs.portal_meta_mutations_extended_file,
+          inputs.portal_meta_cna_segments_file,
+          inputs.portal_cna_data_file,
+          inputs.portal_cna_ascna_file,
+          inputs.portal_muts_file,
+          inputs.portal_hisens_segs,
+          inputs.portal_fusions_data_file,
+          inputs.portal_case_list_dir,
+          ]}
+    out: [ directory ]
 
 outputs:
   portal_dir:
     type: Directory
-    outputSource: run_workflow/portal_dir
+    outputSource: make_portal_dir/directory
 
   analysis_dir:
     type: Directory
-    outputSource: run_workflow/analysis_dir
+    outputSource: run_analysis_workflow/analysis_dir
 
   facets_dir:
     type: Directory

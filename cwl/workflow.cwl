@@ -324,12 +324,70 @@ steps:
       sample_summary_file: sample_summary_file
       facets_suite_txt_files: facets_suite_txt_files
     out:
-      [ portal_dir ]
+      # [ portal_dir ]
+      [
+      portal_meta_clinical_sample_file, # meta_clinical_sample.txt
+      portal_data_clinical_patient_file, # data_clinical_patient.txt
+      portal_data_clinical_sample_file, # data_clinical_sample.txt
+      portal_meta_study_file, # meta_study.txt
+      portal_clinical_patient_meta_file, # meta_clinical_patient.txt
+      portal_meta_cna_file, # meta_CNA.txt
+      portal_meta_fusions_file, # meta_fusions.txt
+      portal_meta_mutations_extended_file, # meta_mutations_extended.txt
+      portal_meta_cna_segments_file, # <project_id>_meta_cna_hg19_seg.txt
+      portal_cna_data_file, # data_CNA.txt
+      portal_cna_ascna_file, # data_CNA.ascna.txt
+      portal_muts_file, # data_mutations_extended.txt
+      portal_hisens_segs, # <project_id>_data_cna_hg19.seg
+      portal_fusions_data_file, # data_fusions.txt
+      portal_case_list_dir
+      ]
+
+  # create the "portal" directory in the output dir and put cBioPortal files in it
+  make_portal_dir:
+    run: put_in_dir.cwl
+    in:
+      portal_meta_clinical_sample_file: run_portal_workflow/portal_meta_clinical_sample_file # meta_clinical_sample.txt
+      portal_data_clinical_patient_file: run_portal_workflow/portal_data_clinical_patient_file # data_clinical_patient.txt
+      portal_data_clinical_sample_file: run_portal_workflow/portal_data_clinical_sample_file # data_clinical_sample.txt
+      portal_meta_study_file: run_portal_workflow/portal_meta_study_file # meta_study.txt
+      portal_clinical_patient_meta_file: run_portal_workflow/portal_clinical_patient_meta_file # meta_clinical_patient.txt
+      portal_meta_cna_file: run_portal_workflow/portal_meta_cna_file # meta_CNA.txt
+      portal_meta_fusions_file: run_portal_workflow/portal_meta_fusions_file # meta_fusions.txt
+      portal_meta_mutations_extended_file: run_portal_workflow/portal_meta_mutations_extended_file # meta_mutations_extended.txt
+      portal_meta_cna_segments_file: run_portal_workflow/portal_meta_cna_segments_file  # <project_id>_meta_cna_hg19_seg.txt
+      portal_cna_data_file: run_portal_workflow/portal_cna_data_file # data_CNA.txt
+      portal_cna_ascna_file: run_portal_workflow/portal_cna_ascna_file # data_CNA.ascna.txt
+      portal_muts_file: run_portal_workflow/portal_muts_file # data_mutations_extended.txt
+      portal_hisens_segs: run_portal_workflow/portal_hisens_segs # # <project_id>_data_cna_hg19.seg
+      portal_fusions_data_file: run_portal_workflow/portal_fusions_data_file # data_fusions.txt
+      portal_case_list_dir: run_portal_workflow/portal_case_list_dir
+      output_directory_name:
+        valueFrom: ${ return "portal"; }
+      files:
+        valueFrom: ${return [
+          inputs.portal_meta_clinical_sample_file,
+          inputs.portal_data_clinical_patient_file,
+          inputs.portal_data_clinical_sample_file,
+          inputs.portal_meta_study_file,
+          inputs.portal_clinical_patient_meta_file,
+          inputs.portal_meta_cna_file,
+          inputs.portal_meta_fusions_file,
+          inputs.portal_meta_mutations_extended_file,
+          inputs.portal_meta_cna_segments_file,
+          inputs.portal_cna_data_file,
+          inputs.portal_cna_ascna_file,
+          inputs.portal_muts_file,
+          inputs.portal_hisens_segs,
+          inputs.portal_fusions_data_file,
+          inputs.portal_case_list_dir,
+          ]}
+    out: [ directory ]
 
 outputs:
   portal_dir:
     type: Directory
-    outputSource: run_portal_workflow/portal_dir
+    outputSource: make_portal_dir/directory
 
   analysis_dir:
     type: Directory
