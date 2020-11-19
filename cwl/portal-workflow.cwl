@@ -443,49 +443,49 @@ steps:
           ]}
     out: [ directory ]
 
-  # create the "portal" directory in the output dir and put cBioPortal files in it
-  make_portal_dir:
-    run: put_in_dir.cwl
-    in:
-      meta_clinical_sample_file: generate_meta_clinical_sample/output_file # meta_clinical_sample.txt
-      data_clinical_patient_file: generate_data_clinical_patient/output_file # data_clinical_patient.txt
-      data_clinical_sample_file: generate_data_clinical_sample/output_file # data_clinical_sample.txt
-      meta_study_file: generate_cbio_meta_study/output_file # meta_study.txt
-      clinical_patient_meta_file: generate_cbio_clinical_patient_meta/output_file # meta_clinical_patient.txt
-      meta_cna_file: generate_cbio_meta_cna/output_file # meta_CNA.txt
-      meta_fusions_file: generate_cbio_meta_fusions/output_file # meta_fusions.txt
-      meta_mutations_extended_file: generate_meta_mutations_extended/output_file # meta_mutations_extended.txt
-      meta_cna_segments_file: generate_meta_cna_segments/output_file  # <project_id>_meta_cna_hg19_seg.txt
-      cna_data_file: clean_cna_headers/output_file # data_CNA.txt
-      cna_ascna_file: clean_ascna_headers/output_file # data_CNA.ascna.txt
-      muts_file: concat_cbio_muts_maf/output_file # data_mutations_extended.txt
-      hisens_segs: rename_cbio_hisens_segs/output_file # # <project_id>_data_cna_hg19.seg
-      fusions_data_file: filter_cbio_fusions/output_file # data_fusions.txt
-      case_list_dir: make_case_list_dir/directory
-      output_directory_name:
-        valueFrom: ${ return "portal"; }
-      files:
-        valueFrom: ${return [
-          inputs.meta_clinical_sample_file,
-          inputs.data_clinical_patient_file,
-          inputs.data_clinical_sample_file,
-          inputs.meta_study_file,
-          inputs.clinical_patient_meta_file,
-          inputs.meta_cna_file,
-          inputs.meta_fusions_file,
-          inputs.meta_mutations_extended_file,
-          inputs.meta_cna_segments_file,
-          inputs.cna_data_file,
-          inputs.cna_ascna_file,
-          inputs.cna_scna_file,
-          inputs.muts_file,
-          inputs.hisens_segs,
-          inputs.fusions_data_file,
-          inputs.case_list_dir
-          ]}
-    out: [ directory ]
-
 outputs:
-  portal_dir:
+  portal_meta_clinical_sample_file:
+    type: File
+    outputSource: generate_meta_clinical_sample/output_file # meta_clinical_sample.txt
+  portal_data_clinical_patient_file:
+    type: File
+    outputSource: generate_data_clinical_patient/output_file # data_clinical_patient.txt
+  portal_data_clinical_sample_file:
+    type: File
+    outputSource: generate_data_clinical_sample/output_file # data_clinical_sample.txt
+  portal_meta_study_file:
+    type: File
+    outputSource: generate_cbio_meta_study/output_file # meta_study.txt
+  portal_clinical_patient_meta_file:
+    type: File
+    outputSource: generate_cbio_clinical_patient_meta/output_file # meta_clinical_patient.txt
+  portal_meta_cna_file:
+    type: File
+    outputSource: generate_cbio_meta_cna/output_file # meta_CNA.txt
+  portal_meta_fusions_file:
+    type: File
+    outputSource: generate_cbio_meta_fusions/output_file # meta_fusions.txt
+  portal_meta_mutations_extended_file:
+    type: File
+    outputSource: generate_meta_mutations_extended/output_file # meta_mutations_extended.txt
+  portal_meta_cna_segments_file:
+    type: File
+    outputSource: generate_meta_cna_segments/output_file  # <project_id>_meta_cna_hg19_seg.txt
+  portal_cna_data_file:
+    type: File
+    outputSource: clean_cna_headers/output_file # data_CNA.txt
+  portal_cna_ascna_file:
+    type: File
+    outputSource: clean_ascna_headers/output_file # data_CNA.ascna.txt
+  portal_muts_file:
+    type: File
+    outputSource: concat_cbio_muts_maf/output_file # data_mutations_extended.txt
+  portal_hisens_segs:
+    type: File
+    outputSource: rename_cbio_hisens_segs/output_file # # <project_id>_data_cna_hg19.seg
+  portal_fusions_data_file:
+    type: File
+    outputSource: filter_cbio_fusions/output_file # data_fusions.txt
+  portal_case_list_dir:
     type: Directory
-    outputSource: make_portal_dir/directory
+    outputSource: make_case_list_dir/directory
