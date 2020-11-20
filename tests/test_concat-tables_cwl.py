@@ -10,11 +10,11 @@ from tempfile import TemporaryDirectory, NamedTemporaryFile
 
 # relative imports, from CLI and from parent project
 if __name__ != "__main__":
-    from .tools import run_command
+    from .tools import run_command, run_cwl
     from .settings import CWL_DIR, CWL_ARGS
 
 if __name__ == "__main__":
-    from tools import run_command
+    from tools import run_command, run_cwl
     from settings import CWL_DIR, CWL_ARGS
 
 cwl_file = os.path.join(CWL_DIR, 'concat-tables.cwl')
@@ -50,32 +50,11 @@ class TestConcatTables(unittest.TestCase):
                     ],
                 "output_filename": "output.txt"
                 }
-
-            input_json_file = os.path.join(tmpdir, "input.json")
-            with open(input_json_file, "w") as input_json_file_data:
-                json.dump(input_json, input_json_file_data)
-
-            output_dir = os.path.join(tmpdir, "output")
-            tmp_dir = os.path.join(tmpdir, "tmp")
-            cache_dir = os.path.join(tmpdir, "cache")
-
-            command = [
-            "cwl-runner",
-            *CWL_ARGS,
-            "--outdir", output_dir,
-            "--tmpdir-prefix", tmp_dir,
-            "--cachedir", cache_dir,
-            cwl_file, input_json_file
-            ]
-
-            returncode, proc_stdout, proc_stderr = run_command(command)
-
-            if returncode != 0:
-                print(proc_stderr)
-
-            self.assertEqual(returncode, 0)
-
-            output_json = json.loads(proc_stdout)
+            output_json, output_dir = run_cwl(
+                testcase = self,
+                tmpdir = tmpdir,
+                input_json = input_json,
+                cwl_file = cwl_file)
 
             # check the contents of the concatenated file; should be the same as the input
             output_file = output_json['output_file']['path']
@@ -99,7 +78,7 @@ class TestConcatTables(unittest.TestCase):
 
     def test_concat_one_tables(self):
         """
-        Test that two files are concatenated correctly
+        Test that one file is returned correctly from the script
         """
         with TemporaryDirectory() as tmpdir:
             # make a dummy file with some lines
@@ -118,31 +97,11 @@ class TestConcatTables(unittest.TestCase):
                 "output_filename": "output.txt"
                 }
 
-            input_json_file = os.path.join(tmpdir, "input.json")
-            with open(input_json_file, "w") as input_json_file_data:
-                json.dump(input_json, input_json_file_data)
-
-            output_dir = os.path.join(tmpdir, "output")
-            tmp_dir = os.path.join(tmpdir, "tmp")
-            cache_dir = os.path.join(tmpdir, "cache")
-
-            command = [
-            "cwl-runner",
-            *CWL_ARGS,
-            "--outdir", output_dir,
-            "--tmpdir-prefix", tmp_dir,
-            "--cachedir", cache_dir,
-            cwl_file, input_json_file
-            ]
-
-            returncode, proc_stdout, proc_stderr = run_command(command)
-
-            if returncode != 0:
-                print(proc_stderr)
-
-            self.assertEqual(returncode, 0)
-
-            output_json = json.loads(proc_stdout)
+            output_json, output_dir = run_cwl(
+                testcase = self,
+                tmpdir = tmpdir,
+                input_json = input_json,
+                cwl_file = cwl_file)
 
             # check the contents of the concatenated file; should be the same as the input
             output_file = output_json['output_file']['path']

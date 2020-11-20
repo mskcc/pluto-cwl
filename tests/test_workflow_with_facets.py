@@ -320,8 +320,8 @@ class TestWorkflow(unittest.TestCase):
                                 'location': 'file://' + os.path.join(output_dir, 'portal/data_mutations_extended.txt'),
                                 'basename': 'data_mutations_extended.txt',
                                 'class': 'File',
-                                'checksum': 'sha1$ae78549d387625aa58358f3e52928d977273e4b4',
-                                'size': 5629,
+                                'checksum': 'sha1$f98179c9fc244b91bd2521cc2dca7e611d5a8c9a',
+                                'size': 5657,
                                 'path': os.path.join(output_dir, 'portal/data_mutations_extended.txt')
                             },
                             {
@@ -748,8 +748,8 @@ class TestWorkflow(unittest.TestCase):
                         {'location': 'file://' + os.path.join(output_dir, 'portal/data_mutations_extended.txt'),
                         'basename': 'data_mutations_extended.txt',
                         'class': 'File',
-                        'checksum': 'sha1$8e12ceda93a0b43c1a98c0903269b73dff7438c8',
-                        'size': 8344,
+                        'checksum': 'sha1$e688086833d015e38e4dea2e207552190bae5d21',
+                        'size': 8382,
                         'path': os.path.join(output_dir, 'portal/data_mutations_extended.txt')},
                         {'location': 'file://' + os.path.join(output_dir, 'portal/Proj_08390_G_data_cna_hg19.seg'),
                         'basename': 'Proj_08390_G_data_cna_hg19.seg',
@@ -800,6 +800,10 @@ class TestWorkflow(unittest.TestCase):
             self.assertEqual(len(mutations), 34)
             comments, mutations = load_mutations(os.path.join(output_dir, 'portal', 'data_mutations_extended.txt'))
             self.assertEqual(len(mutations), 27)
+
+            # the clonality column needs to have been added in the workflow output
+            for mut in mutations:
+                self.assertTrue('ASCN.CLONAL' in mut)
 
             # load the data_CNA.txt file
             path = os.path.join(output_dir, 'portal/data_CNA.txt') # renamed from the data_CNA.scna.txt file ...

@@ -144,7 +144,20 @@ steps:
         hisens_cncf_txt: facets_suite/hisens_cncf_txt
         output_dir: facets_suite/output_dir
         results_passed: facets_suite/results_passed
-      out: [ purity_seg,hisens_seg,qc_txt,gene_level_txt,arm_level_txt,facets_txt,purity_rds,hisens_rds,annotated_maf,hisens_cncf_txt,output_dir,failed_pairs]
+      out: [
+        purity_seg,
+        hisens_seg,
+        qc_txt,
+        gene_level_txt,
+        arm_level_txt,
+        facets_txt,
+        purity_rds,
+        hisens_rds,
+        annotated_maf,
+        hisens_cncf_txt,
+        output_dir,
+        failed_pairs
+      ]
       run:
           class: ExpressionTool
           id: check_facets_suite
@@ -287,52 +300,52 @@ steps:
           }"
 
 outputs:
-  purity_seg:
+  purity_seg: # [ Tumor1.Normal1_purity.seg, ... ]
     type:
       type: array
       items: ['null', File]
     outputSource: check_facets_suite/purity_seg
-  hisens_seg:
+  hisens_seg: # [ Tumor1.Normal1_hisens.seg, ... ]
     type:
       type: array
       items: ['null', File]
     outputSource: check_facets_suite/hisens_seg
-  qc_txt:
+  qc_txt: # [ Tumor1.Normal1.qc.txt, ... ]
     type:
       type: array
       items: ['null', File]
     outputSource: check_facets_suite/qc_txt
-  gene_level_txt:
+  gene_level_txt: # [ Tumor1.Normal1.gene_level.txt, ... ]
     type:
       type: array
       items: ['null', File]
     outputSource: check_facets_suite/gene_level_txt
-  arm_level_txt:
+  arm_level_txt: # [ Tumor2.Normal2.arm_level.txt, ... ]
     type:
       type: array
       items: ['null', File]
     outputSource: check_facets_suite/arm_level_txt
-  facets_txt:
+  facets_txt: # [ Tumor1.Normal1.txt, ... ]
     type:
       type: array
       items: ['null', File]
     outputSource: check_facets_suite/facets_txt
-  purity_rds:
+  purity_rds: # [ Tumor1.Normal1_purity.rds, ... ]
     type:
       type: array
       items: ['null', File]
     outputSource: check_facets_suite/purity_rds
-  hisens_rds:
+  hisens_rds: # [ Tumor1.Normal1_hisens.rds, ... ]
     type:
       type: array
       items: ['null', File]
     outputSource: check_facets_suite/hisens_rds
-  annotated_maf:
+  annotated_maf: # [ Tumor1.Normal1_hisens.ccf.maf, ... ]
     type:
       type: array
       items: ['null', File]
     outputSource: check_facets_suite/annotated_maf
-  hisens_cncf_txt:
+  hisens_cncf_txt: # [ Tumor1.Normal1_hisens.cncf.txt, ... ] ; from legacy facets output
     type:
       type: array
       items: ['null', File]
