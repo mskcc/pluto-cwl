@@ -267,19 +267,29 @@ steps:
       pairs: pairs
     out:
       [
-        purity_seg,
-        hisens_seg,
-        qc_txt,
-        gene_level_txt,
-        arm_level_txt,
-        facets_txt,
-        purity_rds,
-        hisens_rds,
-        annotated_maf,
-        hisens_cncf_txt,
+        purity_seg, # [ Tumor1.Normal1_purity.seg, ... ]
+        hisens_seg, # [ Tumor1.Normal1_hisens.seg, ... ]
+        qc_txt, # [ Tumor1.Normal1.qc.txt, ... ]
+        gene_level_txt, # [ Tumor1.Normal1.gene_level.txt, ... ]
+        arm_level_txt, # [ Tumor2.Normal2.arm_level.txt, ... ]
+        facets_txt, # [ Tumor1.Normal1.txt, ... ]
+        purity_rds, # [ Tumor1.Normal1_purity.rds, ... ]
+        hisens_rds, # [ Tumor1.Normal1_hisens.rds, ... ]
+        annotated_maf,  # [ Tumor1.Normal1_hisens.ccf.maf, ... ]
+        hisens_cncf_txt, # [ Tumor1.Normal1_hisens.cncf.txt, ... ] ; from legacy facets output
         output_dir,
         failed_pairs
       ]
+
+  # need to make a concatenated maf file for merging with portal maf
+  concat_facets_maf:
+    run: concat-tables.cwl
+    in:
+      input_files: run_facets/annotated_maf
+      output_filename:
+        valueFrom: ${ return "facets.maf"; }
+    out:
+      [ output_file ]
 
   run_analysis_workflow:
     run: analysis-workflow.cwl
@@ -363,6 +373,18 @@ steps:
       portal_case_list_dir
       ]
 
+  # need to merge the portal mutations maf with the Facets maf to get some extra information in the output
+  merge_maf:
+    run: update_cBioPortal_data.cwl
+    in:
+      subcommand:
+        valueFrom: ${ return "merge_mafs"; }
+      input_file: run_portal_workflow/portal_muts_file
+      output_filename: cbio_mutation_data_filename
+      facets_maf: concat_facets_maf/output_file
+    out:
+      [ output_file, failed_txt, stdout_txt, stderr_txt ]
+
   # create the "portal" directory in the output dir and put cBioPortal files in it
   make_portal_dir:
     run: put_in_dir.cwl
@@ -378,7 +400,7 @@ steps:
       portal_meta_cna_segments_file: run_portal_workflow/portal_meta_cna_segments_file  # <project_id>_meta_cna_hg19_seg.txt
       portal_cna_data_file: run_portal_workflow/portal_cna_data_file # data_CNA.txt
       portal_cna_ascna_file: run_portal_workflow/portal_cna_ascna_file # data_CNA.ascna.txt
-      portal_muts_file: run_portal_workflow/portal_muts_file # data_mutations_extended.txt
+      portal_muts_file: merge_maf/output_file # data_mutations_extended.txt
       portal_hisens_segs: run_portal_workflow/portal_hisens_segs # # <project_id>_data_cna_hg19.seg
       portal_fusions_data_file: run_portal_workflow/portal_fusions_data_file # data_fusions.txt
       portal_case_list_dir: run_portal_workflow/portal_case_list_dir

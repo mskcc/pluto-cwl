@@ -4,6 +4,8 @@ cwlVersion: v1.0
 class: Workflow
 doc: '
 Workflow for running the facets suite workflow on a single tumor normal pair
+
+Includes handling of errors in case execution fails for the sample pair
 '
 requirements:
   MultipleInputFeatureRequirement: {}
@@ -25,7 +27,19 @@ steps:
     in:
       snp_pileup: snp_pileup
       sample_id: tumor_id
-    out: [ purity_seg, hisens_seg, qc_txt, gene_level_txt, arm_level_txt, output_txt, purity_rds, hisens_rds, failed_txt, stdout_txt, stderr_txt ]
+    out: [
+    purity_seg,
+    hisens_seg,
+    qc_txt,
+    gene_level_txt,
+    arm_level_txt,
+    output_txt,
+    purity_rds,
+    hisens_rds,
+    failed_txt,
+    stdout_txt,
+    stderr_txt
+    ]
 
   check_run_facets:
       in:
@@ -38,7 +52,17 @@ steps:
         gene_level_txt: run_facets/gene_level_txt
         arm_level_txt: run_facets/arm_level_txt
         purity_rds: run_facets/purity_rds
-      out: [ hisens_rds, facets_txt, single_facets_txt, purity_seg, hisens_seg, qc_txt, gene_level_txt, arm_level_txt, purity_rds ]
+      out: [
+      hisens_rds,
+      facets_txt,
+      single_facets_txt,
+      purity_seg,
+      hisens_seg,
+      qc_txt,
+      gene_level_txt,
+      arm_level_txt,
+      purity_rds
+      ]
       run:
           class: ExpressionTool
           id: check_facets
@@ -426,21 +450,6 @@ steps:
     out:
       [ output_file, failed_txt, stdout_txt, stderr_txt ]
 
-  merge_maf:
-    run: update_cBioPortal_data.cwl
-    in:
-      pair_id: pair_id
-      subcommand:
-        valueFrom: ${ return "merge_mafs"; }
-      input_file: check_label_maf_normal/output_file
-      output_filename:
-        valueFrom: $(inputs.pair_id)_hisens.ccf.portal.maf
-      facets_txt: check_run_facets/single_facets_txt
-    scatter: [input_file]
-    scatterMethod: dotproduct
-    out:
-      [ output_file, failed_txt, stdout_txt, stderr_txt ]
-
   check_update_maf:
       in:
         output_file: update_maf/output_file
@@ -492,9 +501,38 @@ steps:
         hisens_rds: check_run_facets/hisens_rds
         annotated_maf: check_update_maf/output_file
         log_files:
-          source: [ run_facets/stdout_txt,run_facets_legacy/stdout_txt,annotate_maf/stdout_txt,label_facets_txt_tumor/stdout_txt,label_facets_txt_normal/stdout_txt,label_maf_sample/stdout_txt,label_maf_normal/stdout_txt,update_maf/stdout_txt,run_facets/stderr_txt,run_facets_legacy/stderr_txt,annotate_maf/stderr_txt,label_facets_txt_tumor/stderr_txt,label_facets_txt_normal/stderr_txt,label_maf_sample/stderr_txt,label_maf_normal/stderr_txt,update_maf/stderr_txt]
+          source: [
+            run_facets/stdout_txt,
+            run_facets_legacy/stdout_txt,
+            annotate_maf/stdout_txt,
+            label_facets_txt_tumor/stdout_txt,
+            label_facets_txt_normal/stdout_txt,
+            label_maf_sample/stdout_txt,
+            label_maf_normal/stdout_txt,
+            update_maf/stdout_txt,
+            run_facets/stderr_txt,
+            run_facets_legacy/stderr_txt,
+            annotate_maf/stderr_txt,
+            label_facets_txt_tumor/stderr_txt,
+            label_facets_txt_normal/stderr_txt,
+            label_maf_sample/stderr_txt,
+            label_maf_normal/stderr_txt,
+            update_maf/stderr_txt
+            ]
           linkMerge: merge_flattened
-      out: [ hisens_cncf_txt,purity_seg,hisens_seg,qc_txt,gene_level_txt,arm_level_txt,facets_txt,purity_rds,hisens_rds,annotated_maf,output_dir,results_passed ]
+      out: [
+        hisens_cncf_txt,
+        purity_seg,hisens_seg,
+        qc_txt,
+        gene_level_txt,
+        arm_level_txt,
+        facets_txt,
+        purity_rds,
+        hisens_rds,
+        annotated_maf,
+        output_dir,
+        results_passed
+        ]
       run:
           class: ExpressionTool
           id: check_results
@@ -592,34 +630,34 @@ outputs:
   pair_id:
     type: string
     outputSource: pair_id
-  hisens_cncf_txt:
+  hisens_cncf_txt: # Tumor1.Normal1_hisens.cncf.txt ; from legacy facets output
     type: File?
     outputSource: check_results/hisens_cncf_txt
-  purity_seg:
+  purity_seg: # Tumor1.Normal1_purity.seg
     type: File?
     outputSource: check_results/purity_seg
-  hisens_seg:
+  hisens_seg: # Tumor1.Normal1_hisens.seg
     type: File?
     outputSource: check_results/hisens_seg
-  qc_txt:
+  qc_txt: # Tumor1.Normal1.qc.txt
     type: File?
     outputSource: check_results/qc_txt
-  gene_level_txt:
+  gene_level_txt: # Tumor1.Normal1.gene_level.txt
     type: File?
     outputSource: check_results/gene_level_txt
-  arm_level_txt:
+  arm_level_txt: # Tumor2.Normal2.arm_level.txt
     type: File?
     outputSource: check_results/arm_level_txt
-  facets_txt:
+  facets_txt: # Tumor1.Normal1.txt
     type: File?
     outputSource: check_results/facets_txt
-  purity_rds:
+  purity_rds: # Tumor1.Normal1_purity.rds
     type: File?
     outputSource: check_results/purity_rds
-  hisens_rds:
+  hisens_rds: # Tumor1.Normal1_hisens.rds
     type: File?
     outputSource: check_results/hisens_rds
-  annotated_maf:
+  annotated_maf: # Tumor1.Normal1_hisens.ccf.maf
     type: File?
     outputSource: check_results/annotated_maf
   output_dir:
