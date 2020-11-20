@@ -9,7 +9,7 @@ baseCommand: ["bash","update_cBioPortal_data_wrapper.sh"]
 
 requirements:
   DockerRequirement:
-    dockerPull: mskcc/helix_filters_01:20.11.1
+    dockerPull: mskcc/helix_filters_01:dev
   InitialWorkDirRequirement:
     listing:
       - entryname: update_cBioPortal_data_wrapper.sh
@@ -33,10 +33,16 @@ inputs:
       prefix: '--output'
       position: 3
   facets_txt:
-    type: File
+    type: ['null', File]
     inputBinding:
       prefix: '--facets-txt'
       position: 4
+  facets_maf:
+    type: ['null', File]
+    inputBinding:
+      prefix: '--facets-maf'
+      position: 5
+
 
 outputs:
   output_file:
