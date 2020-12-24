@@ -10,6 +10,8 @@ baseCommand: ["bash","update_cBioPortal_data_wrapper.sh"]
 requirements:
   DockerRequirement:
     dockerPull: mskcc/helix_filters_01:20.11.2
+  ResourceRequirement:
+    ramMax: 16000
   InitialWorkDirRequirement:
     listing:
       - entryname: update_cBioPortal_data_wrapper.sh
