@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-unit tests for the add_af.cwl
+unit tests for the udpate_cBioPortal_data.cwl
 """
 import os
 import unittest

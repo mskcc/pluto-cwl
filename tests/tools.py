@@ -7,7 +7,22 @@ import csv
 import json
 from settings import CWL_ARGS
 from collections import OrderedDict
+import unittest
+from tempfile import mkdtemp
+import shutil
 
+class TmpDirTestCase(unittest.TestCase):
+    """
+    unittest.TestCase wrapper that includes a tmpdir
+    """
+    def setUp(self):
+        self.preserve = False # save the tmpdir
+        self.tmpdir = mkdtemp() # dir = THIS_DIR
+
+    def tearDown(self):
+        if not self.preserve:
+            # remove the tmpdir upon test completion
+            shutil.rmtree(self.tmpdir)
 
 def run_command(args):
     """
