@@ -10,7 +10,7 @@ requirements:
   StepInputExpressionRequirement: {}
   InlineJavascriptRequirement: {}
   DockerRequirement:
-    dockerPull: mskcc/helix_filters_01:20.11.2
+    dockerPull: mskcc/helix_filters_01:21.01.0
 
 # echo ${return item['path'] for item in inputs.input_files}
 inputs:

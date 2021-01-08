@@ -9,7 +9,7 @@ baseCommand: ["bash","run_paste_col_wrapper.sh"]
 
 requirements:
   DockerRequirement:
-    dockerPull: mskcc/helix_filters_01:20.11.2
+    dockerPull: mskcc/helix_filters_01:21.01.0
   InitialWorkDirRequirement:
     listing:
       - entryname: run_paste_col_wrapper.sh
