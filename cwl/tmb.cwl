@@ -3,7 +3,7 @@
 cwlVersion: v1.0
 class: Workflow
 doc: "
-Workflow for calculating TMB tumor mutational burden
+Workflow for calculating TMB tumor mutational burden on a single sample
 "
 requirements:
   StepInputExpressionRequirement: {}
@@ -20,6 +20,7 @@ inputs:
     type: string
 
 steps:
+    # filter the variant maf file for only the variants desired for use in TMB calculation
     filter_variants:
       run: tmb_variant_filter.cwl
       in:
@@ -29,6 +30,7 @@ steps:
       out:
         [ output_file ]
 
+    # calculate the TMB for the variants present + assay coverage
     calc_tmb_value:
       run: calc-tmb.cwl
       in:
@@ -39,6 +41,7 @@ steps:
       out:
         [ output_file ]
 
+    # turn the TMB value into a table format with header
     fix_tmb_header:
       run: add_header.cwl
       in:
@@ -48,6 +51,7 @@ steps:
       out:
         [ output_file ]
 
+    # add the sample ID back to the TMB table file
     add_sampleID:
       run: paste-col.cwl
       in:

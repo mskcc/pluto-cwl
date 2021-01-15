@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
+Test case for the TMB analysis cwl
 """
 import os
 import unittest
