@@ -47,7 +47,7 @@ steps:
       in:
         input_file: calc_tmb_value/output_file
         header_str:
-          valueFrom: ${ return "TMB"; }
+          valueFrom: ${ return "CMO_TMB_SCORE"; }
       out:
         [ output_file ]
 

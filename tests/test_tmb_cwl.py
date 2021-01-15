@@ -123,8 +123,8 @@ class TestTMBWorkflow(TmpDirTestCase):
                 'location': 'file://' + os.path.join(output_dir,'tmb.tsv'),
                 'basename': 'tmb.tsv',
                 'class': 'File',
-                'checksum': 'sha1$b33248e5e17c9590b3dfd96b2fd7cfc9f665505a',
-                'size': 33,
+                'checksum': 'sha1$fc3cc241f333bccf9b45ba2a9e067920fe621a4c',
+                'size': 43,
                 'path':  os.path.join(output_dir,'tmb.tsv')
                 }
             }
@@ -134,7 +134,7 @@ class TestTMBWorkflow(TmpDirTestCase):
         with open(output_file) as fin:
             lines = [ l.strip().split() for l in fin ]
         expected_lines = [
-            ['TMB', 'SampleID'],
+            ['CMO_TMB_SCORE', 'SampleID'],
             ['0.000000006', 'Sample1']
         ]
         self.assertEqual(lines, expected_lines)
