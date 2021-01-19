@@ -6,18 +6,67 @@ UNAME:=$(shell uname)
 define help
 This is the Makefile for helix filters CWL
 
-Run the test suite with:
+Development Guide
+-----------------
 
+Create a new .cwl file in the cwl/ dir, and a corresponding test script in the tests/ dir
+
+Pull copies of the Singularity containers locally:
+
+```
+# pulls the latest tagged container
+make singularity-pull
+
+# pulls the latest master branch container
+make singularity-pull-dev
+```
+
+Run the individual test case & cwl you are developing directly
+
+```
+# load the environment for running pluto-cwl
+make bash
+
+# run your test script
+python3 tests/test_tmb_cwl.py
+```
+
+Note that `unittest.main()` needs to be included in your test script to run it directly from CLI
+
+When you are done working on your updates, run the full test suite with:
+
+```
+# serial test runner
 make test
 
-Run the workflow against the demo dataset with
+# or
 
+# run tests in parallel
+make test3 -j 8
+```
+
+To do a version bump of all CWL files to a new version of the helix_filters container, use:
+
+```
+make update-container-tags
+
+# example
+make update-container-tags OLD_TAG='20.11.2' NEW_TAG='21.01.0'
+```
+
+
+
+NOTE: these may be deprecated;
+Run the workflow against the demo dataset with:
+
+```
 make run
+```
 
 Run the Facets Suite workflow against the demo dataset with
-
+```
 make facets
-
+```
 endef
 export help
 help:

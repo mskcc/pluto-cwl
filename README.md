@@ -4,6 +4,8 @@
 
 CWL files and workflows to accompany the [helix_filters_01](https://github.com/mskcc/helix_filters_01) repo.
 
+**NOTE:** see the help section under `make help` for the most up to date instructions.
+
 ## Test Suite
 
 Development and testing takes place via the test suite.
@@ -37,7 +39,7 @@ make test3 -j 8
 
 ### Single Test
 
-For development purposes, it is helpful to be able to run only a specific test case, or subset of tests. 
+For development purposes, it is helpful to be able to run only a specific test case, or subset of tests.
 
 To do this, first enter an interactive bash session with the environment populated;
 
@@ -58,4 +60,3 @@ python tests/test_workflow_cwl.py TestClassName
 
 python tests/test_workflow_cwl.py TestClassName.test_function
 ```
-
