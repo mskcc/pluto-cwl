@@ -487,13 +487,13 @@ test:
 	module load python/3.7.1 && \
 	module load cwl/cwltool && \
 	if [ ! -e "$(SINGULARITY_SIF)" ]; then $(MAKE) singularity-pull; fi && \
-	for i in tests/test_*.py; do echo $$i; $$i; done
+	for i in tests/test_*.py; do echo $$i; python3 $$i; done
 
 # run tests in parallel;
 # $ make test3 -j 4
 TESTS:=$(shell ls tests/test_*.py)
 $(TESTS):
-	module load singularity/3.3.0 && module load python/3.7.1 && module load cwl/cwltool && echo $@; $@
+	module load singularity/3.3.0 && module load python/3.7.1 && module load cwl/cwltool && echo $@; python3 $@
 .PHONY:$(TESTS)
 test3:$(TESTS)
 
