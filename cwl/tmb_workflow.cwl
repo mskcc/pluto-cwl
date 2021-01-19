@@ -69,6 +69,8 @@ steps:
         valueFrom: ${ return "SampleID"; } # sample column header from TMB file
       output_filename:
         valueFrom: ${ return "data_clinical_sample.txt"; } # TODO: should this be passed in?
+      cBioPortal:
+        valueFrom: ${ return true; }
     out:
       [ output_file ]
 

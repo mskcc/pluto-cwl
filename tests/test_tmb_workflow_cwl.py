@@ -202,8 +202,8 @@ class TestTmbWorkflow(TmpDirTestCase):
                 'location': 'file://' + os.path.join(output_dir,'data_clinical_sample.txt'),
                 'basename': 'data_clinical_sample.txt',
                 'class': 'File',
-                'checksum': 'sha1$09243e8ed17d6c1be5307603d92de4c4f1fa6e5f',
-                'size': 277,
+                'checksum': 'sha1$6933552a71f7d08bb35f685ce05565399a731c8d',
+                'size': 307,
                 'path':  os.path.join(output_dir,'data_clinical_sample.txt')
                 }
             }
@@ -214,10 +214,10 @@ class TestTmbWorkflow(TmpDirTestCase):
             lines = [ l.strip().split() for l in fin ]
 
         expected_lines = [
-            ['#SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE'],
-            ['#SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE'],
-            ['#STRING', 'STRING', 'NUMBER'],
-            ['#1', '1', '1'],
+            ['#SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'CMO_TMB_SCORE'],
+            ['#SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'CMO_TMB_SCORE'],
+            ['#STRING', 'STRING', 'NUMBER', 'NUMBER'],
+            ['#1', '1', '1', '1'],
             ['SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'CMO_TMB_SCORE'],
             ['Sample1-T', 'Patient1', '108', '0.000000006'],
             ['Sample1-N', 'Patient2', '58'], # tailing empty value gets stripped off

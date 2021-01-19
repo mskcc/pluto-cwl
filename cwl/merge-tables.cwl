@@ -31,6 +31,11 @@ inputs:
     inputBinding:
       prefix: --output
       position: 5
+  cBioPortal: # if the output table should have cBioPortal headers
+    type: [ "null", boolean ]
+    inputBinding:
+      prefix: --cBioPortal
+      position: 6
 
 outputs:
   output_file:
