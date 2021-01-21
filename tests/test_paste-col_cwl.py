@@ -86,7 +86,5 @@ class TestPasteCol(unittest.TestCase):
                 }
             self.assertDictEqual(output_json, expected_output)
 
-
-
 if __name__ == "__main__":
     unittest.main()

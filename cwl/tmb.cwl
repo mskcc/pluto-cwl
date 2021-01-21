@@ -18,6 +18,8 @@ inputs:
     doc: "genome_coverage value; amount of the genome in bp covered by the assay"
   sample_id:
     type: string
+  normal_id:
+    type: string
 
 steps:
     # filter the variant maf file for only the variants desired for use in TMB calculation
@@ -38,6 +40,7 @@ steps:
         output_filename:
           valueFrom: ${ return "tmb.txt"; }
         genome_coverage: assay_coverage
+        normal_id: normal_id
       out:
         [ output_file ]
 

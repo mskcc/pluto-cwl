@@ -50,6 +50,7 @@ class TestMergeTables(TmpDirTestCase):
             'key1': 'SAMPLE_ID',
             'key2': 'SampleID',
             'output_filename': 'output.tsv'
+            #  NOTE: need to use cBioPortal flag to get correct output headers
         }
         output_json, output_dir = run_cwl(
             testcase = self,
@@ -74,6 +75,8 @@ class TestMergeTables(TmpDirTestCase):
         output_file = expected_output['output_file']['path']
         with open(output_file) as fin:
             lines = [ l.strip().split() for l in fin ]
+
+        #  NOTE: need to use cBioPortal flag to get correct output headers
         expected_lines = [
             ['#SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE'],
             ['#SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE'],
@@ -81,9 +84,9 @@ class TestMergeTables(TmpDirTestCase):
             ['#1', '1', '1'],
             ['SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'TMB'],
             ['Sample1-T', 'Patient1', '108', '100'],
-            ['Sample1-N', 'Patient2', '58'], # tailing empty value gets stripped off
+            ['Sample1-N', 'Patient2', '58', 'NA'],
             ['Sample2-T', 'Patient3', '502', '200'],
-            ['Sample2-N', 'Patient4', '56'] # tailing empty value gets stripped off
+            ['Sample2-N', 'Patient4', '56', 'NA'] 
             ]
         self.assertEqual(lines, expected_lines)
 

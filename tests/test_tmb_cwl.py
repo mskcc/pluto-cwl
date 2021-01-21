@@ -108,7 +108,8 @@ class TestTMBWorkflow(TmpDirTestCase):
                   "path": input_maf
                 },
             "assay_coverage":  '1000',
-            "sample_id": "Sample1"
+            "sample_id": "Sample1",
+            "normal_id": "Sample1-N"
             }
         output_json, output_dir = run_cwl(
             testcase = self,
@@ -136,6 +137,46 @@ class TestTMBWorkflow(TmpDirTestCase):
         expected_lines = [
             ['CMO_TMB_SCORE', 'SampleID'],
             ['0.000000006', 'Sample1']
+        ]
+        self.assertEqual(lines, expected_lines)
+
+
+        # A pooled Normal gives a NA result output
+        input_json = {
+            "mutations_file": {
+                  "class": "File",
+                  "path": input_maf
+                },
+            "assay_coverage":  '1000',
+            "sample_id": "Sample1",
+            "normal_id": "Sample1-PooledNormal"
+            }
+        output_json, output_dir = run_cwl(
+            testcase = self,
+            tmpdir = self.tmpdir,
+            input_json = input_json,
+            cwl_file = cwl_file,
+            print_command = False,
+            )
+
+        expected_output = {
+            'output_file': {
+                'location': 'file://' + os.path.join(output_dir,'tmb.tsv'),
+                'basename': 'tmb.tsv',
+                'class': 'File',
+                'checksum': 'sha1$f822b3bbbe1ef2281f1caee3c5efec04c7740b41',
+                'size': 34,
+                'path':  os.path.join(output_dir,'tmb.tsv')
+                }
+            }
+        self.assertDictEqual(output_json, expected_output)
+
+        output_file = expected_output['output_file']['path']
+        with open(output_file) as fin:
+            lines = [ l.strip().split() for l in fin ]
+        expected_lines = [
+            ['CMO_TMB_SCORE', 'SampleID'],
+            ['NA', 'Sample1']
         ]
         self.assertEqual(lines, expected_lines)
 

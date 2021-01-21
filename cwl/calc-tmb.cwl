@@ -22,6 +22,11 @@ inputs:
     inputBinding:
       prefix: --genome-coverage
       position: 3
+  normal_id:
+    type: string
+    inputBinding:
+      prefix: --normal-id
+      position: 4
 
 outputs:
   output_file:

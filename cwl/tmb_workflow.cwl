@@ -41,9 +41,11 @@ steps:
         valueFrom: ${ return inputs.pair['pair_maf']; }
       sample_id:
         valueFrom: ${ return inputs.pair['tumor_id']; }
+      normal_id:
+        valueFrom: ${ return inputs.pair['normal_id']; }
       assay_coverage: assay_coverage
     out:
-      [ output_file ]
+      [ output_file ] # [ tmb.tsv 1, tmb.tsv 2, ... ] array of tmb table files for each input pair
 
   # concatenate all the individual TMB tables into a single table
   concat_tmb_tables:
@@ -51,7 +53,7 @@ steps:
     in:
       input_files: run_tmb_workflow/output_file
       output_filename:
-        valueFrom: ${ return "tmb.tsv"; }
+        valueFrom: ${ return "tmb.concat.tsv"; }
       comments:
         valueFrom: ${ return true; }
     out:

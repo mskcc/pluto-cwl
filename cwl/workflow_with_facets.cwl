@@ -259,6 +259,9 @@ inputs:
   IMPACT_gene_list:
     type: File
     doc: "TSV file with gene labels and corresponding impact assays"
+  assay_coverage:
+    type: string
+    doc: "genome_coverage value; amount of the genome in bp covered by the assay"
 
 steps:
   run_facets:
@@ -385,13 +388,23 @@ steps:
     out:
       [ output_file, failed_txt, stdout_txt, stderr_txt ]
 
+  # run the TMB workflow
+  run_tmb_workflow:
+    run: tmb_workflow.cwl
+    in:
+      data_clinical_file: run_portal_workflow/portal_data_clinical_sample_file
+      assay_coverage: assay_coverage
+      pairs: pairs
+    out:
+      [ output_file ] # updated data_clinical_sample_file with the new TMB data
+
   # create the "portal" directory in the output dir and put cBioPortal files in it
   make_portal_dir:
     run: put_in_dir.cwl
     in:
       portal_meta_clinical_sample_file: run_portal_workflow/portal_meta_clinical_sample_file # meta_clinical_sample.txt
       portal_data_clinical_patient_file: run_portal_workflow/portal_data_clinical_patient_file # data_clinical_patient.txt
-      portal_data_clinical_sample_file: run_portal_workflow/portal_data_clinical_sample_file # data_clinical_sample.txt
+      portal_data_clinical_sample_file: run_tmb_workflow/output_file # data_clinical_sample.txt
       portal_meta_study_file: run_portal_workflow/portal_meta_study_file # meta_study.txt
       portal_clinical_patient_meta_file: run_portal_workflow/portal_clinical_patient_meta_file # meta_clinical_patient.txt
       portal_meta_cna_file: run_portal_workflow/portal_meta_cna_file # meta_CNA.txt
