@@ -6,7 +6,7 @@ stdout: output.txt
 
 requirements:
   DockerRequirement:
-    dockerPull: mskcc/helix_filters_01:21.01.0
+    dockerPull: mskcc/helix_filters_01:21.01.1
 
 inputs:
   input_file:

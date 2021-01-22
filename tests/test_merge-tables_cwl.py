@@ -22,7 +22,7 @@ class TestMergeTables(TmpDirTestCase):
         lines1 = [
         ['#SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE'],
         ['#SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE'],
-        ['#STRING', 'STRING', 'NUMBER',],
+        ['#STRING', 'STRING', 'NUMBER'],
         ['#1', '1', '1'],
         ['SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE'],
         ['Sample1-T', 'Patient1', '108'],
@@ -32,7 +32,7 @@ class TestMergeTables(TmpDirTestCase):
         ]
 
         lines2 = [
-        ['SampleID', 'TMB'],
+        ['SampleID', 'CMO_TMB_SCORE'],
         ['Sample1-T', '100'],
         ['Sample2-T', '200'],
         ]
@@ -49,7 +49,8 @@ class TestMergeTables(TmpDirTestCase):
             },
             'key1': 'SAMPLE_ID',
             'key2': 'SampleID',
-            'output_filename': 'output.tsv'
+            'output_filename': 'output.tsv',
+            'cBioPortal': True
             #  NOTE: need to use cBioPortal flag to get correct output headers
         }
         output_json, output_dir = run_cwl(
@@ -65,8 +66,8 @@ class TestMergeTables(TmpDirTestCase):
                 'location': 'file://' + os.path.join(output_dir,'output.tsv'),
                 'basename': 'output.tsv',
                 'class': 'File',
-                'checksum': 'sha1$9480f53914b2eba6839f5837e8629e028b132fe4',
-                'size': 251,
+                'checksum': 'sha1$d789b7d7e9c6e60afc37c907979e52b8e9b48841',
+                'size': 297,
                 'path':  os.path.join(output_dir,'output.tsv')
                 }
             }
@@ -78,15 +79,15 @@ class TestMergeTables(TmpDirTestCase):
 
         #  NOTE: need to use cBioPortal flag to get correct output headers
         expected_lines = [
-            ['#SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE'],
-            ['#SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE'],
-            ['#STRING', 'STRING', 'NUMBER'],
-            ['#1', '1', '1'],
-            ['SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'TMB'],
+            ['#SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'CMO_TMB_SCORE'],
+            ['#SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'CMO_TMB_SCORE'],
+            ['#STRING', 'STRING', 'NUMBER', 'NUMBER'],
+            ['#1', '1', '1', '1'],
+            ['SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'CMO_TMB_SCORE'],
             ['Sample1-T', 'Patient1', '108', '100'],
             ['Sample1-N', 'Patient2', '58', 'NA'],
             ['Sample2-T', 'Patient3', '502', '200'],
-            ['Sample2-N', 'Patient4', '56', 'NA'] 
+            ['Sample2-N', 'Patient4', '56', 'NA']
             ]
         self.assertEqual(lines, expected_lines)
 
