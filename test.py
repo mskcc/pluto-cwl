@@ -2,6 +2,9 @@
 # -*- coding: utf-8 -*-
 """
 Run all the unit tests
+
+NOTE: This does not seem to work correctly, it skips some tests located in the `tests/` directory, 
+so do not use this and instead use the `make test` recipes from the Makefile
 """
 
 import unittest
