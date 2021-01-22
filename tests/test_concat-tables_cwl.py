@@ -4,20 +4,19 @@
 unit tests for the concat-tables.cwl
 """
 import os
-import json
+import sys
 import unittest
-from tempfile import TemporaryDirectory, NamedTemporaryFile
+import json
+from tempfile import TemporaryDirectory
 
-# relative imports, from CLI and from parent project
-if __name__ != "__main__":
-    from .tools import run_command, run_cwl
-    from .settings import CWL_DIR, CWL_ARGS
+THIS_DIR = os.path.dirname(os.path.realpath(__file__))
+PARENT_DIR = os.path.dirname(THIS_DIR)
+sys.path.insert(0, PARENT_DIR)
+from pluto.tools import run_command, run_cwl, CWLFile
 
-if __name__ == "__main__":
-    from tools import run_command, run_cwl
-    from settings import CWL_DIR, CWL_ARGS
+sys.path.pop(0)
 
-cwl_file = os.path.join(CWL_DIR, 'concat-tables.cwl')
+cwl_file = CWLFile('concat-tables.cwl')
 
 class TestConcatTables(unittest.TestCase):
     def test_concat_two_tables(self):

@@ -4,21 +4,19 @@
 unit tests for the facets-workflow.cwl
 """
 import os
+import sys
 import json
 import unittest
-from tempfile import TemporaryDirectory, NamedTemporaryFile
+from tempfile import TemporaryDirectory
 
+THIS_DIR = os.path.dirname(os.path.realpath(__file__))
+PARENT_DIR = os.path.dirname(THIS_DIR)
+sys.path.insert(0, PARENT_DIR)
+from pluto.tools import run_command, CWLFile
+from pluto.settings import CWL_ARGS, DATA_SETS, FACETS_SNPS_VCF
+sys.path.pop(0)
 
-# relative imports, from CLI and from parent project
-if __name__ != "__main__":
-    from .tools import run_command
-    from .settings import CWL_DIR, CWL_ARGS, DATA_SETS, FACETS_SNPS_VCF
-
-if __name__ == "__main__":
-    from tools import run_command
-    from settings import CWL_DIR, CWL_ARGS, DATA_SETS, FACETS_SNPS_VCF
-
-cwl_file = os.path.join(CWL_DIR, 'facets-workflow.cwl')
+cwl_file = CWLFile('facets-workflow.cwl')
 
 class TestFacetsWorkflow(unittest.TestCase):
     def test_facets_workflow(self):

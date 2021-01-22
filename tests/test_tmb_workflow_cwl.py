@@ -4,18 +4,17 @@
 Test case for the TMB analysis workflow cwl which uses multiple input samples
 """
 import os
+import sys
 import unittest
 
-# relative imports, from CLI and from parent project
-if __name__ != "__main__":
-    from .tools import TmpDirTestCase, TableReader, load_mutations, run_cwl, write_table, dicts2lines
-    from .settings import CWL_DIR, DATA_SETS
+THIS_DIR = os.path.dirname(os.path.realpath(__file__))
+PARENT_DIR = os.path.dirname(THIS_DIR)
+sys.path.insert(0, PARENT_DIR)
+from pluto.tools import TmpDirTestCase, TableReader, load_mutations, run_cwl, write_table, dicts2lines, CWLFile
+from pluto.settings import DATA_SETS
+sys.path.pop(0)
 
-if __name__ == "__main__":
-    from tools import TmpDirTestCase, TableReader, load_mutations, run_cwl, write_table, dicts2lines
-    from settings import CWL_DIR, DATA_SETS
-
-cwl_file = os.path.join(CWL_DIR, 'tmb_workflow.cwl')
+cwl_file = CWLFile('tmb_workflow.cwl')
 
 class TestTmbWorkflow(TmpDirTestCase):
     def setUp(self):

@@ -3,18 +3,17 @@
 """
 """
 import os
+import sys
 import unittest
 
-# relative imports, from CLI and from parent project
-if __name__ != "__main__":
-    from .tools import TmpDirTestCase, load_mutations, run_cwl, write_table, dicts2lines
-    from .settings import CWL_DIR
+THIS_DIR = os.path.dirname(os.path.realpath(__file__))
+PARENT_DIR = os.path.dirname(THIS_DIR)
+sys.path.insert(0, PARENT_DIR)
+from pluto.tools import TmpDirTestCase, load_mutations, run_cwl, write_table, dicts2lines, CWLFile
 
-if __name__ == "__main__":
-    from tools import TmpDirTestCase, load_mutations, run_cwl, write_table, dicts2lines
-    from settings import CWL_DIR
+sys.path.pop(0)
 
-cwl_file = os.path.join(CWL_DIR, 'calc-tmb.cwl')
+cwl_file = CWLFile('calc-tmb.cwl')
 
 class TestCalcTMB(TmpDirTestCase):
     def test_calc_tmb_from_file(self):

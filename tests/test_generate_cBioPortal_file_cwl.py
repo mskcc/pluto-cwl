@@ -4,19 +4,18 @@
 unit tests for the generate_cbioPortal_file.cwl file
 """
 import os
+import sys
 import unittest
 from tempfile import TemporaryDirectory
 
-# relative imports, from CLI and from parent project
-if __name__ != "__main__":
-    from .tools import run_cwl, write_table
-    from .settings import CWL_DIR, DATA_SETS
+THIS_DIR = os.path.dirname(os.path.realpath(__file__))
+PARENT_DIR = os.path.dirname(THIS_DIR)
+sys.path.insert(0, PARENT_DIR)
+from pluto.tools import run_cwl, write_table, CWLFile
+from pluto.settings import DATA_SETS
+sys.path.pop(0)
 
-if __name__ == "__main__":
-    from tools import run_cwl, write_table
-    from settings import CWL_DIR, DATA_SETS
-
-cwl_file = os.path.join(CWL_DIR, 'generate_cBioPortal_file.cwl')
+cwl_file = CWLFile('generate_cBioPortal_file.cwl')
 
 class TestGenerateCbioFilesCWL(unittest.TestCase):
     def test_generate_meta_sample(self):

@@ -4,20 +4,18 @@
 unit tests for the portal-workflow.cwl
 """
 import os
+import sys
 import unittest
 from tempfile import TemporaryDirectory
 
+THIS_DIR = os.path.dirname(os.path.realpath(__file__))
+PARENT_DIR = os.path.dirname(THIS_DIR)
+sys.path.insert(0, PARENT_DIR)
+from pluto.tools import load_mutations, run_cwl, CWLFile
+from pluto.settings import DATA_SETS, KNOWN_FUSIONS_FILE
+sys.path.pop(0)
 
-# relative imports, from CLI and from parent project
-if __name__ != "__main__":
-    from .tools import load_mutations, run_cwl
-    from .settings import CWL_DIR, DATA_SETS, KNOWN_FUSIONS_FILE
-
-if __name__ == "__main__":
-    from tools import load_mutations, run_cwl
-    from settings import CWL_DIR, DATA_SETS, KNOWN_FUSIONS_FILE
-
-cwl_file = os.path.join(CWL_DIR, 'portal-workflow.cwl')
+cwl_file = CWLFile('portal-workflow.cwl')
 
 class TestPortalWorkflow(unittest.TestCase):
     def test_run_worflow_one_maf(self):

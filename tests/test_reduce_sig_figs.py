@@ -4,22 +4,22 @@
 unit tests for reduce_sig_figs.cwl
 """
 import os
+import sys
+import json
+import unittest
 import json
 import csv
-import unittest
 from collections import OrderedDict
 from tempfile import TemporaryDirectory
 
-# relative imports, from CLI and from parent project
-if __name__ != "__main__":
-    from .tools import run_command
-    from .settings import CWL_DIR, CWL_ARGS
+THIS_DIR = os.path.dirname(os.path.realpath(__file__))
+PARENT_DIR = os.path.dirname(THIS_DIR)
+sys.path.insert(0, PARENT_DIR)
+from pluto.tools import run_command, CWLFile
+from pluto.settings import CWL_ARGS
+sys.path.pop(0)
 
-if __name__ == "__main__":
-    from tools import run_command
-    from settings import CWL_DIR, CWL_ARGS
-
-cwl_file = os.path.join(CWL_DIR, 'reduce_sig_figs.cwl')
+cwl_file = CWLFile('reduce_sig_figs.cwl')
 
 class TestReduceSigFigs(unittest.TestCase):
     def test_reduce_sig_figs(self):
