@@ -4,18 +4,17 @@
 Test case for merging tables
 """
 import os
+import sys
 import unittest
 
-# relative imports, from CLI and from parent project
-if __name__ != "__main__":
-    from .tools import TmpDirTestCase, run_cwl, write_table
-    from .settings import CWL_DIR
+THIS_DIR = os.path.dirname(os.path.realpath(__file__))
+PARENT_DIR = os.path.dirname(THIS_DIR)
+sys.path.insert(0, PARENT_DIR)
+from pluto.tools import TmpDirTestCase, run_cwl, write_table, CWLFile
 
-if __name__ == "__main__":
-    from tools import TmpDirTestCase, run_cwl, write_table
-    from settings import CWL_DIR
+sys.path.pop(0)
 
-cwl_file = os.path.join(CWL_DIR, 'merge-tables.cwl')
+cwl_file = CWLFile('merge-tables.cwl')
 
 class TestMergeTables(TmpDirTestCase):
     def test_merge_tables1(self):
@@ -66,8 +65,8 @@ class TestMergeTables(TmpDirTestCase):
                 'location': 'file://' + os.path.join(output_dir,'output.tsv'),
                 'basename': 'output.tsv',
                 'class': 'File',
-                'checksum': 'sha1$d789b7d7e9c6e60afc37c907979e52b8e9b48841',
-                'size': 297,
+                'checksum': 'sha1$03d7120a05eeef1a4a7349c9b35069566415e786',
+                'size': 255,
                 'path':  os.path.join(output_dir,'output.tsv')
                 }
             }

@@ -4,20 +4,19 @@
 unit tests for the paste-col.cwl
 """
 import os
-import json
+import sys
 import unittest
-from tempfile import TemporaryDirectory, NamedTemporaryFile
+import json
+from tempfile import TemporaryDirectory
 
-# relative imports, from CLI and from parent project
-if __name__ != "__main__":
-    from .tools import run_command
-    from .settings import CWL_DIR, CWL_ARGS
+THIS_DIR = os.path.dirname(os.path.realpath(__file__))
+PARENT_DIR = os.path.dirname(THIS_DIR)
+sys.path.insert(0, PARENT_DIR)
+from pluto.tools import run_command, CWLFile
+from pluto.settings import CWL_ARGS
+sys.path.pop(0)
 
-if __name__ == "__main__":
-    from tools import run_command
-    from settings import CWL_DIR, CWL_ARGS
-
-cwl_file = os.path.join(CWL_DIR, 'paste-col.cwl')
+cwl_file = CWLFile('paste-col.cwl')
 
 class TestPasteCol(unittest.TestCase):
     def test_paste_col_1(self):

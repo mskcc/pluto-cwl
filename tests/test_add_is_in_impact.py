@@ -4,20 +4,18 @@
 unit tests for the add_is_in_impact.cwl
 """
 import os
-import json
+import sys
 import unittest
 from tempfile import TemporaryDirectory
 
-# relative imports, from CLI and from parent project
-if __name__ != "__main__":
-    from .tools import load_mutations, run_cwl, write_table
-    from .settings import CWL_DIR, DATA_SETS, IMPACT_FILE
+THIS_DIR = os.path.dirname(os.path.realpath(__file__))
+PARENT_DIR = os.path.dirname(THIS_DIR)
+sys.path.insert(0, PARENT_DIR)
+from pluto.tools import load_mutations, run_cwl, write_table, CWLFile
+from pluto.settings import DATA_SETS, IMPACT_FILE
+sys.path.pop(0)
 
-if __name__ == "__main__":
-    from tools import load_mutations, run_cwl, write_table
-    from settings import CWL_DIR, DATA_SETS, IMPACT_FILE
-
-cwl_file = os.path.join(CWL_DIR, 'add_is_in_impact.cwl')
+cwl_file = CWLFile('add_is_in_impact.cwl')
 
 class TestAddImpactCWL(unittest.TestCase):
     def test_add_impact_0(self):

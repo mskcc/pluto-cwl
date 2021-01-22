@@ -4,20 +4,19 @@
 unit tests for the workflow_with_facets.cwl
 """
 import os
-import json
+import sys
 import unittest
+import json
 from tempfile import TemporaryDirectory
 
-# relative imports, from CLI and from parent project
-if __name__ != "__main__":
-    from .tools import load_mutations, run_cwl, TableReader, TmpDirTestCase
-    from .settings import CWL_DIR, DATA_SETS, KNOWN_FUSIONS_FILE, IMPACT_FILE
+THIS_DIR = os.path.dirname(os.path.realpath(__file__))
+PARENT_DIR = os.path.dirname(THIS_DIR)
+sys.path.insert(0, PARENT_DIR)
+from pluto.tools import load_mutations, run_cwl, TableReader, TmpDirTestCase, CWLFile
+from pluto.settings import DATA_SETS, KNOWN_FUSIONS_FILE, IMPACT_FILE
+sys.path.pop(0)
 
-if __name__ == "__main__":
-    from tools import load_mutations, run_cwl, TableReader, TmpDirTestCase
-    from settings import CWL_DIR, DATA_SETS, KNOWN_FUSIONS_FILE, IMPACT_FILE
-
-cwl_file = os.path.join(CWL_DIR, 'workflow_with_facets.cwl')
+cwl_file = CWLFile('workflow_with_facets.cwl')
 
 class TestWorkflow(TmpDirTestCase):
     def test_run_worflow_one_maf(self):

@@ -1,0 +1,9 @@
+#SAMPLE_ID
+#SAMPLE_ID
+#STRING
+#1
+SAMPLE_ID
+Sample6
+Sample5
+Sample1
+Sample2

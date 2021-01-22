@@ -3,20 +3,20 @@
 """
 unit tests for the udpate_cBioPortal_data.cwl
 """
+
 import os
+import sys
 import unittest
 from tempfile import TemporaryDirectory
 
-# relative imports, from CLI and from parent project
-if __name__ != "__main__":
-    from .tools import load_mutations, run_cwl, write_table, dicts2lines
-    from .settings import CWL_DIR
+THIS_DIR = os.path.dirname(os.path.realpath(__file__))
+PARENT_DIR = os.path.dirname(THIS_DIR)
+sys.path.insert(0, PARENT_DIR)
+from pluto.tools import load_mutations, run_cwl, write_table, dicts2lines, CWLFile
 
-if __name__ == "__main__":
-    from tools import load_mutations, run_cwl, write_table, dicts2lines
-    from settings import CWL_DIR
+sys.path.pop(0)
 
-cwl_file = os.path.join(CWL_DIR, 'update_cBioPortal_data.cwl')
+cwl_file = CWLFile('update_cBioPortal_data.cwl')
 
 class TestUpdate_cBioPortal_dataCWL(unittest.TestCase):
 

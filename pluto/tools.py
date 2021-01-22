@@ -5,11 +5,65 @@ import os
 import subprocess as sp
 import csv
 import json
-from settings import CWL_ARGS
+from .settings import CWL_DIR, CWL_ARGS
 from collections import OrderedDict
 import unittest
 from tempfile import mkdtemp
 import shutil
+from pathlib import Path
+
+class CWLRunner(object):
+    """
+    class for running a CWL File
+    """
+    def __init__(self, cwl_file, input, CWL_ARGS = CWL_ARGS, print_stdout = False, dir = "tmp", verbose = True):
+        self.cwl_file = cwl_file
+        self.input = input
+        self.CWL_ARGS = CWL_ARGS
+        self.print_stdout = print_stdout
+        self.verbose = verbose
+
+        Path(os.path.abspath(dir)).mkdir(parents=True, exist_ok=True)
+        self.dir = os.path.abspath(dir)
+
+    def run(self):
+        if self.verbose:
+            message = ">>> Running {cwl_file} in {dir}".format(cwl_file = self.cwl_file, dir = self.dir)
+            print(message)
+
+        output_json, output_dir = run_cwl(
+            testcase = None,
+            tmpdir = self.dir,
+            input_json = self.input,
+            cwl_file = self.cwl_file,
+            CWL_ARGS = self.CWL_ARGS,
+            print_stdout = self.print_stdout,
+            print_command = False,
+            check_returncode = False
+            )
+        output_json_file = os.path.join(self.dir, "output.json")
+        with open(output_json_file, "w") as fout:
+            json.dump(output_json, fout, indent = 4)
+
+
+
+class CWLFile(os.PathLike):
+    """
+    wrapper class so I dont have to do
+
+    from pluto.settings import CWL_DIR
+    cwl_file = os.path.join(CWL_DIR, 'some.cwl')
+
+    all the time
+    """
+    def __init__(self, path):
+        self.path = os.path.join(CWL_DIR, path)
+    def __str__(self):
+        return(self.path)
+    def __repr__(self):
+        return(self.path)
+    def __fspath__(self):
+        return(self.path)
 
 class TmpDirTestCase(unittest.TestCase):
     """
@@ -56,8 +110,8 @@ def run_cwl(
         json.dump(input_json, json_out)
 
     output_dir = os.path.join(tmpdir, "output")
-    tmp_dir = os.path.join(tmpdir, "tmp")
-    cache_dir = os.path.join(tmpdir, "cache")
+    cache_dir = os.path.join(tmpdir, 'tmp', "cache")
+    tmp_dir = os.path.join(tmpdir, 'tmp', "tmp")
 
     command = [
         "cwl-runner",
@@ -121,11 +175,12 @@ def load_mutations(filename):
         mutations = [ row for row in reader ]
     return(comments, mutations)
 
-def write_table(tmpdir, filename, lines, delimiter = '\t'):
+def write_table(tmpdir, filename, lines, delimiter = '\t', filepath = None):
     """
     Write a table to a temp location
     """
-    filepath = os.path.join(tmpdir, filename)
+    if not filepath:
+        filepath = os.path.join(tmpdir, filename)
     with open(filepath, "w") as f:
         for line in lines:
             line_str = delimiter.join(line) + '\n'

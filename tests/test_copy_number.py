@@ -4,20 +4,19 @@
 unit tests for the copy_number.cwl
 """
 import os
+import sys
 import json
 import unittest
-from tempfile import TemporaryDirectory, NamedTemporaryFile
+from tempfile import TemporaryDirectory
 
-# relative imports, from CLI and from parent project
-if __name__ != "__main__":
-    from .tools import run_command
-    from .settings import CWL_DIR, CWL_ARGS, DATA_SETS, PORTAL_CNA_FILE
+THIS_DIR = os.path.dirname(os.path.realpath(__file__))
+PARENT_DIR = os.path.dirname(THIS_DIR)
+sys.path.insert(0, PARENT_DIR)
+from pluto.tools import run_command, CWLFile
+from pluto.settings import CWL_ARGS, DATA_SETS, PORTAL_CNA_FILE
+sys.path.pop(0)
 
-if __name__ == "__main__":
-    from tools import run_command
-    from settings import CWL_DIR, CWL_ARGS, DATA_SETS, PORTAL_CNA_FILE
-
-cwl_file = os.path.join(CWL_DIR, 'copy_number.cwl')
+cwl_file = CWLFile('copy_number.cwl')
 
 class TestCopyNumber(unittest.TestCase):
     def test_run_copy_number_one_file(self):
