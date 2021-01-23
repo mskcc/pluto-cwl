@@ -16,7 +16,7 @@ class CWLRunner(object):
     """
     class for running a CWL File
     """
-    def __init__(self, cwl_file, input, CWL_ARGS = CWL_ARGS, print_stdout = False, dir = "tmp", verbose = True):
+    def __init__(self, cwl_file, input, CWL_ARGS = CWL_ARGS, print_stdout = False, dir = "pipeline_output", verbose = True):
         self.cwl_file = cwl_file
         self.input = input
         self.CWL_ARGS = CWL_ARGS
