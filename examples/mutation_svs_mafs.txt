@@ -1,0 +1,2 @@
+/juno/work/ci/helix_filters_01/fixtures/Proj_08390_G/maf/Sample6.Sample5.svs.pass.vep.maf
+/juno/work/ci/helix_filters_01/fixtures/Proj_08390_G/maf/Sample1.Sample2.svs.pass.vep.maf
