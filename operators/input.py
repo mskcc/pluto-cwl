@@ -1,7 +1,7 @@
 """
 Module for converting Python dict into CWL input JSON dict
 """
-from pluto.tools import TableReader
+from pluto.tools import TableReader, write_table, dicts2lines
 import copy
 
 def generate_pairs(pairs_file, pair_template):
@@ -50,7 +50,7 @@ def generate_input(
     if bool_keys is None:
         bool_keys = []
 
-    input = copy.deepcopy(args) 
+    input = copy.deepcopy(args)
 
     # convert input args into the correct output formats
     for key in bool_keys:
@@ -77,3 +77,47 @@ def generate_input(
         input['pairs'] = generate_pairs(pairs_file, pair_template)
 
     return(input)
+
+
+def generate_data_clinical(func = None, output_file = "data_clinical.txt"):
+    """
+    create a blank base data clinical file template
+    """
+    data_clinical_lines = [
+    ['#SAMPLE_ID'],
+    ['#SAMPLE_ID'],
+    ['#STRING'],
+    ['#1'],
+    ['SAMPLE_ID']
+    ]
+    write_table('', '', lines = data_clinical_lines, filepath = output_file)
+
+def generate_pairs(func = None, output_file = "pairs.tsv"):
+    """
+    create a blank template pairs file for use with pipelines
+    """
+    lines = [[
+    'tumor_id',
+    'normal_id',
+    'pair_id',
+    'pair_maf',
+    'snp_pileup'
+    ]]
+    write_table('', '', lines = lines, filepath = output_file)
+
+def generate_sample_summary(func = None, output_file = "sample_summary.txt"):
+    lines = [[
+        'Auto-status',
+        'Sample',
+        'Unexpected Match(es)',
+        'Unexpected Mismatch(es)',
+        'Major Contamination',
+        'Minor Contamination',
+        'Coverage',
+        'Duplication',
+        'Library Size (millions)',
+        'On Bait Bases (millions)',
+        'Aligned Reads (millions)',
+        'Insert Size Peak'
+    ]]
+    write_table('', '', lines = lines, filepath = output_file)
