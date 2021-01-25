@@ -11,7 +11,7 @@ import json
 THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 PARENT_DIR = os.path.dirname(THIS_DIR)
 sys.path.insert(0, PARENT_DIR)
-from pluto.tools import TmpDirTestCase, TableReader, load_mutations, run_cwl, write_table, dicts2lines, CWLFile
+from pluto.tools import TmpDirTestCase, write_table, dicts2lines
 from operators import input
 sys.path.pop(0)
 
@@ -115,7 +115,7 @@ class TestInputGenerateInput(TmpDirTestCase):
         # this will be a File input
         data_clinical_file = os.path.join(self.tmpdir, "data_clinical.txt"),
 
-        # these paths will be read from the input file 
+        # these paths will be read from the input file
         path1 = os.path.join(self.tmpdir, '1.txt')
         path2 = os.path.join(self.tmpdir, '2.txt')
         files_list_file = os.path.join(self.tmpdir, "some_files.txt")

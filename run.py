@@ -6,7 +6,8 @@ Script for running the CWL workflows
 import csv
 import argparse
 from pluto.tools import write_table, dicts2lines
-from operators import tmb_workflow, workflow_with_facets
+from operators import workflow_with_facets
+from operators.tmb_workflow import TMBWorkflow
 
 def generate_data_clinical(func = None, output_file = "data_clinical.txt"):
     """
@@ -79,7 +80,7 @@ def main():
     _tmb_workflow.add_argument('--data-clinical', dest = 'data_clinical_file', required = True)
     _tmb_workflow.add_argument('--assay-coverage', dest = 'assay_coverage', required = True)
     _tmb_workflow.add_argument('--pairs', dest = 'pairs_file', required = True)
-    _tmb_workflow.set_defaults(func = tmb_workflow.main)
+    _tmb_workflow.set_defaults(func = TMBWorkflow._run)
     """
     $ ./run.py tmb_workflow --data-clinical examples/data_clinical.txt --assay-coverage 10000 --pairs examples/pairs.tsv
     """

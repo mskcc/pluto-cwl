@@ -103,4 +103,5 @@ def main(
         return()
 
     runner = CWLRunner(cwl_file, input, dir = dir, verbose = verbose)
-    runner.run()
+    output_json, output_dir, output_json_file = runner.run()
+    return(output_json, output_dir, output_json_file)
