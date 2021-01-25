@@ -34,7 +34,17 @@ pair_template = {
     "normal_id": None
 }
 
-def main(assay_coverage, project_id, cancer_type, pairs_file, data_clinical_file, sample_summary_file, print_input = False, **kwargs):
+def main(
+    assay_coverage,
+    project_id,
+    cancer_type,
+    pairs_file,
+    data_clinical_file,
+    sample_summary_file,
+    print_input = False,
+    dir = None,
+    verbose = True,
+    **kwargs):
     # collect and parse through all the input args
     args = {**kwargs}
     if 'func' in args:
@@ -92,5 +102,5 @@ def main(assay_coverage, project_id, cancer_type, pairs_file, data_clinical_file
         print(json.dumps(input, indent = 4))
         return()
 
-    runner = CWLRunner(cwl_file, input)
+    runner = CWLRunner(cwl_file, input, dir = dir, verbose = verbose)
     runner.run()

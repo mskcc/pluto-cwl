@@ -16,12 +16,21 @@ class CWLRunner(object):
     """
     class for running a CWL File
     """
-    def __init__(self, cwl_file, input, CWL_ARGS = CWL_ARGS, print_stdout = False, dir = "pipeline_output", verbose = True):
+    def __init__(self, cwl_file, input,
+        CWL_ARGS = CWL_ARGS,
+        print_stdout = False,
+        dir = None,
+        input_json_file = None,
+        verbose = True):
         self.cwl_file = cwl_file
         self.input = input
         self.CWL_ARGS = CWL_ARGS
         self.print_stdout = print_stdout
         self.verbose = verbose
+        self.input_json_file = input_json_file
+
+        if dir is None:
+            dir = "pipeline_output"
 
         Path(os.path.abspath(dir)).mkdir(parents=True, exist_ok=True)
         self.dir = os.path.abspath(dir)
@@ -39,11 +48,13 @@ class CWLRunner(object):
             CWL_ARGS = self.CWL_ARGS,
             print_stdout = self.print_stdout,
             print_command = False,
-            check_returncode = False
+            check_returncode = False,
+            input_json_file = self.input_json_file
             )
         output_json_file = os.path.join(self.dir, "output.json")
         with open(output_json_file, "w") as fout:
             json.dump(output_json, fout, indent = 4)
+        return(output_json, output_dir, output_json_file)
 
 
 
@@ -102,10 +113,12 @@ def run_cwl(
     CWL_ARGS = CWL_ARGS, # default cwltool args to use
     print_stdout = False,
     print_command = False,
-    check_returncode = True
+    check_returncode = True,
+    input_json_file = None
     ):
     """Run the CWL"""
-    input_json_file = os.path.join(tmpdir, "input.json")
+    if not input_json_file:
+        input_json_file = os.path.join(tmpdir, "input.json")
     with open(input_json_file, "w") as json_out:
         json.dump(input_json, json_out)
 

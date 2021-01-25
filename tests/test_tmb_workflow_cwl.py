@@ -129,29 +129,33 @@ class TestTmbWorkflow(TmpDirTestCase):
         'Consequence': 'synonymous_variant' # include even though its synonymous_variant
         }
         self.maf_rows1 = [
-            self.maf_row1,
-            self.maf_row2,
-            self.maf_row3,
-            self.maf_row4,
-            self.maf_row5,
-            self.maf_row6,
-            self.maf_row7,
-            self.maf_row8,
-            self.maf_row9,
-            self.maf_row10
+            self.maf_row1, # exclude due to synonymous_variant
+            self.maf_row2, # exclude due to synonymous_variant
+            self.maf_row3, # this one should pass filter
+            self.maf_row4, # exclude due to low AF
+            self.maf_row5, # exclude due to low coverage
+            self.maf_row6, # this one should pass filter
+            self.maf_row7,  # this one should pass filter
+            self.maf_row8, # this should pass filter
+            self.maf_row9, # this should pass filter
+            self.maf_row10 # this should pass filter
         ]
+        # PASS: 6
+        # FAIL: 4
         self.maf_rows2 = [
-            self.maf_row1_2,
-            self.maf_row2,
-            self.maf_row3_2,
-            self.maf_row3_3,
-            self.maf_row4,
-            self.maf_row5,
-            self.maf_row6,
-            self.maf_row8,
-            self.maf_row9,
-            self.maf_row10
+            self.maf_row1_2, # exclude due to synonymous_variant
+            self.maf_row2, # exclude due to synonymous_variant
+            self.maf_row3_2, # this one should pass filter
+            self.maf_row3_3, # exclude due to low AF
+            self.maf_row4, # exclude due to low AF
+            self.maf_row5, # exclude due to low coverage
+            self.maf_row6, # this one should pass filter
+            self.maf_row8, # this should pass filter
+            self.maf_row9, # this should pass filter
+            self.maf_row10 # this should pass filter
         ]
+        # PASS: 5
+        # FAIL: 5
         self.maf_lines1 = dicts2lines(dict_list = self.maf_rows1, comment_list = self.maf_comments)
         self.maf_lines2 = dicts2lines(dict_list = self.maf_rows2, comment_list = self.maf_comments)
         self.maf1 = write_table(self.tmpdir, filename = "input1.maf", lines = self.maf_lines1)

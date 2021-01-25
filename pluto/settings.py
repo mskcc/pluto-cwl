@@ -6,6 +6,7 @@ import os
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 CWL_DIR = os.path.join(os.path.dirname(THIS_DIR), "cwl")
 REF_DIR = os.path.join(os.path.dirname(THIS_DIR), "ref")
+EXAMPLES_DIR = os.path.join(os.path.dirname(THIS_DIR), "examples")
 
 # common args to be included in all cwltool invocations
 CWL_ARGS = [

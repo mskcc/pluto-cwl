@@ -2,6 +2,7 @@
 Module for converting Python dict into CWL input JSON dict
 """
 from pluto.tools import TableReader
+import copy
 
 def generate_pairs(pairs_file, pair_template):
     """
@@ -14,11 +15,15 @@ def generate_pairs(pairs_file, pair_template):
 
     pairs = []
     for record in records:
-        pair = {**pair_template}
+        # start wit a copy of the the template
+        pair = copy.deepcopy(pair_template)
+        # add the pair_maf entry if it was included
         if 'pair_maf' in pair_template:
             pair['pair_maf']['path'] = record.pop('pair_maf')
+        # add the snp_pileup if it was included
         if 'snp_pileup' in pair_template:
             pair['snp_pileup']['path'] = record.pop('snp_pileup')
+        # add all the other items from the input record
         for k, v in record.items():
             if k in pair:
                 pair[k] = v
@@ -45,7 +50,7 @@ def generate_input(
     if bool_keys is None:
         bool_keys = []
 
-    input = {**args}
+    input = copy.deepcopy(args) 
 
     # convert input args into the correct output formats
     for key in bool_keys:

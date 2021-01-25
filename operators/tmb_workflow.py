@@ -21,7 +21,13 @@ pair_template = {
         "normal_id": None
     }
 
-def main(data_clinical_file, assay_coverage, pairs_file, func = None):
+def main(
+    data_clinical_file,
+    assay_coverage,
+    pairs_file,
+    dir = None,
+    verbose = True,
+    func = None):
     data_clinical_file = os.path.abspath(data_clinical_file)
     pairs_file = os.path.abspath(pairs_file)
 
@@ -36,5 +42,6 @@ def main(data_clinical_file, assay_coverage, pairs_file, func = None):
         pair_template = pair_template,
         File_keys = ['data_clinical_file']
     )
-    runner = CWLRunner(cwl_file, input)
-    runner.run()
+    runner = CWLRunner(cwl_file = cwl_file, input = input, dir = dir, verbose = verbose)
+    output_json, output_dir, output_json_file = runner.run()
+    return(output_json, output_dir, output_json_file)
