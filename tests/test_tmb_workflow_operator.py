@@ -12,7 +12,7 @@ THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 PARENT_DIR = os.path.dirname(THIS_DIR)
 sys.path.insert(0, PARENT_DIR)
 from pluto.tools import TmpDirTestCase, TableReader, load_mutations, run_cwl, write_table, dicts2lines, CWLFile
-from operators import tmb_workflow
+from operators.tmb_workflow import TMBWorkflow
 sys.path.pop(0)
 
 class TestTmbWorkflowOperator(TmpDirTestCase):
@@ -186,12 +186,12 @@ class TestTmbWorkflowOperator(TmpDirTestCase):
         Test case for running the TMB operator with
         """
         self.maxDiff = None
-        output_json, output_dir, output_json_file = tmb_workflow.main(
-            data_clinical_file = self.data_clinical_file,
+        operator = TMBWorkflow(data_clinical_file = self.data_clinical_file,
             assay_coverage = '1000',
             pairs_file = self.pairs_file,
             dir = self.tmpdir,
             verbose = False)
+        output_json, output_dir, output_json_file = operator.run()
 
         expected_output = {
             'output_file': {
