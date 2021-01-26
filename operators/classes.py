@@ -1,3 +1,5 @@
+import json
+import copy
 from pluto.tools import CWLRunner
 
 class Operator(object):
@@ -6,21 +8,28 @@ class Operator(object):
     dir = 'pipeline_output'
     verbose = True
     input = None
+    print_input = False
 
     def __init__(self, **kwargs):
-        pass
+        self.args = copy.deepcopy(kwargs)
+        # use these keyword args to set instance attributes
+        if 'dir' in self.args:
+            self.dir = self.args.pop('dir')
+        if 'verbose' in self.args:
+            self.verbose = self.args.pop('verbose')
+        if 'print_input' in self.args:
+            self.print_input = self.args.pop('print_input')
+        if 'func' in self.args:
+            self.args.pop('func')
+        # pass
         # for k,v in kwargs.items():
         #     if k not in ['func']:
         #         setattr(self, k, v)
 
     def parse_kwargs(self, **kwargs):
         """
-        Override this method to parse the args passed in a set instance attributes
+        Pre-processing of passed keyword args to set required instance values and strip out values that should not get passed to pipeline input later
         """
-        if 'dir' in kwargs:
-            self.dir = kwargs['dir']
-        if 'verbose' in kwargs:
-            self.verbose = kwargs['verbose']
 
     def generate_input_data(self):
         """
@@ -39,6 +48,10 @@ class Operator(object):
         """
         Run the CWL
         """
+        if self.print_input:
+            print(json.dumps(self.input, indent = 4))
+            return()
+
         runner = CWLRunner(
             cwl_file = self.cwl_file,
             input = self.input,

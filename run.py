@@ -4,9 +4,10 @@
 Script for running the CWL workflows
 """
 import argparse
-from operators import workflow_with_facets
+# from operators import workflow_with_facets
 from operators.tmb_workflow import TMBWorkflow
-from operators.input import generate_sample_summary, generate_pairs, generate_data_clinical
+from operators.workflow_with_facets import WorkflowWithFacets
+from operators.input import generate_sample_summary, generate_pairs_sheet, generate_data_clinical
 
 def main():
     """
@@ -24,7 +25,7 @@ def main():
     # Generate a blank template file
     _generate_pairs = subparsers.add_parser('pairs_template', help = 'Generate a blank template pairs file')
     _generate_pairs.add_argument('--output', dest = 'output_file', default = "pairs.tsv")
-    _generate_pairs.set_defaults(func = generate_pairs)
+    _generate_pairs.set_defaults(func = generate_pairs_sheet)
 
     # Generate a blank template file
     _generate_sample_summary = subparsers.add_parser('sample_summary', help = 'Generate a blank template sample sumamry file')
@@ -68,7 +69,7 @@ def main():
     _workflow_with_facets.add_argument('--targets-list', dest = 'targets_list')
     _workflow_with_facets.add_argument('--known-fusions', dest = 'known_fusions_file')
     _workflow_with_facets.add_argument('--print-input', dest = 'print_input', action = 'store_true')
-    _workflow_with_facets.set_defaults(func = workflow_with_facets.main)
+    _workflow_with_facets.set_defaults(func = WorkflowWithFacets._run)
     """
     $ ./run.py workflow_with_facets --assay-coverage 100000 --project-id Project1 --cancer-type MEL --pairs examples/pairs.tsv --data-clinical examples/data_clinical.txt --sample-summary examples/sample_summary.txt --mutation-svs-txts examples/mutation_svs.txt --mutation-svs-mafs examples/mutation_svs_mafs.txt --print-input
     """

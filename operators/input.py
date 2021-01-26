@@ -92,7 +92,7 @@ def generate_data_clinical(func = None, output_file = "data_clinical.txt"):
     ]
     write_table('', '', lines = data_clinical_lines, filepath = output_file)
 
-def generate_pairs(func = None, output_file = "pairs.tsv"):
+def generate_pairs_sheet(func = None, output_file = "pairs.tsv"):
     """
     create a blank template pairs file for use with pipelines
     """
