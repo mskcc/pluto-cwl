@@ -10,13 +10,12 @@ import unittest
 THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 PARENT_DIR = os.path.dirname(THIS_DIR)
 sys.path.insert(0, PARENT_DIR)
-from pluto.tools import TmpDirTestCase, TableReader, load_mutations, run_cwl, write_table, dicts2lines, CWLFile
-from pluto.settings import DATA_SETS
+from pluto.tools import TmpDirTestCase, TableReader
 sys.path.pop(0)
 
-cwl_file = CWLFile('tmb_workflow.cwl')
-
 class TestTmbWorkflow(TmpDirTestCase):
+    cwl_file = 'tmb_workflow.cwl'
+
     def setUp(self):
         # initialize the tmpdir
         super().setUp()
@@ -156,18 +155,18 @@ class TestTmbWorkflow(TmpDirTestCase):
         ]
         # PASS: 5
         # FAIL: 5
-        self.maf_lines1 = dicts2lines(dict_list = self.maf_rows1, comment_list = self.maf_comments)
-        self.maf_lines2 = dicts2lines(dict_list = self.maf_rows2, comment_list = self.maf_comments)
-        self.maf1 = write_table(self.tmpdir, filename = "input1.maf", lines = self.maf_lines1)
-        self.maf2 = write_table(self.tmpdir, filename = "input2.maf", lines = self.maf_lines2)
-        self.data_clinical_file = write_table(self.tmpdir, filename = "data_clinical_sample.txt", lines = self.data_clinical_lines)
+        self.maf_lines1 = self.dicts2lines(dict_list = self.maf_rows1, comment_list = self.maf_comments)
+        self.maf_lines2 = self.dicts2lines(dict_list = self.maf_rows2, comment_list = self.maf_comments)
+        self.maf1 = self.write_table(self.tmpdir, filename = "input1.maf", lines = self.maf_lines1)
+        self.maf2 = self.write_table(self.tmpdir, filename = "input2.maf", lines = self.maf_lines2)
+        self.data_clinical_file = self.write_table(self.tmpdir, filename = "data_clinical_sample.txt", lines = self.data_clinical_lines)
 
     def test_tmb_workflow1(self):
         """
         Test case for running the TMB workflow on multiple files
         """
         self.maxDiff = None
-        input_json = {
+        self.input = {
             "data_clinical_file": {
                   "class": "File",
                   "path": self.data_clinical_file
@@ -194,13 +193,8 @@ class TestTmbWorkflow(TmpDirTestCase):
                 }
                 ]
             }
-        output_json, output_dir = run_cwl(
-            testcase = self,
-            tmpdir = self.tmpdir,
-            input_json = input_json,
-            cwl_file = cwl_file,
-            print_command = False,
-            )
+
+        output_json, output_dir = self.run_cwl()
 
         expected_output = {
             'output_file': {
@@ -215,8 +209,8 @@ class TestTmbWorkflow(TmpDirTestCase):
         self.assertDictEqual(output_json, expected_output)
 
         output_file = expected_output['output_file']['path']
-        with open(output_file) as fin:
-            lines = [ l.strip().split() for l in fin ]
+
+        lines = self.read_table(output_file)
 
         expected_lines = [
             ['#SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'CMO_TMB_SCORE'],
@@ -237,7 +231,7 @@ class TestTmbWorkflow(TmpDirTestCase):
 
 
         # one pair uses a Pooled Normal
-        input_json = {
+        self.input = {
             "data_clinical_file": {
                   "class": "File",
                   "path": self.data_clinical_file
@@ -264,13 +258,8 @@ class TestTmbWorkflow(TmpDirTestCase):
                 }
                 ]
             }
-        output_json, output_dir = run_cwl(
-            testcase = self,
-            tmpdir = self.tmpdir,
-            input_json = input_json,
-            cwl_file = cwl_file,
-            print_command = False,
-            )
+
+        output_json, output_dir = self.run_cwl()
 
         expected_output = {
             'output_file': {
@@ -285,8 +274,8 @@ class TestTmbWorkflow(TmpDirTestCase):
         self.assertDictEqual(output_json, expected_output)
 
         output_file = expected_output['output_file']['path']
-        with open(output_file) as fin:
-            lines = [ l.strip().split() for l in fin ]
+
+        lines = self.read_table(output_file)
 
         expected_lines = [
             ['#SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'CMO_TMB_SCORE'],
@@ -308,7 +297,7 @@ class TestTmbWorkflow(TmpDirTestCase):
         """
         Test case for using a single input pair maf
         """
-        input_json = {
+        self.input = {
             "data_clinical_file": {
                   "class": "File",
                   "path": self.data_clinical_file
@@ -326,13 +315,9 @@ class TestTmbWorkflow(TmpDirTestCase):
                 }
                 ]
             }
-        output_json, output_dir = run_cwl(
-            testcase = self,
-            tmpdir = self.tmpdir,
-            input_json = input_json,
-            cwl_file = cwl_file,
-            print_command = False,
-            )
+
+        output_json, output_dir = self.run_cwl()
+
         expected_output = {
             'output_file': {
                 'location': 'file://' + os.path.join(output_dir,'data_clinical_sample.txt'),
@@ -346,8 +331,8 @@ class TestTmbWorkflow(TmpDirTestCase):
         self.assertDictEqual(output_json, expected_output)
 
         output_file = expected_output['output_file']['path']
-        with open(output_file) as fin:
-            lines = [ l.strip().split() for l in fin ]
+
+        lines = self.read_table(output_file)
 
         expected_lines = [
             ['#SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'CMO_TMB_SCORE'],
@@ -368,7 +353,7 @@ class TestTmbWorkflow(TmpDirTestCase):
         """
         Test case with a single real maf file
         """
-        input_json = {
+        self.input = {
             "data_clinical_file": {
                   "class": "File",
                   "path": self.data_clinical_file
@@ -377,7 +362,7 @@ class TestTmbWorkflow(TmpDirTestCase):
             "pairs": [
                 {
                     "pair_maf": {
-                        "path": os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample1.Sample2.muts.maf"),
+                        "path": os.path.join(self.DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample1.Sample2.muts.maf"),
                         "class": "File"
                     },
                     "pair_id": "Sample1-T.Sample1-N",
@@ -386,13 +371,9 @@ class TestTmbWorkflow(TmpDirTestCase):
                 }
                 ]
             }
-        output_json, output_dir = run_cwl(
-            testcase = self,
-            tmpdir = self.tmpdir,
-            input_json = input_json,
-            cwl_file = cwl_file,
-            print_command = False,
-            )
+
+        output_json, output_dir = self.run_cwl()
+
         expected_output = {
             'output_file': {
                 'location': 'file://' + os.path.join(output_dir,'data_clinical_sample.txt'),
@@ -406,8 +387,8 @@ class TestTmbWorkflow(TmpDirTestCase):
         self.assertDictEqual(output_json, expected_output)
 
         output_file = expected_output['output_file']['path']
-        with open(output_file) as fin:
-            lines = [ l.strip().split() for l in fin ]
+
+        lines = self.read_table(output_file)
 
         expected_lines = [
             ['#SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'CMO_TMB_SCORE'],
@@ -429,8 +410,8 @@ class TestTmbWorkflow(TmpDirTestCase):
         Test case with a real maf and real data clinical file
         """
         self.maxDiff = None
-        data_clinical_file = os.path.join(DATA_SETS['Proj_08390_G']['INPUTS_DIR'], "Proj_08390_G_sample_data_clinical.txt")
-        input_json = {
+        data_clinical_file = os.path.join(self.DATA_SETS['Proj_08390_G']['INPUTS_DIR'], "Proj_08390_G_sample_data_clinical.txt")
+        self.input = {
             "data_clinical_file": {
                   "class": "File",
                   "path": data_clinical_file
@@ -439,7 +420,7 @@ class TestTmbWorkflow(TmpDirTestCase):
             "pairs": [
                 {
                     "pair_maf": {
-                        "path": os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample1.Sample2.muts.maf"),
+                        "path": os.path.join(self.DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample1.Sample2.muts.maf"),
                         "class": "File"
                     },
                     "pair_id": "Sample1.Sample2",
@@ -448,13 +429,9 @@ class TestTmbWorkflow(TmpDirTestCase):
                 }
                 ]
             }
-        output_json, output_dir = run_cwl(
-            testcase = self,
-            tmpdir = self.tmpdir,
-            input_json = input_json,
-            cwl_file = cwl_file,
-            print_command = False,
-            )
+
+        output_json, output_dir = self.run_cwl()
+
         expected_output = {
             'output_file': {
                 'location': 'file://' + os.path.join(output_dir,'data_clinical_sample.txt'),

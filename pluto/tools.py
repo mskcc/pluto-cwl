@@ -5,7 +5,7 @@ import os
 import subprocess as sp
 import csv
 import json
-from .settings import CWL_DIR, CWL_ARGS
+from .settings import CWL_DIR, CWL_ARGS, DATA_SETS, KNOWN_FUSIONS_FILE, IMPACT_FILE
 from collections import OrderedDict
 import unittest
 from tempfile import mkdtemp
@@ -15,19 +15,33 @@ from pathlib import Path
 class CWLRunner(object):
     """
     class for running a CWL File
+
+    Usage:
+
+    runner = CWLRunner(
+        cwl_file = self.cwl_file,
+        input = self.input,
+        dir = self.dir,
+        verbose = self.verbose)
+    output_json, output_dir, output_json_file = runner.run()
     """
-    def __init__(self, cwl_file, input,
+    def __init__(self,
+        cwl_file, # str or CWLFile
+        input, # pipeline input dict to be converted to JSON
         CWL_ARGS = CWL_ARGS,
         print_stdout = False,
-        dir = None,
-        input_json_file = None,
-        verbose = True):
+        dir = None, # directory to run the CWL in and write output to
+        input_json_file = None, # path to write input JSON to if you already have one chosen
+        verbose = True,
+        testcase = None
+        ):
         self.cwl_file = cwl_file
         self.input = input
         self.CWL_ARGS = CWL_ARGS
         self.print_stdout = print_stdout
         self.verbose = verbose
         self.input_json_file = input_json_file
+        self.testcase = testcase
 
         if dir is None:
             dir = "pipeline_output"
@@ -41,7 +55,7 @@ class CWLRunner(object):
             print(message)
 
         output_json, output_dir = run_cwl(
-            testcase = None,
+            testcase = self.testcase,
             tmpdir = self.dir,
             input_json = self.input,
             cwl_file = self.cwl_file,
@@ -75,19 +89,6 @@ class CWLFile(os.PathLike):
         return(self.path)
     def __fspath__(self):
         return(self.path)
-
-class TmpDirTestCase(unittest.TestCase):
-    """
-    unittest.TestCase wrapper that includes a tmpdir
-    """
-    def setUp(self):
-        self.preserve = False # save the tmpdir
-        self.tmpdir = mkdtemp() # dir = THIS_DIR
-
-    def tearDown(self):
-        if not self.preserve:
-            # remove the tmpdir upon test completion
-            shutil.rmtree(self.tmpdir)
 
 def run_command(args):
     """
@@ -282,3 +283,60 @@ class TableReader(object):
         for _ in self.read():
             num_records += 1
         return(num_records)
+
+class TmpDirTestCase(unittest.TestCase):
+    """
+    unittest.TestCase wrapper that includes a tmpdir
+    Also, includes CWLRunner and the other helper functions from this module to make test case imports easier
+    """
+    # global settings for all test cases in the instance
+    cwl_file = None # make sure to override this in subclasses before using the runner
+    DATA_SETS = DATA_SETS
+    KNOWN_FUSIONS_FILE = KNOWN_FUSIONS_FILE
+    IMPACT_FILE = IMPACT_FILE
+
+    def setUp(self):
+        """this gets run for each test case"""
+        self.preserve = False # save the tmpdir
+        self.tmpdir = mkdtemp() # dir = THIS_DIR
+        self.input = {} # put the CWL input data here
+
+    def tearDown(self):
+        """this gets run for each test case"""
+        if not self.preserve:
+            # remove the tmpdir upon test completion
+            shutil.rmtree(self.tmpdir)
+
+    def run_cwl(self, input = None, cwl_file = None):
+        """run the CWL used in the test case"""
+        if input is None:
+            input = self.input
+        if cwl_file is None:
+            cwl_file = CWLFile(self.cwl_file)
+        runner = CWLRunner(
+            cwl_file = cwl_file,
+            input = input,
+            verbose = False,
+            dir = self.tmpdir,
+            testcase = self)
+        output_json, output_dir, output_json_file = runner.run()
+        return(output_json, output_dir)
+
+    # wrappers around other functions in this module to reduce imports needed
+    def write_table(self, *args, **kwargs):
+        filepath = write_table(*args, **kwargs)
+        return(filepath)
+
+    def read_table(self, input_file):
+        """simple loading of tabular lines in a file"""
+        with open(input_file) as fin:
+            lines = [ l.strip().split() for l in fin ]
+        return(lines)
+
+    def load_mutations(self, *args, **kwargs):
+        comments, mutations = load_mutations(*args, **kwargs)
+        return(comments, mutations)
+
+    def dicts2lines(self, *args, **kwargs):
+        lines = dicts2lines(*args, **kwargs)
+        return(lines)
