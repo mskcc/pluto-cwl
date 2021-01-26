@@ -6,26 +6,23 @@ unit tests for the workflow_with_facets.cwl
 import os
 import sys
 import unittest
-import json
-from tempfile import TemporaryDirectory
 
 THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 PARENT_DIR = os.path.dirname(THIS_DIR)
 sys.path.insert(0, PARENT_DIR)
-from pluto.tools import load_mutations, run_cwl, TableReader, TmpDirTestCase, CWLFile
-from pluto.settings import DATA_SETS, KNOWN_FUSIONS_FILE, IMPACT_FILE
+from pluto.tools import TableReader, TmpDirTestCase
 sys.path.pop(0)
 
-cwl_file = CWLFile('workflow_with_facets.cwl')
+class TestWorkflowWithFacets(TmpDirTestCase):
+    cwl_file = 'workflow_with_facets.cwl'
 
-class TestWorkflow(TmpDirTestCase):
     def test_run_worflow_one_maf(self):
         """
         Test that the workflow works correctly when run with a single maf
         """
-        data_clinical_file = os.path.join(DATA_SETS['Proj_08390_G']['INPUTS_DIR'], "Proj_08390_G_sample_data_clinical.txt")
-        sample_summary_file = os.path.join(DATA_SETS['Proj_08390_G']['QC_DIR'], "Proj_08390_G_SampleSummary.txt")
-        input_json = {
+        data_clinical_file = os.path.join(self.DATA_SETS['Proj_08390_G']['INPUTS_DIR'], "Proj_08390_G_sample_data_clinical.txt")
+        sample_summary_file = os.path.join(self.DATA_SETS['Proj_08390_G']['QC_DIR'], "Proj_08390_G_SampleSummary.txt")
+        self.input = {
             "assay_coverage": "10000000", # TODO: get this from an assay reference key
             "project_id": "Proj_08390_G",
             "project_name": "Proj_08390_G",
@@ -46,7 +43,7 @@ class TestWorkflow(TmpDirTestCase):
             "cbio_segment_data_filename": "Proj_08390_G_data_cna_hg19.seg",
             "helix_filter_version": "20.06.1",
             'IMPACT_gene_list': {
-                "path": IMPACT_FILE,
+                "path": self.IMPACT_FILE,
                 "class": "File"
             },
             "data_clinical_file": {
@@ -58,33 +55,33 @@ class TestWorkflow(TmpDirTestCase):
                 "class": "File"
             },
             "targets_list": {
-                "path": DATA_SETS['Proj_08390_G']["targets_list"],
+                "path": self.DATA_SETS['Proj_08390_G']["targets_list"],
                 "class": "File"
             },
             "known_fusions_file": {
-                "path": KNOWN_FUSIONS_FILE,
+                "path": self.KNOWN_FUSIONS_FILE,
                 "class": "File"
             },
             "mutation_svs_txt_files": [
                 {
-                    "path": os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample1.Sample2.svs.pass.vep.portal.txt"),
+                    "path": os.path.join(self.DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample1.Sample2.svs.pass.vep.portal.txt"),
                     "class": "File"
                 }
             ],
             "mutation_svs_maf_files": [
                 {
-                    "path": os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample1.Sample2.svs.pass.vep.maf"),
+                    "path": os.path.join(self.DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample1.Sample2.svs.pass.vep.maf"),
                     "class": "File"
                 }
             ],
             "pairs": [
                 {
                     "pair_maf": {
-                        "path": os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample1.Sample2.muts.maf"),
+                        "path": os.path.join(self.DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample1.Sample2.muts.maf"),
                         "class": "File"
                     },
                     "snp_pileup": {
-                         "path": os.path.join(DATA_SETS['Proj_08390_G']['FACETS_DIR'], "Sample2.rg.md.abra.printreads__Sample1.rg.md.abra.printreads.dat.gz"),
+                         "path": os.path.join(self.DATA_SETS['Proj_08390_G']['FACETS_DIR'], "Sample2.rg.md.abra.printreads__Sample1.rg.md.abra.printreads.dat.gz"),
                          "class": "File"
                     },
                     "pair_id": "Sample1.Sample2",
@@ -94,11 +91,7 @@ class TestWorkflow(TmpDirTestCase):
             ]
         }
 
-        output_json, output_dir = run_cwl(
-            testcase = self,
-            tmpdir = self.tmpdir,
-            input_json = input_json,
-            cwl_file = cwl_file)
+        output_json, output_dir = self.run_cwl()
 
         expected_output = {
             'analysis_dir': {
@@ -247,7 +240,7 @@ class TestWorkflow(TmpDirTestCase):
                             'location': 'file://' + os.path.join(output_dir, 'portal/data_clinical_sample.txt'),
                             'basename': 'data_clinical_sample.txt',
                             'class': 'File',
-                            'checksum': 'sha1$db154b66b7fc3d3380967d6ed5ee05c1871dc19e',
+                            'checksum': 'sha1$1d89d39e40c65f607dd71eedb21f93d935a44409',
                             'size': 8758,
                             'path': os.path.join(output_dir, 'portal/data_clinical_sample.txt')
                         },
@@ -376,9 +369,9 @@ class TestWorkflow(TmpDirTestCase):
             }
         self.maxDiff = None
         self.assertDictEqual(output_json, expected_output)
-        comments, mutations = load_mutations(os.path.join(output_dir, 'analysis', 'Proj_08390_G.muts.maf'))
+        comments, mutations = self.load_mutations(os.path.join(output_dir, 'analysis', 'Proj_08390_G.muts.maf'))
         self.assertEqual(len(mutations), 22)
-        comments, mutations = load_mutations(os.path.join(output_dir, 'portal', 'data_mutations_extended.txt'))
+        comments, mutations = self.load_mutations(os.path.join(output_dir, 'portal', 'data_mutations_extended.txt'))
         self.assertEqual(len(mutations), 17)
 
         # load the data_CNA.txt file
@@ -423,9 +416,9 @@ class TestWorkflow(TmpDirTestCase):
         """
         Test that the workflow works correctly when run with two maf files
         """
-        data_clinical_file = os.path.join(DATA_SETS['Proj_08390_G']['INPUTS_DIR'], "Proj_08390_G_sample_data_clinical.txt")
-        sample_summary_file = os.path.join(DATA_SETS['Proj_08390_G']['QC_DIR'], "Proj_08390_G_SampleSummary.txt")
-        input_json = {
+        data_clinical_file = os.path.join(self.DATA_SETS['Proj_08390_G']['INPUTS_DIR'], "Proj_08390_G_sample_data_clinical.txt")
+        sample_summary_file = os.path.join(self.DATA_SETS['Proj_08390_G']['QC_DIR'], "Proj_08390_G_SampleSummary.txt")
+        self.input = {
             "assay_coverage": "10000000", # TODO: get this from an assay reference key
             "project_id": "Proj_08390_G",
             "project_name": "Proj_08390_G",
@@ -446,7 +439,7 @@ class TestWorkflow(TmpDirTestCase):
             "cbio_segment_data_filename": "Proj_08390_G_data_cna_hg19.seg",
             "helix_filter_version": "20.06.1",
             'IMPACT_gene_list': {
-                "path": IMPACT_FILE,
+                "path": self.IMPACT_FILE,
                 "class": "File"
             },
             "data_clinical_file": {
@@ -458,41 +451,41 @@ class TestWorkflow(TmpDirTestCase):
                 "class": "File"
             },
             "targets_list": {
-                "path": DATA_SETS['Proj_08390_G']["targets_list"],
+                "path": self.DATA_SETS['Proj_08390_G']["targets_list"],
                 "class": "File"
             },
             "known_fusions_file": {
-                "path": KNOWN_FUSIONS_FILE,
+                "path": self.KNOWN_FUSIONS_FILE,
                 "class": "File"
             },
             "mutation_svs_txt_files": [
                 {
-                    "path": os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample1.Sample2.svs.pass.vep.portal.txt"),
+                    "path": os.path.join(self.DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample1.Sample2.svs.pass.vep.portal.txt"),
                     "class": "File"
                 },
                 {
-                    "path": os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample4.Sample3.svs.pass.vep.portal.txt"),
+                    "path": os.path.join(self.DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample4.Sample3.svs.pass.vep.portal.txt"),
                     "class": "File"
                 }
             ],
             "mutation_svs_maf_files": [
                 {
-                    "path": os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample1.Sample2.svs.pass.vep.maf"),
+                    "path": os.path.join(self.DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample1.Sample2.svs.pass.vep.maf"),
                     "class": "File"
                 },
                 {
-                    "path": os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample4.Sample3.svs.pass.vep.maf"),
+                    "path": os.path.join(self.DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample4.Sample3.svs.pass.vep.maf"),
                     "class": "File"
                 }
             ],
             "pairs": [
                 {
                     "pair_maf": {
-                        "path": os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample1.Sample2.muts.maf"),
+                        "path": os.path.join(self.DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample1.Sample2.muts.maf"),
                         "class": "File"
                     },
                     "snp_pileup": {
-                         "path": os.path.join(DATA_SETS['Proj_08390_G']['FACETS_DIR'], "Sample2.rg.md.abra.printreads__Sample1.rg.md.abra.printreads.dat.gz"),
+                         "path": os.path.join(self.DATA_SETS['Proj_08390_G']['FACETS_DIR'], "Sample2.rg.md.abra.printreads__Sample1.rg.md.abra.printreads.dat.gz"),
                          "class": "File"
                     },
                     "pair_id": "Sample1.Sample2",
@@ -501,11 +494,11 @@ class TestWorkflow(TmpDirTestCase):
                 },
                 {
                     "pair_maf": {
-                        "path": os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample4.Sample3.muts.maf"),
+                        "path": os.path.join(self.DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample4.Sample3.muts.maf"),
                         "class": "File"
                     },
                     "snp_pileup": {
-                         "path": os.path.join(DATA_SETS['Proj_08390_G']['FACETS_DIR'], "Sample3.rg.md.abra.printreads__Sample4.rg.md.abra.printreads.dat.gz"),
+                         "path": os.path.join(self.DATA_SETS['Proj_08390_G']['FACETS_DIR'], "Sample3.rg.md.abra.printreads__Sample4.rg.md.abra.printreads.dat.gz"),
                          "class": "File"
                     },
                     "pair_id": "Sample4.Sample3",
@@ -514,11 +507,8 @@ class TestWorkflow(TmpDirTestCase):
                 }
             ]
         }
-        output_json, output_dir = run_cwl(
-            testcase = self,
-            tmpdir = self.tmpdir,
-            input_json = input_json,
-            cwl_file = cwl_file)
+
+        output_json, output_dir = self.run_cwl()
 
         expected_output = {
             'analysis_dir': {
@@ -716,7 +706,7 @@ class TestWorkflow(TmpDirTestCase):
                     {'location': 'file://' + os.path.join(output_dir, 'portal/data_clinical_sample.txt'),
                     'basename': 'data_clinical_sample.txt',
                     'class': 'File',
-                    'checksum': 'sha1$d7f68fdadb2ad4d23d1bdeb22669fefe1a55c1e8',
+                    'checksum': 'sha1$013055a53721fece2488a88c16751f8a8dd26901',
                     'size': 8769,
                     'path': os.path.join(output_dir, 'portal/data_clinical_sample.txt')},
                     {'location': 'file://' + os.path.join(output_dir, 'portal/meta_study.txt'),
@@ -818,9 +808,9 @@ class TestWorkflow(TmpDirTestCase):
         }
         self.maxDiff = None
         self.assertDictEqual(output_json, expected_output)
-        comments, mutations = load_mutations(os.path.join(output_dir, 'analysis', 'Proj_08390_G.muts.maf'))
+        comments, mutations = self.load_mutations(os.path.join(output_dir, 'analysis', 'Proj_08390_G.muts.maf'))
         self.assertEqual(len(mutations), 34)
-        comments, mutations = load_mutations(os.path.join(output_dir, 'portal', 'data_mutations_extended.txt'))
+        comments, mutations = self.load_mutations(os.path.join(output_dir, 'portal', 'data_mutations_extended.txt'))
         self.assertEqual(len(mutations), 27)
 
         # the clonality column needs to have been added in the workflow output
