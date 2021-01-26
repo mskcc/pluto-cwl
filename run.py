@@ -37,6 +37,7 @@ def main():
     _tmb_workflow.add_argument('--data-clinical', dest = 'data_clinical_file', required = True)
     _tmb_workflow.add_argument('--assay-coverage', dest = 'assay_coverage', required = True)
     _tmb_workflow.add_argument('--pairs', dest = 'pairs_file', required = True)
+    _tmb_workflow.add_argument('--dir', dest = 'dir', help = 'Directory for pipeline execution and output')
     _tmb_workflow.set_defaults(func = TMBWorkflow._run)
     """
     $ ./run.py tmb_workflow --data-clinical examples/data_clinical.txt --assay-coverage 10000 --pairs examples/pairs.tsv
