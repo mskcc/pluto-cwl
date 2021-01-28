@@ -2,12 +2,12 @@
 
 cwlVersion: v1.0
 class: CommandLineTool
-baseCommand: [ "bash", "run.sh" ]
+baseCommand: [ "bash", "sleep.sh" ]
 
 requirements:
   InitialWorkDirRequirement:
     listing:
-      - entryname: run.sh
+      - entryname: sleep.sh
         entry: |-
           sleep 10
 

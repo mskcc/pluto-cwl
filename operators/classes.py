@@ -9,6 +9,7 @@ class Operator(object):
     verbose = True
     input = None
     print_input = False
+    engine = 'cwltool'
 
     def __init__(self, **kwargs):
         self.args = copy.deepcopy(kwargs)
@@ -21,6 +22,8 @@ class Operator(object):
             self.print_input = self.args.pop('print_input')
         if 'func' in self.args:
             self.args.pop('func')
+        if 'engine' in self.args:
+            self.engine = self.args.pop('engine')
         # pass
         # for k,v in kwargs.items():
         #     if k not in ['func']:
@@ -56,7 +59,8 @@ class Operator(object):
             cwl_file = self.cwl_file,
             input = self.input,
             dir = self.dir,
-            verbose = self.verbose)
+            verbose = self.verbose,
+            engine = self.engine)
         output_json, output_dir, output_json_file = runner.run()
         return(output_json, output_dir, output_json_file)
 

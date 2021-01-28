@@ -14,6 +14,13 @@ CWL_ARGS = [
     "--preserve-environment", "SINGULARITY_CACHEDIR",
     "--singularity"
 ]
+TOIL_ARGS = [
+    '--singularity',
+    '--batchSystem', 'lsf', '--disableCaching', 'True',
+    '--disable-user-provenance', '--disable-host-provenance',
+    '--preserve-entire-environment',
+    '--retryCount', '5'
+]
 
 # location on the filesystem for static fixtures
 FIXTURES_DIR = os.environ.get('FIXTURES_DIR', '/juno/work/ci/helix_filters_01/fixtures')

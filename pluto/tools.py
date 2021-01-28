@@ -5,7 +5,7 @@ import os
 import subprocess as sp
 import csv
 import json
-from .settings import CWL_DIR, CWL_ARGS, DATA_SETS, KNOWN_FUSIONS_FILE, IMPACT_FILE
+from .settings import CWL_DIR, CWL_ARGS, TOIL_ARGS, DATA_SETS, KNOWN_FUSIONS_FILE, IMPACT_FILE
 from collections import OrderedDict
 import unittest
 from tempfile import mkdtemp
@@ -33,7 +33,8 @@ class CWLRunner(object):
         dir = None, # directory to run the CWL in and write output to
         input_json_file = None, # path to write input JSON to if you already have one chosen
         verbose = True,
-        testcase = None
+        testcase = None,
+        engine = "cwltool"
         ):
         self.cwl_file = cwl_file
         self.input = input
@@ -42,6 +43,7 @@ class CWLRunner(object):
         self.verbose = verbose
         self.input_json_file = input_json_file
         self.testcase = testcase
+        self.engine = engine
 
         if dir is None:
             dir = "pipeline_output"
@@ -54,17 +56,26 @@ class CWLRunner(object):
             message = ">>> Running {cwl_file} in {dir}".format(cwl_file = self.cwl_file, dir = self.dir)
             print(message)
 
-        output_json, output_dir = run_cwl(
-            testcase = self.testcase,
-            tmpdir = self.dir,
-            input_json = self.input,
-            cwl_file = self.cwl_file,
-            CWL_ARGS = self.CWL_ARGS,
-            print_stdout = self.print_stdout,
-            print_command = False,
-            check_returncode = False,
-            input_json_file = self.input_json_file
-            )
+        if self.engine == 'cwltool':
+            output_json, output_dir = run_cwl(
+                testcase = self.testcase,
+                tmpdir = self.dir,
+                input_json = self.input,
+                cwl_file = self.cwl_file,
+                CWL_ARGS = self.CWL_ARGS,
+                print_stdout = self.print_stdout,
+                print_command = False,
+                check_returncode = False,
+                input_json_file = self.input_json_file
+                )
+        elif self.engine == 'toil':
+            output_json, output_dir = run_cwl_toil(
+                input_data = self.input,
+                cwl_file = self.cwl_file,
+                run_dir = self.dir,
+                input_json_file = self.input_json_file)
+        else:
+            return()
         output_json_file = os.path.join(self.dir, "output.json")
         with open(output_json_file, "w") as fout:
             json.dump(output_json, fout, indent = 4)
@@ -152,6 +163,64 @@ def run_cwl(
 
     output_json = json.loads(proc_stdout)
     return(output_json, output_dir)
+
+def run_cwl_toil(
+        input_data,
+        cwl_file,
+        run_dir,
+        output_dir = None,
+        workDir = None,
+        jobStore = None,
+        logFile = None,
+        input_json_file = None,
+        print_command = False,
+        TOIL_ARGS = TOIL_ARGS
+        ):
+    """
+    Run a CWL using Toil
+    """
+    run_dir = os.path.abspath(run_dir)
+    if input_json_file is None:
+        input_json_file = os.path.join(run_dir, "input.json")
+    with open(input_json_file, "w") as json_out:
+        json.dump(input_data, json_out)
+    if output_dir is None:
+        output_dir = os.path.join(run_dir, "output")
+    if workDir is None:
+        workDir = os.path.join(run_dir, "work")
+    if logFile is None:
+        logFile = os.path.join(run_dir, "toil.log")
+    if jobStore is None:
+        jobStore = os.path.join(run_dir, "jobstore")
+
+    Path(workDir).mkdir(parents=True, exist_ok=True)
+
+    # Need to delete job store due to weird errors about it already existsing, later implement the 'restart' functionality
+    if os.path.exists(jobStore):
+        shutil.rmtree(jobStore)
+
+    command = [
+        "toil-cwl-runner",
+        *TOIL_ARGS,
+        "--logFile", logFile,
+        "--outdir", output_dir,
+        '--workDir', workDir,
+        '--jobStore', jobStore, # requires adjustment to '--restart' arg
+        cwl_file, input_json_file
+        ] 
+
+    if print_command:
+        print(command)
+
+    returncode, proc_stdout, proc_stderr = run_command(command)
+
+    try:
+        output_data = json.loads(proc_stdout)
+        return(output_data, output_dir)
+    except json.decoder.JSONDecodeError:
+        print(proc_stdout)
+        print(proc_stderr)
+        raise
 
 
 def parse_header_comments(filename, comment_char = '#'):

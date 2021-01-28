@@ -178,3 +178,29 @@ clean:
 
 clean-all: clean
 	rm -rf output portal analysis mutation_maf_files.txt facets_hisens_seg_files.txt facets_hisens_cncf_files.txt mutation_svs_txt_files.txt mutation_svs_maf_files.txt
+
+
+# Example args for running with Toil
+run-toil: OUTPUTDIR=$(CURDIR)/toil_output
+run-toil: LOGFILE=$(OUTPUTDIR)/toil.log
+run-toil: JOBSTORE=$(OUTPUTDIR)/job-store
+run-toil: WORKDIR=$(OUTPUTDIR)/work
+run-toil: ENV=conda
+run-toil:
+	. $(ENVSH) $(ENV)
+	unset SINGULARITY_CACHEDIR
+	mkdir -p "$(OUTPUTDIR)"
+	mkdir -p "$(WORKDIR)"
+	[ -e "$(JOBSTORE)" ] && rm -rf "$(JOBSTORE)" || :
+	( toil-cwl-runner \
+	--logFile "$(LOGFILE)" \
+	--outdir "$(OUTPUTDIR)" \
+	--workDir "$(WORKDIR)" \
+	--jobStore "$(JOBSTORE)" \
+	--singularity \
+	--batchSystem lsf --disableCaching True \
+	--disable-user-provenance --disable-host-provenance \
+	--preserve-entire-environment \
+	cwl/example_workflow.cwl cwl/example_input.json ) > toil.stdout.txt 
+# --preserve-environment PATH TMPDIR TOIL_LSF_ARGS SINGULARITY_CACHEDIR SINGULARITY_TMPDIR SINGULARITY_PULLDIR PWD \
+# --maxLocalJobs 500 \

@@ -7,6 +7,7 @@ import argparse
 # from operators import workflow_with_facets
 from operators.tmb_workflow import TMBWorkflow
 from operators.workflow_with_facets import WorkflowWithFacets
+from operators.example_workflow import ExampleWorkflow
 from operators.input import generate_sample_summary, generate_pairs_sheet, generate_data_clinical
 
 def main():
@@ -14,6 +15,7 @@ def main():
     Main function for CLI parsing
     """
     parser = argparse.ArgumentParser(description = '')
+    parser.add_argument("--engine", default = 'cwltool', dest = 'engine', choices = ['cwltool', 'toil'], help = "CWL execution engine to use")
 
     subparsers = parser.add_subparsers(help ='Sub-commands available', required = True)
 
@@ -31,6 +33,14 @@ def main():
     _generate_sample_summary = subparsers.add_parser('sample_summary', help = 'Generate a blank template sample sumamry file')
     _generate_sample_summary.add_argument('--output', dest = 'output_file', default = "sample_summary.txt")
     _generate_sample_summary.set_defaults(func = generate_sample_summary)
+
+    _example_workflow = subparsers.add_parser('example_workflow', help = 'Run the example workflow')
+    _example_workflow.add_argument('--value', dest = 'value', required = True)
+    _example_workflow.add_argument('--sampleIDs', dest = 'sampleIDs', nargs='+', required = True)
+    _example_workflow.set_defaults(func = ExampleWorkflow._run)
+    """
+    $ ./run.py example_workflow --value foo --sampleIDs 1 2 3
+    """
 
     # TMB workflow
     _tmb_workflow = subparsers.add_parser('tmb_workflow', help = 'Run the TMB workflow')

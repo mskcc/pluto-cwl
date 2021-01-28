@@ -14,3 +14,4 @@ analysis-input.json
 output*
 portal-input.json
 conda/
+toil_output/
