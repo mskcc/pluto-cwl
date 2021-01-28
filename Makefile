@@ -1,10 +1,12 @@
 export SHELL:=/bin/bash
 .ONESHELL:
+# enforce some stricter shell options to
+OLDSHELLOPTS:=$(SHELLOPTS)
 export SHELLOPTS:=$(if $(SHELLOPTS),$(SHELLOPTS):)pipefail:errexit
 UNAME:=$(shell uname)
 
 # .sh file to source for each recipe
-ENV:=env.juno.sh
+ENVSH:=env.juno.sh
 
 define help
 This is the Makefile for helix filters CWL
@@ -76,7 +78,31 @@ help:
 	@printf "$$help"
 .PHONY : help
 
+# ~~~~~ Install Dependencies ~~~~~~ #
+# This is only needed if you are not running on Juno/Silo server, or want to use Toil
+# NOTE: see env.sh for PATH and PYTHONHOME, PYTHONPATH modifications for this to work correctly
+ifeq ($(UNAME), Darwin)
+CONDASH:=Miniconda3-4.7.12.1-MacOSX-x86_64.sh
+endif
 
+ifeq ($(UNAME), Linux)
+CONDASH:=Miniconda3-4.7.12.1-Linux-x86_64.sh
+endif
+
+CONDAURL:=https://repo.anaconda.com/miniconda/$(CONDASH)
+
+conda: SHELLOPTS=$(OLDSHELLOPTS)
+conda:
+	@echo ">>> Setting up conda..."
+	@wget "$(CONDAURL)" && \
+	bash "$(CONDASH)" -b -p conda && \
+	rm -f "$(CONDASH)"
+
+install: SHELLOPTS=$(OLDSHELLOPTS)
+install: conda
+	. "$(ENVSH)" conda
+	conda install -y conda-forge::jq=1.5
+	pip install -r requirements.txt
 
 # ~~~~~ Container ~~~~~ #
 # pull the Docker container and convert it to Singularity container image file
@@ -88,24 +114,24 @@ DOCKER_DEV_TAG:=mskcc/helix_filters_01:latest
 SINGULARITY_SIF:=mskcc_helix_filters_01:21.01.1.sif
 SINGULARITY_DEV_SIF:=mskcc_helix_filters_01:latest.sif
 singularity-pull:
-	. "$(ENV)" singularity && \
+	. "$(ENVSH)" singularity && \
 	singularity pull --force --name "$(SINGULARITY_SIF)" docker://$(DOCKER_TAG)
 
 singularity-pull-dev:
-	. "$(ENV)" singularity && \
+	. "$(ENVSH)" singularity && \
 	singularity pull --force --name "$(SINGULARITY_DEV_SIF)" docker://$(DOCKER_DEV_TAG)
 # unset SINGULARITY_CACHEDIR && \
 # module load singularity/3.3.0 && \
 
 # shell into the Singularity container to check that it looks right
 singularity-shell:
-	- . "$(ENV)" singularity && \
+	- . "$(ENVSH)" singularity && \
 	singularity shell "$(SINGULARITY_SIF)"
 
 FACETS_DOCKERTAG:=stevekm/facets-suite:2.0.6
 FACETS_SIF:=stevekm_facets-suite:2.0.6.sif
 singularity-pull-facets:
-	. "$(ENV)" singularity && \
+	. "$(ENVSH)" singularity && \
 	singularity pull --force --name "$(FACETS_SIF)" docker://$(FACETS_DOCKERTAG)
 
 # change the Docker tag for all the CWL files from the old pattern to the new pattern
@@ -122,14 +148,14 @@ update-container-tags:
 export FIXTURES_DIR:=/juno/work/ci/helix_filters_01/fixtures
 # TODO: figure out why this is missing some tests
 test2:
-	. "$(ENV)" test && \
+	. "$(ENVSH)" test && \
 	if [ ! -e "$(SINGULARITY_SIF)" ]; then $(MAKE) singularity-pull; fi && \
 	python3 test.py
 
 # TODO: figure out if we can run the tests in parallel or otherwise make it faster
 # for some reason the test recipe is not running all tests....
 test:
-	. "$(ENV)" test && \
+	. "$(ENVSH)" test && \
 	if [ ! -e "$(SINGULARITY_SIF)" ]; then $(MAKE) singularity-pull; fi && \
 	for i in tests/test_*.py; do echo $$i; python3 $$i; done
 
@@ -137,15 +163,15 @@ test:
 # $ make test3 -j 4
 TESTS:=$(shell ls tests/test_*.py)
 $(TESTS):
-	. "$(ENV)" test && echo $@; python3 $@
+	. "$(ENVSH)" test && echo $@; python3 $@
 .PHONY:$(TESTS)
 test3:$(TESTS)
 
 
 # interactive session with environment populated
+bash: ENV=shell
 bash:
-	. "$(ENV)" shell && bash
-
+	. "$(ENVSH)" "$(ENV)" && bash
 
 clean:
 	rm -rf cache tmp
