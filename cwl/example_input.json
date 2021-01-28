@@ -1,0 +1,20 @@
+{
+    "value": "Foo",
+    "samples": [
+        {
+            "sample_id": "1T"
+        },
+        {
+            "sample_id": "2T"
+        },
+        {
+            "sample_id": "3T"
+        },
+        {
+            "sample_id": "4T"
+        },
+        {
+            "sample_id": "5T"
+        }
+    ]
+}
