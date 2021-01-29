@@ -45,17 +45,17 @@ steps:
         valueFrom: ${ return "output.concat.tsv"; }
     out:
       [ output_file ]
-  #
-  # check_env:
-  #   run: env.cwl
-  #   in: []
-  #   out:
-  #     [ output_file ]
+
+  check_env:
+    run: env.cwl
+    in: []
+    out:
+      [ output_file ]
 
 outputs:
   output_file:
     type: File
     outputSource: concat_tables/output_file
-  # env:
-  #   type: File
-  #   outputSource: check_env/output_file
+  env:
+    type: File
+    outputSource: check_env/output_file

@@ -3,7 +3,6 @@
 """
 Operator to run the example workflow
 """
-import os
 import copy
 from pluto.tools import CWLFile
 from .classes import Operator

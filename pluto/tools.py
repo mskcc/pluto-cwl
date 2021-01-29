@@ -48,7 +48,12 @@ class CWLRunner(object):
         self.print_command = print_command
 
         if dir is None:
-            dir = "pipeline_output"
+            if engine == 'cwltool':
+                dir = "cwltool_output"
+            elif engine == 'toil':
+                dir = "toil_output"
+            else:
+                dir = "pipeline_output"
 
         Path(os.path.abspath(dir)).mkdir(parents=True, exist_ok=True)
         self.dir = os.path.abspath(dir)

@@ -15,3 +15,4 @@ output*
 portal-input.json
 conda/
 toil_output/
+pipeline_output/

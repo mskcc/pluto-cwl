@@ -8,6 +8,8 @@ import argparse
 from operators.tmb_workflow import TMBWorkflow
 from operators.workflow_with_facets import WorkflowWithFacets
 from operators.example_workflow import ExampleWorkflow
+from operators.env import EnvCWL
+from operators.env_container import EnvContainerCWL
 from operators.input import generate_sample_summary, generate_pairs_sheet, generate_data_clinical
 
 def main():
@@ -35,6 +37,7 @@ def main():
     _generate_sample_summary.add_argument('--output', dest = 'output_file', default = "sample_summary.txt")
     _generate_sample_summary.set_defaults(func = generate_sample_summary)
 
+    # Example workflow
     _example_workflow = subparsers.add_parser('example_workflow', help = 'Run the example workflow')
     _example_workflow.add_argument('--value', dest = 'value', required = True)
     _example_workflow.add_argument('--sampleIDs', dest = 'sampleIDs', nargs='+', required = True)
@@ -42,6 +45,13 @@ def main():
     """
     $ ./run.py example_workflow --value foo --sampleIDs 1 2 3
     """
+
+    # CWL runs for checking execution environment for debugging
+    _env_cwl = subparsers.add_parser('env', help = 'Check the execution environment')
+    _env_cwl.set_defaults(func = EnvCWL._run)
+
+    _env_container_cwl = subparsers.add_parser('env_container', help = 'Check the execution environment inside the container')
+    _env_container_cwl.set_defaults(func = EnvContainerCWL._run)
 
     # TMB workflow
     _tmb_workflow = subparsers.add_parser('tmb_workflow', help = 'Run the TMB workflow')

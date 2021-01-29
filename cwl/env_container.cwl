@@ -5,7 +5,11 @@ class: CommandLineTool
 baseCommand: [ "env" ]
 doc: "CWL to save a copy of the execution environment for debugging"
 
-stdout: env.txt
+requirements:
+  DockerRequirement:
+    dockerPull: mskcc/helix_filters_01:21.01.1
+
+stdout: env.container.txt
 
 inputs: []
 
