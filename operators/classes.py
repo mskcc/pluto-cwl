@@ -5,25 +5,32 @@ from pluto.tools import CWLRunner
 class Operator(object):
     # placeholder values to be overriden by subclasses
     cwl_file = None # str or CWLFile object
-    dir = 'pipeline_output'
-    verbose = True
-    input = None
+    input = {}
+    pair_template = {}
     print_input = False
-    engine = 'cwltool'
+    runner_args = dict(
+        engine = 'cwltool',
+        verbose = True,
+        dir = 'pipeline_output',
+        print_command = False
+        )
 
     def __init__(self, **kwargs):
         self.args = copy.deepcopy(kwargs)
         # use these keyword args to set instance attributes
         if 'dir' in self.args:
-            self.dir = self.args.pop('dir')
+            self.runner_args['dir'] = self.args.pop('dir')
         if 'verbose' in self.args:
-            self.verbose = self.args.pop('verbose')
+            self.runner_args['verbose'] = self.args.pop('verbose')
+        if 'print_command' in self.args:
+            self.runner_args['print_command'] = self.args.pop('print_command')
+        if 'engine' in self.args:
+            self.runner_args['engine'] = self.args.pop('engine')
+
         if 'print_input' in self.args:
             self.print_input = self.args.pop('print_input')
         if 'func' in self.args:
             self.args.pop('func')
-        if 'engine' in self.args:
-            self.engine = self.args.pop('engine')
         # pass
         # for k,v in kwargs.items():
         #     if k not in ['func']:
@@ -55,12 +62,7 @@ class Operator(object):
             print(json.dumps(self.input, indent = 4))
             return()
 
-        runner = CWLRunner(
-            cwl_file = self.cwl_file,
-            input = self.input,
-            dir = self.dir,
-            verbose = self.verbose,
-            engine = self.engine)
+        runner = CWLRunner(cwl_file = self.cwl_file, input = self.input, **self.runner_args)
         output_json, output_dir, output_json_file = runner.run()
         return(output_json, output_dir, output_json_file)
 

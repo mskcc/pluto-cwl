@@ -185,7 +185,7 @@ run-toil: OUTPUTDIR=$(CURDIR)/toil_output
 run-toil: LOGFILE=$(OUTPUTDIR)/toil.log
 run-toil: JOBSTORE=$(OUTPUTDIR)/job-store
 run-toil: WORKDIR=$(OUTPUTDIR)/work
-run-toil: ENV=conda
+run-toil: ENV=toil
 run-toil:
 	. $(ENVSH) $(ENV)
 	unset SINGULARITY_CACHEDIR
@@ -201,6 +201,6 @@ run-toil:
 	--batchSystem lsf --disableCaching True \
 	--disable-user-provenance --disable-host-provenance \
 	--preserve-entire-environment \
-	cwl/example_workflow.cwl cwl/example_input.json ) > toil.stdout.txt 
+	cwl/example_workflow.cwl cwl/example_input.json ) > toil.stdout.txt
 # --preserve-environment PATH TMPDIR TOIL_LSF_ARGS SINGULARITY_CACHEDIR SINGULARITY_TMPDIR SINGULARITY_PULLDIR PWD \
 # --maxLocalJobs 500 \

@@ -25,8 +25,15 @@ case $arg in
         ;;
 
     conda)
+        export PATH=${PWD}/conda/bin:${PATH}
+        unset PYTHONPATH
+        unset PYTHONHOME
+        ;;
+
+    toil)
         module load singularity/3.3.0
         export PATH=${PWD}/conda/bin:${PATH}
+        export PATH="$(dirname $(which singularity))":${PATH}
         unset PYTHONPATH
         unset PYTHONHOME
 

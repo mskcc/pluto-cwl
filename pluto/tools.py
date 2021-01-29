@@ -34,7 +34,8 @@ class CWLRunner(object):
         input_json_file = None, # path to write input JSON to if you already have one chosen
         verbose = True,
         testcase = None,
-        engine = "cwltool"
+        engine = "cwltool",
+        print_command = False
         ):
         self.cwl_file = cwl_file
         self.input = input
@@ -44,6 +45,7 @@ class CWLRunner(object):
         self.input_json_file = input_json_file
         self.testcase = testcase
         self.engine = engine
+        self.print_command = print_command
 
         if dir is None:
             dir = "pipeline_output"
@@ -64,7 +66,7 @@ class CWLRunner(object):
                 cwl_file = self.cwl_file,
                 CWL_ARGS = self.CWL_ARGS,
                 print_stdout = self.print_stdout,
-                print_command = False,
+                print_command = self.print_command,
                 check_returncode = False,
                 input_json_file = self.input_json_file
                 )
@@ -73,6 +75,7 @@ class CWLRunner(object):
                 input_data = self.input,
                 cwl_file = self.cwl_file,
                 run_dir = self.dir,
+                print_command = self.print_command,
                 input_json_file = self.input_json_file)
         else:
             return()
@@ -147,7 +150,8 @@ def run_cwl(
         cwl_file, input_json_file
         ]
     if print_command:
-        print(command)
+        print(">>> cwl-runner command:")
+        print(' '.join([ str(c) for c in  command ]) )
 
     returncode, proc_stdout, proc_stderr = run_command(command)
 
@@ -207,10 +211,11 @@ def run_cwl_toil(
         '--workDir', workDir,
         '--jobStore', jobStore, # requires adjustment to '--restart' arg
         cwl_file, input_json_file
-        ] 
+        ]
 
     if print_command:
-        print(command)
+        print(">>> toil-cwl-runner command:")
+        print(' '.join([ str(c) for c in  command ]) )
 
     returncode, proc_stdout, proc_stderr = run_command(command)
 

@@ -9,7 +9,7 @@ requirements:
     listing:
       - entryname: sleep.sh
         entry: |-
-          sleep 10
+          sleep 5
 
 inputs:
   dummy_input:
