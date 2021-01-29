@@ -11,6 +11,9 @@ import unittest
 from tempfile import mkdtemp
 import shutil
 from pathlib import Path
+import getpass
+
+username = getpass.getuser()
 
 class CWLRunner(object):
     """
@@ -198,6 +201,21 @@ def run_cwl_toil(
     Run a CWL using Toil
     """
     run_dir = os.path.abspath(run_dir)
+
+    # if jobStore is None:
+    jobStore = os.path.join(run_dir, "jobstore")
+    if os.path.exists(jobStore):
+        print(">>> removing old job store; ", jobStore)
+        shutil.rmtree(jobStore)
+    # TODO: fix this so we can restart with an old Jobstore
+    # # if not restarting, need to remove the jobStore if it exists
+    # if not restart:
+    #     if os.path.exists(jobStore):
+    #         shutil.rmtree(jobStore)
+    # # if restarting, need to add extra restart args
+    # else:
+    #     TOIL_ARGS = [ *TOIL_ARGS, '--restart' ]
+
     if input_json_file is None:
         input_json_file = os.path.join(run_dir, "input.json")
     with open(input_json_file, "w") as json_out:
@@ -208,22 +226,14 @@ def run_cwl_toil(
         workDir = os.path.join(run_dir, "work")
     if logFile is None:
         logFile = os.path.join(run_dir, "toil.log")
-    if jobStore is None:
-        jobStore = os.path.join(run_dir, "jobstore")
     if tmpDir is None:
-        tmpDir = os.path.join(run_dir, "tmp")
+        # tmpDir = os.path.join(run_dir, "tmp")
+        tmpDir = os.path.join('/scratch', username)
+
     tmpDirPrefix = os.path.join(tmpDir, "tmp")
 
     Path(workDir).mkdir(parents=True, exist_ok=True)
     Path(tmpDir).mkdir(parents=True, exist_ok=True)
-
-    # if not restarting, need to remove the jobStore if it exists
-    if not restart:
-        if os.path.exists(jobStore):
-            shutil.rmtree(jobStore)
-    # if restarting, need to add extra restart args
-    else:
-        TOIL_ARGS = [ *TOIL_ARGS, '--restart' ]
 
     command = [
         "toil-cwl-runner",
@@ -236,6 +246,7 @@ def run_cwl_toil(
         cwl_file, input_json_file
         ]
 
+
     if print_command:
         print(">>> toil-cwl-runner command:")
         print(' '.join([ str(c) for c in  command ]) )
@@ -245,6 +256,8 @@ def run_cwl_toil(
     try:
         output_data = json.loads(proc_stdout)
         return(output_data, output_dir)
+
+    # if you cant decode the JSON stdout then it did not finish correctly
     except json.decoder.JSONDecodeError:
         print(proc_stdout)
         print(proc_stderr)

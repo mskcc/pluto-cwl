@@ -15,11 +15,13 @@ CWL_ARGS = [
     "--singularity"
 ]
 TOIL_ARGS = [
-    '--singularity',
-    '--batchSystem', 'lsf', '--disableCaching', 'True',
+    '--singularity', # run with Singularity instead of Docker
+    '--batchSystem', 'lsf', '--disableCaching', 'True', # use LSF on the HPC to submit jobs
     '--disable-user-provenance', '--disable-host-provenance',
-    '--preserve-entire-environment',
-    '--retryCount', '5'
+    '--preserve-entire-environment', # need to propagate the env vars for Singularity, etc., into the HPC jobs
+    '--retryCount', '1',
+    '--maxLocalJobs', '500', # run up to 500 jobs at once; not actually "local", this includes HPC jobs
+    '--statePollingWait', '10' # check available jobs every 10 seconds instead of after every job is submitted
 ]
 
 # location on the filesystem for static fixtures
