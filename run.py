@@ -19,6 +19,8 @@ def main():
     parser = argparse.ArgumentParser(description = '')
     parser.add_argument("--engine", default = 'cwltool', dest = 'engine', choices = ['cwltool', 'toil'], help = "CWL execution engine to use")
     parser.add_argument("--print-command", action = 'store_true', dest = 'print_command', help = "Print the CWL runner command and exit")
+    parser.add_argument("--restart", action = 'store_true', dest = 'restart', help = "Restart a previous run; requires jobStore")
+    parser.add_argument("--jobStore", dest = 'jobStore', default = None, help = "Job store to use for a restarted run")
 
     subparsers = parser.add_subparsers(help ='Sub-commands available', required = True)
 

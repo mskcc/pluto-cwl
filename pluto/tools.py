@@ -35,7 +35,9 @@ class CWLRunner(object):
         verbose = True,
         testcase = None,
         engine = "cwltool",
-        print_command = False
+        print_command = False,
+        restart = False,
+        jobStore = None
         ):
         self.cwl_file = cwl_file
         self.input = input
@@ -46,6 +48,8 @@ class CWLRunner(object):
         self.testcase = testcase
         self.engine = engine
         self.print_command = print_command
+        self.restart = restart
+        self.jobStore = jobStore
 
         if dir is None:
             if engine == 'cwltool':
@@ -81,7 +85,10 @@ class CWLRunner(object):
                 cwl_file = self.cwl_file,
                 run_dir = self.dir,
                 print_command = self.print_command,
-                input_json_file = self.input_json_file)
+                input_json_file = self.input_json_file,
+                restart = self.restart,
+                jobStore = self.jobStore
+                )
         else:
             return()
         output_json_file = os.path.join(self.dir, "output.json")
@@ -180,9 +187,11 @@ def run_cwl_toil(
         output_dir = None,
         workDir = None,
         jobStore = None,
+        tmpDir = None,
         logFile = None,
         input_json_file = None,
         print_command = False,
+        restart = False,
         TOIL_ARGS = TOIL_ARGS
         ):
     """
@@ -201,12 +210,20 @@ def run_cwl_toil(
         logFile = os.path.join(run_dir, "toil.log")
     if jobStore is None:
         jobStore = os.path.join(run_dir, "jobstore")
+    if tmpDir is None:
+        tmpDir = os.path.join(run_dir, "tmp")
+    tmpDirPrefix = os.path.join(tmpDir, "tmp")
 
     Path(workDir).mkdir(parents=True, exist_ok=True)
+    Path(tmpDir).mkdir(parents=True, exist_ok=True)
 
-    # Need to delete job store due to weird errors about it already existsing, later implement the 'restart' functionality
-    if os.path.exists(jobStore):
-        shutil.rmtree(jobStore)
+    # if not restarting, need to remove the jobStore if it exists
+    if not restart:
+        if os.path.exists(jobStore):
+            shutil.rmtree(jobStore)
+    # if restarting, need to add extra restart args
+    else:
+        TOIL_ARGS = [ *TOIL_ARGS, '--restart' ]
 
     command = [
         "toil-cwl-runner",
@@ -214,6 +231,7 @@ def run_cwl_toil(
         "--logFile", logFile,
         "--outdir", output_dir,
         '--workDir', workDir,
+        '--tmpdir-prefix', tmpDirPrefix,
         '--jobStore', jobStore, # requires adjustment to '--restart' arg
         cwl_file, input_json_file
         ]

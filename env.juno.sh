@@ -31,13 +31,23 @@ case $arg in
         ;;
 
     toil)
+        # need to get these env vars to propagate into the HPC jobs
+        # SINGULARITY_DOCKER_USERNAME
+        # SINGULARITY_DOCKER_PASSWORD
+        [ -e ../toil-settings.sh ] && . ../toil-settings.sh || :
+        # NOTE: in the future might also need these
+        # TOIL_LSF_ARGS
+        # SINGULARITY_PULLDIR
+        # SINGULARITY_CACHEDIR
         module load singularity/3.3.0
         export PATH=${PWD}/conda/bin:${PATH}
         export PATH="$(dirname $(which singularity))":${PATH}
         unset PYTHONPATH
         unset PYTHONHOME
+        ;;
 
-  # *)
-  #   echo "something else was called"
-  #   ;;
+    *)
+        echo "unrecognized target called"
+        # exit 1
+        ;;
 esac

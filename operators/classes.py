@@ -11,8 +11,10 @@ class Operator(object):
     runner_args = dict(
         engine = 'cwltool',
         verbose = True,
-        dir = 'pipeline_output',
-        print_command = False
+        dir = None,
+        print_command = False,
+        restart = False,
+        jobStore = None
         )
 
     def __init__(self, **kwargs):
@@ -26,6 +28,12 @@ class Operator(object):
             self.runner_args['print_command'] = self.args.pop('print_command')
         if 'engine' in self.args:
             self.runner_args['engine'] = self.args.pop('engine')
+        if 'restart' in self.args:
+            self.runner_args['restart'] = self.args.pop('restart')
+        if 'jobStore' in self.args:
+            self.runner_args['jobStore'] = self.args.pop('jobStore')
+
+
 
         if 'print_input' in self.args:
             self.print_input = self.args.pop('print_input')
