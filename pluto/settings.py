@@ -21,7 +21,8 @@ TOIL_ARGS = [
     '--preserve-entire-environment', # need to propagate the env vars for Singularity, etc., into the HPC jobs
     '--retryCount', '1',
     '--maxLocalJobs', '500', # run up to 500 jobs at once; not actually "local", this includes HPC jobs
-    '--statePollingWait', '10' # check available jobs every 10 seconds instead of after every job is submitted
+    '--statePollingWait', '10', # check available jobs every 10 seconds instead of after every job is submitted
+    '--clean', 'onSuccess'
 ]
 
 # location on the filesystem for static fixtures

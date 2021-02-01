@@ -1,6 +1,7 @@
 """
 Helper functions for running tests
 """
+import sys
 import os
 import subprocess as sp
 import csv
@@ -202,19 +203,28 @@ def run_cwl_toil(
     """
     run_dir = os.path.abspath(run_dir)
 
-    # if jobStore is None:
-    jobStore = os.path.join(run_dir, "jobstore")
-    if os.path.exists(jobStore):
-        print(">>> removing old job store; ", jobStore)
-        shutil.rmtree(jobStore)
-    # TODO: fix this so we can restart with an old Jobstore
-    # # if not restarting, need to remove the jobStore if it exists
-    # if not restart:
-    #     if os.path.exists(jobStore):
-    #         shutil.rmtree(jobStore)
-    # # if restarting, need to add extra restart args
-    # else:
-    #     TOIL_ARGS = [ *TOIL_ARGS, '--restart' ]
+
+    # if we are not restarting, jobStore should not already exist
+    if not restart:
+        if not jobStore:
+            jobStore = os.path.join(run_dir, "jobstore")
+        if os.path.exists(jobStore):
+            print(">>> ERROR: Job store already exists; ", jobStore)
+            sys.exit(1)
+        TOIL_ARGS = [ *TOIL_ARGS, '--jobStore', jobStore ]
+
+    # if we are restarting, jobStore needs to exist
+    else:
+        if not jobStore:
+            print(">>> ERROR: jobStore must be provided")
+            sys.exit(1)
+        else:
+            jobStore = os.path.abspath(jobStore)
+        if not os.path.exists(jobStore):
+            print(">>> ERROR: jobStore does not exist; ", jobStore)
+            sys.exit(1)
+        # need to add extra restart args
+        TOIL_ARGS = [ *TOIL_ARGS, '--restart', '--jobStore', jobStore ]
 
     if input_json_file is None:
         input_json_file = os.path.join(run_dir, "input.json")
@@ -242,7 +252,6 @@ def run_cwl_toil(
         "--outdir", output_dir,
         '--workDir', workDir,
         '--tmpdir-prefix', tmpDirPrefix,
-        '--jobStore', jobStore, # requires adjustment to '--restart' arg
         cwl_file, input_json_file
         ]
 
