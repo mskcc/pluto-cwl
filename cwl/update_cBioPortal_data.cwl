@@ -11,7 +11,7 @@ requirements:
   DockerRequirement:
     dockerPull: mskcc/helix_filters_01:21.01.1
   ResourceRequirement:
-    ramMax: 16000
+    ramMax: 25000
   InitialWorkDirRequirement:
     listing:
       - entryname: update_cBioPortal_data_wrapper.sh
