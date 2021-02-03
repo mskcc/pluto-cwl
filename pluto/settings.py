@@ -22,7 +22,8 @@ TOIL_ARGS = [
     '--retryCount', '1',
     '--maxLocalJobs', '500', # run up to 500 jobs at once; not actually "local", this includes HPC jobs
     '--statePollingWait', '10', # check available jobs every 10 seconds instead of after every job is submitted
-    '--clean', 'onSuccess'
+    '--clean', 'onSuccess', # deletion of the jobStore
+    '--cleanWorkDir', 'onSuccess' # deletion of temporary worker directory
 ]
 
 # location on the filesystem for static fixtures
