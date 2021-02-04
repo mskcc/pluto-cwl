@@ -17,3 +17,5 @@ conda/
 toil_output/
 pipeline_output/
 *__pycache__*
+inputs/
+worker_log.txt
