@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Operator to run the example workflow
+Operator to run the ls cwl
 """
 from pluto.tools import CWLFile
 from .input import generate_input

@@ -80,7 +80,7 @@ def generate_input(
         with open(path) as f:
             lines = [ line.strip() for line in f ]
         for line in lines:
-            d = {'class':'File', 'path': line}
+            d = {'class':'File', 'path': os.path.abspath(line)} # NOTE: maybe shouldnt do abspath here??
             input[key].append(d)
 
     # fill in the 'pairs' field with the values parsed from the pairs_file samplesheet

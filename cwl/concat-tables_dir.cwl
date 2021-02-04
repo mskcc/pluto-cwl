@@ -30,11 +30,13 @@ arguments:
 inputs:
   output_filename:
     type: string
+    default: "output.txt"
   na_str:
     type: [ "null", string ]
     default: "NA"
   comments:
     type: [ "null", boolean ]
+    default: false
   input_files:
     type: File[]
 

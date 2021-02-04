@@ -11,6 +11,7 @@ from operators.example_workflow import ExampleWorkflow
 from operators.env import EnvCWL
 from operators.env_container import EnvContainerCWL
 from operators.ls import LsCWL
+from operators.concat_tables_dir import ConcatTablesDirCWL
 from operators.input import generate_sample_summary, generate_pairs_sheet, generate_data_clinical
 
 def main():
@@ -60,6 +61,14 @@ def main():
     _ls_cwl = subparsers.add_parser('ls', help = 'Check the execution directory')
     _ls_cwl.add_argument('input_files', nargs='*', help="Input files to stage in the directory")
     _ls_cwl.set_defaults(func = LsCWL._run)
+
+    _concat_tables_dir = subparsers.add_parser('concat_tables_dir', help = 'Concatenate tables')
+    _concat_tables_dir.add_argument('input_files', nargs='*', help="Input files to stage in the directory")
+    _concat_tables_dir.add_argument('--input-files-list', dest = 'input_files_list', help="List of input files")
+    _concat_tables_dir.add_argument('--comments', dest = 'comments', action = "store_true", help="Parse file header comments")
+    _concat_tables_dir.add_argument('--na-str', dest = 'na_str', default = ".", help="NA string")
+    _concat_tables_dir.add_argument('-o', '--output-file', dest = 'output_filename', default = "output.txt", help="Output filename")
+    _concat_tables_dir.set_defaults(func = ConcatTablesDirCWL._run)
 
     # TMB workflow
     _tmb_workflow = subparsers.add_parser('tmb_workflow', help = 'Run the TMB workflow')
