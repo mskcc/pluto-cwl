@@ -1,6 +1,7 @@
 """
 Module for converting Python dict into CWL input JSON dict
 """
+import os
 from pluto.tools import TableReader, write_table, dicts2lines
 import copy
 
@@ -31,10 +32,11 @@ def generate_pairs(pairs_file, pair_template):
     return(pairs)
 
 def generate_input(
-    args,
-    bool_keys = None,
-    File_keys = None,
-    array_File_keys = None,
+    args, # Python dict of arguments to convert to CWL input format
+    bool_keys = None, # convert value into a CWL boolean
+    File_keys = None, # convert value into a CWL File record
+    list_File_keys = None, # build a CWL array of File entries from an input Python list of file paths
+    array_File_keys = None, # build a CWL array of File entries from an input .txt file with one filepath per line
     pair_template = None # requires 'pairs_file' in args
     ):
     """
@@ -49,6 +51,8 @@ def generate_input(
         array_File_keys = []
     if bool_keys is None:
         bool_keys = []
+    if list_File_keys is None:
+        list_File_keys = []
 
     input = copy.deepcopy(args)
 
@@ -60,7 +64,15 @@ def generate_input(
         path = input[key]
         input[key] = {'class':'File', 'path': path}
 
-    # input value is a single txt file that contains one filepath per line to build into array of File
+    for key in list_File_keys:
+        paths = input[key]
+        path_list = []
+        for path in paths:
+            d = {'class':'File', 'path': os.path.abspath(path)}
+            path_list.append(d)
+        input[key] = path_list
+
+    # input value is a single txt file that contains one filepath per line to build into a CWL array of File
     for key in array_File_keys:
         path = input[key]
         input[key] = []

@@ -16,3 +16,4 @@ portal-input.json
 conda/
 toil_output/
 pipeline_output/
+*__pycache__*

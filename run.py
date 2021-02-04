@@ -10,6 +10,7 @@ from operators.workflow_with_facets import WorkflowWithFacets
 from operators.example_workflow import ExampleWorkflow
 from operators.env import EnvCWL
 from operators.env_container import EnvContainerCWL
+from operators.ls import LsCWL
 from operators.input import generate_sample_summary, generate_pairs_sheet, generate_data_clinical
 
 def main():
@@ -20,6 +21,7 @@ def main():
     parser.add_argument("--engine", default = 'cwltool', dest = 'engine', choices = ['cwltool', 'toil'], help = "CWL execution engine to use")
     parser.add_argument("--print-command", action = 'store_true', dest = 'print_command', help = "Print the CWL runner command and exit")
     parser.add_argument("--restart", action = 'store_true', dest = 'restart', help = "Restart a previous run; requires jobStore")
+    parser.add_argument("--debug", action = 'store_true', dest = 'debug', help = "Restart a previous run; requires jobStore")
     parser.add_argument("--jobStore", dest = 'jobStore', default = None, help = "Job store to use for a restarted run")
 
     subparsers = parser.add_subparsers(help ='Sub-commands available', required = True)
@@ -54,6 +56,10 @@ def main():
 
     _env_container_cwl = subparsers.add_parser('env_container', help = 'Check the execution environment inside the container')
     _env_container_cwl.set_defaults(func = EnvContainerCWL._run)
+
+    _ls_cwl = subparsers.add_parser('ls', help = 'Check the execution directory')
+    _ls_cwl.add_argument('input_files', nargs='*', help="Input files to stage in the directory")
+    _ls_cwl.set_defaults(func = LsCWL._run)
 
     # TMB workflow
     _tmb_workflow = subparsers.add_parser('tmb_workflow', help = 'Run the TMB workflow')

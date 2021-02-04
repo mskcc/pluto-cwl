@@ -41,7 +41,8 @@ class CWLRunner(object):
         engine = "cwltool",
         print_command = False,
         restart = False,
-        jobStore = None
+        jobStore = None,
+        debug = False
         ):
         self.cwl_file = cwl_file
         self.input = input
@@ -54,6 +55,7 @@ class CWLRunner(object):
         self.print_command = print_command
         self.restart = restart
         self.jobStore = jobStore
+        self.debug = debug
 
         if dir is None:
             if engine == 'cwltool':
@@ -81,7 +83,8 @@ class CWLRunner(object):
                 print_stdout = self.print_stdout,
                 print_command = self.print_command,
                 check_returncode = False,
-                input_json_file = self.input_json_file
+                input_json_file = self.input_json_file,
+                debug = self.debug
                 )
         elif self.engine == 'toil':
             output_json, output_dir = run_cwl_toil(
@@ -145,7 +148,8 @@ def run_cwl(
     print_stdout = False,
     print_command = False,
     check_returncode = True,
-    input_json_file = None
+    input_json_file = None,
+    debug = False
     ):
     """Run the CWL"""
     if not input_json_file:
@@ -156,6 +160,9 @@ def run_cwl(
     output_dir = os.path.join(tmpdir, "output")
     cache_dir = os.path.join(tmpdir, 'tmp', "cache")
     tmp_dir = os.path.join(tmpdir, 'tmp', "tmp")
+
+    if debug:
+        CWL_ARGS = [ *CWL_ARGS, '--debug' ]
 
     command = [
         "cwl-runner",

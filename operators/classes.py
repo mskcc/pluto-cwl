@@ -14,7 +14,8 @@ class Operator(object):
         dir = None,
         print_command = False,
         restart = False,
-        jobStore = None
+        jobStore = None,
+        debug = False
         )
 
     def __init__(self, **kwargs):
@@ -32,6 +33,8 @@ class Operator(object):
             self.runner_args['restart'] = self.args.pop('restart')
         if 'jobStore' in self.args:
             self.runner_args['jobStore'] = self.args.pop('jobStore')
+        if 'debug' in self.args:
+            self.runner_args['debug'] = self.args.pop('debug')
 
 
 
