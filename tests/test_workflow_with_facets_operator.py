@@ -6,18 +6,16 @@ unit tests for the workflow_with_facets Operator
 import os
 import sys
 import unittest
-import json
-from tempfile import TemporaryDirectory
 
 THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 PARENT_DIR = os.path.dirname(THIS_DIR)
 sys.path.insert(0, PARENT_DIR)
-from pluto.tools import load_mutations, run_cwl, TableReader, TmpDirTestCase, CWLFile, dicts2lines, write_table
-from pluto.settings import DATA_SETS, KNOWN_FUSIONS_FILE, IMPACT_FILE, EXAMPLES_DIR
+from pluto.tools import TableReader, PlutoTestCase
+from pluto.settings import DATA_SETS, KNOWN_FUSIONS_FILE, IMPACT_FILE
 from operators.workflow_with_facets import WorkflowWithFacets
 sys.path.pop(0)
 
-class TestTmbWorkflowOperator(TmpDirTestCase):
+class TestTmbWorkflowOperator(PlutoTestCase):
     def setUp(self):
         super().setUp()
         self.mutation_svs_txt_files_file = os.path.join(self.tmpdir, "mutation_svs.txt")
@@ -46,8 +44,8 @@ class TestTmbWorkflowOperator(TmpDirTestCase):
                 'snp_pileup': os.path.join(DATA_SETS['Proj_08390_G']['FACETS_DIR'], "Sample3.rg.md.abra.printreads__Sample4.rg.md.abra.printreads.dat.gz")
             }
         ]
-        self.pairs_lines = dicts2lines(dict_list = self.pairs_dicts, comment_list = [])
-        self.pairs_file = write_table(self.tmpdir, filename = "pairs.tsv", lines = self.pairs_lines)
+        self.pairs_lines = self.dicts2lines(dict_list = self.pairs_dicts, comment_list = [])
+        self.pairs_file = self.write_table(self.tmpdir, filename = "pairs.tsv", lines = self.pairs_lines)
         self.data_clinical_file = os.path.join(DATA_SETS['Proj_08390_G']['INPUTS_DIR'], "Proj_08390_G_sample_data_clinical.txt")
         self.sample_summary_file = os.path.join(DATA_SETS['Proj_08390_G']['QC_DIR'], "Proj_08390_G_SampleSummary.txt")
         self.targets_list = DATA_SETS['Proj_08390_G']["targets_list"]
@@ -492,9 +490,9 @@ class TestTmbWorkflowOperator(TmpDirTestCase):
         }
         self.maxDiff = None
         self.assertDictEqual(output_json, expected_output)
-        comments, mutations = load_mutations(os.path.join(output_dir, 'analysis', 'Proj_08390_G.muts.maf'))
+        comments, mutations = self.load_mutations(os.path.join(output_dir, 'analysis', 'Proj_08390_G.muts.maf'))
         self.assertEqual(len(mutations), 34)
-        comments, mutations = load_mutations(os.path.join(output_dir, 'portal', 'data_mutations_extended.txt'))
+        comments, mutations = self.load_mutations(os.path.join(output_dir, 'portal', 'data_mutations_extended.txt'))
         self.assertEqual(len(mutations), 27)
 
         path = os.path.join(output_dir, 'portal/data_clinical_sample.txt')

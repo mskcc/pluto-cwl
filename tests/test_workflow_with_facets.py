@@ -10,10 +10,10 @@ import unittest
 THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 PARENT_DIR = os.path.dirname(THIS_DIR)
 sys.path.insert(0, PARENT_DIR)
-from pluto.tools import TableReader, TmpDirTestCase
+from pluto.tools import TableReader, PlutoTestCase
 sys.path.pop(0)
 
-class TestWorkflowWithFacets(TmpDirTestCase):
+class TestWorkflowWithFacets(PlutoTestCase):
     cwl_file = 'workflow_with_facets.cwl'
 
     def test_run_worflow_one_maf(self):

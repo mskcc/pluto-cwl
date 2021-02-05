@@ -6,16 +6,15 @@ Test case for the TMB analysis workflow Operator
 import os
 import sys
 import unittest
-import json
 
 THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 PARENT_DIR = os.path.dirname(THIS_DIR)
 sys.path.insert(0, PARENT_DIR)
-from pluto.tools import TmpDirTestCase, TableReader, load_mutations, run_cwl, write_table, dicts2lines, CWLFile
+from pluto.tools import PlutoTestCase, TableReader
 from operators.tmb_workflow import TMBWorkflow
 sys.path.pop(0)
 
-class TestTmbWorkflowOperator(TmpDirTestCase):
+class TestTmbWorkflowOperator(PlutoTestCase):
     def setUp(self):
         # initialize the tmpdir
         super().setUp()
@@ -156,11 +155,11 @@ class TestTmbWorkflowOperator(TmpDirTestCase):
         ]
         # PASS: 5
         # FAIL: 5
-        self.maf_lines1 = dicts2lines(dict_list = self.maf_rows1, comment_list = self.maf_comments)
-        self.maf_lines2 = dicts2lines(dict_list = self.maf_rows2, comment_list = self.maf_comments)
-        self.maf1 = write_table(self.tmpdir, filename = "input1.maf", lines = self.maf_lines1)
-        self.maf2 = write_table(self.tmpdir, filename = "input2.maf", lines = self.maf_lines2)
-        self.data_clinical_file = write_table(self.tmpdir, filename = "data_clinical_sample.txt", lines = self.data_clinical_lines)
+        self.maf_lines1 = self.dicts2lines(dict_list = self.maf_rows1, comment_list = self.maf_comments)
+        self.maf_lines2 = self.dicts2lines(dict_list = self.maf_rows2, comment_list = self.maf_comments)
+        self.maf1 = self.write_table(self.tmpdir, filename = "input1.maf", lines = self.maf_lines1)
+        self.maf2 = self.write_table(self.tmpdir, filename = "input2.maf", lines = self.maf_lines2)
+        self.data_clinical_file = self.write_table(self.tmpdir, filename = "data_clinical_sample.txt", lines = self.data_clinical_lines)
 
         self.pairs_dicts = [
             {
@@ -178,8 +177,8 @@ class TestTmbWorkflowOperator(TmpDirTestCase):
                 'snp_pileup': ''
             }
         ]
-        self.pairs_lines = dicts2lines(dict_list = self.pairs_dicts, comment_list = [])
-        self.pairs_file = write_table(self.tmpdir, filename = "pairs.tsv", lines = self.pairs_lines)
+        self.pairs_lines = self.dicts2lines(dict_list = self.pairs_dicts, comment_list = [])
+        self.pairs_file = self.write_table(self.tmpdir, filename = "pairs.tsv", lines = self.pairs_lines)
 
     def test_tmb_workflow_operator1(self):
         """

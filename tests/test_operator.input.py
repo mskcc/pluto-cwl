@@ -11,11 +11,11 @@ import json
 THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 PARENT_DIR = os.path.dirname(THIS_DIR)
 sys.path.insert(0, PARENT_DIR)
-from pluto.tools import TmpDirTestCase, write_table, dicts2lines
+from pluto.tools import PlutoTestCase, CWLFile 
 from operators import input
 sys.path.pop(0)
 
-class TestInputGeneratePairs(TmpDirTestCase):
+class TestInputGeneratePairs(PlutoTestCase):
     def setUp(self):
         # initialize the tmpdir
         super().setUp()
@@ -57,8 +57,8 @@ class TestInputGeneratePairs(TmpDirTestCase):
         pairs_dicts = [ self.pairs_dicts[0] ]
         pairs_dicts[0] = { **pairs_dicts[0] }
         pairs_dicts[0]['pair_maf'] = self.maf1
-        pairs_lines = dicts2lines(dict_list = pairs_dicts, comment_list = [])
-        pairs_file = write_table(self.tmpdir, filename = "pairs.tsv", lines = pairs_lines)
+        pairs_lines = self.dicts2lines(dict_list = pairs_dicts, comment_list = [])
+        pairs_file = self.write_table(self.tmpdir, filename = "pairs.tsv", lines = pairs_lines)
         pairs = input.generate_pairs(pairs_file, self.pair_template)
         expected_pairs = [
             {
@@ -82,8 +82,8 @@ class TestInputGeneratePairs(TmpDirTestCase):
             pairs_dicts[i] = { **d }
         pairs_dicts[0]['pair_maf'] = self.maf1
         pairs_dicts[1]['pair_maf'] = self.maf2
-        pairs_lines = dicts2lines(dict_list = pairs_dicts, comment_list = [])
-        pairs_file = write_table(self.tmpdir, filename = "pairs.tsv", lines = pairs_lines)
+        pairs_lines = self.dicts2lines(dict_list = pairs_dicts, comment_list = [])
+        pairs_file = self.write_table(self.tmpdir, filename = "pairs.tsv", lines = pairs_lines)
         pairs = input.generate_pairs(pairs_file, self.pair_template)
         expected_pairs = [
             {
@@ -107,7 +107,7 @@ class TestInputGeneratePairs(TmpDirTestCase):
         ]
         self.assertEqual(pairs, expected_pairs)
 
-class TestInputGenerateInput(TmpDirTestCase):
+class TestInputGenerateInput(PlutoTestCase):
     def test_generate_input1(self):
         """
         Test case for generating some input data

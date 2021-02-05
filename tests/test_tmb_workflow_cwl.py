@@ -10,11 +10,11 @@ import unittest
 THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 PARENT_DIR = os.path.dirname(THIS_DIR)
 sys.path.insert(0, PARENT_DIR)
-from pluto.tools import TmpDirTestCase, TableReader
+from pluto.tools import PlutoTestCase, CWLFile, TableReader
 sys.path.pop(0)
 
-class TestTmbWorkflow(TmpDirTestCase):
-    cwl_file = 'tmb_workflow.cwl'
+class TestTmbWorkflow(PlutoTestCase):
+    cwl_file = CWLFile('tmb_workflow.cwl')
 
     def setUp(self):
         # initialize the tmpdir

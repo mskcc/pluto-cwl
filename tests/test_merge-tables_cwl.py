@@ -9,11 +9,11 @@ import unittest
 
 PARENT_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.insert(0, PARENT_DIR)
-from pluto.tools import TmpDirTestCase
+from pluto.tools import PlutoTestCase, CWLFile
 sys.path.pop(0)
 
-class TestMergeTables(TmpDirTestCase):
-    cwl_file = 'merge-tables.cwl'
+class TestMergeTables(PlutoTestCase):
+    cwl_file = CWLFile('merge-tables.cwl')
 
     def test_merge_tables1(self):
         lines1 = [

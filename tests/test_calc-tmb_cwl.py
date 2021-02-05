@@ -9,13 +9,12 @@ import unittest
 THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 PARENT_DIR = os.path.dirname(THIS_DIR)
 sys.path.insert(0, PARENT_DIR)
-from pluto.tools import TmpDirTestCase, load_mutations, run_cwl, write_table, dicts2lines, CWLFile
-
+from pluto.tools import PlutoTestCase, CWLFile
 sys.path.pop(0)
 
-cwl_file = CWLFile('calc-tmb.cwl')
+class TestCalcTMB(PlutoTestCase):
+    cwl_file = CWLFile('calc-tmb.cwl')
 
-class TestCalcTMB(TmpDirTestCase):
     def test_calc_tmb_from_file(self):
         """
         Test case for calculating TMB by reading the number of variants from a file
@@ -31,8 +30,8 @@ class TestCalcTMB(TmpDirTestCase):
             ['SUFU', '1'],
             ['GOT1', '2']
         ]
-        input_maf_file = write_table(tmpdir = self.tmpdir, filename = 'input.maf', lines = maf_lines)
-        input_json = {
+        input_maf_file = self.write_table(tmpdir = self.tmpdir, filename = 'input.maf', lines = maf_lines)
+        self.input = {
             "input_file": {
                   "class": "File",
                   "path": input_maf_file
@@ -41,13 +40,7 @@ class TestCalcTMB(TmpDirTestCase):
             "genome_coverage": "1000",
             "normal_id": "Sample1-N"
             }
-        output_json, output_dir = run_cwl(
-            testcase = self,
-            tmpdir = self.tmpdir,
-            input_json = input_json,
-            cwl_file = cwl_file,
-            print_command = False,
-            )
+        output_json, output_dir = self.run_cwl()
 
         expected_output = {
             'output_file': {
@@ -81,8 +74,8 @@ class TestCalcTMB(TmpDirTestCase):
             ['SUFU', '1'],
             ['GOT1', '2']
         ]
-        input_maf_file = write_table(tmpdir = self.tmpdir, filename = 'input.maf', lines = maf_lines)
-        input_json = {
+        input_maf_file = self.write_table(tmpdir = self.tmpdir, filename = 'input.maf', lines = maf_lines)
+        self.input = {
             "input_file": {
                   "class": "File",
                   "path": input_maf_file
@@ -91,13 +84,7 @@ class TestCalcTMB(TmpDirTestCase):
             "genome_coverage": "1000",
             "normal_id": "Sample1PooledNormal"
             }
-        output_json, output_dir = run_cwl(
-            testcase = self,
-            tmpdir = self.tmpdir,
-            input_json = input_json,
-            cwl_file = cwl_file,
-            print_command = False,
-            )
+        output_json, output_dir = self.run_cwl()
 
         expected_output = {
             'output_file': {

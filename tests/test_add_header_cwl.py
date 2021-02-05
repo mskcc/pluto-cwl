@@ -9,13 +9,13 @@ import unittest
 THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 PARENT_DIR = os.path.dirname(THIS_DIR)
 sys.path.insert(0, PARENT_DIR)
-from pluto.tools import TmpDirTestCase, run_cwl, CWLFile
+from pluto.tools import PlutoTestCase, CWLFile
 
 sys.path.pop(0)
 
-cwl_file = CWLFile('add_header.cwl')
+class TestAddHeader(PlutoTestCase):
+    cwl_file = CWLFile('add_header.cwl')
 
-class TestAddHeader(TmpDirTestCase):
     def test_add_header(self):
         """
         Test case for adding a header to a file
@@ -27,7 +27,7 @@ class TestAddHeader(TmpDirTestCase):
             f.write("foo")
         header_str = "HEADER"
 
-        input_json = {
+        self.input = {
             "input_file": {
                   "class": "File",
                   "path": input_file
@@ -35,13 +35,7 @@ class TestAddHeader(TmpDirTestCase):
             "header_str":  header_str,
             }
 
-        output_json, output_dir = run_cwl(
-            testcase = self,
-            tmpdir = self.tmpdir,
-            input_json = input_json,
-            cwl_file = cwl_file,
-            print_command = False,
-            )
+        output_json, output_dir = self.run_cwl()
 
         expected_output = {
             'output_file': {
@@ -71,7 +65,7 @@ class TestAddHeader(TmpDirTestCase):
 
         header_str = "HEADER"
 
-        input_json = {
+        self.input = {
             "input_file": {
                   "class": "File",
                   "path": input_file
@@ -79,13 +73,7 @@ class TestAddHeader(TmpDirTestCase):
             "header_str":  header_str,
             }
 
-        output_json, output_dir = run_cwl(
-            testcase = self,
-            tmpdir = self.tmpdir,
-            input_json = input_json,
-            cwl_file = cwl_file,
-            print_command = False,
-            )
+        output_json, output_dir = self.run_cwl()
 
         expected_output = {
             'output_file': {
