@@ -3,7 +3,8 @@
 cwlVersion: v1.0
 class: CommandLineTool
 baseCommand: [ "concat-tables.py", '--dir' ]
-doc: "Concatenate all the table files provided, but put the input files in a dir first to try avoiding issues with gigantic CLI args when tons of files are passed"
+doc: "Concatenate all the table files provided, but put the input files in a dir first to try avoiding issues with gigantic CLI args when tons of files are passed.
+NOTE: All input files must have a unique basename!!"
 requirements:
   InlineJavascriptRequirement: {}
   DockerRequirement:

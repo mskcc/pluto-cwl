@@ -49,7 +49,7 @@ steps:
 
   # concatenate all the individual TMB tables into a single table
   concat_tmb_tables:
-    run: concat-tables.cwl
+    run: concat-tables_dir.cwl # NOTE: Important!! use this CWL in case a huge amount of files are passed!!
     in:
       input_files: run_tmb_workflow/output_file
       output_filename:

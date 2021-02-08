@@ -112,12 +112,12 @@ class TestTMBWorkflow(PlutoTestCase):
 
         expected_output = {
             'output_file': {
-                'location': 'file://' + os.path.join(output_dir,'tmb.tsv'),
-                'basename': 'tmb.tsv',
+                'location': 'file://' + os.path.join(output_dir,'Sample1.Sample1-N.tmb.tsv'),
+                'basename': 'Sample1.Sample1-N.tmb.tsv',
                 'class': 'File',
                 'checksum': 'sha1$fc3cc241f333bccf9b45ba2a9e067920fe621a4c',
                 'size': 43,
-                'path':  os.path.join(output_dir,'tmb.tsv')
+                'path':  os.path.join(output_dir,'Sample1.Sample1-N.tmb.tsv')
                 }
             }
         self.assertDictEqual(output_json, expected_output)
@@ -146,12 +146,12 @@ class TestTMBWorkflow(PlutoTestCase):
 
         expected_output = {
             'output_file': {
-                'location': 'file://' + os.path.join(output_dir,'tmb.tsv'),
-                'basename': 'tmb.tsv',
+                'location': 'file://' + os.path.join(output_dir,'Sample1.Sample1-PooledNormal.tmb.tsv'),
+                'basename': 'Sample1.Sample1-PooledNormal.tmb.tsv',
                 'class': 'File',
                 'checksum': 'sha1$f822b3bbbe1ef2281f1caee3c5efec04c7740b41',
                 'size': 34,
-                'path':  os.path.join(output_dir,'tmb.tsv')
+                'path':  os.path.join(output_dir,'Sample1.Sample1-PooledNormal.tmb.tsv')
                 }
             }
         self.assertDictEqual(output_json, expected_output)
