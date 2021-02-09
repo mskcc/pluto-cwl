@@ -103,6 +103,12 @@ install: conda
 	. "$(ENVSH)" conda
 	conda install -y conda-forge::jq=1.5
 	pip install -r requirements.txt
+	$(MAKE) init
+
+init: SHELLOPTS=$(OLDSHELLOPTS)
+init:
+	git submodule init
+	git submodule update
 
 # ~~~~~ Container ~~~~~ #
 # pull the Docker container and convert it to Singularity container image file
