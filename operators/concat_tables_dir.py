@@ -3,7 +3,6 @@
 """
 Operator to run the concat-tables_dir CWL
 """
-import copy
 from pluto.tools import CWLFile
 from .input import generate_input
 from .classes import Operator
