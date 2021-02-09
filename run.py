@@ -12,6 +12,7 @@ from operators.env import EnvCWL
 from operators.env_container import EnvContainerCWL
 from operators.ls import LsCWL
 from operators.concat_tables_dir import ConcatTablesDirCWL
+from operators.consensus_bed import ConsensusBed
 from operators.input import generate_sample_summary, generate_pairs_sheet, generate_data_clinical
 
 def main():
@@ -71,6 +72,12 @@ def main():
     _concat_tables_dir.add_argument('--na-str', dest = 'na_str', default = ".", help="NA string")
     _concat_tables_dir.add_argument('-o', '--output-file', dest = 'output_filename', default = "output.txt", help="Output filename")
     _concat_tables_dir.set_defaults(func = ConcatTablesDirCWL._run)
+
+
+    _consensus_bed = subparsers.add_parser('consensus_bed', help = 'Merge maf files into a consensus bed file')
+    _consensus_bed.add_argument('maf_files', nargs='*', help="Input maf files")
+    _consensus_bed.add_argument('--maf-files-list', dest = 'maf_files_list', help="List of input files")
+    _consensus_bed.set_defaults(func = ConsensusBed._run)
 
     # TMB workflow
     _tmb_workflow = subparsers.add_parser('tmb_workflow', help = 'Run the TMB workflow')
