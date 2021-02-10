@@ -14,6 +14,7 @@ from operators.ls import LsCWL
 from operators.concat_tables_dir import ConcatTablesDirCWL
 from operators.consensus_bed import ConsensusBed
 from operators.concat_mafs import ConcatMafs
+from operators.deduplicate_maf import DeduplicateMaf
 from operators.input import generate_sample_summary, generate_pairs_sheet, generate_data_clinical
 
 def main():
@@ -79,6 +80,12 @@ def main():
     _concat_tables_dir.add_argument('--input-files-list', dest = 'input_files_list', help="List of input files")
     _concat_tables_dir.add_argument('-o', '--output-file', dest = 'output_filename', default = "output.maf", help="Output filename")
     _concat_tables_dir.set_defaults(func = ConcatMafs._run)
+
+    _concat_tables_dir = subparsers.add_parser('deduplicate_maf', help = 'Deduplicate and sort rows in a maf file')
+    _concat_tables_dir.add_argument('input_file', help="Input maf files")
+    # _concat_tables_dir.add_argument('--input-files-list', dest = 'input_files_list', help="List of input files")
+    # _concat_tables_dir.add_argument('-o', '--output-file', dest = 'output_filename', default = "output.maf", help="Output filename")
+    _concat_tables_dir.set_defaults(func = DeduplicateMaf._run)
 
     _consensus_bed = subparsers.add_parser('consensus_bed', help = 'Merge maf files into a consensus bed file')
     _consensus_bed.add_argument('maf_files', nargs='*', help="Input maf files")
