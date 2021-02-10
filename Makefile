@@ -140,6 +140,14 @@ singularity-pull-facets:
 	. "$(ENVSH)" singularity && \
 	singularity pull --force --name "$(FACETS_SIF)" docker://$(FACETS_DOCKERTAG)
 
+# docker://cmopipeline/getbasecountsmultisample:1.2.2
+FILLOUT_DOCKERTAG:=cmopipeline/getbasecountsmultisample:1.2.2
+FILLOUT_SIF:=cmopipeline_getbasecountsmultisample:1.2.2.sif
+singularity-pull-fillout:
+	. "$(ENVSH)" singularity && \
+	singularity pull --force --name "$(FILLOUT_SIF)" docker://$(FILLOUT_DOCKERTAG)
+
+
 # change the Docker tag for all the CWL files from the old pattern to the new pattern
 OLD_TAG:=20.06.1
 NEW_TAG:=20.06.2
