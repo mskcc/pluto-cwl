@@ -6,6 +6,7 @@ baseCommand: [
   '--dir',
   '--na-str', '',
   '--keep-cols', 'Hugo_Symbol', 'Chromosome', 'Start_Position', 'End_Position', 'Variant_Classification', 'Reference_Allele', 'Tumor_Seq_Allele1', 'Tumor_Seq_Allele2', 'Center', 'NCBI_Build',
+  # replace the value of these cols with the na_str to save space in the output file
   '--na-cols', 'Tumor_Sample_Barcode', 'Matched_Norm_Sample_Barcode', 't_ref_count', 't_alt_count', 'n_ref_count', 'n_alt_count',
   '--comments' ]
 doc: "
@@ -37,6 +38,7 @@ requirements:
     dockerPull: mskcc/helix_filters_01:latest
   InitialWorkDirRequirement:
     listing:
+      # NOTE: Input files must have unique filenames or they might get silently overwritten here !!
       - entryname: inputs_dir
         writable: true
         entry: "$({class: 'Directory', listing: inputs.input_files})"
