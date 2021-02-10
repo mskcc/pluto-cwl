@@ -22,6 +22,8 @@ Expected columns are in this order;
 14  t_ref_count
 15  n_ref_count
 16  Tumor_Sample_Barcode
+
+NOTE: actually this order might be wrong but all that matters is that Chromosome and Start_Position are columns 4 and 5
 "
 
 requirements:
