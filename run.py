@@ -11,6 +11,7 @@ from operators.example_workflow import ExampleWorkflow
 from operators.env import EnvCWL
 from operators.env_container import EnvContainerCWL
 from operators.ls import LsCWL
+from operators.ls_dir import LsDirCWL
 from operators.concat_tables_dir import ConcatTablesDirCWL
 from operators.consensus_bed import ConsensusBed
 from operators.concat_mafs import ConcatMafs
@@ -65,8 +66,11 @@ def main():
     _env_container_cwl.set_defaults(func = EnvContainerCWL._run)
 
     _ls_cwl = subparsers.add_parser('ls', help = 'Check the execution directory')
-    _ls_cwl.add_argument('input_files', nargs='*', help="Input files to stage in the directory")
     _ls_cwl.set_defaults(func = LsCWL._run)
+
+    _ls_dir_cwl = subparsers.add_parser('ls_dir', help = 'Check the execution directory with files input')
+    _ls_dir_cwl.add_argument('input_files', nargs='+', help="Input files to stage in the directory")
+    _ls_dir_cwl.set_defaults(func = LsDirCWL._run)
 
     _concat_tables_dir = subparsers.add_parser('concat_tables_dir', help = 'Concatenate tables')
     _concat_tables_dir.add_argument('input_files', nargs='*', help="Input files to stage in the directory")
