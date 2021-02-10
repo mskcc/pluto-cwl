@@ -38,9 +38,9 @@ requirements:
         # then sort the maf rows
         entry: |-
           set -euo pipefail
-          grep '#' "$1" > comments
-          grep '^Hugo_Symbol' "$1" > header
-          grep -v '^Hugo_Symbol' "$1" | grep -v '#' | sort -u >> body.dedup
+          grep '#' "$1" > comments || touch comments
+          grep '^Hugo_Symbol' "$1" > header || touch header
+          grep -v '^Hugo_Symbol' "$1" | grep -v '#' | sort -u > body.dedup
           sort -V -k4,4 -k5,5n body.dedup > body.sorted
           cat comments > dedup.maf
           cat header >> dedup.maf

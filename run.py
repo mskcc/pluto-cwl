@@ -15,6 +15,7 @@ from operators.concat_tables_dir import ConcatTablesDirCWL
 from operators.consensus_bed import ConsensusBed
 from operators.concat_mafs import ConcatMafs
 from operators.deduplicate_maf import DeduplicateMaf
+from operators.consensus_maf import ConsensusMaf
 from operators.input import generate_sample_summary, generate_pairs_sheet, generate_data_clinical
 
 def main():
@@ -91,6 +92,11 @@ def main():
     _consensus_bed.add_argument('maf_files', nargs='*', help="Input maf files")
     _consensus_bed.add_argument('--maf-files-list', dest = 'maf_files_list', help="List of input files")
     _consensus_bed.set_defaults(func = ConsensusBed._run)
+
+    _consensus_maf = subparsers.add_parser('consensus_maf', help = 'Merge maf files into a consensus maf file')
+    _consensus_maf.add_argument('maf_files', nargs='*', help="Input maf files")
+    _consensus_maf.add_argument('--maf-files-list', dest = 'maf_files_list', help="List of input files")
+    _consensus_maf.set_defaults(func = ConsensusMaf._run)
 
     # TMB workflow
     _tmb_workflow = subparsers.add_parser('tmb_workflow', help = 'Run the TMB workflow')
