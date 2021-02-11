@@ -5,7 +5,7 @@ doc: "
 Version of concat-mafs.cwl that doesnt drop any columns or make columns blank
 "
 
-baseCommand: [ "concat-tables.py", '--dir', '--na-str', '', '--comments' ]
+baseCommand: [ "concat-tables.py", '--dir', '--na-str', '', '--comments', '--no-carriage-returns' ]
 
 requirements:
   InlineJavascriptRequirement: {}
