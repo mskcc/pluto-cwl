@@ -1,14 +1,6 @@
 #!/usr/bin/env cwl-runner
 cwlVersion: v1.0
 class: CommandLineTool
-baseCommand: [
-  "concat-tables.py",
-  '--dir',
-  '--na-str', '',
-  '--keep-cols', 'Hugo_Symbol', 'Chromosome', 'Start_Position', 'End_Position', 'Variant_Classification', 'Reference_Allele', 'Tumor_Seq_Allele1', 'Tumor_Seq_Allele2', 'Center', 'NCBI_Build',
-  # replace the value of these cols with the na_str to save space in the output file
-  '--na-cols', 'Tumor_Sample_Barcode', 'Matched_Norm_Sample_Barcode', 't_ref_count', 't_alt_count', 'n_ref_count', 'n_alt_count',
-  '--comments' ]
 doc: "
 Special case of concat-tables.py to use with concatenating maf files for
 use with https://github.com/zengzheng123/GetBaseCountsMultiSample
@@ -32,16 +24,34 @@ Center	NCBI_Build
 see also;
 https://docs.gdc.cancer.gov/Data/File_Formats/MAF_Format/
 "
+
+baseCommand: [
+  "concat-tables.py",
+  '--dir',
+  '--na-str', '',
+  # keep only these cols in the output;
+  '--keep-cols', 'Hugo_Symbol', 'Chromosome', 'Start_Position', 'End_Position', 'Variant_Classification', 'Reference_Allele', 'Tumor_Seq_Allele1', 'Tumor_Seq_Allele2', 'Center', 'NCBI_Build',
+  # replace the value of these cols with the na_str to save space in the output file;
+  '--na-cols', 'Tumor_Sample_Barcode', 'Matched_Norm_Sample_Barcode', 't_ref_count', 't_alt_count', 'n_ref_count', 'n_alt_count',
+  '--comments'
+  ]
+
 requirements:
   InlineJavascriptRequirement: {}
   DockerRequirement:
     dockerPull: mskcc/helix_filters_01:latest
   InitialWorkDirRequirement:
     listing:
-      # NOTE: Input files must have unique filenames or they might get silently overwritten here !!
       - entryname: inputs_dir
         writable: true
-        entry: "$({class: 'Directory', listing: inputs.input_files})"
+        # put all the input files in a dir and rename them so the filenames do not collide
+        entry: |-
+            ${
+              for (var i = 0; i < inputs.input_files.length; i++) {
+                inputs.input_files[i].basename = inputs.input_files[i].basename + "." + i;
+              }
+              return {class: 'Directory', listing: inputs.input_files};
+            }
 
 arguments:
   - valueFrom: $(inputs.output_filename)

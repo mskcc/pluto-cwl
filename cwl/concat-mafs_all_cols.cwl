@@ -1,10 +1,12 @@
 #!/usr/bin/env cwl-runner
-
 cwlVersion: v1.0
 class: CommandLineTool
-baseCommand: [ "concat-tables.py", '--dir' ]
-doc: "Concatenate all the table files provided, but put the input files in a dir first to try avoiding issues with gigantic CLI args when tons of files are passed.
+doc: "
+Version of concat-mafs.cwl that doesnt drop any columns or make columns blank
 "
+
+baseCommand: [ "concat-tables.py", '--dir', '--na-str', '', '--comments' ]
+
 requirements:
   InlineJavascriptRequirement: {}
   DockerRequirement:
@@ -22,30 +24,17 @@ requirements:
               return {class: 'Directory', listing: inputs.input_files};
             }
 
-
 arguments:
   - valueFrom: $(inputs.output_filename)
     position: 1
     prefix: -o
-  - valueFrom: $(inputs.na_str)
-    position: 2
-    prefix: -n
-  - valueFrom: $(inputs.comments)
-    position: 3
-    prefix: --comments
   - valueFrom: ${ return "inputs_dir" }
-    position: 4
+    position: 2
 
 inputs:
   output_filename:
     type: string
-    default: "output.txt"
-  na_str:
-    type: [ "null", string ]
-    default: "NA"
-  comments:
-    type: [ "null", boolean ]
-    default: false
+    default: "output.maf"
   input_files:
     type: File[]
 
