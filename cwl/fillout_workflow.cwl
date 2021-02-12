@@ -1,6 +1,7 @@
 #!/usr/bin/env cwl-runner
 
-cwlVersion: v1.0
+# NOTE: Important! Need  cwlVersion: v1.1 for the array record fields secondaryFiles to work here
+cwlVersion: v1.1
 class: Workflow
 doc: "
 Workflow to run GetBaseCountsMultiSample fillout on a number of bam files with a single maf file
@@ -22,7 +23,8 @@ inputs:
       items:
         type: record
         fields:
-          bam_file: File
+          bam_file:
+            type: File
             secondaryFiles:
               - ^.bai
           sample_id: string

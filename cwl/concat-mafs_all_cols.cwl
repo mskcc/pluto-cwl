@@ -5,7 +5,13 @@ doc: "
 Version of concat-mafs.cwl that doesnt drop any columns or make columns blank
 "
 
-baseCommand: [ "concat-tables.py", '--dir', '--na-str', '', '--comments', '--no-carriage-returns' ]
+baseCommand: [
+  "concat-tables.py",
+  '--dir', # read input from directory of files
+  '--na-str', '.', # using '' crashes GetBaseCountsMultiSample
+  '--comments', # parse any header comments
+  '--no-carriage-returns' # carriage returns output by default by Python csv.DictWriter will crash GetBaseCountsMultiSample
+  ]
 
 requirements:
   InlineJavascriptRequirement: {}
