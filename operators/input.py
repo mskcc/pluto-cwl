@@ -133,3 +133,11 @@ def generate_sample_summary(func = None, output_file = "sample_summary.txt"):
         'Insert Size Peak'
     ]]
     write_table('', '', lines = lines, filepath = output_file)
+
+def generate_samples_fillout_sheet(func = None, output_file = "samples.fillout.tsv", **kwargs):
+    lines = [[
+    'sample_id',
+    'bam_file',
+    'maf_file'
+    ]]
+    write_table('', '', lines = lines, filepath = output_file)

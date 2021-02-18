@@ -17,7 +17,8 @@ from operators.consensus_bed import ConsensusBed
 from operators.concat_mafs import ConcatMafs
 from operators.deduplicate_maf import DeduplicateMaf
 from operators.consensus_maf import ConsensusMaf
-from operators.input import generate_sample_summary, generate_pairs_sheet, generate_data_clinical
+from operators.samples_fillout import SamplesFillout
+from operators.input import generate_sample_summary, generate_pairs_sheet, generate_data_clinical, generate_samples_fillout_sheet
 
 def main():
     """
@@ -48,6 +49,12 @@ def main():
     _generate_sample_summary = subparsers.add_parser('sample_summary', help = 'Generate a blank template sample sumamry file')
     _generate_sample_summary.add_argument('--output', dest = 'output_file', default = "sample_summary.txt")
     _generate_sample_summary.set_defaults(func = generate_sample_summary)
+
+    _generate_samples_fillout_sheet = subparsers.add_parser('samples_fillout_sheet', help = 'Generate a blank template sample fillout samplesheet file')
+    _generate_samples_fillout_sheet.add_argument('--output', dest = 'output_file', default = "samples.fillout.tsv")
+    _generate_samples_fillout_sheet.set_defaults(func = generate_samples_fillout_sheet)
+
+
 
     # Example workflow
     _example_workflow = subparsers.add_parser('example_workflow', help = 'Run the example workflow')
@@ -112,6 +119,15 @@ def main():
     """
     $ ./run.py tmb_workflow --data-clinical examples/data_clinical.txt --assay-coverage 10000 --pairs examples/pairs.tsv
     """
+
+    _samples_fillout = subparsers.add_parser('samples_fillout', help = 'Run the samples fillout workflow')
+    _samples_fillout.add_argument('--samplesheet', dest = 'samplesheet', required = True)
+    _samples_fillout.add_argument('--ref-fasta', dest = 'ref_fasta', required = True)
+    _samples_fillout.set_defaults(func = SamplesFillout._run)
+    """
+    $ ./run.py samples_fillout --samplesheet examples/samples.fillout.tsv --ref-fasta /juno/work/ci/resources/genomes/GRCh37/fasta/b37.fasta
+    """
+
 
     # Main full workflow with Facets
     _workflow_with_facets = subparsers.add_parser('workflow_with_facets', help = 'Run the full workflow with Facets')
