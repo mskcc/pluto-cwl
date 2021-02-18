@@ -114,10 +114,12 @@ init:
 # pull the Docker container and convert it to Singularity container image file
 export SINGULARITY_CACHEDIR:=/juno/work/ci/pluto-cwl-test/cache
 # GIT_TAG:=$(shell git describe --tags --abbrev=0)
-DOCKER_TAG:=mskcc/helix_filters_01:21.01.1
-DOCKER_DEV_TAG:=mskcc/helix_filters_01:latest
+HF_CONTAINER:=mskcc/helix_filters_01
+HF_TAG:=21.02.2
+DOCKER_TAG:=$(HF_CONTAINER):$(HF_TAG)
+DOCKER_DEV_TAG:=$(HF_CONTAINER):latest
 # NOTE: you cannot use a filename with a ':' as a Makefile target
-SINGULARITY_SIF:=mskcc_helix_filters_01:21.01.1.sif
+SINGULARITY_SIF:=mskcc_helix_filters_01:$(HF_TAG).sif
 SINGULARITY_DEV_SIF:=mskcc_helix_filters_01:latest.sif
 singularity-pull:
 	. "$(ENVSH)" singularity && \
@@ -149,10 +151,13 @@ singularity-pull-fillout:
 
 
 # change the Docker tag for all the CWL files from the old pattern to the new pattern
-OLD_TAG:=20.06.1
-NEW_TAG:=20.06.2
+OLD_TAG:=
+NEW_TAG:=
+UPDATE_CONTAINER:=$(HF_CONTAINER)
 update-container-tags:
-	for i in $$(find cwl -type f -exec grep -l 'dockerPull: mskcc/helix_filters_01' {} \;); do \
+	[ -z "$(OLD_TAG)" ] && echo "ERROR: OLD_TAG value missing" && exit 1 || :
+	[ -z "$(NEW_TAG)" ] && echo "ERROR: NEW_TAG value missing" && exit 1 || :
+	for i in $$(find cwl -type f -exec grep -l 'dockerPull: $(UPDATE_CONTAINER)' {} \;); do \
 	perl -i -pe 's/$(OLD_TAG)/$(NEW_TAG)/g' $$i ; \
 	done
 
