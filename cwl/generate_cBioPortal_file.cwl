@@ -6,7 +6,7 @@ baseCommand: [ "generate_cbioPortal_files.py" ]
 
 requirements:
   DockerRequirement:
-    dockerPull: mskcc/helix_filters_01:21.01.0
+    dockerPull: mskcc/helix_filters_01:21.02.2
 
 inputs:
   # required for every invocation

@@ -60,3 +60,23 @@ python tests/test_workflow_cwl.py TestClassName
 
 python tests/test_workflow_cwl.py TestClassName.test_function
 ```
+
+## Run a CWL
+
+You can run a specific CWL workflow manually using the included `run.py` script. See `run.py -h` for available CWL's to run. 
+
+Example usages;
+
+- run a TMB workflow
+
+```
+$ ./run.py tmb_workflow --data-clinical examples/data_clinical.txt --assay-coverage 10000 --pairs examples/pairs.tsv
+```
+
+- run the main `workflow_with_facets` workflow
+
+```
+$ ./run.py workflow_with_facets --assay-coverage 100000 --project-id Project1 --cancer-type MEL --pairs examples/pairs.tsv --data-clinical examples/data_clinical.txt --sample-summary examples/sample_summary.txt --mutation-svs-txts examples/mutation_svs.txt --mutation-svs-mafs examples/mutation_svs_mafs.txt
+```
+
+NOTE: The `run.py` script still requires that the Singularity containers be present locally, see the section on running the test scripts for details. You might also have to set your environment using either `make bash` or `. env.juno.sh shell` first.

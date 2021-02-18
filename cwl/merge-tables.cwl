@@ -5,7 +5,7 @@ class: CommandLineTool
 baseCommand: [ "merge-tables.py" ]
 requirements:
   DockerRequirement:
-    dockerPull: mskcc/helix_filters_01:latest
+    dockerPull: mskcc/helix_filters_01:21.02.2
 
 inputs:
   table1:
@@ -31,6 +31,11 @@ inputs:
     inputBinding:
       prefix: --output
       position: 5
+  cBioPortal: # if the output table should have cBioPortal headers
+    type: [ "null", boolean ]
+    inputBinding:
+      prefix: --cBioPortal
+      position: 6
 
 outputs:
   output_file:

@@ -3,31 +3,31 @@
 """
 """
 import os
+import sys
 import unittest
 
-if __name__ != "__main__":
-    from .tools import TmpDirTestCase, run_cwl
-    from .settings import CWL_DIR
+THIS_DIR = os.path.dirname(os.path.realpath(__file__))
+PARENT_DIR = os.path.dirname(THIS_DIR)
+sys.path.insert(0, PARENT_DIR)
+from pluto.tools import PlutoTestCase, CWLFile
 
-if __name__ == "__main__":
-    from tools import TmpDirTestCase, run_cwl
-    from settings import CWL_DIR
+sys.path.pop(0)
 
-cwl_file = os.path.join(CWL_DIR, 'add_header.cwl')
+class TestAddHeader(PlutoTestCase):
+    cwl_file = CWLFile('add_header.cwl')
 
-class TestAddHeader(TmpDirTestCase):
     def test_add_header(self):
         """
         Test case for adding a header to a file
         """
         self.maxDiff = None
-        
+
         input_file = os.path.join(self.tmpdir, "input.txt")
         with open(input_file, "w") as f:
             f.write("foo")
         header_str = "HEADER"
 
-        input_json = {
+        self.input = {
             "input_file": {
                   "class": "File",
                   "path": input_file
@@ -35,13 +35,7 @@ class TestAddHeader(TmpDirTestCase):
             "header_str":  header_str,
             }
 
-        output_json, output_dir = run_cwl(
-            testcase = self,
-            tmpdir = self.tmpdir,
-            input_json = input_json,
-            cwl_file = cwl_file,
-            print_command = False,
-            )
+        output_json, output_dir = self.run_cwl()
 
         expected_output = {
             'output_file': {
@@ -59,6 +53,44 @@ class TestAddHeader(TmpDirTestCase):
         with open(output_file) as f:
             lines = [ l.strip() for l in f ]
         expected_lines = ['HEADER', 'foo']
+        self.assertEqual(lines, expected_lines)
+
+    def test_add_header_empty_file(self):
+        """
+        Test case for adding a header to an empty file should return only the header
+        """
+        input_file = os.path.join(self.tmpdir, "input.txt")
+        with open(input_file, "w") as f:
+            pass
+
+        header_str = "HEADER"
+
+        self.input = {
+            "input_file": {
+                  "class": "File",
+                  "path": input_file
+                },
+            "header_str":  header_str,
+            }
+
+        output_json, output_dir = self.run_cwl()
+
+        expected_output = {
+            'output_file': {
+                'location': 'file://' + os.path.join(output_dir,'output.txt'),
+                'basename': 'output.txt',
+                'class': 'File',
+                'checksum': 'sha1$b4cf58442d6321c81db6bab562806e14bf54bf72',
+                'size': 7,
+                'path':  os.path.join(output_dir,'output.txt')
+                }
+            }
+        self.assertDictEqual(output_json, expected_output)
+
+        output_file = expected_output['output_file']['path']
+        with open(output_file) as f:
+            lines = [ l.strip() for l in f ]
+        expected_lines = ['HEADER']
         self.assertEqual(lines, expected_lines)
 
 if __name__ == "__main__":

@@ -4,20 +4,19 @@
 unit tests for the maf_filter.cwl
 """
 import os
-import json
+import sys
 import unittest
+import json
 from tempfile import TemporaryDirectory
 
-# relative imports, from CLI and from parent project
-if __name__ != "__main__":
-    from .tools import run_command, load_mutations, run_cwl
-    from .settings import CWL_DIR, CWL_ARGS, DATA_SETS, ARGOS_VERSION_STRING, IS_IMPACT
+THIS_DIR = os.path.dirname(os.path.realpath(__file__))
+PARENT_DIR = os.path.dirname(THIS_DIR)
+sys.path.insert(0, PARENT_DIR)
+from pluto.tools import run_command, load_mutations, run_cwl, CWLFile
+from pluto.settings import CWL_ARGS, DATA_SETS, ARGOS_VERSION_STRING, IS_IMPACT
+sys.path.pop(0)
 
-if __name__ == "__main__":
-    from tools import run_command, load_mutations, run_cwl
-    from settings import CWL_DIR, CWL_ARGS, DATA_SETS, ARGOS_VERSION_STRING, IS_IMPACT
-
-cwl_file = os.path.join(CWL_DIR, 'maf_filter.cwl')
+cwl_file = CWLFile('maf_filter.cwl')
 
 class TestMafFilter(unittest.TestCase):
     def test_filter_a_maf_file(self):

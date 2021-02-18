@@ -18,6 +18,8 @@ inputs:
     doc: "genome_coverage value; amount of the genome in bp covered by the assay"
   sample_id:
     type: string
+  normal_id:
+    type: string
 
 steps:
     # filter the variant maf file for only the variants desired for use in TMB calculation
@@ -38,6 +40,7 @@ steps:
         output_filename:
           valueFrom: ${ return "tmb.txt"; }
         genome_coverage: assay_coverage
+        normal_id: normal_id
       out:
         [ output_file ]
 
@@ -55,9 +58,11 @@ steps:
     add_sampleID:
       run: paste-col.cwl
       in:
+        sample_id: sample_id
+        normal_id: normal_id
         input_file: fix_tmb_header/output_file
-        output_filename:
-          valueFrom: ${ return "tmb.tsv"; }
+        output_filename: # NOTE: we plan to concat this file later so it needs to have a unique filename !!
+          valueFrom: ${ return inputs.sample_id + "." + inputs.normal_id + ".tmb.tsv"; }
         header:
           valueFrom: ${ return "SampleID"; }
         value: sample_id

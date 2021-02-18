@@ -6,7 +6,7 @@ baseCommand: ["calc-tmb.py", 'from-file']
 
 requirements:
   DockerRequirement:
-    dockerPull: mskcc/helix_filters_01:latest
+    dockerPull: mskcc/helix_filters_01:21.02.2
 
 inputs:
   input_file:
@@ -22,6 +22,11 @@ inputs:
     inputBinding:
       prefix: --genome-coverage
       position: 3
+  normal_id:
+    type: string
+    inputBinding:
+      prefix: --normal-id
+      position: 4
 
 outputs:
   output_file:

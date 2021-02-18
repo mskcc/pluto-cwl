@@ -4,19 +4,19 @@
 unit tests for the add_af.cwl
 """
 import os
+import sys
+import json
 import unittest
 from tempfile import TemporaryDirectory
 
-# relative imports, from CLI and from parent project
-if __name__ != "__main__":
-    from .tools import load_mutations, run_cwl, write_table
-    from .settings import CWL_DIR
+THIS_DIR = os.path.dirname(os.path.realpath(__file__))
+PARENT_DIR = os.path.dirname(THIS_DIR)
+sys.path.insert(0, PARENT_DIR)
+from pluto.tools import load_mutations, run_cwl, write_table, CWLFile
 
-if __name__ == "__main__":
-    from tools import load_mutations, run_cwl, write_table
-    from settings import CWL_DIR
+sys.path.pop(0)
 
-cwl_file = os.path.join(CWL_DIR, 'add_af.cwl')
+cwl_file = CWLFile('add_af.cwl')
 
 class TestAddImpactCWL(unittest.TestCase):
     def test_add_af(self):

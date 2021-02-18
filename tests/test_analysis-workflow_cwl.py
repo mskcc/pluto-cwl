@@ -4,21 +4,19 @@
 unit tests for the workflow.cwl
 """
 import os
+import sys
 import json
 import unittest
-from tempfile import TemporaryDirectory, NamedTemporaryFile
+from tempfile import TemporaryDirectory
 
+THIS_DIR = os.path.dirname(os.path.realpath(__file__))
+PARENT_DIR = os.path.dirname(THIS_DIR)
+sys.path.insert(0, PARENT_DIR)
+from pluto.tools import run_cwl, load_mutations, CWLFile
+from pluto.settings import DATA_SETS, IMPACT_FILE
+sys.path.pop(0)
 
-# relative imports, from CLI and from parent project
-if __name__ != "__main__":
-    from .tools import run_cwl, load_mutations
-    from .settings import CWL_DIR, DATA_SETS, IMPACT_FILE
-
-if __name__ == "__main__":
-    from tools import run_cwl, load_mutations
-    from settings import CWL_DIR, DATA_SETS, IMPACT_FILE
-
-cwl_file = os.path.join(CWL_DIR, 'analysis-workflow.cwl')
+cwl_file = CWLFile('analysis-workflow.cwl')
 
 class TestAnalysisWorkflow(unittest.TestCase):
     def test_run_worflow_one_maf(self):

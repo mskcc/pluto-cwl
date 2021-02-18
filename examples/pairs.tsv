@@ -1,0 +1,3 @@
+tumor_id	normal_id	pair_id	pair_maf	snp_pileup
+Sample6	Sample5	Sample6.Sample5	/juno/work/ci/helix_filters_01/fixtures/Proj_08390_G/maf/Sample6.Sample5.muts.maf	/juno/work/ci/helix_filters_01/fixtures/Proj_08390_G/facets/Sample5.rg.md.abra.printreads__Sample6.rg.md.abra.printreads.dat.gz
+Sample1	Sample2	Sample1.Sample2	/juno/work/ci/helix_filters_01/fixtures/Proj_08390_G/maf/Sample1.Sample2.muts.maf	/juno/work/ci/helix_filters_01/fixtures/Proj_08390_G/facets/Sample2.rg.md.abra.printreads__Sample1.rg.md.abra.printreads.dat.gz

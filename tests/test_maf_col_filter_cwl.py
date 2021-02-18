@@ -4,19 +4,18 @@
 unit tests for the maf_col_filter.cwl
 """
 import os
+import sys
 import unittest
 from tempfile import TemporaryDirectory
 
-# relative imports, from CLI and from parent project
-if __name__ != "__main__":
-    from .tools import run_command, load_mutations, run_cwl, write_table
-    from .settings import CWL_DIR, DATA_SETS
+THIS_DIR = os.path.dirname(os.path.realpath(__file__))
+PARENT_DIR = os.path.dirname(THIS_DIR)
+sys.path.insert(0, PARENT_DIR)
+from pluto.tools import run_command, load_mutations, run_cwl, write_table, CWLFile
+from pluto.settings import DATA_SETS
+sys.path.pop(0)
 
-if __name__ == "__main__":
-    from tools import run_command, load_mutations, run_cwl, write_table
-    from settings import CWL_DIR, DATA_SETS
-
-cwl_file = os.path.join(CWL_DIR, 'maf_col_filter.cwl')
+cwl_file = CWLFile('maf_col_filter.cwl')
 
 
 # copy/pasted this from maf_col_filter.py for testing purposes
@@ -170,7 +169,7 @@ class TestMafColFilter(unittest.TestCase):
             for key in mutations[0].keys():
                 self.assertTrue(key in cols_to_keep)
 
-            # make sure there are fewer than or equal to the number of columns in new output as there are entries to keep 
+            # make sure there are fewer than or equal to the number of columns in new output as there are entries to keep
             self.assertTrue( len(mutations[0].keys()) <= len(cols_to_keep) )
 
 

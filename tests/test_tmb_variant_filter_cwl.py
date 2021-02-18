@@ -3,20 +3,18 @@
 """
 """
 import os
+import sys
 import unittest
 
-# relative imports, from CLI and from parent project
-if __name__ != "__main__":
-    from .tools import TmpDirTestCase, load_mutations, run_cwl, write_table, dicts2lines
-    from .settings import CWL_DIR
+THIS_DIR = os.path.dirname(os.path.realpath(__file__))
+PARENT_DIR = os.path.dirname(THIS_DIR)
+sys.path.insert(0, PARENT_DIR)
+from pluto.tools import PlutoTestCase, CWLFile 
+sys.path.pop(0)
 
-if __name__ == "__main__":
-    from tools import TmpDirTestCase, load_mutations, run_cwl, write_table, dicts2lines
-    from settings import CWL_DIR
+class TestTMBVariantFilter(PlutoTestCase):
+    cwl_file = CWLFile('tmb_variant_filter.cwl')
 
-cwl_file = os.path.join(CWL_DIR, 'tmb_variant_filter.cwl')
-
-class TestTMBVariantFilter(TmpDirTestCase):
     def test_tmb_filter(self):
         """
         Test cases for filtering variants for TMB
@@ -97,24 +95,18 @@ class TestTMBVariantFilter(TmpDirTestCase):
         'Consequence': 'synonymous_variant' # include even though its synonymous_variant
         }
         maf_rows = [ row1, row2, row3, row4, row5, row6, row7, row8, row9, row10 ]
-        maf_lines = dicts2lines(dict_list = maf_rows, comment_list = comments)
-        input_maf = write_table(self.tmpdir, filename = "input.maf", lines = maf_lines)
+        maf_lines = self.dicts2lines(dict_list = maf_rows, comment_list = comments)
+        input_maf = self.write_table(self.tmpdir, filename = "input.maf", lines = maf_lines)
         output_file = os.path.join(self.tmpdir, "output.txt")
 
-        input_json = {
+        self.input = {
             "input_file": {
                   "class": "File",
                   "path": input_maf
                 },
             "output_filename":  'output.maf',
             }
-        output_json, output_dir = run_cwl(
-            testcase = self,
-            tmpdir = self.tmpdir,
-            input_json = input_json,
-            cwl_file = cwl_file,
-            print_command = False,
-            )
+        output_json, output_dir = self.run_cwl()
 
         expected_output = {
             'output_file': {
@@ -128,7 +120,7 @@ class TestTMBVariantFilter(TmpDirTestCase):
             }
         self.assertDictEqual(output_json, expected_output)
 
-        comments, mutations = load_mutations(output_json['output_file']['path'])
+        comments, mutations = self.load_mutations(output_json['output_file']['path'])
 
         expected_comments = ['# comment 1', '# comment 2']
         expected_mutations = [
