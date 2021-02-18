@@ -18,6 +18,7 @@ from operators.concat_mafs import ConcatMafs
 from operators.deduplicate_maf import DeduplicateMaf
 from operators.consensus_maf import ConsensusMaf
 from operators.samples_fillout import SamplesFillout
+from operators.maf_filter import MafFilter
 from operators.input import generate_sample_summary, generate_pairs_sheet, generate_data_clinical, generate_samples_fillout_sheet
 
 def main():
@@ -127,6 +128,16 @@ def main():
     """
     $ ./run.py samples_fillout --samplesheet examples/samples.fillout.tsv --ref-fasta /juno/work/ci/resources/genomes/GRCh37/fasta/b37.fasta
     """
+
+    _maf_filter = subparsers.add_parser('maf_filter', help = 'Run the maf filter workflow')
+    _maf_filter.add_argument('--maf-file', dest = 'maf_file', required = True)
+    _maf_filter.add_argument('--argos-version-string', dest = 'argos_version_string', default = "2.x")
+    _maf_filter.add_argument('--is-impact', dest = 'is_impact', action = "store_false")
+    _maf_filter.add_argument('--analysis-mutations-filename', dest = 'analysis_mutations_filename', default = "analysis.muts.maf")
+    _maf_filter.add_argument('--cbio-mutation-data-filename', dest = 'cbio_mutation_data_filename', default = "data_mutations_extended.txt")
+    _maf_filter.add_argument('--rejected-file', dest = 'rejected_file', default = "rejected.muts.maf")
+    _maf_filter.add_argument('--keep-rejects', dest = 'keep_rejects', action = "store_false")
+    _maf_filter.set_defaults(func = MafFilter._run)
 
 
     # Main full workflow with Facets
