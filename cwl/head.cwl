@@ -5,7 +5,7 @@ class: CommandLineTool
 baseCommand: [ head ]
 requirements:
   DockerRequirement:
-    dockerPull: mskcc/helix_filters_01:21.01.1
+    dockerPull: mskcc/helix_filters_01:21.02.2
 stdout: $(inputs.input_file.basename).head.txt
 inputs:
   num_lines:

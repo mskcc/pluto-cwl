@@ -7,7 +7,7 @@ doc: "CWL to save a copy of the execution environment for debugging"
 
 requirements:
   DockerRequirement:
-    dockerPull: mskcc/helix_filters_01:21.01.1
+    dockerPull: mskcc/helix_filters_01:21.02.2
 
 stdout: env.container.txt
 
