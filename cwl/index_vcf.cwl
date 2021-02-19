@@ -18,7 +18,8 @@ inputs:
       position: 1
 
 outputs:
-  output_file:
+  indexed_file:
     type: File
     outputBinding:
-      glob: "*.tbi"
+      glob: $(inputs.input_file.basename)
+    secondaryFiles: [".tbi"]
