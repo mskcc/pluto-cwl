@@ -1,0 +1,3 @@
+sample_id	bam_file	maf_file
+Sample6	/juno/work/ci/helix_filters_01/fixtures/Proj_08390_G/bam/Sample6.rg.md.abra.printreads.bam	/juno/work/ci/helix_filters_01/fixtures/Proj_08390_G/maf/Sample6.Sample5.muts.maf
+Sample1	/juno/work/ci/helix_filters_01/fixtures/Proj_08390_G/bam/Sample1.rg.md.abra.printreads.bam	/juno/work/ci/helix_filters_01/fixtures/Proj_08390_G/maf/Sample1.Sample2.muts.maf
