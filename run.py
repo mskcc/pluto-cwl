@@ -22,6 +22,7 @@ from operators.maf_filter import MafFilter
 from operators.maf2vcf import Maf2Vcf
 from operators.vcf_sort import VcfSort
 from operators.bgzip import Bgzip
+from operators.index_vcf import IndexVcf
 from operators.input import generate_sample_summary, generate_pairs_sheet, generate_data_clinical, generate_samples_fillout_sheet
 
 def main():
@@ -160,13 +161,22 @@ def main():
     $ ./run.py vcf_sort --vcf-file cwltool_output/output/output.vcf
     """
 
-    _bgzip = subparsers.add_parser('bgzip', help = 'Run the vcf_sort workflow')
+    _bgzip = subparsers.add_parser('bgzip', help = 'Run the bgzip workflow')
     _bgzip.add_argument(dest = 'input_file')
     _bgzip.add_argument('--output-filename', dest = 'output_filename', default = "output.gz")
     _bgzip.set_defaults(func = Bgzip._run)
     """
-    $ ./run.py bgzip cwltool_output/output/output.sorted.vcf
+    $ ./run.py bgzip cwltool_output/output/output.sorted.vcf --output-filename output.sorted.vcf.gz
     """
+
+    _index_vcf = subparsers.add_parser('index_vcf', help = 'Run the index_vcf workflow')
+    _index_vcf.add_argument(dest = 'input_file')
+    _index_vcf.set_defaults(func = IndexVcf._run)
+    """
+    $ ./run.py index_vcf cwltool_output/output/output.sorted.vcf.gz
+    """
+
+
 
     # Main full workflow with Facets
     _workflow_with_facets = subparsers.add_parser('workflow_with_facets', help = 'Run the full workflow with Facets')
