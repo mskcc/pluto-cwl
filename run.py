@@ -23,6 +23,7 @@ from operators.maf2vcf import Maf2Vcf
 from operators.vcf_sort import VcfSort
 from operators.bgzip import Bgzip
 from operators.index_vcf import IndexVcf
+from operators.igv_reports import IgvReports
 from operators.input import generate_sample_summary, generate_pairs_sheet, generate_data_clinical, generate_samples_fillout_sheet
 
 def main():
@@ -142,6 +143,9 @@ def main():
     _maf_filter.add_argument('--rejected-file', dest = 'rejected_file', default = "rejected.muts.maf")
     _maf_filter.add_argument('--keep-rejects', dest = 'keep_rejects', action = "store_false")
     _maf_filter.set_defaults(func = MafFilter._run)
+    """
+    $ ./run.py maf_filter --maf-file /juno/work/ci/helix_filters_01/fixtures/Proj_08390_G/maf/Sample6.Sample5.muts.maf
+    """
 
 
     _maf2vcf = subparsers.add_parser('maf2vcf', help = 'Run the maf2vcf workflow')
@@ -150,7 +154,7 @@ def main():
     _maf2vcf.add_argument('--output-filename', dest = 'output_vcf_filename', default = "output.vcf")
     _maf2vcf.set_defaults(func = Maf2Vcf._run)
     """
-    $ ./run.py maf2vcf --maf-file /juno/work/ci/helix_filters_01/fixtures/Proj_08390_G/maf/Sample6.Sample5.muts.maf --ref-fasta /juno/work/ci/resources/genomes/GRCh37/fasta/b37.fasta
+    $ ./run.py maf2vcf --maf-file cwltool_output//output/analysis.muts.maf --ref-fasta /juno/work/ci/resources/genomes/GRCh37/fasta/b37.fasta
     """
 
     _vcf_sort = subparsers.add_parser('vcf_sort', help = 'Run the vcf_sort workflow')
@@ -175,6 +179,18 @@ def main():
     """
     $ ./run.py index_vcf cwltool_output/output/output.sorted.vcf.gz
     """
+
+    _igv_report = subparsers.add_parser('igv_report', help = 'Run the index_vcf workflow')
+    _igv_report.add_argument('--ref-fasta', dest = 'ref_fasta', required = True)
+    _igv_report.add_argument('--sites', dest = 'sites', required = True)
+    _igv_report.add_argument('--vcf-files', dest = 'vcf_gz_files', nargs='+', help="Input vcf.gz files. Should have adjacent .tbi files")
+    _igv_report.add_argument('--bam-files', dest = 'bam_files', nargs='+', help="Input bam files. Should have adjacent .bai files")
+    _igv_report.add_argument('--output-filename', dest = 'output_filename', default = "igv.html")
+    _igv_report.set_defaults(func = IgvReports._run)
+    """
+    $ ./run.py igv_report --ref-fasta /juno/work/ci/resources/genomes/GRCh37/fasta/b37.fasta --vcf-files cwltool_output/output/output.sorted.vcf.gz --bam-files /juno/work/ci/helix_filters_01/fixtures/Proj_08390_G/bam/Sample5.rg.md.abra.printreads.bam /juno/work/ci/helix_filters_01/fixtures/Proj_08390_G/bam/Sample6.rg.md.abra.printreads.bam --sites cwltool_output/output/output.sorted.vcf.gz
+    """
+
 
 
 

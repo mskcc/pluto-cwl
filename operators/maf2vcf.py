@@ -15,5 +15,5 @@ class Maf2Vcf(Operator):
 
         self.input = generate_input(
             self.args,
-            File_keys = ['maf_file', 'ref_fasta']
+            File_keys = ['maf_file', 'ref_fasta'], File_keys_abspath = True
         )
