@@ -20,6 +20,7 @@ from operators.consensus_maf import ConsensusMaf
 from operators.samples_fillout import SamplesFillout
 from operators.maf_filter import MafFilter
 from operators.maf2vcf import Maf2Vcf
+from operators.vcf_sort import VcfSort
 from operators.input import generate_sample_summary, generate_pairs_sheet, generate_data_clinical, generate_samples_fillout_sheet
 
 def main():
@@ -149,6 +150,16 @@ def main():
     """
     $ ./run.py maf2vcf --maf-file /juno/work/ci/helix_filters_01/fixtures/Proj_08390_G/maf/Sample6.Sample5.muts.maf --ref-fasta /juno/work/ci/resources/genomes/GRCh37/fasta/b37.fasta
     """
+
+    _vcf_sort = subparsers.add_parser('vcf_sort', help = 'Run the vcf_sort workflow')
+    _vcf_sort.add_argument('--vcf-file', dest = 'vcf_file', required = True)
+    _vcf_sort.add_argument('--output-filename', dest = 'output_filename', default = "output.sorted.vcf")
+    _vcf_sort.set_defaults(func = VcfSort._run)
+    """
+    $ ./run.py vcf_sort --vcf-file cwltool_output/output/output.vcf 
+    """
+
+
 
 
     # Main full workflow with Facets
