@@ -24,6 +24,7 @@ from operators.vcf_sort import VcfSort
 from operators.bgzip import Bgzip
 from operators.index_vcf import IndexVcf
 from operators.igv_reports import IgvReports
+from operators.run_facets import RunFacets
 from operators.input import generate_sample_summary, generate_pairs_sheet, generate_data_clinical, generate_samples_fillout_sheet
 
 def main():
@@ -189,6 +190,14 @@ def main():
     _igv_report.set_defaults(func = IgvReports._run)
     """
     $ ./run.py igv_report --ref-fasta /juno/work/ci/resources/genomes/GRCh37/fasta/b37.fasta --vcf-files cwltool_output/output/output.sorted.vcf.gz --bam-files /juno/work/ci/helix_filters_01/fixtures/Proj_08390_G/bam/Sample5.rg.md.abra.printreads.bam /juno/work/ci/helix_filters_01/fixtures/Proj_08390_G/bam/Sample6.rg.md.abra.printreads.bam --sites cwltool_output/output/output.sorted.vcf.gz
+    """
+
+    _run_facets = subparsers.add_parser('run_facets', help = 'Run the Facets wrapper workflow')
+    _run_facets.add_argument('--snp-pileup', dest = 'snp_pileup', required = True)
+    _run_facets.add_argument('--sample-id', dest = 'sample_id', required = True)
+    _run_facets.set_defaults(func = RunFacets._run)
+    """
+    $ ./run.py run_facets --snp-pileup /juno/work/ci/helix_filters_01/fixtures/Proj_08390_G/snp-pileup/Sample34.Sample33.snp_pileup.gz --sample-id Sample34.Sample33
     """
 
 
