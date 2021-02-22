@@ -13,9 +13,7 @@ Development and testing takes place via the test suite.
 Make sure that you have copies of the Singularity containers used cached locally
 
 ```
-make singularity-pull
-make singularity-pull-dev
-make singularity-pull-facets
+make singularity-pull-all
 ```
 
 
