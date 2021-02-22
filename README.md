@@ -103,6 +103,4 @@ $ ./run.py tmb_workflow --data-clinical examples/data_clinical.txt --assay-cover
 $ ./run.py workflow_with_facets --assay-coverage 100000 --project-id Project1 --cancer-type MEL --pairs examples/pairs.tsv --data-clinical examples/data_clinical.txt --sample-summary examples/sample_summary.txt --mutation-svs-txts examples/mutation_svs.txt --mutation-svs-mafs examples/mutation_svs_mafs.txt
 ```
 
-NOTE: The `run.py` script still requires that the Singularity containers be present locally, see the section on running the test scripts for details. You might also have to set your environment using either `make bash` or `. env.juno.sh shell` first.
-
 Output will be in the `cwltool_output` or `toil_output` directories. Note that this includes `tmp` and `work` directories for the run, which may need to be deleted periodically.
