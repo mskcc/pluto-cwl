@@ -63,7 +63,31 @@ python tests/test_workflow_cwl.py TestClassName.test_function
 
 ## Run a CWL
 
-You can run a specific CWL workflow manually using the included `run.py` script. See `run.py -h` for available CWL's to run. 
+### Setup
+
+To run a CWL, you first need to make sure dependencies are available.
+
+Running on Juno requires that the Singularity containers mentioned above are available;
+
+```
+make singularity-pull-all
+```
+
+If you are on Juno server using `cwltool` you can just load the included config for the `test` environment;
+
+```
+. env.juno.sh test
+```
+
+If you want to use Toil to submit jobs to LSF then you will need the `toil` environment config;
+
+```
+. env.juno.sh toil
+```
+
+### Run
+
+You can run a specific CWL workflow manually using the included `run.py` script. See `run.py -h` for available CWL's to run.
 
 Example usages;
 
@@ -80,3 +104,5 @@ $ ./run.py workflow_with_facets --assay-coverage 100000 --project-id Project1 --
 ```
 
 NOTE: The `run.py` script still requires that the Singularity containers be present locally, see the section on running the test scripts for details. You might also have to set your environment using either `make bash` or `. env.juno.sh shell` first.
+
+Output will be in the `cwltool_output` or `toil_output` directories. Note that this includes `tmp` and `work` directories for the run, which may need to be deleted periodically.

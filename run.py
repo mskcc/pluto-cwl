@@ -25,6 +25,7 @@ from operators.bgzip import Bgzip
 from operators.index_vcf import IndexVcf
 from operators.igv_reports import IgvReports
 from operators.run_facets import RunFacets
+from operators.snp_pileup import SnpPileup
 from operators.input import generate_sample_summary, generate_pairs_sheet, generate_data_clinical, generate_samples_fillout_sheet
 
 def main():
@@ -198,6 +199,20 @@ def main():
     _run_facets.set_defaults(func = RunFacets._run)
     """
     $ ./run.py run_facets --snp-pileup /juno/work/ci/helix_filters_01/fixtures/Proj_08390_G/snp-pileup/Sample34.Sample33.snp_pileup.gz --sample-id Sample34.Sample33
+    """
+
+    _snp_pileup = subparsers.add_parser('snp_pileup', help = 'Run the Facets wrapper workflow')
+    _snp_pileup.add_argument('--snps-vcf', dest = 'snps_vcf', required = True)
+    _snp_pileup.add_argument('--normal-bam', dest = 'normal_bam', required = True)
+    _snp_pileup.add_argument('--tumor-bam', dest = 'tumor_bam', required = True)
+    _snp_pileup.add_argument('--output-prefix', dest = 'output_prefix', required = True)
+    _snp_pileup.set_defaults(func = SnpPileup._run)
+    """
+    $ ./run.py snp_pileup \
+    --tumor-bam /juno/work/ci/helix_filters_01/fixtures/Proj_08390_G/bam/Sample34.rg.md.abra.printreads.bam \
+    --normal-bam /juno/work/ci/helix_filters_01/fixtures/Proj_08390_G/bam/Sample33.rg.md.abra.printreads.bam \
+    --snps-vcf /juno/work/ci/resources/genomes/GRCh37/facets_snps/dbsnp_137.b37__RmDupsClean__plusPseudo50__DROP_SORT.vcf \
+    --output-prefix Sample34.Sample33
     """
 
 
