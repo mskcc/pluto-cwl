@@ -151,12 +151,14 @@ inputs:
       prefix: -y
 
 outputs:
-  output:
+  output_file:
     type: File
     outputBinding:
-      glob: |-
-        ${
-          if (inputs.o)
-            return inputs.o;
-          return null;
-        }
+      glob: $(inputs.o)
+
+      # glob: |-
+      #   ${
+      #     if (inputs.o)
+      #       return inputs.o;
+      #     return null;
+      #   }
