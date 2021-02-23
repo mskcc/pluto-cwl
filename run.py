@@ -196,6 +196,11 @@ def main():
     _run_facets = subparsers.add_parser('run_facets', help = 'Run the Facets wrapper workflow')
     _run_facets.add_argument('--snp-pileup', dest = 'snp_pileup', required = True)
     _run_facets.add_argument('--sample-id', dest = 'sample_id', required = True)
+    _run_facets.add_argument('--purity-cval', dest = 'purity_cval', default = "100")
+    _run_facets.add_argument('--cval', dest = 'cval', default = "50")
+    _run_facets.add_argument('--seed', dest = 'seed', default = "1000")
+    _run_facets.add_argument('--min-nhet', dest = 'min_nhet', default = "25")
+    _run_facets.add_argument('--purity-min-nhet', dest = 'purity_min_nhet', default = "25")
     _run_facets.set_defaults(func = RunFacets._run)
     """
     $ ./run.py run_facets --snp-pileup /juno/work/ci/helix_filters_01/fixtures/Proj_08390_G/snp-pileup/Sample34.Sample33.snp_pileup.gz --sample-id Sample34.Sample33
