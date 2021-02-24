@@ -35,7 +35,7 @@ inputs:
               - ^.bai
 
 steps:
-  # run the TMB analysis for each tumor sample in the list of pairs
+  # run the MSI analysis for each tumor sample in the list of pairs
   run_msi_workflow:
     run: msi.cwl
     scatter: pair
@@ -53,7 +53,7 @@ steps:
       [ output_file ]
 
   # concatenate all the individual MSI tables into a single table
-  concat_tmb_tables:
+  concat_msi_tables:
     run: concat-tables.cwl
     in:
       input_files: run_msi_workflow/output_file
@@ -69,11 +69,11 @@ steps:
     run: merge-tables.cwl
     in:
       table1: data_clinical_file
-      table2: concat_tmb_tables/output_file
+      table2: concat_msi_tables/output_file
       key1:
         valueFrom: ${ return "SAMPLE_ID"; } # sample column header from data clinical file
       key2:
-        valueFrom: ${ return "SampleID"; } # sample column header from TMB file
+        valueFrom: ${ return "SampleID"; } # sample column header from MSI file
       output_filename:
         valueFrom: ${ return "data_clinical_sample.txt"; } # TODO: should this be passed in?
     out:
