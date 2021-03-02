@@ -65,13 +65,13 @@ steps:
   run_samples_fillout:
     run: samples_fillout_workflow_ultron.cwl
     in:
-      sample_names: 
+      sample_name:
         source: [ sample_names, dmp_bams_sample_names ]
         linkMerge: merge_flattened
-      bam_files:
+      bam_file:
         source: [ bam_files, run_indexer/bam_indexed ]
         linkMerge: merge_flattened
-      maf_files: 
+      maf_file: 
         source: [ maf_files, dmp_maf_files ]
         linkMerge: merge_flattened
       ref_fasta: ref_fasta
