@@ -14,12 +14,12 @@ requirements:
   SubworkflowFeatureRequirement: {}
 
 inputs:
-  sample_name:
+  sample_names:
     type:
         type: array
         items: string
 
-  bam_file:
+  bam_files:
     type:
         type: array
         items: File
@@ -27,7 +27,7 @@ inputs:
         - ^.bai
         - .bai
 
-  maf_file: File[]
+  maf_files: File[]
 
   ref_fasta:
     type: File
@@ -46,7 +46,7 @@ steps:
   make_reference_maf:
     run: ../concat-mafs.cwl
     in:
-      input_files: maf_file
+      input_files: maf_files
     out:
       [ output_file ]
 
@@ -56,8 +56,8 @@ steps:
     scatter: [ sample_id, bam ]
     scatterMethod: dotproduct
     in:
-      sample_id: sample_name
-      bam: bam_file
+      sample_id: sample_names
+      bam: bam_files
       ref_fasta: ref_fasta
       maf: make_reference_maf/output_file
     out:

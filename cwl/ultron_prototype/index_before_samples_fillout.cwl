@@ -65,6 +65,11 @@ steps:
   run_samples_fillout:
     run: samples_fillout_workflow_ultron.cwl
     in:
+      sample_names: sample_names
+      dmp_bams_sample_names: dmp_bams_sample_names
+      bam_files: bam_files
+      maf_files: maf_files
+      dmp_maf_files: dmp_maf_files
       sample_name:
         source: [ sample_names, dmp_bams_sample_names ]
         linkMerge: merge_flattened
@@ -78,6 +83,7 @@ steps:
     out: [ output_file ]
 
 outputs:
+
   output_file:
     type: File
     outputSource: run_samples_fillout/output_file
