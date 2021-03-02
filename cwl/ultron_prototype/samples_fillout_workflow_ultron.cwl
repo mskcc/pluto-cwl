@@ -26,7 +26,10 @@ inputs:
     secondaryFiles:
         - ^.bai
 
-  maf_file: File[]
+  maf_file:
+    type:
+        type: array
+        items: File
 
   ref_fasta:
     type: File

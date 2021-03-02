@@ -35,9 +35,15 @@ inputs:
       type: array
       items: string
 
-  maf_files: File[]
+  maf_files:
+    type:
+      type: array
+      items: File
 
-  dmp_maf_files: File[]
+  dmp_maf_files:
+    type:
+      type: array
+      items: File
 
   ref_fasta:
     type: File
