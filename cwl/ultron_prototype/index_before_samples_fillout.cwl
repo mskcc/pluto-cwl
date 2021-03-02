@@ -24,7 +24,6 @@ inputs:
         items: File
     secondaryFiles:
         - ^.bai
-        - .bai
 
   dmp_bams:
     type:

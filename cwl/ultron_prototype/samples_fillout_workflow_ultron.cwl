@@ -25,7 +25,6 @@ inputs:
         items: File
     secondaryFiles:
         - ^.bai
-        - .bai
 
   maf_files: File[]
 
