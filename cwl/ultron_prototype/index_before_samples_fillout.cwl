@@ -60,7 +60,7 @@ steps:
       bams: dmp_bams
     scatter: [ bams ]
     scatterMethod: dotproduct
-    out: [ bams_indexed ]
+    out: [ bam_indexed ]
 
   run_samples_fillout:
     run: samples_fillout_workflow_ultron.cwl
@@ -69,12 +69,12 @@ steps:
         source: [ sample_names, dmp_bams_sample_names ]
         linkMerge: merge_flattened
       bam_files:
-        source: [ bam_files, run_indexer/bams_indexed ]
+        source: [ bam_files, run_indexer/bam_indexed ]
         linkMerge: merge_flattened
       maf_files: 
         source: [ maf_files, dmp_maf_files ]
         linkMerge: merge_flattened
-      ref_fastas: ref_fasta
+      ref_fasta: ref_fasta
     out: [ output_file ]
 
 outputs:
