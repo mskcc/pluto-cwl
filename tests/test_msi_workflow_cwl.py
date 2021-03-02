@@ -65,10 +65,15 @@ class TestMsiWorkflow(PlutoTestCase):
                     "normal_id": "Sample1-N"
                 }#,
                 # {
-                #     "pair_maf": {
-                #         "path": self.maf2,
+                #     "pair_normal_bam": {
+                #         "path": self.normal_bam,
                 #         "class": "File"
                 #     },
+                #     "pair_tumor_bam": {
+                #         "path": self.tumor_bam,
+                #         "class": "File"
+                #     },
+                #
                 #     "pair_id": "Sample2-T.Sample2-N",
                 #     "tumor_id": "Sample2-T",
                 #     "normal_id": "Sample2-N"

@@ -34,6 +34,12 @@ inputs:
             secondaryFiles:
               - ^.bai
 
+outputs:
+  output_file:
+    type: File
+    outputSource: merge_data_clinical/output_file # merge_data_clinical/output_file
+
+
 steps:
   # run the MSI analysis for each tumor sample in the list of pairs
   run_msi_workflow:
@@ -46,7 +52,7 @@ steps:
       t:
         valueFrom: ${ return inputs.pair['pair_tumor_bam']; }
       d:
-        valueFrom: ${ return '/work/ci/resources/request_files/msisensor/b37_known_somatic_microsatellites.list'; }
+        valueFrom: ${ return '/work/ci/vurals/pluto-cwl/b37_known_somatic_microsatellites.list'; }
       o:
         valueFrom: ${ return inputs.pair['pair_id']; }
     out:
@@ -78,8 +84,3 @@ steps:
         valueFrom: ${ return "data_clinical_sample.txt"; } # TODO: should this be passed in?
     out:
       [ output_file ]
-
-outputs:
-  output_file:
-    type: File
-    outputSource: merge_data_clinical/output_file

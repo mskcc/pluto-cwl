@@ -1,6 +1,6 @@
 #!/usr/bin/env cwl-runner
 
-cwlVersion: cwl:v1.0
+cwlVersion: cwl:v1.1
 
 #msisensor:
 #    msisensor msi \
@@ -155,6 +155,7 @@ outputs:
     type: File
     outputBinding:
       glob: $(inputs.o)
+      # glob: "*.txt"
 
       # glob: |-
       #   ${
