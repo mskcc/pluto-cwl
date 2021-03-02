@@ -18,6 +18,15 @@ from operators.concat_mafs import ConcatMafs
 from operators.deduplicate_maf import DeduplicateMaf
 from operators.consensus_maf import ConsensusMaf
 from operators.samples_fillout import SamplesFillout
+from operators.maf_filter import MafFilter
+from operators.maf2vcf import Maf2Vcf
+from operators.vcf_sort import VcfSort
+from operators.bgzip import Bgzip
+from operators.index_vcf import IndexVcf
+from operators.igv_reports import IgvReports
+from operators.run_facets import RunFacets
+from operators.snp_pileup import SnpPileup
+from operators.head import HeadCWL
 from operators.input import generate_sample_summary, generate_pairs_sheet, generate_data_clinical, generate_samples_fillout_sheet
 
 def main():
@@ -79,6 +88,13 @@ def main():
     _ls_dir_cwl.add_argument('input_files', nargs='+', help="Input files to stage in the directory")
     _ls_dir_cwl.set_defaults(func = LsDirCWL._run)
 
+    _head_cwl = subparsers.add_parser('head', help = 'Head a file')
+    _head_cwl.add_argument('input_file', help="Input files to stage in the directory")
+    _head_cwl.add_argument('--num-lines', dest = 'num_lines', required = True)
+    _head_cwl.set_defaults(func = HeadCWL._run)
+
+
+
     _concat_tables_dir = subparsers.add_parser('concat_tables_dir', help = 'Concatenate tables')
     _concat_tables_dir.add_argument('input_files', nargs='*', help="Input files to stage in the directory")
     _concat_tables_dir.add_argument('--input-files-list', dest = 'input_files_list', help="List of input files")
@@ -127,6 +143,92 @@ def main():
     """
     $ ./run.py samples_fillout --samplesheet examples/samples.fillout.tsv --ref-fasta /juno/work/ci/resources/genomes/GRCh37/fasta/b37.fasta
     """
+
+    _maf_filter = subparsers.add_parser('maf_filter', help = 'Run the maf filter workflow')
+    _maf_filter.add_argument('--maf-file', dest = 'maf_file', required = True)
+    _maf_filter.add_argument('--argos-version-string', dest = 'argos_version_string', default = "2.x")
+    _maf_filter.add_argument('--is-impact', dest = 'is_impact', action = "store_false")
+    _maf_filter.add_argument('--analysis-mutations-filename', dest = 'analysis_mutations_filename', default = "analysis.muts.maf")
+    _maf_filter.add_argument('--cbio-mutation-data-filename', dest = 'cbio_mutation_data_filename', default = "data_mutations_extended.txt")
+    _maf_filter.add_argument('--rejected-file', dest = 'rejected_file', default = "rejected.muts.maf")
+    _maf_filter.add_argument('--keep-rejects', dest = 'keep_rejects', action = "store_false")
+    _maf_filter.set_defaults(func = MafFilter._run)
+    """
+    $ ./run.py maf_filter --maf-file /juno/work/ci/helix_filters_01/fixtures/Proj_08390_G/maf/Sample6.Sample5.muts.maf
+    """
+
+
+    _maf2vcf = subparsers.add_parser('maf2vcf', help = 'Run the maf2vcf workflow')
+    _maf2vcf.add_argument('--maf-file', dest = 'maf_file', required = True)
+    _maf2vcf.add_argument('--ref-fasta', dest = 'ref_fasta', required = True)
+    _maf2vcf.add_argument('--output-filename', dest = 'output_vcf_filename', default = "output.vcf")
+    _maf2vcf.set_defaults(func = Maf2Vcf._run)
+    """
+    $ ./run.py maf2vcf --maf-file cwltool_output//output/analysis.muts.maf --ref-fasta /juno/work/ci/resources/genomes/GRCh37/fasta/b37.fasta
+    """
+
+    _vcf_sort = subparsers.add_parser('vcf_sort', help = 'Run the vcf_sort workflow')
+    _vcf_sort.add_argument('--vcf-file', dest = 'vcf_file', required = True)
+    _vcf_sort.add_argument('--output-filename', dest = 'output_filename', default = "output.sorted.vcf")
+    _vcf_sort.set_defaults(func = VcfSort._run)
+    """
+    $ ./run.py vcf_sort --vcf-file cwltool_output/output/output.vcf
+    """
+
+    _bgzip = subparsers.add_parser('bgzip', help = 'Run the bgzip workflow')
+    _bgzip.add_argument(dest = 'input_file')
+    _bgzip.add_argument('--output-filename', dest = 'output_filename', default = "output.gz")
+    _bgzip.set_defaults(func = Bgzip._run)
+    """
+    $ ./run.py bgzip cwltool_output/output/output.sorted.vcf --output-filename output.sorted.vcf.gz
+    """
+
+    _index_vcf = subparsers.add_parser('index_vcf', help = 'Run the index_vcf workflow')
+    _index_vcf.add_argument(dest = 'input_file')
+    _index_vcf.set_defaults(func = IndexVcf._run)
+    """
+    $ ./run.py index_vcf cwltool_output/output/output.sorted.vcf.gz
+    """
+
+    _igv_report = subparsers.add_parser('igv_report', help = 'Run the index_vcf workflow')
+    _igv_report.add_argument('--ref-fasta', dest = 'ref_fasta', required = True)
+    _igv_report.add_argument('--sites', dest = 'sites', required = True)
+    _igv_report.add_argument('--vcf-files', dest = 'vcf_gz_files', nargs='+', help="Input vcf.gz files. Should have adjacent .tbi files")
+    _igv_report.add_argument('--bam-files', dest = 'bam_files', nargs='+', help="Input bam files. Should have adjacent .bai files")
+    _igv_report.add_argument('--output-filename', dest = 'output_filename', default = "igv.html")
+    _igv_report.set_defaults(func = IgvReports._run)
+    """
+    $ ./run.py igv_report --ref-fasta /juno/work/ci/resources/genomes/GRCh37/fasta/b37.fasta --vcf-files cwltool_output/output/output.sorted.vcf.gz --bam-files /juno/work/ci/helix_filters_01/fixtures/Proj_08390_G/bam/Sample5.rg.md.abra.printreads.bam /juno/work/ci/helix_filters_01/fixtures/Proj_08390_G/bam/Sample6.rg.md.abra.printreads.bam --sites cwltool_output/output/output.sorted.vcf.gz
+    """
+
+    _run_facets = subparsers.add_parser('run_facets', help = 'Run the Facets wrapper workflow')
+    _run_facets.add_argument('--snp-pileup', dest = 'snp_pileup', required = True)
+    _run_facets.add_argument('--sample-id', dest = 'sample_id', required = True)
+    _run_facets.add_argument('--purity-cval', dest = 'purity_cval', default = "100")
+    _run_facets.add_argument('--cval', dest = 'cval', default = "50")
+    _run_facets.add_argument('--seed', dest = 'seed', default = "1000")
+    _run_facets.add_argument('--min-nhet', dest = 'min_nhet', default = "25")
+    _run_facets.add_argument('--purity-min-nhet', dest = 'purity_min_nhet', default = "25")
+    _run_facets.set_defaults(func = RunFacets._run)
+    """
+    $ ./run.py run_facets --snp-pileup /juno/work/ci/helix_filters_01/fixtures/Proj_08390_G/snp-pileup/Sample34.Sample33.snp_pileup.gz --sample-id Sample34.Sample33
+    """
+
+    _snp_pileup = subparsers.add_parser('snp_pileup', help = 'Run the Facets wrapper workflow')
+    _snp_pileup.add_argument('--snps-vcf', dest = 'snps_vcf', required = True)
+    _snp_pileup.add_argument('--normal-bam', dest = 'normal_bam', required = True)
+    _snp_pileup.add_argument('--tumor-bam', dest = 'tumor_bam', required = True)
+    _snp_pileup.add_argument('--output-prefix', dest = 'output_prefix', required = True)
+    _snp_pileup.set_defaults(func = SnpPileup._run)
+    """
+    $ ./run.py snp_pileup \
+    --tumor-bam /juno/work/ci/helix_filters_01/fixtures/Proj_08390_G/bam/Sample34.rg.md.abra.printreads.bam \
+    --normal-bam /juno/work/ci/helix_filters_01/fixtures/Proj_08390_G/bam/Sample33.rg.md.abra.printreads.bam \
+    --snps-vcf /juno/work/ci/resources/genomes/GRCh37/facets_snps/dbsnp_137.b37__RmDupsClean__plusPseudo50__DROP_SORT.vcf \
+    --output-prefix Sample34.Sample33
+    """
+
+
 
 
     # Main full workflow with Facets
