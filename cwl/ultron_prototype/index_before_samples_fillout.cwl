@@ -57,8 +57,8 @@ steps:
   run_indexer:
     run: cmo_index.cwl 
     in:
-      bams: dmp_bams
-    scatter: [ bams ]
+      bam: dmp_bams
+    scatter: [ bam ]
     scatterMethod: dotproduct
     out: [ bam_indexed ]
 
