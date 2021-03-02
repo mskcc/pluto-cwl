@@ -26,6 +26,7 @@ from operators.index_vcf import IndexVcf
 from operators.igv_reports import IgvReports
 from operators.run_facets import RunFacets
 from operators.snp_pileup import SnpPileup
+from operators.head import HeadCWL
 from operators.input import generate_sample_summary, generate_pairs_sheet, generate_data_clinical, generate_samples_fillout_sheet
 
 def main():
@@ -86,6 +87,13 @@ def main():
     _ls_dir_cwl = subparsers.add_parser('ls_dir', help = 'Check the execution directory with files input')
     _ls_dir_cwl.add_argument('input_files', nargs='+', help="Input files to stage in the directory")
     _ls_dir_cwl.set_defaults(func = LsDirCWL._run)
+
+    _head_cwl = subparsers.add_parser('head', help = 'Head a file')
+    _head_cwl.add_argument('input_file', help="Input files to stage in the directory")
+    _head_cwl.add_argument('--num-lines', dest = 'num_lines', required = True)
+    _head_cwl.set_defaults(func = HeadCWL._run)
+
+
 
     _concat_tables_dir = subparsers.add_parser('concat_tables_dir', help = 'Concatenate tables')
     _concat_tables_dir.add_argument('input_files', nargs='*', help="Input files to stage in the directory")
