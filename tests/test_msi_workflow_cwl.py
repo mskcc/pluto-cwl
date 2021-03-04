@@ -44,6 +44,11 @@ class TestMsiWorkflow(PlutoTestCase):
         """
         Test case for running the TMB workflow on multiple files
         """
+        self.runner_args['debug']=True
+        self.preserve = True
+
+        print("----->",self.tmpdir)
+
         self.maxDiff = None
         self.input = {
             "data_clinical_file": {
@@ -58,11 +63,11 @@ class TestMsiWorkflow(PlutoTestCase):
 
             "pairs": [
                 {
-                    "pair_normal_bam": {
+                    "normal_bam": {
                         "path": self.normal_bam,
                         "class": "File"
                     },
-                    "pair_tumor_bam": {
+                    "tumor_bam": {
                         "path": self.tumor_bam,
                         "class": "File"
                     },
@@ -72,11 +77,11 @@ class TestMsiWorkflow(PlutoTestCase):
                     "normal_id": "Sample1-N"
                 },
                 {
-                    "pair_normal_bam": {
+                    "normal_bam": {
                         "path": self.normal_bam,
                         "class": "File"
                     },
-                    "pair_tumor_bam": {
+                    "tumor_bam": {
                         "path": self.tumor_bam,
                         "class": "File"
                     },
