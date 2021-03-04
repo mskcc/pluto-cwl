@@ -14,7 +14,7 @@ from pluto.tools import PlutoTestCase, CWLFile, TableReader
 sys.path.pop(0)
 
 class TestMsiWorkflow(PlutoTestCase):
-    cwl_file = CWLFile('msi_workflow.cwl')
+    cwl_file = CWLFile('msi_workflow2.cwl')
 
     def setUp(self):
         # initialize the tmpdir
@@ -33,6 +33,8 @@ class TestMsiWorkflow(PlutoTestCase):
         ['Sample7-N', 'Patient4', '58'],
         ]
 
+        # self.tmpdir="/work/ci/vurals/pluto-cwl/tmp"
+
         self.data_clinical_file = self.write_table(self.tmpdir, filename = "data_clinical_sample.txt", lines = self.data_clinical_lines)
         self.normal_bam = "/work/ci/vurals/msi_test/test_stuff/foo_normal.rg.md.bam"
         self.tumor_bam = "/work/ci/vurals/msi_test/test_stuff/foo_tumor.rg.md.bam"
@@ -49,6 +51,11 @@ class TestMsiWorkflow(PlutoTestCase):
                   "path": self.data_clinical_file
                 },
 
+            "microsatellites_file": {
+                "class": "File",
+                "path": '/work/ci/vurals/pluto-cwl/b37_known_somatic_microsatellites.list'
+            },
+
             "pairs": [
                 {
                     "pair_normal_bam": {
@@ -63,21 +70,21 @@ class TestMsiWorkflow(PlutoTestCase):
                     "pair_id": "Sample1-T.Sample1-N",
                     "tumor_id": "Sample1-T",
                     "normal_id": "Sample1-N"
-                }#,
-                # {
-                #     "pair_normal_bam": {
-                #         "path": self.normal_bam,
-                #         "class": "File"
-                #     },
-                #     "pair_tumor_bam": {
-                #         "path": self.tumor_bam,
-                #         "class": "File"
-                #     },
-                #
-                #     "pair_id": "Sample2-T.Sample2-N",
-                #     "tumor_id": "Sample2-T",
-                #     "normal_id": "Sample2-N"
-                # }
+                },
+                {
+                    "pair_normal_bam": {
+                        "path": self.normal_bam,
+                        "class": "File"
+                    },
+                    "pair_tumor_bam": {
+                        "path": self.tumor_bam,
+                        "class": "File"
+                    },
+
+                    "pair_id": "Sample2-T.Sample2-N",
+                    "tumor_id": "Sample2-T",
+                    "normal_id": "Sample2-N"
+                }
                 ]
             }
 
@@ -100,6 +107,7 @@ class TestMsiWorkflow(PlutoTestCase):
         # output_file = expected_output['output_file']['path']
         #
         # lines = self.read_table(output_file)
+        # self.write_table("/work/ci/vurals/pluto-cwl/", filename = "abcd.txt", lines = lines)
         #
         # expected_lines = [
         #     ['#SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'CMO_TMB_SCORE'],
