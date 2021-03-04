@@ -149,6 +149,11 @@ singularity-pull-fillout:
 	. "$(ENVSH)" singularity && \
 	singularity pull --force --name "$(FILLOUT_SIF)" docker://$(FILLOUT_DOCKERTAG)
 
+MSI_DOCKERTAG:=mskcc/msisensor:0.2
+MSI_SIF:=mskcc_msisensor:0.2.sif
+singularity-pull-msi:
+	. "$(ENVSH)" singularity && \
+	singularity pull --force --name "$(MSI_SIF)" docker://$(MSI_DOCKERTAG)
 
 # change the Docker tag for all the CWL files from the old pattern to the new pattern
 OLD_TAG:=
