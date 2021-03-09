@@ -109,6 +109,7 @@ steps:
     out:
       [ output_file ]
 
+  # combine the MSI results with the data clinical file
   merge_data_clinical:
     run: merge-tables.cwl
     in:
@@ -129,5 +130,3 @@ outputs:
   output_file:
     type: File
     outputSource: merge_data_clinical/output_file
-
-# combine the MSI results with the data clinical file

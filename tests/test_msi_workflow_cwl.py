@@ -11,10 +11,11 @@ THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 PARENT_DIR = os.path.dirname(THIS_DIR)
 sys.path.insert(0, PARENT_DIR)
 from pluto.tools import PlutoTestCase, CWLFile, TableReader
+from pluto.settings import DATA_SETS
 sys.path.pop(0)
 
 class TestMsiWorkflow(PlutoTestCase):
-    cwl_file = CWLFile('msi_workflow2.cwl')
+    cwl_file = CWLFile('msi_workflow.cwl')
 
     def setUp(self):
         # initialize the tmpdir
@@ -36,13 +37,19 @@ class TestMsiWorkflow(PlutoTestCase):
         # self.tmpdir="/work/ci/vurals/pluto-cwl/tmp"
 
         self.data_clinical_file = self.write_table(self.tmpdir, filename = "data_clinical_sample.txt", lines = self.data_clinical_lines)
-        self.normal_bam = "/work/ci/vurals/msi_test/test_stuff/foo_normal.rg.md.bam"
-        self.tumor_bam = "/work/ci/vurals/msi_test/test_stuff/foo_tumor.rg.md.bam"
+        self.normal_bam = os.path.join(DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample23.rg.md.abra.printreads.bam")
+        self.tumor_bam  = os.path.join(DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample24.rg.md.abra.printreads.bam")
+
+        self.normal_bam2 = os.path.join(DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample35.rg.md.abra.printreads.bam")
+        self.tumor_bam2  = os.path.join(DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample36.rg.md.abra.printreads.bam")
+
+        self.microsatellites_file = '/work/ci/vurals/pluto-cwl/b37_known_somatic_microsatellites.list'
+
 
 
     def test_tmb_workflow1(self):
         """
-        Test case for running the TMB workflow on multiple files
+        Test case for running the MSI workflow on multiple samples
         """
         self.runner_args['debug']=True
         self.preserve = True
@@ -58,52 +65,37 @@ class TestMsiWorkflow(PlutoTestCase):
 
             "microsatellites_file": {
                 "class": "File",
-                "path": '/work/ci/vurals/pluto-cwl/b37_known_somatic_microsatellites.list'
+                "path": self.microsatellites_file
             },
 
             "pairs": [
                 {
-                    "normal_bam": {
-                        "path": self.normal_bam,
-                        "class": "File"
-                    },
-                    "tumor_bam": {
-                        "path": self.tumor_bam,
-                        "class": "File"
-                    },
-
+                    "normal_bam": { "path": self.normal_bam,"class": "File" },
+                    "tumor_bam":  { "path": self.tumor_bam, "class": "File" },
                     "pair_id": "Sample1-T.Sample1-N",
                     "tumor_id": "Sample1-T",
                     "normal_id": "Sample1-N"
                 },
                 {
-                    "normal_bam": {
-                        "path": self.normal_bam,
-                        "class": "File"
-                    },
-                    "tumor_bam": {
-                        "path": self.tumor_bam,
-                        "class": "File"
-                    },
-
+                    "normal_bam": { "path": self.normal_bam2, "class": "File" },
+                    "tumor_bam":  { "path": self.tumor_bam2,  "class": "File" },
                     "pair_id": "Sample2-T.Sample2-N",
                     "tumor_id": "Sample2-T",
                     "normal_id": "Sample2-N"
                 }
-                ]
-            }
+            ]
+        }
 
         output_json, output_dir = self.run_cwl()
-
-        print ( output_json, output_dir)
+        # print ( output_json, output_dir)
 
         expected_output = {
             'output_file': {
                 'location': 'file://' + os.path.join(output_dir,'data_clinical_sample.txt'),
                 'basename': 'data_clinical_sample.txt',
                 'class': 'File',
-                'checksum': 'sha1$e7975b7d9f34202750c4645d02f2f98796e22c74',
-                'size': 363,
+                'checksum': 'sha1$488808a4d40fd2f14d163de307c034ada90ff93d',
+                'size': 517,
                 'path':  os.path.join(output_dir,'data_clinical_sample.txt')
                 }
             }
@@ -131,7 +123,71 @@ class TestMsiWorkflow(PlutoTestCase):
 
 
 
+    def test_tmb_workflow2(self):
+        """
+        Test case for running the MSI workflow on single sample
+        """
+        self.runner_args['debug']=True
+        self.preserve = True
 
+        self.maxDiff = None
+        self.input = {
+            "data_clinical_file": {
+                  "class": "File",
+                  "path": self.data_clinical_file
+                },
+
+            "microsatellites_file": {
+                "class": "File",
+                "path": self.microsatellites_file
+            },
+
+            "pairs": [
+                {
+                    "normal_bam": { "path": self.normal_bam,"class": "File" },
+                    "tumor_bam":  { "path": self.tumor_bam, "class": "File" },
+                    "pair_id": "Sample1-T.Sample1-N",
+                    "tumor_id": "Sample1-T",
+                    "normal_id": "Sample1-N"
+                }
+            ]
+        }
+
+        output_json, output_dir = self.run_cwl()
+
+        # print ( output_json, output_dir)
+
+        expected_output = {
+            'output_file': {
+                'location': 'file://' + os.path.join(output_dir,'data_clinical_sample.txt'),
+                'basename': 'data_clinical_sample.txt',
+                'class': 'File',
+                'checksum': 'sha1$d1b0f5e4b37aad339187fd689207fa107cc288d3',
+                'size': 513,
+                'path':  os.path.join(output_dir,'data_clinical_sample.txt')
+                }
+            }
+        self.assertDictEqual(output_json, expected_output)
+
+        # output_file = expected_output['output_file']['path']
+        #
+        # lines = self.read_table(output_file)
+        # self.write_table("/work/ci/vurals/pluto-cwl/", filename = "abcd.txt", lines = lines)
+        #
+        # expected_lines = [
+        #     ['#SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'CMO_TMB_SCORE'],
+        #     ['#SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'CMO_TMB_SCORE'],
+        #     ['#STRING', 'STRING', 'NUMBER', 'NUMBER'],
+        #     ['#1', '1', '1', '1'],
+        #     ['SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'CMO_TMB_SCORE'],
+        #     ['Sample1-T', 'Patient1', '108', '0.000000006'],
+        #     ['Sample1-N', 'Patient2', '58', 'NA'],
+        #     ['Sample2-T', 'Patient3', '502', '0.000000005'],
+        #     ['Sample2-N', 'Patient4', '56', 'NA'],
+        #     ['Sample6-T', 'Patient4', '57', 'NA'],
+        #     ['Sample7-N', 'Patient4', '58', 'NA']
+        #     ]
+        # self.assertEqual(lines, expected_lines)
 
 
     #
