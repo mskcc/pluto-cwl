@@ -51,10 +51,10 @@ class TestMsiWorkflow(PlutoTestCase):
         """
         Test case for running the MSI workflow on multiple samples
         """
-        self.runner_args['debug']=True
-        self.preserve = True
+        self.runner_args['debug']= False #True
+        self.preserve = False#True
 
-        print("----->",self.tmpdir)
+        # print("----->",self.tmpdir)
 
         self.maxDiff = None
         self.input = {
@@ -94,32 +94,31 @@ class TestMsiWorkflow(PlutoTestCase):
                 'location': 'file://' + os.path.join(output_dir,'data_clinical_sample.txt'),
                 'basename': 'data_clinical_sample.txt',
                 'class': 'File',
-                'checksum': 'sha1$488808a4d40fd2f14d163de307c034ada90ff93d',
-                'size': 517,
+                'checksum': 'sha1$1c9d73169aede692e7c9366d63f7f5828461eb64',
+                'size': 347,
                 'path':  os.path.join(output_dir,'data_clinical_sample.txt')
                 }
             }
         self.assertDictEqual(output_json, expected_output)
 
-        # output_file = expected_output['output_file']['path']
-        #
-        # lines = self.read_table(output_file)
-        # self.write_table("/work/ci/vurals/pluto-cwl/", filename = "abcd.txt", lines = lines)
-        #
-        # expected_lines = [
-        #     ['#SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'CMO_TMB_SCORE'],
-        #     ['#SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'CMO_TMB_SCORE'],
-        #     ['#STRING', 'STRING', 'NUMBER', 'NUMBER'],
-        #     ['#1', '1', '1', '1'],
-        #     ['SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'CMO_TMB_SCORE'],
-        #     ['Sample1-T', 'Patient1', '108', '0.000000006'],
-        #     ['Sample1-N', 'Patient2', '58', 'NA'],
-        #     ['Sample2-T', 'Patient3', '502', '0.000000005'],
-        #     ['Sample2-N', 'Patient4', '56', 'NA'],
-        #     ['Sample6-T', 'Patient4', '57', 'NA'],
-        #     ['Sample7-N', 'Patient4', '58', 'NA']
-        #     ]
-        # self.assertEqual(lines, expected_lines)
+        output_file = expected_output['output_file']['path']
+
+        lines = self.read_table(output_file)
+
+        expected_lines = [
+            ['#SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'CMO_MSI_SCORE'],
+            ['#SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'CMO_MSI_SCORE'],
+            ['#STRING', 'STRING', 'NUMBER', 'NUMBER'],
+            ['#1', '1', '1', '0'],
+            ['SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'MSI_SCORE'],
+            ['Sample1-T', 'Patient1', '108', '26.30'],
+            ['Sample1-N', 'Patient2', '58', 'NA'],
+            ['Sample2-T', 'Patient3', '502', '40.00'],
+            ['Sample2-N', 'Patient4', '56', 'NA'],
+            ['Sample6-T', 'Patient4', '57', 'NA'],
+            ['Sample7-N', 'Patient4', '58', 'NA']
+            ]
+        self.assertEqual(lines, expected_lines)
 
 
 
@@ -127,8 +126,10 @@ class TestMsiWorkflow(PlutoTestCase):
         """
         Test case for running the MSI workflow on single sample
         """
-        self.runner_args['debug']=True
-        self.preserve = True
+        self.runner_args['debug']= False #True
+        self.preserve = False#True
+
+        # print("----->",self.tmpdir)
 
         self.maxDiff = None
         self.input = {
@@ -144,8 +145,8 @@ class TestMsiWorkflow(PlutoTestCase):
 
             "pairs": [
                 {
-                    "normal_bam": { "path": self.normal_bam,"class": "File" },
-                    "tumor_bam":  { "path": self.tumor_bam, "class": "File" },
+                    "normal_bam": { "path": self.normal_bam2,"class": "File" },
+                    "tumor_bam":  { "path": self.tumor_bam2, "class": "File" },
                     "pair_id": "Sample1-T.Sample1-N",
                     "tumor_id": "Sample1-T",
                     "normal_id": "Sample1-N"
@@ -162,32 +163,30 @@ class TestMsiWorkflow(PlutoTestCase):
                 'location': 'file://' + os.path.join(output_dir,'data_clinical_sample.txt'),
                 'basename': 'data_clinical_sample.txt',
                 'class': 'File',
-                'checksum': 'sha1$d1b0f5e4b37aad339187fd689207fa107cc288d3',
-                'size': 513,
+                'checksum': 'sha1$b55e60eb26a209a159d24e232ab8036a21baa2ca',
+                'size': 344,
                 'path':  os.path.join(output_dir,'data_clinical_sample.txt')
                 }
             }
         self.assertDictEqual(output_json, expected_output)
 
-        # output_file = expected_output['output_file']['path']
-        #
-        # lines = self.read_table(output_file)
-        # self.write_table("/work/ci/vurals/pluto-cwl/", filename = "abcd.txt", lines = lines)
-        #
-        # expected_lines = [
-        #     ['#SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'CMO_TMB_SCORE'],
-        #     ['#SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'CMO_TMB_SCORE'],
-        #     ['#STRING', 'STRING', 'NUMBER', 'NUMBER'],
-        #     ['#1', '1', '1', '1'],
-        #     ['SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'CMO_TMB_SCORE'],
-        #     ['Sample1-T', 'Patient1', '108', '0.000000006'],
-        #     ['Sample1-N', 'Patient2', '58', 'NA'],
-        #     ['Sample2-T', 'Patient3', '502', '0.000000005'],
-        #     ['Sample2-N', 'Patient4', '56', 'NA'],
-        #     ['Sample6-T', 'Patient4', '57', 'NA'],
-        #     ['Sample7-N', 'Patient4', '58', 'NA']
-        #     ]
-        # self.assertEqual(lines, expected_lines)
+        output_file = expected_output['output_file']['path']
+        lines = self.read_table(output_file)
+
+        expected_lines = [
+            ['#SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'CMO_MSI_SCORE'],
+            ['#SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'CMO_MSI_SCORE'],
+            ['#STRING', 'STRING', 'NUMBER', 'NUMBER'],
+            ['#1', '1', '1', '0'],
+            ['SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'MSI_SCORE'],
+            ['Sample1-T', 'Patient1', '108', '40.00'],
+            ['Sample1-N', 'Patient2', '58', 'NA'],
+            ['Sample2-T', 'Patient3', '502', 'NA'],
+            ['Sample2-N', 'Patient4', '56', 'NA'],
+            ['Sample6-T', 'Patient4', '57', 'NA'],
+            ['Sample7-N', 'Patient4', '58', 'NA']
+            ]
+        self.assertEqual(lines, expected_lines)
 
 
     #
