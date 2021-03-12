@@ -1,6 +1,6 @@
 #!/usr/bin/env cwl-runner
 
-cwlVersion: v1.1
+cwlVersion: v1.0
 class: Workflow
 doc: "
 Workflow to run the MSI analysis on a batch of samples and merge the results back into a single data clinical file
@@ -27,34 +27,60 @@ inputs:
           pair_id: string
           tumor_id: string
           normal_id: string
-          normal_bam:
-            type: File
-            secondaryFiles:
-              - ^.bai
-          tumor_bam:
-            type: File
-            secondaryFiles:
-              - ^.bai
+
+  normal_bam_files:
+    type:
+        type: array
+        items: File
+    secondaryFiles:
+        - ^.bai
+
+  tumor_bam_files:
+    type:
+        type: array
+        items: File
+    secondaryFiles:
+        - ^.bai
+
+  #
+  # normal_bam_files:
+  #   type:
+  #     type: array
+  #     items:
+  #       type: File
+  #     secondaryFiles:
+  #       - ^.bai
+  #
+  #
+  #
+  # normal_bam_files:
+  #   type:
+  #     type: array
+  #     items: File
+  #   secondaryFiles:
+  #     - ^.bai
+  #
+  # tumor_bam_files:
+  #   type:
+  #     type: array
+  #     items: File
+  #   secondaryFiles:
+  #     - ^.bai
 
 
 steps:
   run_msi_add_sample_id:
+    scatter: [ pair, normal_bam, tumor_bam ]
+    scatterMethod: dotproduct
     in:
       microsatellites_file: microsatellites_file
       pair: pairs
-      normal_bam:
-        valueFrom: ${ return inputs.pair['normal_bam']; }
-
-      tumor_bam:
-        valueFrom: ${ return inputs.pair['tumor_bam']; }
-
+      normal_bam: normal_bam_files
+      tumor_bam: tumor_bam_files
       col_header:
         valueFrom: ${ return 'SAMPLE_ID'; }
       tumor_id:
         valueFrom: ${ return inputs.pair['tumor_id']; }
-
-    scatter: pair
-
     out: [ output_file ]
 
 

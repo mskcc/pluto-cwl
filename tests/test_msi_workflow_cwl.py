@@ -15,7 +15,7 @@ from pluto.settings import DATA_SETS
 sys.path.pop(0)
 
 class TestMsiWorkflow(PlutoTestCase):
-    cwl_file = CWLFile('msi_workflow.cwl')
+    cwl_file = CWLFile('msi_workflow_v1.0.cwl')
 
     def setUp(self):
         # initialize the tmpdir
@@ -43,7 +43,7 @@ class TestMsiWorkflow(PlutoTestCase):
         self.normal_bam2 = os.path.join(DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample35.rg.md.abra.printreads.bam")
         self.tumor_bam2  = os.path.join(DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample36.rg.md.abra.printreads.bam")
 
-        self.microsatellites_file = '/work/ci/vurals/pluto-cwl/b37_known_somatic_microsatellites.list'
+        self.microsatellites_file = '/work/ci/resources/request_files/msisensor/microsatellites.list' #'/work/ci/vurals/pluto-cwl/b37_known_somatic_microsatellites.list'
 
 
 
@@ -70,19 +70,26 @@ class TestMsiWorkflow(PlutoTestCase):
 
             "pairs": [
                 {
-                    "normal_bam": { "path": self.normal_bam,"class": "File" },
-                    "tumor_bam":  { "path": self.tumor_bam, "class": "File" },
                     "pair_id": "Sample1-T.Sample1-N",
                     "tumor_id": "Sample1-T",
                     "normal_id": "Sample1-N"
                 },
                 {
-                    "normal_bam": { "path": self.normal_bam2, "class": "File" },
-                    "tumor_bam":  { "path": self.tumor_bam2,  "class": "File" },
                     "pair_id": "Sample2-T.Sample2-N",
                     "tumor_id": "Sample2-T",
                     "normal_id": "Sample2-N"
                 }
+            ],
+
+            "normal_bam_files": [
+                { "path": self.normal_bam,"class": "File" },
+                { "path": self.normal_bam2,"class": "File" }
+
+            ],
+
+            "tumor_bam_files": [
+                { "path": self.tumor_bam, "class": "File" },
+                { "path": self.tumor_bam2, "class": "File" }
             ]
         }
 
@@ -94,7 +101,7 @@ class TestMsiWorkflow(PlutoTestCase):
                 'location': 'file://' + os.path.join(output_dir,'data_clinical_sample.txt'),
                 'basename': 'data_clinical_sample.txt',
                 'class': 'File',
-                'checksum': 'sha1$1c9d73169aede692e7c9366d63f7f5828461eb64',
+                'checksum': 'sha1$7c48f70c264df0d742f6c752138fc40be0d51288',
                 'size': 347,
                 'path':  os.path.join(output_dir,'data_clinical_sample.txt')
                 }
@@ -111,9 +118,9 @@ class TestMsiWorkflow(PlutoTestCase):
             ['#STRING', 'STRING', 'NUMBER', 'NUMBER'],
             ['#1', '1', '1', '0'],
             ['SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'MSI_SCORE'],
-            ['Sample1-T', 'Patient1', '108', '26.30'],
+            ['Sample1-T', 'Patient1', '108', '21.97'],
             ['Sample1-N', 'Patient2', '58', 'NA'],
-            ['Sample2-T', 'Patient3', '502', '40.00'],
+            ['Sample2-T', 'Patient3', '502', '40.14'],
             ['Sample2-N', 'Patient4', '56', 'NA'],
             ['Sample6-T', 'Patient4', '57', 'NA'],
             ['Sample7-N', 'Patient4', '58', 'NA']
@@ -145,12 +152,18 @@ class TestMsiWorkflow(PlutoTestCase):
 
             "pairs": [
                 {
-                    "normal_bam": { "path": self.normal_bam2,"class": "File" },
-                    "tumor_bam":  { "path": self.tumor_bam2, "class": "File" },
                     "pair_id": "Sample1-T.Sample1-N",
                     "tumor_id": "Sample1-T",
                     "normal_id": "Sample1-N"
                 }
+            ],
+
+            "normal_bam_files": [
+                { "path": self.normal_bam,"class": "File" }
+            ],
+
+            "tumor_bam_files": [
+                { "path": self.tumor_bam, "class": "File" }
             ]
         }
 
@@ -163,7 +176,7 @@ class TestMsiWorkflow(PlutoTestCase):
                 'location': 'file://' + os.path.join(output_dir,'data_clinical_sample.txt'),
                 'basename': 'data_clinical_sample.txt',
                 'class': 'File',
-                'checksum': 'sha1$b55e60eb26a209a159d24e232ab8036a21baa2ca',
+                'checksum': 'sha1$82f120a0bc3ea4a8f5a44c1424c724b125274fd3',
                 'size': 344,
                 'path':  os.path.join(output_dir,'data_clinical_sample.txt')
                 }
@@ -179,7 +192,7 @@ class TestMsiWorkflow(PlutoTestCase):
             ['#STRING', 'STRING', 'NUMBER', 'NUMBER'],
             ['#1', '1', '1', '0'],
             ['SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'MSI_SCORE'],
-            ['Sample1-T', 'Patient1', '108', '40.00'],
+            ['Sample1-T', 'Patient1', '108', '21.97'],
             ['Sample1-N', 'Patient2', '58', 'NA'],
             ['Sample2-T', 'Patient3', '502', 'NA'],
             ['Sample2-N', 'Patient4', '56', 'NA'],
@@ -189,180 +202,7 @@ class TestMsiWorkflow(PlutoTestCase):
         self.assertEqual(lines, expected_lines)
 
 
-    #
-    # def test_tmb_workflow2(self):
-    #     """
-    #     Test case for using a single input pair maf
-    #     """
-    #     self.input = {
-    #         "data_clinical_file": {
-    #               "class": "File",
-    #               "path": self.data_clinical_file
-    #             },
-    #         "assay_coverage":  '1000',
-    #         "pairs": [
-    #             {
-    #                 "pair_maf": {
-    #                     "path": self.maf1,
-    #                     "class": "File"
-    #                 },
-    #                 "pair_id": "Sample1-T.Sample1-N",
-    #                 "tumor_id": "Sample1-T",
-    #                 "normal_id": "Sample1-N"
-    #             }
-    #             ]
-    #         }
-    #
-    #     output_json, output_dir = self.run_cwl()
-    #
-    #     expected_output = {
-    #         'output_file': {
-    #             'location': 'file://' + os.path.join(output_dir,'data_clinical_sample.txt'),
-    #             'basename': 'data_clinical_sample.txt',
-    #             'class': 'File',
-    #             'checksum': 'sha1$51dfe08e1f1da012880a6d55bd516400fe36cd5a',
-    #             'size': 354,
-    #             'path':  os.path.join(output_dir,'data_clinical_sample.txt')
-    #             }
-    #         }
-    #     self.assertDictEqual(output_json, expected_output)
-    #
-    #     output_file = expected_output['output_file']['path']
-    #
-    #     lines = self.read_table(output_file)
-    #
-    #     expected_lines = [
-    #         ['#SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'CMO_TMB_SCORE'],
-    #         ['#SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'CMO_TMB_SCORE'],
-    #         ['#STRING', 'STRING', 'NUMBER', 'NUMBER'],
-    #         ['#1', '1', '1', '1'],
-    #         ['SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'CMO_TMB_SCORE'],
-    #         ['Sample1-T', 'Patient1', '108', '0.000000006'],
-    #         ['Sample1-N', 'Patient2', '58', 'NA'],
-    #         ['Sample2-T', 'Patient3', '502', 'NA'],
-    #         ['Sample2-N', 'Patient4', '56', 'NA'],
-    #         ['Sample6-T', 'Patient4', '57', 'NA'],
-    #         ['Sample7-N', 'Patient4', '58', 'NA']
-    #         ]
-    #     self.assertEqual(lines, expected_lines)
-    #
-    # def test_tmb_workflow3(self):
-    #     """
-    #     Test case with a single real maf file
-    #     """
-    #     self.input = {
-    #         "data_clinical_file": {
-    #               "class": "File",
-    #               "path": self.data_clinical_file
-    #             },
-    #         "assay_coverage":  '1000',
-    #         "pairs": [
-    #             {
-    #                 "pair_maf": {
-    #                     "path": os.path.join(self.DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample1.Sample2.muts.maf"),
-    #                     "class": "File"
-    #                 },
-    #                 "pair_id": "Sample1-T.Sample1-N",
-    #                 "tumor_id": "Sample1-T",
-    #                 "normal_id": "Sample1-N"
-    #             }
-    #             ]
-    #         }
-    #
-    #     output_json, output_dir = self.run_cwl()
-    #
-    #     expected_output = {
-    #         'output_file': {
-    #             'location': 'file://' + os.path.join(output_dir,'data_clinical_sample.txt'),
-    #             'basename': 'data_clinical_sample.txt',
-    #             'class': 'File',
-    #             'checksum': 'sha1$2ba1761afc6dba46d9b7d699ff29c52e3e04d5b5',
-    #             'size': 354,
-    #             'path':  os.path.join(output_dir,'data_clinical_sample.txt')
-    #             }
-    #         }
-    #     self.assertDictEqual(output_json, expected_output)
-    #
-    #     output_file = expected_output['output_file']['path']
-    #
-    #     lines = self.read_table(output_file)
-    #
-    #     expected_lines = [
-    #         ['#SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'CMO_TMB_SCORE'],
-    #         ['#SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'CMO_TMB_SCORE'],
-    #         ['#STRING', 'STRING', 'NUMBER', 'NUMBER'],
-    #         ['#1', '1', '1', '1'],
-    #         ['SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'CMO_TMB_SCORE'],
-    #         ['Sample1-T', 'Patient1', '108', '0.000000013'],
-    #         ['Sample1-N', 'Patient2', '58', 'NA'],
-    #         ['Sample2-T', 'Patient3', '502', 'NA'],
-    #         ['Sample2-N', 'Patient4', '56', 'NA'],
-    #         ['Sample6-T', 'Patient4', '57', 'NA'],
-    #         ['Sample7-N', 'Patient4', '58', 'NA']
-    #         ]
-    #     self.assertEqual(lines, expected_lines)
-    #
-    # def test_tmb_workflow4(self):
-    #     """
-    #     Test case with a real maf and real data clinical file
-    #     """
-    #     self.maxDiff = None
-    #     data_clinical_file = os.path.join(self.DATA_SETS['Proj_08390_G']['INPUTS_DIR'], "Proj_08390_G_sample_data_clinical.txt")
-    #     self.input = {
-    #         "data_clinical_file": {
-    #               "class": "File",
-    #               "path": data_clinical_file
-    #             },
-    #         "assay_coverage":  '1000',
-    #         "pairs": [
-    #             {
-    #                 "pair_maf": {
-    #                     "path": os.path.join(self.DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample1.Sample2.muts.maf"),
-    #                     "class": "File"
-    #                 },
-    #                 "pair_id": "Sample1.Sample2",
-    #                 "tumor_id": "Sample1",
-    #                 "normal_id": "Sample2"
-    #             }
-    #             ]
-    #         }
-    #
-    #     output_json, output_dir = self.run_cwl()
-    #
-    #     expected_output = {
-    #         'output_file': {
-    #             'location': 'file://' + os.path.join(output_dir,'data_clinical_sample.txt'),
-    #             'basename': 'data_clinical_sample.txt',
-    #             'class': 'File',
-    #             'checksum': 'sha1$347a4f54e4490cac5ef1f67480957f0ea9337fbb',
-    #             'size': 6487,
-    #             'path':  os.path.join(output_dir,'data_clinical_sample.txt')
-    #             }
-    #         }
-    #     self.assertDictEqual(output_json, expected_output)
-    #
-    #     output_file = expected_output['output_file']['path']
-    #     table_reader = TableReader(output_file)
-    #     comments = table_reader.comment_lines
-    #     fieldnames = table_reader.get_fieldnames()
-    #     records = [ rec for rec in table_reader.read() ]
-    #
-    #     expected_comments = [
-    #     '#SAMPLE_ID\tIGO_ID\tPATIENT_ID\tCOLLAB_ID\tSAMPLE_TYPE\tSAMPLE_CLASS\tGENE_PANEL\tONCOTREE_CODE\tSPECIMEN_PRESERVATION_TYPE\tSEX\tTISSUE_SITE\tREQUEST_ID\tPROJECT_ID\tPIPELINE\tPIPELINE_VERSION\tCMO_TMB_SCORE\n',
-    #     '#SAMPLE_ID\tIGO_ID\tPATIENT_ID\tCOLLAB_ID\tSAMPLE_TYPE\tSAMPLE_CLASS\tGENE_PANEL\tONCOTREE_CODE\tSPECIMEN_PRESERVATION_TYPE\tSEX\tTISSUE_SITE\tREQUEST_ID\tPROJECT_ID\tPIPELINE\tPIPELINE_VERSION\tCMO_TMB_SCORE\n',
-    #     '#STRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tNUMBER\n',
-    #     '#1\t1\t1\t0\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\n'
-    #     ]
-    #     self.assertEqual(comments, expected_comments)
-    #
-    #     tmbs = {}
-    #     for record in records:
-    #         tmbs[record['SAMPLE_ID']] = record['CMO_TMB_SCORE']
-    #
-    #     expected_tmbs = {
-    #     'Sample46': 'NA', 'Sample44': 'NA', 'Sample80': 'NA', 'Sample20': 'NA', 'Sample38': 'NA', 'Sample26': 'NA', 'Sample94': 'NA', 'Sample48': 'NA', 'Sample68': 'NA', 'Sample90': 'NA', 'Sample18': 'NA', 'Sample54': 'NA', 'Sample52': 'NA', 'Sample86': 'NA', 'Sample30': 'NA', 'Sample78': 'NA', 'Sample84': 'NA', 'Sample82': 'NA', 'Sample6': 'NA', 'Sample96': 'NA', 'Sample72': 'NA', 'Sample56': 'NA', 'Sample64': 'NA', 'Sample58': 'NA', 'Sample92': 'NA', 'Sample62': 'NA', 'Sample8': 'NA', 'Sample24': 'NA', 'Sample12': 'NA', 'Sample16': 'NA', 'Sample88': 'NA', 'Sample22': 'NA', 'Sample42': 'NA', 'Sample76': 'NA', 'Sample28': 'NA', 'Sample74': 'NA', 'Sample50': 'NA', 'Sample60': 'NA', 'Sample10': 'NA', 'Sample36': 'NA', 'Sample34': 'NA', 'Sample40': 'NA', 'Sample66': 'NA', 'Sample14': 'NA', 'Sample32': 'NA', 'Sample70': 'NA', 'Sample4': 'NA', 'Sample1': '0.000000013'
-    #     }
-    #     self.assertEqual(tmbs, expected_tmbs)
+
 
 
 if __name__ == "__main__":
