@@ -15,7 +15,7 @@ from pluto.settings import DATA_SETS
 sys.path.pop(0)
 
 class TestMsiWorkflow(PlutoTestCase):
-    cwl_file = CWLFile('msi_workflow_v1.0.cwl')
+    cwl_file = CWLFile('msi_workflow.cwl')
 
     def setUp(self):
         # initialize the tmpdir

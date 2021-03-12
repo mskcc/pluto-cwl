@@ -42,31 +42,6 @@ inputs:
     secondaryFiles:
         - ^.bai
 
-  #
-  # normal_bam_files:
-  #   type:
-  #     type: array
-  #     items:
-  #       type: File
-  #     secondaryFiles:
-  #       - ^.bai
-  #
-  #
-  #
-  # normal_bam_files:
-  #   type:
-  #     type: array
-  #     items: File
-  #   secondaryFiles:
-  #     - ^.bai
-  #
-  # tumor_bam_files:
-  #   type:
-  #     type: array
-  #     items: File
-  #   secondaryFiles:
-  #     - ^.bai
-
 
 steps:
   run_msi_add_sample_id:
