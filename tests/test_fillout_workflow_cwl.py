@@ -105,6 +105,11 @@ class TestGetBaseCounts(PlutoTestCase):
         self.maf = self.write_table(tmpdir = self.tmpdir, filename = "consensus.maf", lines = lines)
 
     def test_run_fillout_workflow(self):
+        """
+        Test case for running the cohort fillout for multiple samples against a single maf
+        """
+        self.preserve = True
+        print(">>> ", self.tmpdir)
         self.maxDiff = None
         self.input = {
             "maf_file": {"class": "File", "path": self.maf},
@@ -129,29 +134,30 @@ class TestGetBaseCounts(PlutoTestCase):
 
         expected_output = {
             'output_file': {
-                'location': 'file://' + os.path.join(output_dir,'fillout.maf'),
-                'basename': 'fillout.maf',
+                'location': 'file://' + os.path.join(output_dir,'output.maf'),
+                'basename': 'output.maf',
                 'class': 'File',
-                'checksum': 'sha1$60d27c22093c202607cacc91834d630fc8239352',
-                'size': 1201,
-                'path':  os.path.join(output_dir,'fillout.maf')
+                'checksum': 'sha1$cad1317ab7c2940f11d91ce72cdb8a708c33108e',
+                'size': 1871,
+                'path':  os.path.join(output_dir,'output.maf')
                 }
             }
         self.assertEqual(output_json, expected_output)
 
         output_file = output_json['output_file']['path']
 
-        with open(output_file) as f:
-            lines = [ line for line in f ]
-
-        print(lines)
+        lines = self.read_table(output_file)
 
         expected_lines = [
-            'Hugo_Symbol\tEntrez_Gene_Id\tCenter\tNCBI_Build\tChromosome\tStart_Position\tEnd_Position\tStrand\tVariant_Classification\tVariant_Type\tReference_Allele\tTumor_Seq_Allele1\tTumor_Seq_Allele2\tdbSNP_RS\tdbSNP_Val_Status\tTumor_Sample_Barcode\tMatched_Norm_Sample_Barcode\tMatch_Norm_Seq_Allele1\tMatch_Norm_Seq_Allele2\tTumor_Validation_Allele1\tTumor_Validation_Allele2\tMatch_Norm_Validation_Allele1\tMatch_Norm_Validation_Allele2\tVerification_Status\tValidation_Status\tMutation_Status\tSequencing_Phase\tSequence_Source\tValidation_Method\tScore\tBAM_File\tSequencer\tt_ref_count\tt_alt_count\tn_ref_count\tn_alt_count\tCaller\tt_total_count\tt_variant_frequency\tt_total_count_forward\tt_ref_count_forward\tt_alt_count_forward\n',
-            'FAM46C\t\tmskcc.org\tGRCh37\t1\t118166398\t118166398\t+\tSilent\tSNP\tG\tA\t\t\t\tSample24\tNormal\t\t\t\t\t\t\t\t\tUNPAIRED\t\t\t\t\t\t\t0\t41\t\t\t\t41\t1\t22\t0\t22\n',
-            'IL7R\t\tmskcc.org\tGRCh37\t5\t35876484\t35876484\t+\tSilent\tSNP\tG\tA\t\t\t\tSample24\tNormal\t\t\t\t\t\t\t\t\tUNPAIRED\t\t\t\t\t\t\t0\t0\t\t\t\t52\t0\t26\t0\t0\n',
-            'KMT2C\t\tmskcc.org\tGRCh37\t7\t151845367\t151845367\t+\tSilent\tSNP\tG\tA\t\t\t\tSample24\tNormal\t\t\t\t\t\t\t\t\tUNPAIRED\t\t\t\t\t\t\t68\t4\t\t\t\t72\t0.0555556\t34\t32\t2\n',
-            'RTEL1\t\tmskcc.org\tGRCh37\t20\t62321135\t62321135\t+\tSilent\tSNP\tG\tA\t\t\t\tSample24\tNormal\t\t\t\t\t\t\t\t\tUNPAIRED\t\t\t\t\t\t\t129\t0\t\t\t\t129\t0\t66\t66\t0\n'
+        ['Hugo_Symbol', 'Entrez_Gene_Id', 'Center', 'NCBI_Build', 'Chromosome', 'Start_Position', 'End_Position', 'Strand', 'Variant_Classification', 'Variant_Type', 'Reference_Allele', 'Tumor_Seq_Allele1', 'Tumor_Seq_Allele2', 'dbSNP_RS', 'dbSNP_Val_Status', 'Tumor_Sample_Barcode', 'Matched_Norm_Sample_Barcode', 'Match_Norm_Seq_Allele1', 'Match_Norm_Seq_Allele2', 'Tumor_Validation_Allele1', 'Tumor_Validation_Allele2', 'Match_Norm_Validation_Allele1', 'Match_Norm_Validation_Allele2', 'Verification_Status', 'Validation_Status', 'Mutation_Status', 'Sequencing_Phase', 'Sequence_Source', 'Validation_Method', 'Score', 'BAM_File', 'Sequencer', 't_ref_count', 't_alt_count', 'n_ref_count', 'n_alt_count', 'Caller', 't_total_count', 't_variant_frequency', 't_total_count_forward', 't_ref_count_forward', 't_alt_count_forward'],
+        ['FAM46C', '.', 'mskcc.org', 'GRCh37', '1', '118166398', '118166398', '+', 'Silent', 'SNP', 'G', 'A', '.', '.', '.', 'Sample24', 'Normal', '.', '.', '.', '.', '.', '.', '.', '.', 'UNPAIRED', '.', '.', '.', '.', '.', '.', '0', '41', '.', '.', '.', '41', '1', '22', '0', '22'],
+        ['IL7R', '.', 'mskcc.org', 'GRCh37', '5', '35876484', '35876484', '+', 'Silent', 'SNP', 'G', 'A', '.', '.', '.', 'Sample24', 'Normal', '.', '.', '.', '.', '.', '.', '.', '.', 'UNPAIRED', '.', '.', '.', '.', '.', '.', '0', '0', '.', '.', '.', '52', '0', '26', '0', '0'],
+        ['KMT2C', '.', 'mskcc.org', 'GRCh37', '7', '151845367', '151845367', '+', 'Silent', 'SNP', 'G', 'A', '.', '.', '.', 'Sample24', 'Normal', '.', '.', '.', '.', '.', '.', '.', '.', 'UNPAIRED', '.', '.', '.', '.', '.', '.', '68', '4', '.', '.', '.', '72', '0.0555556', '34', '32', '2'],
+        ['RTEL1', '.', 'mskcc.org', 'GRCh37', '20', '62321135', '62321135', '+', 'Silent', 'SNP', 'G', 'A', '.', '.', '.', 'Sample24', 'Normal', '.', '.', '.', '.', '.', '.', '.', '.', 'UNPAIRED', '.', '.', '.', '.', '.', '.', '129', '0', '.', '.', '.', '129', '0', '66', '66', '0'],
+        ['FAM46C', '.', 'mskcc.org', 'GRCh37', '1', '118166398', '118166398', '+', 'Silent', 'SNP', 'G', 'A', '.', '.', '.', 'Sample23', 'Normal', '.', '.', '.', '.', '.', '.', '.', '.', 'UNPAIRED', '.', '.', '.', '.', '.', '.', '0', '40', '.', '.', '.', '40', '1', '20', '0', '20'],
+        ['IL7R', '.', 'mskcc.org', 'GRCh37', '5', '35876484', '35876484', '+', 'Silent', 'SNP', 'G', 'A', '.', '.', '.', 'Sample23', 'Normal', '.', '.', '.', '.', '.', '.', '.', '.', 'UNPAIRED', '.', '.', '.', '.', '.', '.', '0', '0', '.', '.', '.', '120', '0', '58', '0', '0'],
+        ['KMT2C', '.', 'mskcc.org', 'GRCh37', '7', '151845367', '151845367', '+', 'Silent', 'SNP', 'G', 'A', '.', '.', '.', 'Sample23', 'Normal', '.', '.', '.', '.', '.', '.', '.', '.', 'UNPAIRED', '.', '.', '.', '.', '.', '.', '91', '0', '.', '.', '.', '91', '0', '43', '43', '0'],
+        ['RTEL1', '.', 'mskcc.org', 'GRCh37', '20', '62321135', '62321135', '+', 'Silent', 'SNP', 'G', 'A', '.', '.', '.', 'Sample23', 'Normal', '.', '.', '.', '.', '.', '.', '.', '.', 'UNPAIRED', '.', '.', '.', '.', '.', '.', '184', '0', '.', '.', '.', '184', '0', '89', '89', '0']
         ]
 
         self.assertEqual(lines, expected_lines)
