@@ -1,14 +1,12 @@
 #!/usr/bin/env cwl-runner
-
-# replace strings in file
-
+# bgzip -c "${vcf_sorted}" > "${vcf_gz}"
 cwlVersion: v1.0
 class: CommandLineTool
-baseCommand: [ 'sed', 's/ILLOGICAL/NA/g' ]
+baseCommand: [ "bgzip" ]
 
 requirements:
   DockerRequirement:
-    dockerPull: mskcc/helix_filters_01:21.02.2
+    dockerPull: mskcc/helix_filters_01:igv-reports-1.0.1
 
 stdout: $(inputs.output_filename)
 
@@ -16,10 +14,11 @@ inputs:
   input_file:
     type: File
     inputBinding:
+      prefix: '-c'
       position: 1
   output_filename:
-    type: ["null", string]
-    default: "output.txt"
+    type: string
+    default: "output.gz"
 
 outputs:
   output_file:

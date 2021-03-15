@@ -1,23 +1,24 @@
 #!/usr/bin/env cwl-runner
-# CWL for script to add the variant allele frequency column for tumor sample to the maf file
 
 cwlVersion: v1.0
 class: CommandLineTool
-baseCommand: ['add_af.py']
+baseCommand: [ "bcftools", "sort" ]
 
 requirements:
   DockerRequirement:
-    dockerPull: mskcc/helix_filters_01:21.02.2
+    dockerPull: mskcc/helix_filters_01:igv-reports-1.0.1
 
 inputs:
-  input_file:
+  vcf_file:
     type: File
     inputBinding:
-      position: 1
+      position: 2
   output_filename:
     type: string
+    default: "output.sorted.vcf"
     inputBinding:
-      position: 2
+      prefix: '--output-file'
+      position: 1
 
 outputs:
   output_file:

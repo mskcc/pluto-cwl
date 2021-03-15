@@ -37,7 +37,8 @@ def generate_input(
     File_keys = None, # convert value into a CWL File record
     list_File_keys = None, # build a CWL array of File entries from an input Python list of file paths
     array_File_keys = None, # build a CWL array of File entries from an input .txt file with one filepath per line
-    pair_template = None # requires 'pairs_file' in args
+    pair_template = None, # requires 'pairs_file' in args
+    File_keys_abspath = False
     ):
     """
     Build the input JSON from the args passed
@@ -62,6 +63,8 @@ def generate_input(
 
     for key in File_keys:
         path = input[key]
+        if File_keys_abspath:
+            path = os.path.abspath(path)
         input[key] = {'class':'File', 'path': path}
 
     for key in list_File_keys:
@@ -131,5 +134,13 @@ def generate_sample_summary(func = None, output_file = "sample_summary.txt"):
         'On Bait Bases (millions)',
         'Aligned Reads (millions)',
         'Insert Size Peak'
+    ]]
+    write_table('', '', lines = lines, filepath = output_file)
+
+def generate_samples_fillout_sheet(func = None, output_file = "samples.fillout.tsv", **kwargs):
+    lines = [[
+    'sample_id',
+    'bam_file',
+    'maf_file'
     ]]
     write_table('', '', lines = lines, filepath = output_file)

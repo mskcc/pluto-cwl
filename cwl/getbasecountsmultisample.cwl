@@ -20,6 +20,8 @@ baseCommand: [
 
 requirements:
   InlineJavascriptRequirement: {}
+  ResourceRequirement:
+    coresMin: 4
   DockerRequirement:
     dockerPull: cmopipeline/getbasecountsmultisample:1.2.2
 
