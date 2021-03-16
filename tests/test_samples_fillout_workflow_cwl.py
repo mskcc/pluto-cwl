@@ -116,21 +116,14 @@ class TestGetBaseCounts(PlutoTestCase):
 
         self.input = {
             "ref_fasta": {"class": "File", "path": self.DATA_SETS['Proj_08390_G']['REF_FASTA']},
-            "samples": [
-                {
-                "bam_file": {
-                    "class": "File", "path": os.path.join(self.DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample24.rg.md.abra.printreads.bam")
-                    },
-                "maf_file": { "class": "File", "path": self.maf1 },
-                "sample_id": "Sample24"
-                },
-                {
-                "bam_file": {
-                    "class": "File", "path": os.path.join(self.DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample23.rg.md.abra.printreads.bam")
-                    },
-                "maf_file": { "class": "File", "path": self.maf2 },
-                "sample_id": "Sample23"
-                }
+            "sample_ids": ["Sample24", "Sample23"],
+            "bam_files": [
+                { "class": "File", "path": os.path.join(self.DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample24.rg.md.abra.printreads.bam") },
+                { "class": "File", "path": os.path.join(self.DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample23.rg.md.abra.printreads.bam") }
+            ],
+            "maf_files": [
+                { "class": "File", "path": self.maf1 },
+                { "class": "File", "path": self.maf2 }
             ]
         }
 

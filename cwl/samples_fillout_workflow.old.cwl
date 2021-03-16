@@ -1,7 +1,7 @@
 #!/usr/bin/env cwl-runner
 
-# NOTE: A newer version that will deprecate this exists once cwlVersion gets updated to 1.1
-cwlVersion: v1.0
+# NOTE: Important! Need  cwlVersion: v1.1 for the array record fields secondaryFiles to work here
+cwlVersion: v1.1
 class: Workflow
 doc: "
 Workflow to run GetBaseCountsMultiSample fillout on a number of samples, each with their own bam and maf files
@@ -14,21 +14,18 @@ requirements:
   SubworkflowFeatureRequirement: {}
 
 inputs:
-  # NOTE: arrays for sample_ids, bam_files, maf_files must all be the same length and in the same order by sample
-  sample_ids:
+  samples:
     type:
-        type: array
-        items: string
-  bam_files:
-    type:
-        type: array
-        items: File
-    secondaryFiles:
-        - ^.bai
-  maf_files:
-    type:
-        type: array
-        items: File
+      type: array
+      items:
+        type: record
+        fields:
+          bam_file:
+            type: File
+            secondaryFiles:
+              - ^.bai
+          maf_file: File
+          sample_id: string
   ref_fasta:
     type: File
     secondaryFiles:
@@ -40,54 +37,52 @@ inputs:
       - .fai
       - ^.dict
 
-
-# # future version of input format;
-# NOTE: Important! Need  cwlVersion: v1.1 for the array record fields secondaryFiles to work here
-# cwlVersion: v1.1
-# inputs:
-#   samples:
-#     type:
-#       type: array
-#       items:
-#         type: record
-#         fields:
-#           bam_file:
-#             type: File
-#             secondaryFiles:
-#               - ^.bai
-#           maf_file: File
-#           sample_id: string
-#   ref_fasta:
-#     type: File
-#     secondaryFiles:
-#       - .amb
-#       - .ann
-#       - .bwt
-#       - .pac
-#       - .sa
-#       - .fai
-#       - ^.dict
-
-
-
 steps:
+  # need to get all the maf files from all the input samples
+  get_all_mafs:
+    in:
+      samples: samples
+    out:
+      [ maf_files ]
+    run:
+      class: ExpressionTool
+      id: get_all_mafs
+      inputs:
+        samples:
+          type:
+            type: array
+            items:
+              type: record
+              fields:
+                maf_file: File
+      outputs:
+        maf_files: File[]
+      expression: "${
+        var maf_file_list = [];
+        for(var i in inputs.samples){
+          maf_file_list.push(inputs.samples[i]['maf_file'])
+        };
+        return {'maf_files':maf_file_list};
+      }"
 
   # combine all the sample maf files into a single reference maf to run against GetBaseCountsMultiSample
   make_reference_maf:
     run: concat-mafs.cwl
     in:
-      input_files: maf_files
+      input_files: get_all_mafs/maf_files
     out:
       [ output_file ]
 
   # check the base counts at each position in the sample reference maf for each sample
   sample_fillout:
     run: getbasecountsmultisample.cwl
-    scatter: [ sample_id, bam ]
-    scatterMethod: dotproduct
+    scatter: sample
     in:
-      sample_id: sample_ids
-      bam: bam_files
+      sample: samples
+      bam:
+        valueFrom: ${ return inputs.sample['bam_file']; }
+      sample_id:
+        valueFrom: ${ return inputs.sample['sample_id']; }
       ref_fasta: ref_fasta
       maf: make_reference_maf/output_file
     out:
