@@ -6,6 +6,25 @@ CWL files and workflows to accompany the [helix_filters_01](https://github.com/m
 
 **NOTE:** see the help section under `make help` for the most up to date instructions.
 
+# Installation
+
+To "install" the repo for running locally, use the following command;
+
+```
+make install singularity-pull-all
+```
+
+This will checkout the included `git` submodules, install a local `conda` with extra dependencies, and pull copies of the required Singularity containers locally.
+
+To run manually in your current environment, source the environment script with the appropriate recipe;
+
+```
+# to run unit tests or run.py with cwltool
+. env.juno.sh test
+```
+
+Alternatively, use the Makefile recipes since they already include environment configuration when running on Juno / Silo HPC servers.
+
 ## Test Suite
 
 Development and testing takes place via the test suite.
@@ -45,7 +64,13 @@ To do this, first enter an interactive bash session with the environment populat
 make bash
 ```
 
-The run the script with the tests you are interested in, such as;
+Or source the environment config file
+
+```
+. env.juno.sh test
+```
+
+Then run the script with the tests you are interested in, such as;
 
 ```
 python tests/test_workflow_cwl.py
