@@ -11,7 +11,7 @@ THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 PARENT_DIR = os.path.dirname(THIS_DIR)
 sys.path.insert(0, PARENT_DIR)
 from pluto.tools import PlutoTestCase, CWLFile, TableReader
-from pluto.settings import DATA_SETS
+from pluto.settings import DATA_SETS, MICROSATELLITES_LIST
 sys.path.pop(0)
 
 class TestMsiWorkflow(PlutoTestCase):
@@ -43,7 +43,7 @@ class TestMsiWorkflow(PlutoTestCase):
         self.normal_bam2 = os.path.join(DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample35.rg.md.abra.printreads.bam")
         self.tumor_bam2  = os.path.join(DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample36.rg.md.abra.printreads.bam")
 
-        self.microsatellites_file = '/work/ci/resources/request_files/msisensor/microsatellites.list' #'/work/ci/vurals/pluto-cwl/b37_known_somatic_microsatellites.list'
+        # self.microsatellites_file = '/work/ci/resources/request_files/msisensor/microsatellites.list' #'/work/ci/vurals/pluto-cwl/b37_known_somatic_microsatellites.list'
 
 
 
@@ -65,7 +65,7 @@ class TestMsiWorkflow(PlutoTestCase):
 
             "microsatellites_file": {
                 "class": "File",
-                "path": self.microsatellites_file
+                "path": MICROSATELLITES_LIST
             },
 
             "pairs": [
@@ -101,7 +101,7 @@ class TestMsiWorkflow(PlutoTestCase):
                 'location': 'file://' + os.path.join(output_dir,'data_clinical_sample.txt'),
                 'basename': 'data_clinical_sample.txt',
                 'class': 'File',
-                'checksum': 'sha1$7c48f70c264df0d742f6c752138fc40be0d51288',
+                'checksum': 'sha1$1c9d73169aede692e7c9366d63f7f5828461eb64',
                 'size': 347,
                 'path':  os.path.join(output_dir,'data_clinical_sample.txt')
                 }
@@ -147,7 +147,7 @@ class TestMsiWorkflow(PlutoTestCase):
 
             "microsatellites_file": {
                 "class": "File",
-                "path": self.microsatellites_file
+                "path": MICROSATELLITES_LIST
             },
 
             "pairs": [
