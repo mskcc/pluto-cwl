@@ -11,7 +11,7 @@ THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 PARENT_DIR = os.path.dirname(THIS_DIR)
 sys.path.insert(0, PARENT_DIR)
 from pluto.tools import PlutoTestCase, CWLFile
-from pluto.settings import DATA_SETS
+from pluto.settings import DATA_SETS, MICROSATELLITES_LIST
 sys.path.pop(0)
 
 class TestTMBWorkflow(PlutoTestCase):
@@ -25,7 +25,7 @@ class TestTMBWorkflow(PlutoTestCase):
         output_file = os.path.join(self.tmpdir, "output.txt")
 
         self.input = {
-              "d":    {"class": "File", "path": "/work/ci/resources/request_files/msisensor/b37_known_somatic_microsatellites.list" },
+              "d":    {"class": "File", "path": MICROSATELLITES_LIST },
               "n":    {"class": "File", "path": os.path.join(DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample23.rg.md.abra.printreads.bam") },
               "t":    {"class": "File", "path": os.path.join(DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample24.rg.md.abra.printreads.bam") },
               "o": "Sample24.Sample23"
