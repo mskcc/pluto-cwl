@@ -47,7 +47,7 @@ class TestMsiWorkflow(PlutoTestCase):
 
 
 
-    def test_tmb_workflow1(self):
+    def test_msi_workflow1(self):
         """
         Test case for running the MSI workflow on multiple samples
         """
@@ -129,7 +129,7 @@ class TestMsiWorkflow(PlutoTestCase):
 
 
 
-    def test_tmb_workflow2(self):
+    def test_msi_workflow2(self):
         """
         Test case for running the MSI workflow on single sample
         """
