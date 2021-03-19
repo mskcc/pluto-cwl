@@ -27,7 +27,8 @@ inputs:
           pair_id: string
           tumor_id: string
           normal_id: string
-
+  # NOTE: these two arrays of File with secondaryFiles should eventually be merged directly into the `pairs` record array
+  # after upgrading Toil to support cwlVersion 1.1
   normal_bam_files:
     type:
         type: array

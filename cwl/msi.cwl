@@ -13,10 +13,7 @@ cwlVersion: cwl:v1.1
 #
 
 class: CommandLineTool
-baseCommand:
-- "msisensor"
-- "msi"
-
+baseCommand: [ "msisensor", "msi", "-b", "8" ]
 
 requirements:
   DockerRequirement:
@@ -24,7 +21,7 @@ requirements:
   InlineJavascriptRequirement: {}
   ResourceRequirement:
     ramMin: 16
-    coresMin: 2
+    coresMin: 8
 
 doc: |
   Run msisensor on tumor-normal bams to differentiate MSI (microsatellite instable) samples from MSS (microsatellite stable) ones
