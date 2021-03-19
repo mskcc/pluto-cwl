@@ -37,16 +37,21 @@ class TestTMBWorkflow(PlutoTestCase):
                 'location': 'file://' + os.path.join(output_dir, "Sample24.Sample23"),
                 'basename': "Sample24.Sample23",
                 'class': 'File',
-                'checksum': 'sha1$576fa40d02976be7527b394f482d16768874b174',
-                'size': 61,
+                'checksum': 'sha1$8d5856202b859fc0da427bf9069eb870f2adcd55',
+                'size': 62,
                 'path': os.path.join(output_dir, "Sample24.Sample23")
                 }
             }
         self.assertDictEqual(output_json, expected_output)
 
+        output_file = expected_output['output_file']['path']
+        lines = self.read_table(output_file)
 
-
-
+        expected_lines = [
+            ['Total_Number_of_Sites', 'Number_of_Somatic_Sites', '%'],
+            ['628', '138', '21.97']
+            ]
+        self.assertEqual(lines, expected_lines)
 
 if __name__ == "__main__":
     unittest.main()
