@@ -13,13 +13,17 @@ stderr: annotate_maf_stderr.txt
 baseCommand: ["bash","run_annotate_maf_wrapper.sh"]
 
 requirements:
+  ResourceRequirement:
+    ramMin: 8
+    coresMin: 4
+    # annotate-maf-wrapper.R does not actually accept an arg for the number of CPUs to use, it defaults to using all available CPUs
   DockerRequirement:
     dockerPull: stevekm/facets-suite:2.0.6
   InitialWorkDirRequirement:
     listing:
       - entryname: run_annotate_maf_wrapper.sh
         entry: |-
-          annotate-maf-wrapper.R $@ || touch failed.txt
+          annotate-maf-wrapper.R --parallel TRUE $@ || touch failed.txt
 
 inputs:
   maf_file:
