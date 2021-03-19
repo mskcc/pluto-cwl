@@ -122,8 +122,12 @@ steps:
 
   #replace % colname with MSI_SCORE
   replace_col_name:
-    run: replace2.cwl
+    run: replace_colname.cwl
     in:
+      old_name:
+        valueFrom: ${ return "%"; }
+      new_name:
+        valueFrom: ${ return "MSI_SCORE"; }
       input_file: cut_msi_table/output_file
       output_filename:
         valueFrom: ${ return "msi-replaced.tsv"; }
