@@ -262,8 +262,29 @@ inputs:
   assay_coverage:
     type: string
     doc: "genome_coverage value; amount of the genome in bp covered by the assay"
+  microsatellites_file:
+    type: File
+    doc: "Microsatellites list file to use with MSI Sensor"
+  # NOTE: these two arrays of File with secondaryFiles should eventually be merged directly into the `pairs` record array
+  # after upgrading Toil to support cwlVersion 1.1
+  normal_bam_files:
+    type:
+        type: array
+        items: File
+    doc: "Array of normal bam files. Must match the same order of sample pairs in 'pairs' input field"
+    secondaryFiles:
+        - ^.bai
+  tumor_bam_files:
+    type:
+        type: array
+        items: File
+    doc: "Array of tumor bam files. Must match the same order of sample pairs in 'pairs' input field"
+    secondaryFiles:
+        - ^.bai
+
 
 steps:
+  # run the Facets Suite workflow
   run_facets:
     run: facets-workflow.cwl
     in:
@@ -294,6 +315,7 @@ steps:
     out:
       [ output_file ]
 
+  # generate the "analysis" output files
   run_analysis_workflow:
     run: analysis-workflow.cwl
     in:
@@ -314,6 +336,7 @@ steps:
     out:
       [ analysis_dir ]
 
+  # generate the cBioPortal output files
   run_portal_workflow:
     run: portal-workflow.cwl
     in:
@@ -388,6 +411,8 @@ steps:
     out:
       [ output_file, failed_txt, stdout_txt, stderr_txt ]
 
+
+
   # run the TMB workflow
   run_tmb_workflow:
     run: tmb_workflow.cwl
@@ -398,13 +423,44 @@ steps:
     out:
       [ output_file ] # updated data_clinical_sample_file with the new TMB data
 
+  # run the MSI workflow
+  run_msi_workflow:
+    run: msi_workflow.cwl
+    in:
+      data_clinical_file: run_portal_workflow/portal_data_clinical_sample_file # run_tmb_workflow/output_file # data_clinical_sample.txt
+      microsatellites_file: microsatellites_file
+      pairs: pairs
+      normal_bam_files: normal_bam_files
+      tumor_bam_files: tumor_bam_files
+    out:
+      [ output_file ] # updated data_clinical_file with MSI scores
+
+  # combine the TMB, MSI results with the data clinical file
+  merge_data_clinical:
+    run: merge-tables.cwl
+    in:
+      table1: run_tmb_workflow/output_file
+      table2: run_msi_workflow/output_file
+      key1:
+        valueFrom: ${ return "SAMPLE_ID"; } # sample column header from data clinical file
+      key2:
+        valueFrom: ${ return "SAMPLE_ID"; } # sample column header from MSI file
+      output_filename:
+        valueFrom: ${ return "data_clinical_sample.txt"; } # TODO: should this be passed in?
+      cBioPortal:
+        valueFrom: ${ return true; }
+    out:
+      [ output_file ]
+
+
+
   # create the "portal" directory in the output dir and put cBioPortal files in it
   make_portal_dir:
     run: put_in_dir.cwl
     in:
       portal_meta_clinical_sample_file: run_portal_workflow/portal_meta_clinical_sample_file # meta_clinical_sample.txt
       portal_data_clinical_patient_file: run_portal_workflow/portal_data_clinical_patient_file # data_clinical_patient.txt
-      portal_data_clinical_sample_file: run_tmb_workflow/output_file # data_clinical_sample.txt
+      portal_data_clinical_sample_file: merge_data_clinical/output_file # data_clinical_sample.txt
       portal_meta_study_file: run_portal_workflow/portal_meta_study_file # meta_study.txt
       portal_clinical_patient_meta_file: run_portal_workflow/portal_clinical_patient_meta_file # meta_clinical_patient.txt
       portal_meta_cna_file: run_portal_workflow/portal_meta_cna_file # meta_CNA.txt
