@@ -39,6 +39,9 @@ def main():
     parser.add_argument("--restart", action = 'store_true', dest = 'restart', help = "Restart a previous run; requires jobStore")
     parser.add_argument("--debug", action = 'store_true', dest = 'debug', help = "Restart a previous run; requires jobStore")
     parser.add_argument("--jobStore", dest = 'jobStore', default = None, help = "Job store to use for a restarted run")
+    parser.add_argument("--dir", dest = 'dir', default = None, help = "Directory where the CWL will be executed")
+    parser.add_argument("--output-dir", dest = 'output_dir', default = None, help = "Directory where the CWL output will be saved")
+
     # parser.add_argument("--cleanWorkDir", dest = 'cleanWorkDir', default = 'onSuccess', help = "When to clean the work dir")
     # parser.add_argument("--clean", dest = 'clean', default = 'onSuccess', help = "When to clean the work dir")
 
