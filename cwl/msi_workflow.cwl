@@ -111,16 +111,6 @@ steps:
     out:
       [ output_file ]
 
-  # cut msi.tsv to get only msi scores
-  cut_msi_table:
-    run: cut.cwl
-    in:
-      field_indexes:
-        valueFrom: ${ return "3,4"; }
-      input_file: concat_msi_tables/output_file
-    out:
-      [ output_file ]
-
   #replace % colname with MSI_SCORE
   replace_col_name:
     run: replace_colname.cwl
@@ -129,9 +119,32 @@ steps:
         valueFrom: ${ return "%"; }
       new_name:
         valueFrom: ${ return "MSI_SCORE"; }
-      input_file: cut_msi_table/output_file
+      input_file: concat_msi_tables/output_file
       output_filename:
         valueFrom: ${ return "msi-replaced.tsv"; }
+    out:
+      [ output_file ]
+
+  # add msi status based on the msi score
+  add_msi_status_col:
+    run: add_msi_status.cwl
+    in:
+      input_filename: replace_col_name/output_file
+      output_filename:
+        valueFrom: ${ return "msi_status_added.tsv"; }
+      header:
+        valueFrom: ${ return "MSI_STATUS"; }
+    out:
+      [ output_file ]
+
+
+  # cut msi.tsv to get only msi scores
+  cut_msi_table:
+    run: cut.cwl
+    in:
+      field_indexes:
+        valueFrom: ${ return "3,4,5"; }
+      input_file: add_msi_status_col/output_file
     out:
       [ output_file ]
 
@@ -141,7 +154,7 @@ steps:
     run: merge-tables.cwl
     in:
       table1: data_clinical_file
-      table2: replace_col_name/output_file
+      table2: cut_msi_table/output_file
       key1:
         valueFrom: ${ return "SAMPLE_ID"; } # sample column header from data clinical file
       key2:

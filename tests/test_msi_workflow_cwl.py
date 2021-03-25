@@ -11,7 +11,7 @@ THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 PARENT_DIR = os.path.dirname(THIS_DIR)
 sys.path.insert(0, PARENT_DIR)
 from pluto.tools import PlutoTestCase, CWLFile, TableReader
-from pluto.settings import DATA_SETS, MICROSATELLITES_LIST
+from pluto.settings import DATA_SETS #, MICROSATELLITES_LIST
 sys.path.pop(0)
 
 class TestMsiWorkflow(PlutoTestCase):
@@ -43,7 +43,7 @@ class TestMsiWorkflow(PlutoTestCase):
         self.normal_bam2 = os.path.join(DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample35.rg.md.abra.printreads.bam")
         self.tumor_bam2  = os.path.join(DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample36.rg.md.abra.printreads.bam")
 
-        # self.microsatellites_file = '/work/ci/resources/request_files/msisensor/microsatellites.list' #'/work/ci/vurals/pluto-cwl/b37_known_somatic_microsatellites.list'
+        self.microsatellites_file = '/work/ci/resources/request_files/msisensor/microsatellites.list' #'/work/ci/vurals/pluto-cwl/b37_known_somatic_microsatellites.list'
 
 
 
@@ -54,7 +54,7 @@ class TestMsiWorkflow(PlutoTestCase):
         self.runner_args['debug']= False #True
         self.preserve = False#True
 
-        # print("----->",self.tmpdir)
+        print("----->",self.tmpdir)
 
         self.maxDiff = None
         self.input = {
@@ -65,7 +65,7 @@ class TestMsiWorkflow(PlutoTestCase):
 
             "microsatellites_file": {
                 "class": "File",
-                "path": MICROSATELLITES_LIST
+                "path": self.microsatellites_file #MICROSATELLITES_LIST
             },
 
             "pairs": [
@@ -101,8 +101,8 @@ class TestMsiWorkflow(PlutoTestCase):
                 'location': 'file://' + os.path.join(output_dir,'data_clinical_sample.txt'),
                 'basename': 'data_clinical_sample.txt',
                 'class': 'File',
-                'checksum': 'sha1$1c9d73169aede692e7c9366d63f7f5828461eb64',
-                'size': 347,
+                'checksum': 'sha1$0a7be413f57372afd5142294467e3e91f926e9df',
+                'size': 427,
                 'path':  os.path.join(output_dir,'data_clinical_sample.txt')
                 }
             }
@@ -113,17 +113,17 @@ class TestMsiWorkflow(PlutoTestCase):
         lines = self.read_table(output_file)
 
         expected_lines = [
-            ['#SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'CMO_MSI_SCORE'],
-            ['#SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'CMO_MSI_SCORE'],
-            ['#STRING', 'STRING', 'NUMBER', 'NUMBER'],
-            ['#1', '1', '1', '0'],
-            ['SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'MSI_SCORE'],
-            ['Sample1-T', 'Patient1', '108', '21.97'],
-            ['Sample1-N', 'Patient2', '58', 'NA'],
-            ['Sample2-T', 'Patient3', '502', '40.14'],
-            ['Sample2-N', 'Patient4', '56', 'NA'],
-            ['Sample6-T', 'Patient4', '57', 'NA'],
-            ['Sample7-N', 'Patient4', '58', 'NA']
+            ['#SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'CMO_MSI_SCORE','CMO_MSI_STATUS'],
+            ['#SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'CMO_MSI_SCORE','CMO_MSI_STATUS'],
+            ['#STRING', 'STRING', 'NUMBER', 'NUMBER','STRING'],
+            ['#1', '1', '1', '0','0'],
+            ['SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'MSI_SCORE','MSI_STATUS'],
+            ['Sample1-T', 'Patient1',   '108',             '21.97',    'Instable'  ],
+            ['Sample1-N', 'Patient2',   '58',              'NA',       'NA'        ],
+            ['Sample2-T', 'Patient3',   '502',             '40.14',    'Instable'  ],
+            ['Sample2-N', 'Patient4',   '56',              'NA',       'NA'        ],
+            ['Sample6-T', 'Patient4',   '57',              'NA',       'NA'        ],
+            ['Sample7-N', 'Patient4',   '58',              'NA',       'NA'        ]
             ]
         self.assertEqual(lines, expected_lines)
 
@@ -147,7 +147,7 @@ class TestMsiWorkflow(PlutoTestCase):
 
             "microsatellites_file": {
                 "class": "File",
-                "path": MICROSATELLITES_LIST
+                "path": self.microsatellites_file #MICROSATELLITES_LIST
             },
 
             "pairs": [
@@ -176,8 +176,8 @@ class TestMsiWorkflow(PlutoTestCase):
                 'location': 'file://' + os.path.join(output_dir,'data_clinical_sample.txt'),
                 'basename': 'data_clinical_sample.txt',
                 'class': 'File',
-                'checksum': 'sha1$82f120a0bc3ea4a8f5a44c1424c724b125274fd3',
-                'size': 344,
+                'checksum': 'sha1$1de2dc1ab3d49022b451e23485ce5e9ddd7daad9',
+                'size': 418,
                 'path':  os.path.join(output_dir,'data_clinical_sample.txt')
                 }
             }
@@ -187,17 +187,17 @@ class TestMsiWorkflow(PlutoTestCase):
         lines = self.read_table(output_file)
 
         expected_lines = [
-            ['#SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'CMO_MSI_SCORE'],
-            ['#SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'CMO_MSI_SCORE'],
-            ['#STRING', 'STRING', 'NUMBER', 'NUMBER'],
-            ['#1', '1', '1', '0'],
-            ['SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'MSI_SCORE'],
-            ['Sample1-T', 'Patient1', '108', '21.97'],
-            ['Sample1-N', 'Patient2', '58', 'NA'],
-            ['Sample2-T', 'Patient3', '502', 'NA'],
-            ['Sample2-N', 'Patient4', '56', 'NA'],
-            ['Sample6-T', 'Patient4', '57', 'NA'],
-            ['Sample7-N', 'Patient4', '58', 'NA']
+            ['#SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'CMO_MSI_SCORE','CMO_MSI_STATUS'],
+            ['#SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'CMO_MSI_SCORE','CMO_MSI_STATUS'],
+            ['#STRING', 'STRING', 'NUMBER', 'NUMBER','STRING'],
+            ['#1', '1', '1', '0','0'],
+            ['SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'MSI_SCORE','MSI_STATUS'],
+            ['Sample1-T', 'Patient1',   '108',             '21.97',    'Instable'  ],
+            ['Sample1-N', 'Patient2',   '58',              'NA',       'NA'        ],
+            ['Sample2-T', 'Patient3',   '502',             'NA',       'NA'        ],
+            ['Sample2-N', 'Patient4',   '56',              'NA',       'NA'        ],
+            ['Sample6-T', 'Patient4',   '57',              'NA',       'NA'        ],
+            ['Sample7-N', 'Patient4',   '58',              'NA',       'NA'        ]
             ]
         self.assertEqual(lines, expected_lines)
 
