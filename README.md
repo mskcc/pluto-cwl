@@ -6,6 +6,25 @@ CWL files and workflows to accompany the [helix_filters_01](https://github.com/m
 
 **NOTE:** see the help section under `make help` for the most up to date instructions.
 
+# Installation
+
+To "install" the repo for running locally, use the following command;
+
+```
+make install singularity-pull-all
+```
+
+This will checkout the included `git` submodules, install a local `conda` with extra dependencies, and pull copies of the required Singularity containers locally.
+
+To run manually in your current environment, source the environment script with the appropriate recipe;
+
+```
+# to run unit tests or run.py with cwltool
+. env.juno.sh test
+```
+
+Alternatively, use the Makefile recipes since they already include environment configuration when running on Juno / Silo HPC servers.
+
 ## Test Suite
 
 Development and testing takes place via the test suite.
@@ -13,9 +32,7 @@ Development and testing takes place via the test suite.
 Make sure that you have copies of the Singularity containers used cached locally
 
 ```
-make singularity-pull
-make singularity-pull-dev
-make singularity-pull-facets
+make singularity-pull-all
 ```
 
 
@@ -47,7 +64,13 @@ To do this, first enter an interactive bash session with the environment populat
 make bash
 ```
 
-The run the script with the tests you are interested in, such as;
+Or source the environment config file
+
+```
+. env.juno.sh test
+```
+
+Then run the script with the tests you are interested in, such as;
 
 ```
 python tests/test_workflow_cwl.py
@@ -63,7 +86,31 @@ python tests/test_workflow_cwl.py TestClassName.test_function
 
 ## Run a CWL
 
-You can run a specific CWL workflow manually using the included `run.py` script. See `run.py -h` for available CWL's to run. 
+### Setup
+
+To run a CWL, you first need to make sure dependencies are available.
+
+Running on Juno requires that the Singularity containers mentioned above are available;
+
+```
+make singularity-pull-all
+```
+
+If you are on Juno server using `cwltool` you can just load the included config for the `test` environment;
+
+```
+. env.juno.sh test
+```
+
+If you want to use Toil to submit jobs to LSF then you will need the `toil` environment config;
+
+```
+. env.juno.sh toil
+```
+
+### Run
+
+You can run a specific CWL workflow manually using the included `run.py` script. See `run.py -h` for available CWL's to run.
 
 Example usages;
 
@@ -79,4 +126,4 @@ $ ./run.py tmb_workflow --data-clinical examples/data_clinical.txt --assay-cover
 $ ./run.py workflow_with_facets --assay-coverage 100000 --project-id Project1 --cancer-type MEL --pairs examples/pairs.tsv --data-clinical examples/data_clinical.txt --sample-summary examples/sample_summary.txt --mutation-svs-txts examples/mutation_svs.txt --mutation-svs-mafs examples/mutation_svs_mafs.txt
 ```
 
-NOTE: The `run.py` script still requires that the Singularity containers be present locally, see the section on running the test scripts for details. You might also have to set your environment using either `make bash` or `. env.juno.sh shell` first.
+Output will be in the `cwltool_output` or `toil_output` directories. Note that this includes `tmp` and `work` directories for the run, which may need to be deleted periodically.

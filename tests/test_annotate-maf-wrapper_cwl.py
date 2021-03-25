@@ -91,5 +91,13 @@ class TestAnnotateMafWrapperCWL(unittest.TestCase):
             self.maxDiff = None
             self.assertDictEqual(output_json, expected_output)
 
+            # with open(output_json['stdout_txt']["path"]) as f:
+            #     for line in f:
+            #         print(line)
+            #
+            # with open(output_json['stderr_txt']["path"]) as f:
+            #     for line in f:
+            #         print(line)
+
 if __name__ == "__main__":
     unittest.main()
