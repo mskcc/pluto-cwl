@@ -6,7 +6,7 @@ baseCommand: ["calc-tmb.py", 'from-file']
 
 requirements:
   DockerRequirement:
-    dockerPull: mskcc/helix_filters_01:21.02.2
+    dockerPull: mskcc/helix_filters_01:latest
 
 inputs:
   input_file:
