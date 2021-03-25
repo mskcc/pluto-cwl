@@ -3,6 +3,12 @@ import copy
 from pluto.tools import CWLRunner
 
 class Operator(object):
+    """
+    Object class to handle argument parsing for running CWL's
+    Meant to be subclassed, then imported into run.py and invoked from the self._run() entrypoint
+    All required CWL inputs that do not need special processing should be passed in from the run.main argument parser;
+    they will be loaded into Operator.args, then they should be converted into the correct CWL format inside self.__init__
+    """
     # placeholder values to be overriden by subclasses
     cwl_file = None # str or CWLFile object
     input = {}
@@ -12,17 +18,23 @@ class Operator(object):
         engine = 'cwltool',
         verbose = True,
         dir = None,
+        output_dir = None,
         print_command = False,
         restart = False,
         jobStore = None,
-        debug = False
+        debug = False,
+        parallel = False # only used for cwltool
         )
 
     def __init__(self, **kwargs):
         self.args = copy.deepcopy(kwargs)
         # use these keyword args to set instance attributes
+        if 'parallel' in self.args:
+            self.runner_args['parallel'] = self.args.pop('parallel')
         if 'dir' in self.args:
             self.runner_args['dir'] = self.args.pop('dir')
+        if 'output_dir' in self.args:
+            self.runner_args['output_dir'] = self.args.pop('output_dir')
         if 'verbose' in self.args:
             self.runner_args['verbose'] = self.args.pop('verbose')
         if 'print_command' in self.args:

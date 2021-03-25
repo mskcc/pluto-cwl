@@ -5,7 +5,7 @@ class: CommandLineTool
 baseCommand: [ "merge-tables.py" ]
 requirements:
   DockerRequirement:
-    dockerPull: mskcc/helix_filters_01:msi_add_status2
+    dockerPull: mskcc/helix_filters_01:latest
 
 inputs:
   table1:

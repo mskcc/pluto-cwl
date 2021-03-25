@@ -39,6 +39,10 @@ def main():
     parser.add_argument("--restart", action = 'store_true', dest = 'restart', help = "Restart a previous run; requires jobStore")
     parser.add_argument("--debug", action = 'store_true', dest = 'debug', help = "Restart a previous run; requires jobStore")
     parser.add_argument("--jobStore", dest = 'jobStore', default = None, help = "Job store to use for a restarted run")
+    parser.add_argument("--dir", dest = 'dir', default = None, help = "Directory where the CWL will be executed")
+    parser.add_argument("--output-dir", dest = 'output_dir', default = None, help = "Directory where the CWL output will be saved")
+    parser.add_argument("--parallel", dest = 'parallel', action = "store_true", help = "Run cwltool in parallel mode. NOTE: make sure all containers are cached")
+
     # parser.add_argument("--cleanWorkDir", dest = 'cleanWorkDir', default = 'onSuccess', help = "When to clean the work dir")
     # parser.add_argument("--clean", dest = 'clean', default = 'onSuccess', help = "When to clean the work dir")
 
@@ -130,7 +134,6 @@ def main():
     _tmb_workflow.add_argument('--data-clinical', dest = 'data_clinical_file', required = True)
     _tmb_workflow.add_argument('--assay-coverage', dest = 'assay_coverage', required = True)
     _tmb_workflow.add_argument('--pairs', dest = 'pairs_file', required = True)
-    _tmb_workflow.add_argument('--dir', dest = 'dir', help = 'Directory for pipeline execution and output')
     _tmb_workflow.set_defaults(func = TMBWorkflow._run)
     """
     $ ./run.py tmb_workflow --data-clinical examples/data_clinical.txt --assay-coverage 10000 --pairs examples/pairs.tsv
