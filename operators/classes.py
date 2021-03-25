@@ -22,12 +22,15 @@ class Operator(object):
         print_command = False,
         restart = False,
         jobStore = None,
-        debug = False
+        debug = False,
+        parallel = False # only used for cwltool
         )
 
     def __init__(self, **kwargs):
         self.args = copy.deepcopy(kwargs)
         # use these keyword args to set instance attributes
+        if 'parallel' in self.args:
+            self.runner_args['parallel'] = self.args.pop('parallel')
         if 'dir' in self.args:
             self.runner_args['dir'] = self.args.pop('dir')
         if 'output_dir' in self.args:
