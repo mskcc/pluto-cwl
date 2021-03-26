@@ -52,7 +52,7 @@ class TestMsiWorkflow(PlutoTestCase):
         Test case for running the MSI workflow on multiple samples
         """
         self.runner_args['debug']= False #True
-        self.preserve = False#True
+        self.preserve = False #True
 
         print("----->",self.tmpdir)
 
