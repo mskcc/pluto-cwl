@@ -31,7 +31,3 @@ outputs:
     type: File
     outputBinding:
       glob: merged.bed
-  file_list:
-    type: File
-    outputBinding:
-      glob: files.txt

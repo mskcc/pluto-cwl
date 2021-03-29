@@ -192,22 +192,5 @@ class TestConcatMafs(PlutoTestCase):
         self.assertEqual(comments, expected_comments)
         self.assertEqual(records, expected_records)
 
-        # with open(output_file) as f:
-        #     lines = [ line for line in f ]
-        # expected_lines = [
-        #     '# comment 1\n',
-        #     '# comment 2\n',
-        #     'Hugo_Symbol\tCenter\tNCBI_Build\tChromosome\tStart_Position\tEnd_Position\tVariant_Classification\tReference_Allele\tTumor_Seq_Allele1\tTumor_Seq_Allele2\tTumor_Sample_Barcode\tMatched_Norm_Sample_Barcode\tt_ref_count\tt_alt_count\tn_ref_count\tn_alt_count\n',
-        #     'RTEL1\tmskcc.org\tGRCh37\t20\t62321135\t62321135\tSilent\tG\tG\tA\t\t\t\t\t\t\n',
-        #     'FAM46C\tmskcc.org\tGRCh37\t1\t118166398\t118166398\tSilent\tG\tG\tA\t\t\t\t\t\t\n',
-        #     'IL7R\tmskcc.org\tGRCh37\t5\t35876484\t35876484\tSilent\tG\tG\tA\t\t\t\t\t\t\n',
-        #     'IL7R\tmskcc.org\tGRCh37\t5\t35876484\t35876484\tSilent\tG\tG\tA\t\t\t\t\t\t\n',
-        #     'KMT2C\tmskcc.org\tGRCh37\t7\t151845367\t151845367\tSilent\tG\tG\tA\t\t\t\t\t\t\n',
-        #     'MET\tmskcc.org\tGRCh37\t7\t116418998\t116418998\tSilent\tG\tG\tA\t\t\t\t\t\t\n'
-        # ]
-        # self.assertEqual(lines, expected_lines)
-
-
-
 if __name__ == "__main__":
     unittest.main()
