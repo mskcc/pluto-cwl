@@ -47,8 +47,8 @@ class TestCalcTMB(PlutoTestCase):
                 'location': 'file://' + os.path.join(output_dir,'output.txt'),
                 'basename': 'output.txt',
                 'class': 'File',
-                'checksum': 'sha1$2afff0129f070c317af9367958e0c9fd8713654d',
-                'size': 12,
+                'checksum': 'sha1$3e5448b95b5b3e382d0ab22e0298ffd2cd20e8b9',
+                'size': 7,
                 'path':  os.path.join(output_dir,'output.txt')
                 }
             }
@@ -57,7 +57,7 @@ class TestCalcTMB(PlutoTestCase):
         output_file = expected_output['output_file']['path']
         with open(output_file) as fin:
             result = next(fin).strip()
-        expected_result = '0.000000005'
+        expected_result = '5000.0'
         self.assertEqual(result, expected_result)
 
     def test_calc_tmb_poolednormal1(self):
