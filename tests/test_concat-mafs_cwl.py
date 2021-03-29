@@ -11,7 +11,7 @@ from collections import OrderedDict
 THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 PARENT_DIR = os.path.dirname(THIS_DIR)
 sys.path.insert(0, PARENT_DIR)
-from pluto.tools import PlutoTestCase, CWLFile
+from pluto.tools import PlutoTestCase, CWLFile, TableReader
 sys.path.pop(0)
 
 class TestConcatMafs(PlutoTestCase):
@@ -164,8 +164,8 @@ class TestConcatMafs(PlutoTestCase):
                 'location': 'file://' + os.path.join(output_dir,'output.maf'),
                 'basename': 'output.maf',
                 'class': 'File',
-                'checksum': 'sha1$de3f553b81bd7688e3b849a186419b60cfb76ae0',
-                'size': 649,
+                'checksum': 'sha1$7a073aeff90d335f1b77ddd43d31d1fdf9a8cf57',
+                'size': 678,
                 'path':  os.path.join(output_dir,'output.maf')
                 }
             }
@@ -174,20 +174,38 @@ class TestConcatMafs(PlutoTestCase):
 
         output_file = output_json['output_file']['path']
 
-        with open(output_file) as f:
-            lines = [ line for line in f ]
-        expected_lines = [
-            '# comment 1\n',
-            '# comment 2\n',
-            'Hugo_Symbol\tCenter\tNCBI_Build\tChromosome\tStart_Position\tEnd_Position\tVariant_Classification\tReference_Allele\tTumor_Seq_Allele1\tTumor_Seq_Allele2\tTumor_Sample_Barcode\tMatched_Norm_Sample_Barcode\tt_ref_count\tt_alt_count\tn_ref_count\tn_alt_count\n',
-            'RTEL1\tmskcc.org\tGRCh37\t20\t62321135\t62321135\tSilent\tG\tG\tA\t\t\t\t\t\t\n',
-            'FAM46C\tmskcc.org\tGRCh37\t1\t118166398\t118166398\tSilent\tG\tG\tA\t\t\t\t\t\t\n',
-            'IL7R\tmskcc.org\tGRCh37\t5\t35876484\t35876484\tSilent\tG\tG\tA\t\t\t\t\t\t\n',
-            'IL7R\tmskcc.org\tGRCh37\t5\t35876484\t35876484\tSilent\tG\tG\tA\t\t\t\t\t\t\n',
-            'KMT2C\tmskcc.org\tGRCh37\t7\t151845367\t151845367\tSilent\tG\tG\tA\t\t\t\t\t\t\n',
-            'MET\tmskcc.org\tGRCh37\t7\t116418998\t116418998\tSilent\tG\tG\tA\t\t\t\t\t\t\n'
+        table_reader = TableReader(output_file)
+        comments = table_reader.comment_lines
+        fieldnames = table_reader.get_fieldnames()
+        records = [ rec for rec in table_reader.read() ]
+
+        expected_comments =['# comment 1\n', '# comment 2\n']
+        expected_records = [
+        {'Hugo_Symbol': 'RTEL1', 'Center': 'mskcc.org', 'NCBI_Build': 'GRCh37', 'Chromosome': '20', 'Start_Position': '62321135', 'End_Position': '62321135', 'Variant_Classification': 'Silent', 'Reference_Allele': 'G', 'Tumor_Seq_Allele1': 'G', 'Tumor_Seq_Allele2': 'A', 'Tumor_Sample_Barcode': '.', 'Matched_Norm_Sample_Barcode': '.', 't_ref_count': '.', 't_alt_count': '.', 'n_ref_count': '.', 'n_alt_count': '.'},
+        {'Hugo_Symbol': 'FAM46C', 'Center': 'mskcc.org', 'NCBI_Build': 'GRCh37', 'Chromosome': '1', 'Start_Position': '118166398', 'End_Position': '118166398', 'Variant_Classification': 'Silent', 'Reference_Allele': 'G', 'Tumor_Seq_Allele1': 'G', 'Tumor_Seq_Allele2': 'A', 'Tumor_Sample_Barcode': '.', 'Matched_Norm_Sample_Barcode': '.', 't_ref_count': '.', 't_alt_count': '.', 'n_ref_count': '.', 'n_alt_count': '.'},
+        {'Hugo_Symbol': 'IL7R', 'Center': 'mskcc.org', 'NCBI_Build': 'GRCh37', 'Chromosome': '5', 'Start_Position': '35876484', 'End_Position': '35876484', 'Variant_Classification': 'Silent', 'Reference_Allele': 'G', 'Tumor_Seq_Allele1': 'G', 'Tumor_Seq_Allele2': 'A', 'Tumor_Sample_Barcode': '.', 'Matched_Norm_Sample_Barcode': '.', 't_ref_count': '.', 't_alt_count': '.', 'n_ref_count': '.', 'n_alt_count': '.'},
+        {'Hugo_Symbol': 'IL7R', 'Center': 'mskcc.org', 'NCBI_Build': 'GRCh37', 'Chromosome': '5', 'Start_Position': '35876484', 'End_Position': '35876484', 'Variant_Classification': 'Silent', 'Reference_Allele': 'G', 'Tumor_Seq_Allele1': 'G', 'Tumor_Seq_Allele2': 'A', 'Tumor_Sample_Barcode': '.', 'Matched_Norm_Sample_Barcode': '.', 't_ref_count': '.', 't_alt_count': '.', 'n_ref_count': '.', 'n_alt_count': '.'},
+        {'Hugo_Symbol': 'KMT2C', 'Center': 'mskcc.org', 'NCBI_Build': 'GRCh37', 'Chromosome': '7', 'Start_Position': '151845367', 'End_Position': '151845367', 'Variant_Classification': 'Silent', 'Reference_Allele': 'G', 'Tumor_Seq_Allele1': 'G', 'Tumor_Seq_Allele2': 'A', 'Tumor_Sample_Barcode': '.', 'Matched_Norm_Sample_Barcode': '.', 't_ref_count': '.', 't_alt_count': '.', 'n_ref_count': '.', 'n_alt_count': '.'},
+        {'Hugo_Symbol': 'MET', 'Center': 'mskcc.org', 'NCBI_Build': 'GRCh37', 'Chromosome': '7', 'Start_Position': '116418998', 'End_Position': '116418998', 'Variant_Classification': 'Silent', 'Reference_Allele': 'G', 'Tumor_Seq_Allele1': 'G', 'Tumor_Seq_Allele2': 'A', 'Tumor_Sample_Barcode': '.', 'Matched_Norm_Sample_Barcode': '.', 't_ref_count': '.', 't_alt_count': '.', 'n_ref_count': '.', 'n_alt_count': '.'}
         ]
-        self.assertEqual(lines, expected_lines)
+
+        self.assertEqual(comments, expected_comments)
+        self.assertEqual(records, expected_records)
+
+        # with open(output_file) as f:
+        #     lines = [ line for line in f ]
+        # expected_lines = [
+        #     '# comment 1\n',
+        #     '# comment 2\n',
+        #     'Hugo_Symbol\tCenter\tNCBI_Build\tChromosome\tStart_Position\tEnd_Position\tVariant_Classification\tReference_Allele\tTumor_Seq_Allele1\tTumor_Seq_Allele2\tTumor_Sample_Barcode\tMatched_Norm_Sample_Barcode\tt_ref_count\tt_alt_count\tn_ref_count\tn_alt_count\n',
+        #     'RTEL1\tmskcc.org\tGRCh37\t20\t62321135\t62321135\tSilent\tG\tG\tA\t\t\t\t\t\t\n',
+        #     'FAM46C\tmskcc.org\tGRCh37\t1\t118166398\t118166398\tSilent\tG\tG\tA\t\t\t\t\t\t\n',
+        #     'IL7R\tmskcc.org\tGRCh37\t5\t35876484\t35876484\tSilent\tG\tG\tA\t\t\t\t\t\t\n',
+        #     'IL7R\tmskcc.org\tGRCh37\t5\t35876484\t35876484\tSilent\tG\tG\tA\t\t\t\t\t\t\n',
+        #     'KMT2C\tmskcc.org\tGRCh37\t7\t151845367\t151845367\tSilent\tG\tG\tA\t\t\t\t\t\t\n',
+        #     'MET\tmskcc.org\tGRCh37\t7\t116418998\t116418998\tSilent\tG\tG\tA\t\t\t\t\t\t\n'
+        # ]
+        # self.assertEqual(lines, expected_lines)
 
 
 
