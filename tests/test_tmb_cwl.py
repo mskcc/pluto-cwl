@@ -115,8 +115,8 @@ class TestTMBWorkflow(PlutoTestCase):
                 'location': 'file://' + os.path.join(output_dir,'Sample1.Sample1-N.tmb.tsv'),
                 'basename': 'Sample1.Sample1-N.tmb.tsv',
                 'class': 'File',
-                'checksum': 'sha1$fc3cc241f333bccf9b45ba2a9e067920fe621a4c',
-                'size': 43,
+                'checksum': 'sha1$92855591e336f37084457910676a7dfa7de13c12',
+                'size': 38,
                 'path':  os.path.join(output_dir,'Sample1.Sample1-N.tmb.tsv')
                 }
             }
@@ -127,7 +127,7 @@ class TestTMBWorkflow(PlutoTestCase):
             lines = [ l.strip().split() for l in fin ]
         expected_lines = [
             ['CMO_TMB_SCORE', 'SampleID'],
-            ['0.000000006', 'Sample1']
+            ['6000.0', 'Sample1']
         ]
         self.assertEqual(lines, expected_lines)
 
