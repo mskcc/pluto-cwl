@@ -9,7 +9,7 @@ import unittest
 THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 PARENT_DIR = os.path.dirname(THIS_DIR)
 sys.path.insert(0, PARENT_DIR)
-from pluto.tools import PlutoTestCase, CWLFile 
+from pluto.tools import PlutoTestCase, CWLFile
 sys.path.pop(0)
 
 class TestTMBVariantFilter(PlutoTestCase):
@@ -113,8 +113,8 @@ class TestTMBVariantFilter(PlutoTestCase):
                 'location': 'file://' + os.path.join(output_dir,'output.maf'),
                 'basename': 'output.maf',
                 'class': 'File',
-                'checksum': 'sha1$4dbaee2c0f2f7e6aaf8c007571f10038596b9881',
-                'size': 320,
+                'checksum': 'sha1$b019b5b3c6aba861371c135fe47520c969fab5ae',
+                'size': 352,
                 'path':  os.path.join(output_dir,'output.maf')
                 }
             }
@@ -125,6 +125,7 @@ class TestTMBVariantFilter(PlutoTestCase):
         expected_comments = ['# comment 1', '# comment 2']
         expected_mutations = [
         {'t_af': '0.50', 't_depth': '550', 'Hugo_Symbol': 'EGFR', 'Start_Position': '1', 'Consequence': 'missense_variant'},
+          {'Consequence': 'missense_variant', 'Hugo_Symbol': 'EGFR', 'Start_Position': '1', 't_af': '0.51', 't_depth': '90'},
         {'t_af': '0.45', 't_depth': '590', 'Hugo_Symbol': 'EGFR', 'Start_Position': '1', 'Consequence': 'splice_region_variant'},
         {'t_af': '0.45', 't_depth': '590', 'Hugo_Symbol': 'TERT', 'Start_Position': '1295340', 'Consequence': 'splice_region_variant'},
         {'t_af': '0.45', 't_depth': '590', 'Hugo_Symbol': 'TERT', 'Start_Position': '1295339', 'Consequence': 'splice_region_variant'},

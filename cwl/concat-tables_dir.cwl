@@ -8,7 +8,7 @@ doc: "Concatenate all the table files provided, but put the input files in a dir
 requirements:
   InlineJavascriptRequirement: {}
   DockerRequirement:
-    dockerPull: mskcc/helix_filters_01:21.02.2
+    dockerPull: mskcc/helix_filters_01:21.03.0
   InitialWorkDirRequirement:
     listing:
       - entryname: inputs_dir

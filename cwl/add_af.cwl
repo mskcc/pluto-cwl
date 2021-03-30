@@ -7,7 +7,7 @@ baseCommand: ['add_af.py']
 
 requirements:
   DockerRequirement:
-    dockerPull: mskcc/helix_filters_01:21.02.2
+    dockerPull: mskcc/helix_filters_01:21.03.0
 
 inputs:
   input_file:

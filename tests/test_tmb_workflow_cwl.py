@@ -201,7 +201,7 @@ class TestTmbWorkflow(PlutoTestCase):
                 'location': 'file://' + os.path.join(output_dir,'data_clinical_sample.txt'),
                 'basename': 'data_clinical_sample.txt',
                 'class': 'File',
-                'checksum': 'sha1$64ef184a01d7a95e604d2ab4170867150e3fe90f',
+                'checksum': 'sha1$dd1cd29c40e6e1e247f9443edd5ff1aa22dc5126',
                 'size': 353,
                 'path':  os.path.join(output_dir,'data_clinical_sample.txt')
                 }
@@ -218,9 +218,9 @@ class TestTmbWorkflow(PlutoTestCase):
             ['#STRING', 'STRING', 'NUMBER', 'NUMBER'],
             ['#1', '1', '1', '1'],
             ['SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'CMO_TMB_SCORE'],
-            ['Sample1-T', 'Patient1', '108', '6000.0'],
+            ['Sample1-T', 'Patient1', '108', '7000.0'],
             ['Sample1-N', 'Patient2', '58', 'NA'],
-            ['Sample2-T', 'Patient3', '502', '5000.0'],
+            ['Sample2-T', 'Patient3', '502', '6000.0'],
             ['Sample2-N', 'Patient4', '56', 'NA'],
             ['Sample6-T', 'Patient4', '57', 'NA'],
             ['Sample7-N', 'Patient4', '58', 'NA']
@@ -266,7 +266,7 @@ class TestTmbWorkflow(PlutoTestCase):
                 'location': 'file://' + os.path.join(output_dir,'data_clinical_sample.txt'),
                 'basename': 'data_clinical_sample.txt',
                 'class': 'File',
-                'checksum': 'sha1$e3b51b69c72770e79f542189ac23434cb477bbae',
+                'checksum': 'sha1$cc55474d052c50c16878db5b55ff049c13d12792',
                 'size': 349,
                 'path':  os.path.join(output_dir,'data_clinical_sample.txt')
                 }
@@ -285,7 +285,7 @@ class TestTmbWorkflow(PlutoTestCase):
             ['SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'CMO_TMB_SCORE'],
             ['Sample1-T', 'Patient1', '108', 'NA'],
             ['Sample1-N', 'Patient2', '58', 'NA'],
-            ['Sample2-T', 'Patient3', '502', '5000.0'],
+            ['Sample2-T', 'Patient3', '502', '6000.0'],
             ['Sample2-N', 'Patient4', '56', 'NA'],
             ['Sample6-T', 'Patient4', '57', 'NA'],
             ['Sample7-N', 'Patient4', '58', 'NA']
@@ -323,7 +323,7 @@ class TestTmbWorkflow(PlutoTestCase):
                 'location': 'file://' + os.path.join(output_dir,'data_clinical_sample.txt'),
                 'basename': 'data_clinical_sample.txt',
                 'class': 'File',
-                'checksum': 'sha1$4309ff06827ad7307ef7a9826d9493dae9b05e3b',
+                'checksum': 'sha1$29d75e732beabcf955c28d0e2d690093645dc297',
                 'size': 349,
                 'path':  os.path.join(output_dir,'data_clinical_sample.txt')
                 }
@@ -340,7 +340,7 @@ class TestTmbWorkflow(PlutoTestCase):
             ['#STRING', 'STRING', 'NUMBER', 'NUMBER'],
             ['#1', '1', '1', '1'],
             ['SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'CMO_TMB_SCORE'],
-            ['Sample1-T', 'Patient1', '108', '6000.0'],
+            ['Sample1-T', 'Patient1', '108', '7000.0'],
             ['Sample1-N', 'Patient2', '58', 'NA'],
             ['Sample2-T', 'Patient3', '502', 'NA'],
             ['Sample2-N', 'Patient4', '56', 'NA'],
@@ -379,8 +379,8 @@ class TestTmbWorkflow(PlutoTestCase):
                 'location': 'file://' + os.path.join(output_dir,'data_clinical_sample.txt'),
                 'basename': 'data_clinical_sample.txt',
                 'class': 'File',
-                'checksum': 'sha1$88a5ff675b91a174cb3c395596397b5f37b849f3',
-                'size': 350,
+                'checksum': 'sha1$ee63f691c8e2faa094e9c7a1ffd53ab74ec18317',
+                'size': 351,
                 'path':  os.path.join(output_dir,'data_clinical_sample.txt')
                 }
             }
@@ -396,7 +396,7 @@ class TestTmbWorkflow(PlutoTestCase):
             ['#STRING', 'STRING', 'NUMBER', 'NUMBER'],
             ['#1', '1', '1', '1'],
             ['SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'CMO_TMB_SCORE'],
-            ['Sample1-T', 'Patient1', '108', '13000.0'],
+            ['Sample1-T', 'Patient1', '108', '475000.0'],
             ['Sample1-N', 'Patient2', '58', 'NA'],
             ['Sample2-T', 'Patient3', '502', 'NA'],
             ['Sample2-N', 'Patient4', '56', 'NA'],
@@ -437,8 +437,8 @@ class TestTmbWorkflow(PlutoTestCase):
                 'location': 'file://' + os.path.join(output_dir,'data_clinical_sample.txt'),
                 'basename': 'data_clinical_sample.txt',
                 'class': 'File',
-                'checksum': 'sha1$7acd345d826a6ae3ca9e1ce338336db2b743d343',
-                'size': 6483,
+                'checksum': 'sha1$1db82bdb08d5ee2f6b23df69866bc070dfe15a15',
+                'size': 6484,
                 'path':  os.path.join(output_dir,'data_clinical_sample.txt')
                 }
             }
@@ -463,7 +463,7 @@ class TestTmbWorkflow(PlutoTestCase):
             tmbs[record['SAMPLE_ID']] = record['CMO_TMB_SCORE']
 
         expected_tmbs = {
-        'Sample46': 'NA', 'Sample44': 'NA', 'Sample80': 'NA', 'Sample20': 'NA', 'Sample38': 'NA', 'Sample26': 'NA', 'Sample94': 'NA', 'Sample48': 'NA', 'Sample68': 'NA', 'Sample90': 'NA', 'Sample18': 'NA', 'Sample54': 'NA', 'Sample52': 'NA', 'Sample86': 'NA', 'Sample30': 'NA', 'Sample78': 'NA', 'Sample84': 'NA', 'Sample82': 'NA', 'Sample6': 'NA', 'Sample96': 'NA', 'Sample72': 'NA', 'Sample56': 'NA', 'Sample64': 'NA', 'Sample58': 'NA', 'Sample92': 'NA', 'Sample62': 'NA', 'Sample8': 'NA', 'Sample24': 'NA', 'Sample12': 'NA', 'Sample16': 'NA', 'Sample88': 'NA', 'Sample22': 'NA', 'Sample42': 'NA', 'Sample76': 'NA', 'Sample28': 'NA', 'Sample74': 'NA', 'Sample50': 'NA', 'Sample60': 'NA', 'Sample10': 'NA', 'Sample36': 'NA', 'Sample34': 'NA', 'Sample40': 'NA', 'Sample66': 'NA', 'Sample14': 'NA', 'Sample32': 'NA', 'Sample70': 'NA', 'Sample4': 'NA', 'Sample1': '13000.0'
+        'Sample46': 'NA', 'Sample44': 'NA', 'Sample80': 'NA', 'Sample20': 'NA', 'Sample38': 'NA', 'Sample26': 'NA', 'Sample94': 'NA', 'Sample48': 'NA', 'Sample68': 'NA', 'Sample90': 'NA', 'Sample18': 'NA', 'Sample54': 'NA', 'Sample52': 'NA', 'Sample86': 'NA', 'Sample30': 'NA', 'Sample78': 'NA', 'Sample84': 'NA', 'Sample82': 'NA', 'Sample6': 'NA', 'Sample96': 'NA', 'Sample72': 'NA', 'Sample56': 'NA', 'Sample64': 'NA', 'Sample58': 'NA', 'Sample92': 'NA', 'Sample62': 'NA', 'Sample8': 'NA', 'Sample24': 'NA', 'Sample12': 'NA', 'Sample16': 'NA', 'Sample88': 'NA', 'Sample22': 'NA', 'Sample42': 'NA', 'Sample76': 'NA', 'Sample28': 'NA', 'Sample74': 'NA', 'Sample50': 'NA', 'Sample60': 'NA', 'Sample10': 'NA', 'Sample36': 'NA', 'Sample34': 'NA', 'Sample40': 'NA', 'Sample66': 'NA', 'Sample14': 'NA', 'Sample32': 'NA', 'Sample70': 'NA', 'Sample4': 'NA', 'Sample1': '475000.0'
         }
         self.assertEqual(tmbs, expected_tmbs)
 

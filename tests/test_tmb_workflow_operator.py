@@ -197,7 +197,7 @@ class TestTmbWorkflowOperator(PlutoTestCase):
                 'location': 'file://' + os.path.join(output_dir,'data_clinical_sample.txt'),
                 'basename': 'data_clinical_sample.txt',
                 'class': 'File',
-                'checksum': 'sha1$64ef184a01d7a95e604d2ab4170867150e3fe90f',
+                'checksum': 'sha1$dd1cd29c40e6e1e247f9443edd5ff1aa22dc5126',
                 'size': 353,
                 'path':  os.path.join(output_dir,'data_clinical_sample.txt')
                 }

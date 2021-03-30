@@ -30,7 +30,7 @@ class TestWorkflowWithFacets(PlutoTestCase):
         snp_pileup = os.path.join(self.DATA_SETS['demo']['SNP_PILEUP_DIR'], "Sample1.Sample2.snp_pileup.gz")
 
         self.input = {
-            "assay_coverage": "10000", # TODO: get this from an assay reference key
+            "assay_coverage": "1000", # TODO: get this from an assay reference key
             "project_id": "demo",
             "project_name": "demo",
             "project_short_name": "demo",
@@ -395,7 +395,7 @@ class TestWorkflowWithFacets(PlutoTestCase):
         for record in records:
             tmbs[record['SAMPLE_ID']] = record['CMO_TMB_SCORE']
 
-        expected_tmbs = {'Sample1': '0.0', 'Sample4': 'NA'}
+        expected_tmbs = {'Sample1': '17000.0', 'Sample4': 'NA'}
         self.assertEqual(tmbs, expected_tmbs)
 
 
