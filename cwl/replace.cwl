@@ -1,6 +1,7 @@
 #!/usr/bin/env cwl-runner
 
 # replace strings in file
+# NOTE: in the future, do not write hard-coded CWL's like this, use a generic script or method
 
 cwlVersion: v1.0
 class: CommandLineTool
