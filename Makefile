@@ -179,7 +179,9 @@ update-container-tags:
 
 # ~~~~~ Debug & Development ~~~~~ #
 # Run the test suite
+# NOTE: run with `$ LARGE_TESTS=True python3 tests/... ` to enable large test cases
 export FIXTURES_DIR:=/juno/work/ci/helix_filters_01/fixtures
+
 # TODO: figure out why this is missing some tests
 test2:
 	. "$(ENVSH)" test && \
