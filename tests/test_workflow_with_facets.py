@@ -11,11 +11,879 @@ THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 PARENT_DIR = os.path.dirname(THIS_DIR)
 sys.path.insert(0, PARENT_DIR)
 from pluto.tools import TableReader, PlutoTestCase
+from pluto.settings import ENABLE_LARGE_TESTS
 sys.path.pop(0)
 
 class TestWorkflowWithFacets(PlutoTestCase):
     cwl_file = 'workflow_with_facets.cwl'
 
+    def test_demo_dataset1(self):
+        """
+        Test case for using a single demo sample; tiny dataset
+        """
+        # self.preserve = True
+        # print(self.tmpdir)
+        data_clinical_file = os.path.join(self.DATA_SETS['demo']['INPUTS_DIR'], "demo_sample_data_clinical.txt")
+        sample_summary_file = os.path.join(self.DATA_SETS['demo']['QC_DIR'], "demo_SampleSummary.txt")
+        mutation_svs_txt_file = os.path.join(self.DATA_SETS['demo']['MAF_DIR'], "Sample1.Sample2.svs.pass.vep.portal.txt")
+        mutation_svs_maf = os.path.join(self.DATA_SETS['demo']['MAF_DIR'], "Sample1.Sample2.svs.pass.vep.maf")
+        pair_maf = os.path.join(self.DATA_SETS['demo']['MAF_DIR'], "Sample1.Sample2.muts.maf")
+        snp_pileup = os.path.join(self.DATA_SETS['demo']['SNP_PILEUP_DIR'], "Sample1.Sample2.snp_pileup.gz")
+
+        self.input = {
+            "assay_coverage": "1000", # TODO: get this from an assay reference key
+            "project_id": "demo",
+            "project_name": "demo",
+            "project_short_name": "demo",
+            "project_description": "project",
+            "project_pi": "Dr. Jones",
+            "request_pi": "Dr. Franklin",
+            "is_impact": True,
+            "argos_version_string": "2.x",
+            "cancer_type": "MEL",
+            "cancer_study_identifier": 'demo',
+            "analysis_gene_cna_filename": "demo.gene.cna.txt",
+            "analysis_mutations_filename": "demo.muts.maf",
+            "analysis_mutations_share_filename": "demo.muts.share.maf",
+            "analysis_segment_cna_filename": "demo.seg.cna.txt",
+            "analysis_sv_filename": "demo.svs.maf",
+            "cbio_meta_cna_segments_filename": "Proj_08390_G_meta_cna_hg19_seg.txt",
+            "cbio_segment_data_filename": "Proj_08390_G_data_cna_hg19.seg",
+            "helix_filter_version": "20.06.1",
+            'IMPACT_gene_list': {
+                "path": self.IMPACT_FILE,
+                "class": "File"
+            },
+            "data_clinical_file": {
+                "path": data_clinical_file,
+                "class": "File"
+            },
+            "sample_summary_file": {
+                "path": sample_summary_file,
+                "class": "File"
+            },
+            "targets_list": {
+                "path": self.DATA_SETS['demo']["targets_list"],
+                "class": "File"
+            },
+            "known_fusions_file": {
+                "path": self.KNOWN_FUSIONS_FILE,
+                "class": "File"
+            },
+            "mutation_svs_txt_files": [ { "path": mutation_svs_txt_file, "class": "File" } ],
+            "mutation_svs_maf_files": [ { "path": mutation_svs_maf, "class": "File" } ],
+            "pairs": [
+                {
+                    "pair_maf": { "path": pair_maf, "class": "File" },
+                    "snp_pileup": { "path": snp_pileup, "class": "File" },
+                    "pair_id": "Sample1.Sample2",
+                    "tumor_id": "Sample1",
+                    "normal_id": "Sample2"
+                }
+            ]
+        }
+
+        output_json, output_dir = self.run_cwl()
+
+        expected_output = {
+            'analysis_dir': {
+                'class': 'Directory',
+                'basename': 'analysis',
+                'location': 'file://' + os.path.join(output_dir, 'analysis'),
+                'path': os.path.join(output_dir, 'analysis'),
+                'listing': [
+                    {
+                        'location': 'file://' + os.path.join(output_dir, 'analysis/demo.gene.cna.txt'),
+                        'basename': 'demo.gene.cna.txt',
+                        'class': 'File',
+                        'checksum': 'sha1$a3527d2bf248c3121f093f7edfdf2605b12dfe71',
+                        'size': 26505,
+                        'path': os.path.join(output_dir, 'analysis/demo.gene.cna.txt')
+                    },
+                    {
+                        'location': 'file://' + os.path.join(output_dir, 'analysis/demo.muts.maf'),
+                        'basename': 'demo.muts.maf',
+                        'class': 'File',
+                        'checksum': 'sha1$bbb1320d792c5a37f0d2afae82fdd3e67b2db182',
+                        'size': 36333,
+                        'path': os.path.join(output_dir, 'analysis/demo.muts.maf')
+                    },
+                    {
+                        'location': 'file://' + os.path.join(output_dir, 'analysis/demo.muts.share.maf'),
+                        'basename': 'demo.muts.share.maf',
+                        'class': 'File',
+                        'checksum': 'sha1$7716a2274203abe8039c99d0722b92a675ed38b7',
+                        'size': 7288,
+                        'path': os.path.join(output_dir, 'analysis/demo.muts.share.maf')
+                    },
+                    {
+                        'location': 'file://' + os.path.join(output_dir, 'analysis/demo.seg.cna.txt'),
+                        'basename': 'demo.seg.cna.txt',
+                        'class': 'File',
+                        'checksum': 'sha1$e99e98d33598c423448cba44a37da712c9c933c5',
+                        'size': 525,
+                        'path': os.path.join(output_dir, 'analysis/demo.seg.cna.txt')
+                    },
+                    {
+                        'location': 'file://' + os.path.join(output_dir, 'analysis/demo.svs.maf'),
+                        'basename': 'demo.svs.maf',
+                        'class': 'File',
+                        'checksum': 'sha1$df420706bb5b772a79317843c0a01a3c88a9571d',
+                        'size': 23603,
+                        'path': os.path.join(output_dir, 'analysis/demo.svs.maf')
+                        }
+                    ]
+                },
+                'facets_dir': {
+                    'location': 'file://' + os.path.join(output_dir, 'facets'),
+                    'basename': 'facets',
+                    'class': 'Directory',
+                    'path': os.path.join(output_dir, 'facets'),
+                    'listing': [{'basename': 'Sample1.Sample2',
+                          'class': 'Directory',
+                          'listing': [{'basename': 'Sample1.Sample2_hisens.ccf.portal.maf',
+                                       'checksum': 'sha1$e86566d281bc808e57ee912d02bdbda8179d7c0a',
+                                       'class': 'File',
+                                       'location': 'file://' + os.path.join(output_dir,'facets/Sample1.Sample2/Sample1.Sample2_hisens.ccf.portal.maf'),
+                                       'path': os.path.join(output_dir,'facets/Sample1.Sample2/Sample1.Sample2_hisens.ccf.portal.maf'),
+                                       'size': 62216},
+                                      {'basename': 'Sample1.arm_level.txt',
+                                       'checksum': 'sha1$98704689aedd071919ca0b2e387462948cb803b4',
+                                       'class': 'File',
+                                       'location': 'file://' + os.path.join(output_dir,'facets/Sample1.Sample2/Sample1.arm_level.txt'),
+                                       'path': os.path.join(output_dir,'facets/Sample1.Sample2/Sample1.arm_level.txt'),
+                                       'size': 370},
+                                      {'basename': 'Sample1.txt',
+                                       'checksum': 'sha1$ccdaded463980977bc4c90e539043c6efd1aef33',
+                                       'class': 'File',
+                                       'location': 'file://' + os.path.join(output_dir,'facets/Sample1.Sample2/Sample1.txt'),
+                                       'path': os.path.join(output_dir,'facets/Sample1.Sample2/Sample1.txt'),
+                                       'size': 506},
+                                      {'basename': 'Sample1.gene_level.txt',
+                                       'checksum': 'sha1$75ad4054ccec1f7a47d1c7738730816191d713c3',
+                                       'class': 'File',
+                                       'location': 'file://' + os.path.join(output_dir,'facets/Sample1.Sample2/Sample1.gene_level.txt'),
+                                       'path': os.path.join(output_dir,'facets/Sample1.Sample2/Sample1.gene_level.txt'),
+                                       'size': 94824},
+                                      {'basename': 'Sample1_hisens.cncf.txt',
+                                       'checksum': 'sha1$738974eaa3e4278f40cdbbf487b87f8b57ee2ecb',
+                                       'class': 'File',
+                                       'location': 'file://' + os.path.join(output_dir,'facets/Sample1.Sample2/Sample1_hisens.cncf.txt'),
+                                       'path': os.path.join(output_dir,'facets/Sample1.Sample2/Sample1_hisens.cncf.txt'),
+                                       'size': 1385},
+                                      {'basename': 'Sample1_hisens.rds',
+                                       'checksum': 'sha1$13846db5dc75ca6b7d64cb69ff04fa64da9a88e7',
+                                       'class': 'File',
+                                       'location': 'file://' + os.path.join(output_dir,'facets/Sample1.Sample2/Sample1_hisens.rds'),
+                                       'path': os.path.join(output_dir,'facets/Sample1.Sample2/Sample1_hisens.rds'),
+                                       'size': 191089},
+                                      {'basename': 'Sample1_hisens.seg',
+                                       'checksum': 'sha1$069b23dada099e20700c6b10471750e3cba6ee86',
+                                       'class': 'File',
+                                       'location': 'file://' + os.path.join(output_dir,'facets/Sample1.Sample2/Sample1_hisens.seg'),
+                                       'path': os.path.join(output_dir,'facets/Sample1.Sample2/Sample1_hisens.seg'),
+                                       'size': 647},
+                                      {'basename': 'Sample1_purity.rds',
+                                       'checksum': 'sha1$ded479ac6278f1cd7bf42bf186440d8a89415a02',
+                                       'class': 'File',
+                                       'location': 'file://' + os.path.join(output_dir,'facets/Sample1.Sample2/Sample1_purity.rds'),
+                                       'path': os.path.join(output_dir,'facets/Sample1.Sample2/Sample1_purity.rds'),
+                                       'size': 191195},
+                                      {'basename': 'Sample1_purity.seg',
+                                       'checksum': 'sha1$069b23dada099e20700c6b10471750e3cba6ee86',
+                                       'class': 'File',
+                                       'location': 'file://' + os.path.join(output_dir,'facets/Sample1.Sample2/Sample1_purity.seg'),
+                                       'path': os.path.join(output_dir,'facets/Sample1.Sample2/Sample1_purity.seg'),
+                                       'size': 647},
+                                      {'basename': 'Sample1.qc.txt',
+                                       'checksum': 'sha1$8f014a24b3e53c3801be6a6751de2dc089f79f69',
+                                       'class': 'File',
+                                       'location': 'file://' + os.path.join(output_dir,'facets/Sample1.Sample2/Sample1.qc.txt'),
+                                       'path': os.path.join(output_dir,'facets/Sample1.Sample2/Sample1.qc.txt'),
+                                       'size': 1224}],
+                          'location': 'file://' + os.path.join(output_dir,'facets/Sample1.Sample2'),
+                          'path': os.path.join(output_dir,'facets/Sample1.Sample2')
+                            }]
+                },
+                'facets_failed_pairs': [],
+                'portal_dir': {
+                    'location': 'file://' + os.path.join(output_dir, 'portal'),
+                    'path': os.path.join(output_dir, 'portal'),
+                    'class': 'Directory',
+                    'basename': 'portal',
+                    'listing': [
+                        {
+                            'location': 'file://' + os.path.join(output_dir, 'portal/meta_clinical_sample.txt'),
+                            'basename': 'meta_clinical_sample.txt',
+                            'class': 'File',
+                            'checksum': 'sha1$7d2bb282e74ff6a5d41b334ded689f9336722702',
+                            'size': 132,
+                            'path': os.path.join(output_dir, 'portal/meta_clinical_sample.txt')
+                        },
+                        {
+                            'location': 'file://' + os.path.join(output_dir, 'portal/data_clinical_patient.txt'),
+                            'basename': 'data_clinical_patient.txt',
+                            'class': 'File',
+                            'checksum': 'sha1$cac1377a45dfc316266697a21df87801883127b5',
+                            'size': 91,
+                            'path': os.path.join(output_dir, 'portal/data_clinical_patient.txt')
+                        },
+                        {
+                            'location': 'file://' + os.path.join(output_dir, 'portal/data_clinical_sample.txt'),
+                            'basename': 'data_clinical_sample.txt',
+                            'class': 'File',
+                            'checksum': 'sha1$678e003ed09df4f63a9a3a013623b7a18b6c9359',
+                            'size': 1401,
+                            'path': os.path.join(output_dir, 'portal/data_clinical_sample.txt')
+                        },
+                        {
+                            'location': 'file://' + os.path.join(output_dir, 'portal/meta_study.txt'),
+                            'basename': 'meta_study.txt',
+                            'class': 'File',
+                            'checksum': 'sha1$998a850a03828cf4c235583dced9751ba75c9ab1',
+                            'size': 128,
+                            'path': os.path.join(output_dir, 'portal/meta_study.txt')
+                        },
+                        {
+                            'location': 'file://' + os.path.join(output_dir, 'portal/meta_clinical_patient.txt'),
+                            'basename': 'meta_clinical_patient.txt',
+                            'class': 'File',
+                            'checksum': 'sha1$e1f0b7786dd10af608df5178ff4b1a0b7a191a38',
+                            'size': 134,
+                            'path': os.path.join(output_dir, 'portal/meta_clinical_patient.txt')
+                        },
+                        {
+                            'location': 'file://' + os.path.join(output_dir, 'portal/meta_CNA.txt'),
+                            'basename': 'meta_CNA.txt',
+                            'class': 'File',
+                            'checksum': 'sha1$93367ae36cae5e1a53b25e5bb02731e8b113251b',
+                            'size': 262,
+                            'path': os.path.join(output_dir, 'portal/meta_CNA.txt')
+                        },
+                        {
+                            'location': 'file://' + os.path.join(output_dir, 'portal/meta_fusions.txt'),
+                            'basename': 'meta_fusions.txt',
+                            'class': 'File',
+                            'checksum': 'sha1$f23883a435cd6bcebb05b06ef6004ba3be413828',
+                            'size': 219,
+                            'path': os.path.join(output_dir, 'portal/meta_fusions.txt')
+                        },
+                        {
+                            'location': 'file://' + os.path.join(output_dir, 'portal/meta_mutations_extended.txt'),
+                            'basename': 'meta_mutations_extended.txt',
+                            'class': 'File',
+                            'checksum': 'sha1$3be01b7a638dc3bb4f229038cbecd9b3cafc7410',
+                            'size': 245,
+                            'path': os.path.join(output_dir, 'portal/meta_mutations_extended.txt')
+                        },
+                        {
+                            'location': 'file://' + os.path.join(output_dir, 'portal/Proj_08390_G_meta_cna_hg19_seg.txt'),
+                            'basename': 'Proj_08390_G_meta_cna_hg19_seg.txt',
+                            'class': 'File',
+                            'checksum': 'sha1$fd39b2b94b555902fb9b313a5d06cb7ad3a305eb',
+                            'size': 192,
+                            'path': os.path.join(output_dir, 'portal/Proj_08390_G_meta_cna_hg19_seg.txt')
+                        },
+                        {
+                            'location': 'file://' + os.path.join(output_dir, 'portal/data_CNA.txt'),
+                            'basename': 'data_CNA.txt',
+                            'class': 'File',
+                            'checksum': 'sha1$df07ff6b94392c470e2c8c47ca6e35cc2f6cc791',
+                            'size': 2343,
+                            'path': os.path.join(output_dir, 'portal/data_CNA.txt')
+                        },
+                        {
+                            'location': 'file://' + os.path.join(output_dir, 'portal/data_CNA.ascna.txt'),
+                            'basename': 'data_CNA.ascna.txt',
+                            'class': 'File',
+                            'checksum': 'sha1$64710614a20b754dbbf863369ed18d05747166a3',
+                            'size': 2759,
+                            'path': os.path.join(output_dir, 'portal/data_CNA.ascna.txt')
+                        },
+                        {
+                            'location': 'file://' + os.path.join(output_dir, 'portal/data_mutations_extended.txt'),
+                            'basename': 'data_mutations_extended.txt',
+                            'class': 'File',
+                            'checksum': 'sha1$f4575aaf80b6b4e22cbfed5e7743d3285f7a9a88',
+                            'size': 5623,
+                            'path': os.path.join(output_dir, 'portal/data_mutations_extended.txt')
+                        },
+                        {
+                            'location': 'file://' + os.path.join(output_dir, 'portal/Proj_08390_G_data_cna_hg19.seg'),
+                            'basename': 'Proj_08390_G_data_cna_hg19.seg',
+                            'class': 'File',
+                            'checksum': 'sha1$e99e98d33598c423448cba44a37da712c9c933c5',
+                            'size': 525,
+                            'path': os.path.join(output_dir, 'portal/Proj_08390_G_data_cna_hg19.seg')
+                        },
+                        {
+                            'location': 'file://' + os.path.join(output_dir, 'portal/data_fusions.txt'),
+                            'basename': 'data_fusions.txt',
+                            'class': 'File',
+                            'checksum': 'sha1$c16f763b248813fcdde76f7486f1ddc4e9856038',
+                            'size': 99,
+                            'path': os.path.join(output_dir, 'portal/data_fusions.txt')
+                        },
+                        {
+                            'class': 'Directory',
+                            'basename': 'case_lists',
+                            'location': 'file://' + os.path.join(output_dir, 'portal/case_lists'),
+                            'path': os.path.join(output_dir, 'portal/case_lists'),
+                            'listing': [
+                                {'location': 'file://' + os.path.join(output_dir, 'portal/case_lists/cases_all.txt'),
+                                'basename': 'cases_all.txt',
+                                'class': 'File',
+                                'checksum': 'sha1$3d3d54b5cbd98e751adf926d07884eeaed94aaef',
+                                'size': 188,
+                                'path': os.path.join(output_dir, 'portal/case_lists/cases_all.txt')},
+                                {'location': 'file://' + os.path.join(output_dir, 'portal/case_lists/cases_cnaseq.txt'),
+                                'basename': 'cases_cnaseq.txt',
+                                'class': 'File',
+                                'checksum': 'sha1$2a43c8ed31f69c12cf9a14044bab1aaa1b6ec7ee',
+                                'size': 268,
+                                'path': os.path.join(output_dir, 'portal/case_lists/cases_cnaseq.txt')},
+                                {'location': 'file://' + os.path.join(output_dir, 'portal/case_lists/cases_cna.txt'),
+                                'basename': 'cases_cna.txt',
+                                'class': 'File',
+                                'checksum': 'sha1$117563761d7cb4690dea363f40b77ef1a0444fc1',
+                                'size': 200,
+                                'path': os.path.join(output_dir, 'portal/case_lists/cases_cna.txt')},
+                                {'location': 'file://' + os.path.join(output_dir, 'portal/case_lists/cases_sequenced.txt'),
+                                'basename': 'cases_sequenced.txt',
+                                'class': 'File',
+                                'checksum': 'sha1$78d1d0acb6928349b4448a73f2cdf1ed4edcb1a3',
+                                'size': 213,
+                                'path': os.path.join(output_dir, 'portal/case_lists/cases_sequenced.txt')}
+                            ]
+                        }
+                    ]
+                }
+            }
+        self.maxDiff = None
+        self.assertDictEqual(output_json, expected_output)
+        comments, mutations = self.load_mutations(os.path.join(output_dir, 'analysis', 'demo.muts.maf'))
+        self.assertEqual(len(mutations), 22)
+        comments, mutations = self.load_mutations(os.path.join(output_dir, 'portal', 'data_mutations_extended.txt'))
+        self.assertEqual(len(mutations), 17)
+
+        # load the data_CNA.txt file
+        path = os.path.join(output_dir, 'portal/data_CNA.txt') # renamed from the data_CNA.scna.txt file ...
+        with open(path) as f:
+            header = next(f)
+        header_parts = header.split()
+        expected_header_parts = ['Hugo_Symbol', 'Sample1']
+        self.assertEqual(header_parts, expected_header_parts)
+
+        path = os.path.join(output_dir, 'portal/data_CNA.ascna.txt')
+        with open(path) as f:
+            header = next(f)
+        header_parts = header.split()
+        expected_header_parts = ['Hugo_Symbol', 'Sample1']
+        self.assertEqual(header_parts, expected_header_parts)
+
+        path = os.path.join(output_dir, 'portal/data_clinical_sample.txt')
+        table_reader = TableReader(path)
+        comments = table_reader.comment_lines
+        fieldnames = table_reader.get_fieldnames()
+        records = [ rec for rec in table_reader.read() ]
+
+        expected_comments = [
+        '#SAMPLE_ID\tIGO_ID\tPATIENT_ID\tCOLLAB_ID\tSAMPLE_TYPE\tSAMPLE_CLASS\tGENE_PANEL\tONCOTREE_CODE\tSPECIMEN_PRESERVATION_TYPE\tTISSUE_SITE\tREQUEST_ID\tPROJECT_ID\tPIPELINE\tPIPELINE_VERSION\tSAMPLE_COVERAGE\tPROJECT_PI\tREQUEST_PI\tgenome_doubled\tASCN_PURITY\tASCN_PLOIDY\tASCN_VERSION\tASCN_WGD\tCMO_TMB_SCORE\n', '#SAMPLE_ID\tIGO_ID\tPATIENT_ID\tCOLLAB_ID\tSAMPLE_TYPE\tSAMPLE_CLASS\tGENE_PANEL\tONCOTREE_CODE\tSPECIMEN_PRESERVATION_TYPE\tTISSUE_SITE\tREQUEST_ID\tPROJECT_ID\tPIPELINE\tPIPELINE_VERSION\tSAMPLE_COVERAGE\tPROJECT_PI\tREQUEST_PI\tgenome_doubled\tASCN_PURITY\tASCN_PLOIDY\tASCN_VERSION\tASCN_WGD\tCMO_TMB_SCORE\n', '#STRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tNUMBER\tSTRING\tSTRING\tSTRING\tNUMBER\tNUMBER\tSTRING\tSTRING\tNUMBER\n', '#1\t1\t1\t0\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t0\t1\t1\t0\t1\t1\n'
+        ]
+        self.assertEqual(comments, expected_comments)
+
+        tmbs = {}
+        for record in records:
+            tmbs[record['SAMPLE_ID']] = record['CMO_TMB_SCORE']
+
+        expected_tmbs = {'Sample1': '17000.0', 'Sample4': 'NA'}
+        self.assertEqual(tmbs, expected_tmbs)
+
+
+
+
+    def test_demo_dataset2(self):
+        """
+        Test case for two small demo datasets
+        """
+        self.preserve = True
+        print(self.tmpdir)
+        data_clinical_file = os.path.join(self.DATA_SETS['demo']['INPUTS_DIR'], "demo_sample_data_clinical.txt")
+        sample_summary_file = os.path.join(self.DATA_SETS['demo']['QC_DIR'], "demo_SampleSummary.txt")
+
+        mutation_svs_txt_file1 = os.path.join(self.DATA_SETS['demo']['MAF_DIR'], "Sample1.Sample2.svs.pass.vep.portal.txt")
+        mutation_svs_maf1 = os.path.join(self.DATA_SETS['demo']['MAF_DIR'], "Sample1.Sample2.svs.pass.vep.maf")
+        pair_maf1 = os.path.join(self.DATA_SETS['demo']['MAF_DIR'], "Sample1.Sample2.muts.maf")
+        snp_pileup1 = os.path.join(self.DATA_SETS['demo']['SNP_PILEUP_DIR'], "Sample1.Sample2.snp_pileup.gz")
+
+        mutation_svs_txt_file2 = os.path.join(self.DATA_SETS['demo']['MAF_DIR'], "Sample4.Sample3.svs.pass.vep.portal.txt")
+        mutation_svs_maf2 = os.path.join(self.DATA_SETS['demo']['MAF_DIR'], "Sample4.Sample3.svs.pass.vep.maf")
+        pair_maf2 = os.path.join(self.DATA_SETS['demo']['MAF_DIR'], "Sample4.Sample3.muts.maf")
+        snp_pileup2 = os.path.join(self.DATA_SETS['demo']['SNP_PILEUP_DIR'], "Sample4.Sample3.snp_pileup.gz")
+
+        self.input = {
+            "assay_coverage": "1000", # TODO: get this from an assay reference key
+            "project_id": "demo",
+            "project_name": "demo",
+            "project_short_name": "demo",
+            "project_description": "project",
+            "project_pi": "Dr. Jones",
+            "request_pi": "Dr. Franklin",
+            "is_impact": True,
+            "argos_version_string": "2.x",
+            "cancer_type": "MEL",
+            "cancer_study_identifier": 'demo',
+            "analysis_gene_cna_filename": "demo.gene.cna.txt",
+            "analysis_mutations_filename": "demo.muts.maf",
+            "analysis_mutations_share_filename": "demo.muts.share.maf",
+            "analysis_segment_cna_filename": "demo.seg.cna.txt",
+            "analysis_sv_filename": "demo.svs.maf",
+            "cbio_meta_cna_segments_filename": "Proj_08390_G_meta_cna_hg19_seg.txt",
+            "cbio_segment_data_filename": "Proj_08390_G_data_cna_hg19.seg",
+            "helix_filter_version": "20.06.1",
+            'IMPACT_gene_list': {
+                "path": self.IMPACT_FILE,
+                "class": "File"
+            },
+            "data_clinical_file": {
+                "path": data_clinical_file,
+                "class": "File"
+            },
+            "sample_summary_file": {
+                "path": sample_summary_file,
+                "class": "File"
+            },
+            "targets_list": {
+                "path": self.DATA_SETS['demo']["targets_list"],
+                "class": "File"
+            },
+            "known_fusions_file": {
+                "path": self.KNOWN_FUSIONS_FILE,
+                "class": "File"
+            },
+            "mutation_svs_txt_files": [
+                { "path": mutation_svs_txt_file1, "class": "File" },
+                { "path": mutation_svs_txt_file2, "class": "File" }
+                 ],
+            "mutation_svs_maf_files": [
+                { "path": mutation_svs_maf1, "class": "File" } ,
+                { "path": mutation_svs_maf2, "class": "File" } ,
+                ],
+            "pairs": [
+                {
+                    "pair_maf": { "path": pair_maf1, "class": "File" },
+                    "snp_pileup": { "path": snp_pileup1, "class": "File" },
+                    "pair_id": "Sample1.Sample2",
+                    "tumor_id": "Sample1",
+                    "normal_id": "Sample2"
+                },
+                {
+                    "pair_maf": { "path": pair_maf2, "class": "File" },
+                    "snp_pileup": { "path": snp_pileup2, "class": "File" },
+                    "pair_id": "Sample4.Sample3",
+                    "tumor_id": "Sample4",
+                    "normal_id": "Sample3"
+                },
+            ]
+        }
+
+        output_json, output_dir = self.run_cwl()
+
+        expected_output = {
+            'analysis_dir': {
+                'class': 'Directory',
+                'basename': 'analysis',
+                'location': 'file://' + os.path.join(output_dir, 'analysis'),
+                'path': os.path.join(output_dir, 'analysis'),
+                'listing': [
+                    {
+                        'location': 'file://' + os.path.join(output_dir, 'analysis/demo.gene.cna.txt'),
+                        'basename': 'demo.gene.cna.txt',
+                        'class': 'File',
+                        'checksum': 'sha1$f68fbc5697ef2437c185e8a2ceef926b023de3dc',
+                        'size': 41818,
+                        'path': os.path.join(output_dir, 'analysis/demo.gene.cna.txt')
+                    },
+                    {
+                        'location': 'file://' + os.path.join(output_dir, 'analysis/demo.muts.maf'),
+                        'basename': 'demo.muts.maf',
+                        'class': 'File',
+                        'checksum': 'sha1$a8eec9ff26a8d3fe47bc301d34b1a475899f0b48',
+                        'size': 59074,
+                        'path': os.path.join(output_dir, 'analysis/demo.muts.maf')
+                    },
+                    {
+                        'location': 'file://' + os.path.join(output_dir, 'analysis/demo.muts.share.maf'),
+                        'basename': 'demo.muts.share.maf',
+                        'class': 'File',
+                        'checksum': 'sha1$22f2aa10ff2080458fc895ab93d2e9707d634b32',
+                        'size': 10795,
+                        'path': os.path.join(output_dir, 'analysis/demo.muts.share.maf')
+                    },
+                    {
+                        'location': 'file://' + os.path.join(output_dir, 'analysis/demo.seg.cna.txt'),
+                        'basename': 'demo.seg.cna.txt',
+                        'class': 'File',
+                        'checksum': 'sha1$e1c85484cd13a88cea322de84cd35143c86a8ef3',
+                        'size': 878,
+                        'path': os.path.join(output_dir, 'analysis/demo.seg.cna.txt')
+                    },
+                    {
+                        'location': 'file://' + os.path.join(output_dir, 'analysis/demo.svs.maf'),
+                        'basename': 'demo.svs.maf',
+                        'class': 'File',
+                        'checksum': 'sha1$5c2a63fc01980550108e58079a8b689d53c97d8c',
+                        'size': 35595,
+                        'path': os.path.join(output_dir, 'analysis/demo.svs.maf')
+                        }
+                    ]
+                },
+                'facets_dir': {
+                    'location': 'file://' + os.path.join(output_dir, 'facets'),
+                    'basename': 'facets',
+                    'class': 'Directory',
+                    'path': os.path.join(output_dir, 'facets'),
+                    'listing': [
+                        {'basename': 'Sample1.Sample2',
+                          'class': 'Directory',
+                          'listing': [{'basename': 'Sample1.Sample2_hisens.ccf.portal.maf',
+                                       'checksum': 'sha1$e86566d281bc808e57ee912d02bdbda8179d7c0a',
+                                       'class': 'File',
+                                       'location': 'file://' + os.path.join(output_dir,'facets/Sample1.Sample2/Sample1.Sample2_hisens.ccf.portal.maf'),
+                                       'path': os.path.join(output_dir,'facets/Sample1.Sample2/Sample1.Sample2_hisens.ccf.portal.maf'),
+                                       'size': 62216},
+                                      {'basename': 'Sample1.arm_level.txt',
+                                       'checksum': 'sha1$98704689aedd071919ca0b2e387462948cb803b4',
+                                       'class': 'File',
+                                       'location': 'file://' + os.path.join(output_dir,'facets/Sample1.Sample2/Sample1.arm_level.txt'),
+                                       'path': os.path.join(output_dir,'facets/Sample1.Sample2/Sample1.arm_level.txt'),
+                                       'size': 370},
+                                      {'basename': 'Sample1.txt',
+                                       'checksum': 'sha1$ccdaded463980977bc4c90e539043c6efd1aef33',
+                                       'class': 'File',
+                                       'location': 'file://' + os.path.join(output_dir,'facets/Sample1.Sample2/Sample1.txt'),
+                                       'path': os.path.join(output_dir,'facets/Sample1.Sample2/Sample1.txt'),
+                                       'size': 506},
+                                      {'basename': 'Sample1.gene_level.txt',
+                                       'checksum': 'sha1$75ad4054ccec1f7a47d1c7738730816191d713c3',
+                                       'class': 'File',
+                                       'location': 'file://' + os.path.join(output_dir,'facets/Sample1.Sample2/Sample1.gene_level.txt'),
+                                       'path': os.path.join(output_dir,'facets/Sample1.Sample2/Sample1.gene_level.txt'),
+                                       'size': 94824},
+                                      {'basename': 'Sample1_hisens.cncf.txt',
+                                       'checksum': 'sha1$738974eaa3e4278f40cdbbf487b87f8b57ee2ecb',
+                                       'class': 'File',
+                                       'location': 'file://' + os.path.join(output_dir,'facets/Sample1.Sample2/Sample1_hisens.cncf.txt'),
+                                       'path': os.path.join(output_dir,'facets/Sample1.Sample2/Sample1_hisens.cncf.txt'),
+                                       'size': 1385},
+                                      {'basename': 'Sample1_hisens.rds',
+                                       'checksum': 'sha1$13846db5dc75ca6b7d64cb69ff04fa64da9a88e7',
+                                       'class': 'File',
+                                       'location': 'file://' + os.path.join(output_dir,'facets/Sample1.Sample2/Sample1_hisens.rds'),
+                                       'path': os.path.join(output_dir,'facets/Sample1.Sample2/Sample1_hisens.rds'),
+                                       'size': 191089},
+                                      {'basename': 'Sample1_hisens.seg',
+                                       'checksum': 'sha1$069b23dada099e20700c6b10471750e3cba6ee86',
+                                       'class': 'File',
+                                       'location': 'file://' + os.path.join(output_dir,'facets/Sample1.Sample2/Sample1_hisens.seg'),
+                                       'path': os.path.join(output_dir,'facets/Sample1.Sample2/Sample1_hisens.seg'),
+                                       'size': 647},
+                                      {'basename': 'Sample1_purity.rds',
+                                       'checksum': 'sha1$ded479ac6278f1cd7bf42bf186440d8a89415a02',
+                                       'class': 'File',
+                                       'location': 'file://' + os.path.join(output_dir,'facets/Sample1.Sample2/Sample1_purity.rds'),
+                                       'path': os.path.join(output_dir,'facets/Sample1.Sample2/Sample1_purity.rds'),
+                                       'size': 191195},
+                                      {'basename': 'Sample1_purity.seg',
+                                       'checksum': 'sha1$069b23dada099e20700c6b10471750e3cba6ee86',
+                                       'class': 'File',
+                                       'location': 'file://' + os.path.join(output_dir,'facets/Sample1.Sample2/Sample1_purity.seg'),
+                                       'path': os.path.join(output_dir,'facets/Sample1.Sample2/Sample1_purity.seg'),
+                                       'size': 647},
+                                      {'basename': 'Sample1.qc.txt',
+                                       'checksum': 'sha1$8f014a24b3e53c3801be6a6751de2dc089f79f69',
+                                       'class': 'File',
+                                       'location': 'file://' + os.path.join(output_dir,'facets/Sample1.Sample2/Sample1.qc.txt'),
+                                       'path': os.path.join(output_dir,'facets/Sample1.Sample2/Sample1.qc.txt'),
+                                       'size': 1224}],
+                          'location': 'file://' + os.path.join(output_dir,'facets/Sample1.Sample2'),
+                          'path': os.path.join(output_dir,'facets/Sample1.Sample2')
+                            },
+                        {'basename': 'Sample4.Sample3',
+                           'class': 'Directory',
+                           'listing': [{'basename': 'Sample4.Sample3_hisens.ccf.portal.maf',
+                                        'checksum': 'sha1$dd7be7c4a6256ad6a1d6a168fe24e5b347a0bb31',
+                                        'class': 'File',
+                                        'location': 'file://' + os.path.join(output_dir,'facets/Sample4.Sample3/Sample4.Sample3_hisens.ccf.portal.maf'),
+                                        'path': os.path.join(output_dir,'facets/Sample4.Sample3/Sample4.Sample3_hisens.ccf.portal.maf'),
+                                        'size': 24450},
+                                       {'basename': 'Sample4.arm_level.txt',
+                                        'checksum': 'sha1$e062db543739dbd96466a99a3237de1e27c1fcc3',
+                                        'class': 'File',
+                                        'location': 'file://' + os.path.join(output_dir,'facets/Sample4.Sample3/Sample4.arm_level.txt'),
+                                        'path': os.path.join(output_dir,'facets/Sample4.Sample3/Sample4.arm_level.txt'),
+                                        'size': 231},
+                                       {'basename': 'Sample4.txt',
+                                        'checksum': 'sha1$b20d6ec5d51ef3cd8564ae1f3281c76db8b938a0',
+                                        'class': 'File',
+                                        'location': 'file://' + os.path.join(output_dir,'facets/Sample4.Sample3/Sample4.txt'),
+                                        'path': os.path.join(output_dir,'facets/Sample4.Sample3/Sample4.txt'),
+                                        'size': 508},
+                                       {'basename': 'Sample4.gene_level.txt',
+                                        'checksum': 'sha1$2cc5c01ef531dff22610daf156f1f31e669b59a0',
+                                        'class': 'File',
+                                        'location': 'file://' + os.path.join(output_dir,'facets/Sample4.Sample3/Sample4.gene_level.txt'),
+                                        'path': os.path.join(output_dir,'facets/Sample4.Sample3/Sample4.gene_level.txt'),
+                                        'size': 35806},
+                                       {'basename': 'Sample4_hisens.cncf.txt',
+                                        'checksum': 'sha1$946087e73a21c3cccf2f354e533b9a13bbb8e732',
+                                        'class': 'File',
+                                        'location': 'file://' + os.path.join(output_dir,'facets/Sample4.Sample3/Sample4_hisens.cncf.txt'),
+                                        'path': os.path.join(output_dir,'facets/Sample4.Sample3/Sample4_hisens.cncf.txt'),
+                                        'size': 1056},
+                                       {'basename': 'Sample4_hisens.rds',
+                                        'checksum': 'sha1$e2d0bd96c6d63ee70422a6976f2e72d89f1c2e80',
+                                        'class': 'File',
+                                        'location': 'file://' + os.path.join(output_dir,'facets/Sample4.Sample3/Sample4_hisens.rds'),
+                                        'path': os.path.join(output_dir,'facets/Sample4.Sample3/Sample4_hisens.rds'),
+                                        'size': 55045},
+                                       {'basename': 'Sample4_hisens.seg',
+                                        'checksum': 'sha1$e6df130c57ca594578f9658e589cfafc8f40a56c',
+                                        'class': 'File',
+                                        'location': 'file://' + os.path.join(output_dir,'facets/Sample4.Sample3/Sample4_hisens.seg'),
+                                        'path': os.path.join(output_dir,'facets/Sample4.Sample3/Sample4_hisens.seg'),
+                                        'size': 488},
+                                       {'basename': 'Sample4_purity.rds',
+                                        'checksum': 'sha1$5eea298ef9bfe52096dfd18825ad47adb52a1f99',
+                                        'class': 'File',
+                                        'location': 'file://' + os.path.join(output_dir,'facets/Sample4.Sample3/Sample4_purity.rds'),
+                                        'path': os.path.join(output_dir,'facets/Sample4.Sample3/Sample4_purity.rds'),
+                                        'size': 55150},
+                                       {'basename': 'Sample4_purity.seg',
+                                        'checksum': 'sha1$e6df130c57ca594578f9658e589cfafc8f40a56c',
+                                        'class': 'File',
+                                        'location': 'file://' + os.path.join(output_dir,'facets/Sample4.Sample3/Sample4_purity.seg'),
+                                        'path': os.path.join(output_dir,'facets/Sample4.Sample3/Sample4_purity.seg'),
+                                        'size': 488},
+                                       {'basename': 'Sample4.qc.txt',
+                                        'checksum': 'sha1$d862c00273178e537eeeccc69db15cfa20e811b2',
+                                        'class': 'File',
+                                        'location': 'file://' + os.path.join(output_dir,'facets/Sample4.Sample3/Sample4.qc.txt'),
+                                        'path': os.path.join(output_dir,'facets/Sample4.Sample3/Sample4.qc.txt'),
+                                        'size': 1230}],
+                           'location': 'file://' + os.path.join(output_dir,'facets/Sample4.Sample3'),
+                           'path': os.path.join(output_dir,'facets/Sample4.Sample3')
+                           }
+                        ]
+                },
+                'facets_failed_pairs': [],
+                'portal_dir': {
+                    'location': 'file://' + os.path.join(output_dir, 'portal'),
+                    'path': os.path.join(output_dir, 'portal'),
+                    'class': 'Directory',
+                    'basename': 'portal',
+                    'listing': [
+                        {
+                            'location': 'file://' + os.path.join(output_dir, 'portal/meta_clinical_sample.txt'),
+                            'basename': 'meta_clinical_sample.txt',
+                            'class': 'File',
+                            'checksum': 'sha1$7d2bb282e74ff6a5d41b334ded689f9336722702',
+                            'size': 132,
+                            'path': os.path.join(output_dir, 'portal/meta_clinical_sample.txt')
+                        },
+                        {
+                            'location': 'file://' + os.path.join(output_dir, 'portal/data_clinical_patient.txt'),
+                            'basename': 'data_clinical_patient.txt',
+                            'class': 'File',
+                            'checksum': 'sha1$cac1377a45dfc316266697a21df87801883127b5',
+                            'size': 91,
+                            'path': os.path.join(output_dir, 'portal/data_clinical_patient.txt')
+                        },
+                        {
+                            'location': 'file://' + os.path.join(output_dir, 'portal/data_clinical_sample.txt'),
+                            'basename': 'data_clinical_sample.txt',
+                            'class': 'File',
+                            'checksum': 'sha1$2846305ce5bee0ea049aebdec9150114bc35c299',
+                            'size': 1419,
+                            'path': os.path.join(output_dir, 'portal/data_clinical_sample.txt')
+                        },
+                        {
+                            'location': 'file://' + os.path.join(output_dir, 'portal/meta_study.txt'),
+                            'basename': 'meta_study.txt',
+                            'class': 'File',
+                            'checksum': 'sha1$998a850a03828cf4c235583dced9751ba75c9ab1',
+                            'size': 128,
+                            'path': os.path.join(output_dir, 'portal/meta_study.txt')
+                        },
+                        {
+                            'location': 'file://' + os.path.join(output_dir, 'portal/meta_clinical_patient.txt'),
+                            'basename': 'meta_clinical_patient.txt',
+                            'class': 'File',
+                            'checksum': 'sha1$e1f0b7786dd10af608df5178ff4b1a0b7a191a38',
+                            'size': 134,
+                            'path': os.path.join(output_dir, 'portal/meta_clinical_patient.txt')
+                        },
+                        {
+                            'location': 'file://' + os.path.join(output_dir, 'portal/meta_CNA.txt'),
+                            'basename': 'meta_CNA.txt',
+                            'class': 'File',
+                            'checksum': 'sha1$93367ae36cae5e1a53b25e5bb02731e8b113251b',
+                            'size': 262,
+                            'path': os.path.join(output_dir, 'portal/meta_CNA.txt')
+                        },
+                        {
+                            'location': 'file://' + os.path.join(output_dir, 'portal/meta_fusions.txt'),
+                            'basename': 'meta_fusions.txt',
+                            'class': 'File',
+                            'checksum': 'sha1$f23883a435cd6bcebb05b06ef6004ba3be413828',
+                            'size': 219,
+                            'path': os.path.join(output_dir, 'portal/meta_fusions.txt')
+                        },
+                        {
+                            'location': 'file://' + os.path.join(output_dir, 'portal/meta_mutations_extended.txt'),
+                            'basename': 'meta_mutations_extended.txt',
+                            'class': 'File',
+                            'checksum': 'sha1$3be01b7a638dc3bb4f229038cbecd9b3cafc7410',
+                            'size': 245,
+                            'path': os.path.join(output_dir, 'portal/meta_mutations_extended.txt')
+                        },
+                        {
+                            'location': 'file://' + os.path.join(output_dir, 'portal/Proj_08390_G_meta_cna_hg19_seg.txt'),
+                            'basename': 'Proj_08390_G_meta_cna_hg19_seg.txt',
+                            'class': 'File',
+                            'checksum': 'sha1$fd39b2b94b555902fb9b313a5d06cb7ad3a305eb',
+                            'size': 192,
+                            'path': os.path.join(output_dir, 'portal/Proj_08390_G_meta_cna_hg19_seg.txt')
+                        },
+                        {
+                            'location': 'file://' + os.path.join(output_dir, 'portal/data_CNA.txt'),
+                            'basename': 'data_CNA.txt',
+                            'class': 'File',
+                            'checksum': 'sha1$ddc7acafdb61a3ea2aa1ec02e01df7bcc1691267',
+                            'size': 3808,
+                            'path': os.path.join(output_dir, 'portal/data_CNA.txt')
+                        },
+                        {
+                            'location': 'file://' + os.path.join(output_dir, 'portal/data_CNA.ascna.txt'),
+                            'basename': 'data_CNA.ascna.txt',
+                            'class': 'File',
+                            'checksum': 'sha1$e1570ff3ae4202b99322914b5edb0579c520adaa',
+                            'size': 5104,
+                            'path': os.path.join(output_dir, 'portal/data_CNA.ascna.txt')
+                        },
+                        {
+                            'location': 'file://' + os.path.join(output_dir, 'portal/data_mutations_extended.txt'),
+                            'basename': 'data_mutations_extended.txt',
+                            'class': 'File',
+                            'checksum': 'sha1$581fde39a445050f288a510beb4623eaf5346346',
+                            'size': 8338,
+                            'path': os.path.join(output_dir, 'portal/data_mutations_extended.txt')
+                        },
+                        {
+                            'location': 'file://' + os.path.join(output_dir, 'portal/Proj_08390_G_data_cna_hg19.seg'),
+                            'basename': 'Proj_08390_G_data_cna_hg19.seg',
+                            'class': 'File',
+                            'checksum': 'sha1$e1c85484cd13a88cea322de84cd35143c86a8ef3',
+                            'size': 878,
+                            'path': os.path.join(output_dir, 'portal/Proj_08390_G_data_cna_hg19.seg')
+                        },
+                        {
+                            'location': 'file://' + os.path.join(output_dir, 'portal/data_fusions.txt'),
+                            'basename': 'data_fusions.txt',
+                            'class': 'File',
+                            'checksum': 'sha1$c16f763b248813fcdde76f7486f1ddc4e9856038',
+                            'size': 99,
+                            'path': os.path.join(output_dir, 'portal/data_fusions.txt')
+                        },
+                        {
+                            'class': 'Directory',
+                            'basename': 'case_lists',
+                            'location': 'file://' + os.path.join(output_dir, 'portal/case_lists'),
+                            'path': os.path.join(output_dir, 'portal/case_lists'),
+                            'listing': [
+                                {'location': 'file://' + os.path.join(output_dir, 'portal/case_lists/cases_all.txt'),
+                                'basename': 'cases_all.txt',
+                                'class': 'File',
+                                'checksum': 'sha1$3d3d54b5cbd98e751adf926d07884eeaed94aaef',
+                                'size': 188,
+                                'path': os.path.join(output_dir, 'portal/case_lists/cases_all.txt')},
+                                {'location': 'file://' + os.path.join(output_dir, 'portal/case_lists/cases_cnaseq.txt'),
+                                'basename': 'cases_cnaseq.txt',
+                                'class': 'File',
+                                'checksum': 'sha1$2a43c8ed31f69c12cf9a14044bab1aaa1b6ec7ee',
+                                'size': 268,
+                                'path': os.path.join(output_dir, 'portal/case_lists/cases_cnaseq.txt')},
+                                {'location': 'file://' + os.path.join(output_dir, 'portal/case_lists/cases_cna.txt'),
+                                'basename': 'cases_cna.txt',
+                                'class': 'File',
+                                'checksum': 'sha1$117563761d7cb4690dea363f40b77ef1a0444fc1',
+                                'size': 200,
+                                'path': os.path.join(output_dir, 'portal/case_lists/cases_cna.txt')},
+                                {'location': 'file://' + os.path.join(output_dir, 'portal/case_lists/cases_sequenced.txt'),
+                                'basename': 'cases_sequenced.txt',
+                                'class': 'File',
+                                'checksum': 'sha1$78d1d0acb6928349b4448a73f2cdf1ed4edcb1a3',
+                                'size': 213,
+                                'path': os.path.join(output_dir, 'portal/case_lists/cases_sequenced.txt')}
+                            ]
+                        }
+                    ]
+                }
+            }
+        self.maxDiff = None
+        self.assertDictEqual(output_json, expected_output)
+        comments, mutations = self.load_mutations(os.path.join(output_dir, 'analysis', 'demo.muts.maf'))
+        self.assertEqual(len(mutations), 34)
+        comments, mutations = self.load_mutations(os.path.join(output_dir, 'portal', 'data_mutations_extended.txt'))
+        self.assertEqual(len(mutations), 27)
+
+        # load the data_CNA.txt file
+        path = os.path.join(output_dir, 'portal/data_CNA.txt') # renamed from the data_CNA.scna.txt file ...
+        with open(path) as f:
+            header = next(f)
+        header_parts = header.split()
+        expected_header_parts = ['Hugo_Symbol', 'Sample1', 'Sample4']
+        self.assertEqual(header_parts, expected_header_parts)
+
+        path = os.path.join(output_dir, 'portal/data_CNA.ascna.txt')
+        with open(path) as f:
+            header = next(f)
+        header_parts = header.split()
+        expected_header_parts = ['Hugo_Symbol', 'Sample1', 'Sample4']
+        self.assertEqual(header_parts, expected_header_parts)
+
+        path = os.path.join(output_dir, 'portal/data_clinical_sample.txt')
+        table_reader = TableReader(path)
+        comments = table_reader.comment_lines
+        fieldnames = table_reader.get_fieldnames()
+        records = [ rec for rec in table_reader.read() ]
+
+        expected_comments = [
+        '#SAMPLE_ID\tIGO_ID\tPATIENT_ID\tCOLLAB_ID\tSAMPLE_TYPE\tSAMPLE_CLASS\tGENE_PANEL\tONCOTREE_CODE\tSPECIMEN_PRESERVATION_TYPE\tTISSUE_SITE\tREQUEST_ID\tPROJECT_ID\tPIPELINE\tPIPELINE_VERSION\tSAMPLE_COVERAGE\tPROJECT_PI\tREQUEST_PI\tgenome_doubled\tASCN_PURITY\tASCN_PLOIDY\tASCN_VERSION\tASCN_WGD\tCMO_TMB_SCORE\n', '#SAMPLE_ID\tIGO_ID\tPATIENT_ID\tCOLLAB_ID\tSAMPLE_TYPE\tSAMPLE_CLASS\tGENE_PANEL\tONCOTREE_CODE\tSPECIMEN_PRESERVATION_TYPE\tTISSUE_SITE\tREQUEST_ID\tPROJECT_ID\tPIPELINE\tPIPELINE_VERSION\tSAMPLE_COVERAGE\tPROJECT_PI\tREQUEST_PI\tgenome_doubled\tASCN_PURITY\tASCN_PLOIDY\tASCN_VERSION\tASCN_WGD\tCMO_TMB_SCORE\n', '#STRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tNUMBER\tSTRING\tSTRING\tSTRING\tNUMBER\tNUMBER\tSTRING\tSTRING\tNUMBER\n', '#1\t1\t1\t0\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t0\t1\t1\t0\t1\t1\n'
+        ]
+        self.assertEqual(comments, expected_comments)
+
+        tmbs = {}
+        for record in records:
+            tmbs[record['SAMPLE_ID']] = record['CMO_TMB_SCORE']
+
+        expected_tmbs = {'Sample1': '17000.0', 'Sample4': '9000.0'}
+        self.assertEqual(tmbs, expected_tmbs)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @unittest.skipIf(ENABLE_LARGE_TESTS!=True, "is a large test")
     def test_run_worflow_one_maf(self):
         """
         Test that the workflow works correctly when run with a single maf
@@ -240,8 +1108,8 @@ class TestWorkflowWithFacets(PlutoTestCase):
                             'location': 'file://' + os.path.join(output_dir, 'portal/data_clinical_sample.txt'),
                             'basename': 'data_clinical_sample.txt',
                             'class': 'File',
-                            'checksum': 'sha1$1d89d39e40c65f607dd71eedb21f93d935a44409',
-                            'size': 8758,
+                            'checksum': 'sha1$8ecadecb49fabf58e4b1552c7d0eded157cb4c32',
+                            'size': 8747,
                             'path': os.path.join(output_dir, 'portal/data_clinical_sample.txt')
                         },
                         {
@@ -408,10 +1276,11 @@ class TestWorkflowWithFacets(PlutoTestCase):
             tmbs[record['SAMPLE_ID']] = record['CMO_TMB_SCORE']
 
         expected_tmbs = {
-        'Sample46': 'NA', 'Sample44': 'NA', 'Sample80': 'NA', 'Sample20': 'NA', 'Sample38': 'NA', 'Sample26': 'NA', 'Sample94': 'NA', 'Sample48': 'NA', 'Sample68': 'NA', 'Sample90': 'NA', 'Sample18': 'NA', 'Sample54': 'NA', 'Sample52': 'NA', 'Sample86': 'NA', 'Sample30': 'NA', 'Sample78': 'NA', 'Sample84': 'NA', 'Sample82': 'NA', 'Sample6': 'NA', 'Sample96': 'NA', 'Sample72': 'NA', 'Sample56': 'NA', 'Sample64': 'NA', 'Sample58': 'NA', 'Sample92': 'NA', 'Sample62': 'NA', 'Sample8': 'NA', 'Sample24': 'NA', 'Sample12': 'NA', 'Sample16': 'NA', 'Sample88': 'NA', 'Sample22': 'NA', 'Sample42': 'NA', 'Sample76': 'NA', 'Sample28': 'NA', 'Sample74': 'NA', 'Sample50': 'NA', 'Sample60': 'NA', 'Sample10': 'NA', 'Sample36': 'NA', 'Sample34': 'NA', 'Sample40': 'NA', 'Sample66': 'NA', 'Sample14': 'NA', 'Sample32': 'NA', 'Sample70': 'NA', 'Sample4': 'NA', 'Sample1': '0.0000000000013'
+        'Sample46': 'NA', 'Sample44': 'NA', 'Sample80': 'NA', 'Sample20': 'NA', 'Sample38': 'NA', 'Sample26': 'NA', 'Sample94': 'NA', 'Sample48': 'NA', 'Sample68': 'NA', 'Sample90': 'NA', 'Sample18': 'NA', 'Sample54': 'NA', 'Sample52': 'NA', 'Sample86': 'NA', 'Sample30': 'NA', 'Sample78': 'NA', 'Sample84': 'NA', 'Sample82': 'NA', 'Sample6': 'NA', 'Sample96': 'NA', 'Sample72': 'NA', 'Sample56': 'NA', 'Sample64': 'NA', 'Sample58': 'NA', 'Sample92': 'NA', 'Sample62': 'NA', 'Sample8': 'NA', 'Sample24': 'NA', 'Sample12': 'NA', 'Sample16': 'NA', 'Sample88': 'NA', 'Sample22': 'NA', 'Sample42': 'NA', 'Sample76': 'NA', 'Sample28': 'NA', 'Sample74': 'NA', 'Sample50': 'NA', 'Sample60': 'NA', 'Sample10': 'NA', 'Sample36': 'NA', 'Sample34': 'NA', 'Sample40': 'NA', 'Sample66': 'NA', 'Sample14': 'NA', 'Sample32': 'NA', 'Sample70': 'NA', 'Sample4': 'NA', 'Sample1': '47.5'
         }
         self.assertEqual(tmbs, expected_tmbs)
 
+    @unittest.skipIf(ENABLE_LARGE_TESTS!=True, "is a large test")
     def test_run_worflow_two_mafs(self):
         """
         Test that the workflow works correctly when run with two maf files
@@ -706,8 +1575,8 @@ class TestWorkflowWithFacets(PlutoTestCase):
                     {'location': 'file://' + os.path.join(output_dir, 'portal/data_clinical_sample.txt'),
                     'basename': 'data_clinical_sample.txt',
                     'class': 'File',
-                    'checksum': 'sha1$013055a53721fece2488a88c16751f8a8dd26901',
-                    'size': 8769,
+                    'checksum': 'sha1$b57da6f7a300cf4479f256094904532b577b4608',
+                    'size': 8758,
                     'path': os.path.join(output_dir, 'portal/data_clinical_sample.txt')},
                     {'location': 'file://' + os.path.join(output_dir, 'portal/meta_study.txt'),
                     'basename': 'meta_study.txt',
@@ -851,7 +1720,7 @@ class TestWorkflowWithFacets(PlutoTestCase):
             tmbs[record['SAMPLE_ID']] = record['CMO_TMB_SCORE']
 
         expected_tmbs = {
-        'Sample46': 'NA', 'Sample44': 'NA', 'Sample80': 'NA', 'Sample20': 'NA', 'Sample38': 'NA', 'Sample26': 'NA', 'Sample94': 'NA', 'Sample48': 'NA', 'Sample68': 'NA', 'Sample90': 'NA', 'Sample18': 'NA', 'Sample54': 'NA', 'Sample52': 'NA', 'Sample86': 'NA', 'Sample30': 'NA', 'Sample78': 'NA', 'Sample84': 'NA', 'Sample82': 'NA', 'Sample6': 'NA', 'Sample96': 'NA', 'Sample72': 'NA', 'Sample56': 'NA', 'Sample64': 'NA', 'Sample58': 'NA', 'Sample92': 'NA', 'Sample62': 'NA', 'Sample8': 'NA', 'Sample24': 'NA', 'Sample12': 'NA', 'Sample16': 'NA', 'Sample88': 'NA', 'Sample22': 'NA', 'Sample42': 'NA', 'Sample76': 'NA', 'Sample28': 'NA', 'Sample74': 'NA', 'Sample50': 'NA', 'Sample60': 'NA', 'Sample10': 'NA', 'Sample36': 'NA', 'Sample34': 'NA', 'Sample40': 'NA', 'Sample66': 'NA', 'Sample14': 'NA', 'Sample32': 'NA', 'Sample70': 'NA', 'Sample4': '0.0', 'Sample1': '0.0000000000013'
+        'Sample46': 'NA', 'Sample44': 'NA', 'Sample80': 'NA', 'Sample20': 'NA', 'Sample38': 'NA', 'Sample26': 'NA', 'Sample94': 'NA', 'Sample48': 'NA', 'Sample68': 'NA', 'Sample90': 'NA', 'Sample18': 'NA', 'Sample54': 'NA', 'Sample52': 'NA', 'Sample86': 'NA', 'Sample30': 'NA', 'Sample78': 'NA', 'Sample84': 'NA', 'Sample82': 'NA', 'Sample6': 'NA', 'Sample96': 'NA', 'Sample72': 'NA', 'Sample56': 'NA', 'Sample64': 'NA', 'Sample58': 'NA', 'Sample92': 'NA', 'Sample62': 'NA', 'Sample8': 'NA', 'Sample24': 'NA', 'Sample12': 'NA', 'Sample16': 'NA', 'Sample88': 'NA', 'Sample22': 'NA', 'Sample42': 'NA', 'Sample76': 'NA', 'Sample28': 'NA', 'Sample74': 'NA', 'Sample50': 'NA', 'Sample60': 'NA', 'Sample10': 'NA', 'Sample36': 'NA', 'Sample34': 'NA', 'Sample40': 'NA', 'Sample66': 'NA', 'Sample14': 'NA', 'Sample32': 'NA', 'Sample70': 'NA', 'Sample4': '5.5', 'Sample1': '47.5'
         }
         self.assertEqual(tmbs, expected_tmbs)
 

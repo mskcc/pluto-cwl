@@ -111,6 +111,8 @@ class TestConsensusBed(PlutoTestCase):
     def test_consensus_bed_workflow(self):
         """
         """
+        # self.preserve = True
+        # print(self.tmpdir)
         self.maxDiff = None
         self.input = {
             'maf_files': [
@@ -145,7 +147,7 @@ class TestConsensusBed(PlutoTestCase):
             '7\t151845367\t151845367\n',
             '20\t62321135\t62321135\n'
         ]
-        self.assertDictEqual(lines, expected_lines)
+        self.assertEqual(lines, expected_lines)
 
 if __name__ == "__main__":
     unittest.main()

@@ -6,17 +6,28 @@
 arg="${1:-None}"
 
 case $arg in
+    # for running test cases
     test)
         module load singularity/3.3.0
         module load python/3.7.1
         module load cwl/cwltool
         ;;
 
+    # for running all test cases including the large integration tests
+    test-full)
+        export LARGE_TESTS=True
+        module load singularity/3.3.0
+        module load python/3.7.1
+        module load cwl/cwltool
+        ;;
+
+    # for running CWL's with Singularity
     singularity)
         unset SINGULARITY_CACHEDIR  # TODO: why do I need to unset this when I am explicitly setting it in the Makefile??
         module load singularity/3.3.0
         ;;
 
+    # for interactive shell session
     shell)
         module load singularity/3.3.0
         module load python/3.7.1
@@ -24,12 +35,14 @@ case $arg in
         module load jq
         ;;
 
+    # for using conda install dependencies
     conda)
         export PATH=${PWD}/conda/bin:${PATH}
         unset PYTHONPATH
         unset PYTHONHOME
         ;;
 
+    # for using conda installed Toil and Singularity to run CWL's
     toil)
         # need to get these env vars to propagate into the HPC jobs
         # SINGULARITY_DOCKER_USERNAME

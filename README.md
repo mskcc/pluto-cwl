@@ -46,6 +46,8 @@ It typically takes about 45 minutes to run all included tests
 
 - NOTE: tests require data sets that are pre-saved on the `juno` server
 
+Some very large integration tests are skipped by default. To include all tests, export the environment variable `LARGE_TESTS=True` or include it in the command line invocation.
+
 ### Parallel Test Suite
 
 An extra recipe is included which can run the tests in parallel, for example to run 8 tests at once you can use this command:

@@ -7,7 +7,7 @@ baseCommand: [ "bash", "run.sh" ]
 requirements:
   InlineJavascriptRequirement: {}
   DockerRequirement:
-    dockerPull: mskcc/helix_filters_01:21.02.2
+    dockerPull: mskcc/helix_filters_01:21.03.0
   InitialWorkDirRequirement:
     listing:
       - entryname: inputs_dir
@@ -31,7 +31,3 @@ outputs:
     type: File
     outputBinding:
       glob: merged.bed
-  file_list:
-    type: File
-    outputBinding:
-      glob: files.txt

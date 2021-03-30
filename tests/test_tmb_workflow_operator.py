@@ -197,8 +197,8 @@ class TestTmbWorkflowOperator(PlutoTestCase):
                 'location': 'file://' + os.path.join(output_dir,'data_clinical_sample.txt'),
                 'basename': 'data_clinical_sample.txt',
                 'class': 'File',
-                'checksum': 'sha1$e7975b7d9f34202750c4645d02f2f98796e22c74',
-                'size': 363,
+                'checksum': 'sha1$dd1cd29c40e6e1e247f9443edd5ff1aa22dc5126',
+                'size': 353,
                 'path':  os.path.join(output_dir,'data_clinical_sample.txt')
                 }
             }
@@ -214,9 +214,9 @@ class TestTmbWorkflowOperator(PlutoTestCase):
             ['#STRING', 'STRING', 'NUMBER', 'NUMBER'],
             ['#1', '1', '1', '1'],
             ['SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'CMO_TMB_SCORE'],
-            ['Sample1-T', 'Patient1', '108', '0.000000006'],
+            ['Sample1-T', 'Patient1', '108', '7000.0'],
             ['Sample1-N', 'Patient2', '58', 'NA'],
-            ['Sample2-T', 'Patient3', '502', '0.000000005'],
+            ['Sample2-T', 'Patient3', '502', '6000.0'],
             ['Sample2-N', 'Patient4', '56', 'NA'],
             ['Sample6-T', 'Patient4', '57', 'NA'],
             ['Sample7-N', 'Patient4', '58', 'NA']

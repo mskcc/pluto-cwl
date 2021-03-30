@@ -115,7 +115,7 @@ init:
 export SINGULARITY_CACHEDIR:=/juno/work/ci/pluto-cwl-test/cache
 # GIT_TAG:=$(shell git describe --tags --abbrev=0)
 HF_CONTAINER:=mskcc/helix_filters_01
-HF_TAG:=21.02.2
+HF_TAG:=21.03.0
 DOCKER_TAG:=$(HF_CONTAINER):$(HF_TAG)
 DOCKER_DEV_TAG:=$(HF_CONTAINER):latest
 # NOTE: you cannot use a filename with a ':' as a Makefile target
@@ -161,7 +161,15 @@ singularity-pull-igv-reports:
 	. "$(ENVSH)" singularity && \
 	singularity pull --force --name "$(IGV_REPORTS_SIF)" docker://$(IGV_REPORTS_DOCKERTAG)
 
-singularity-pull-all: singularity-pull singularity-pull-dev singularity-pull-facets singularity-pull-fillout singularity-pull-igv-reports
+# mskcc/roslin-variant-cmo-utils:1.9.15
+# mskcc_roslin-variant-cmo-utils:1.9.15.sif
+CMOUTILS_DOCKERTAG:=mskcc/roslin-variant-cmo-utils:1.9.15
+CMOUTILS_SIF:=mskcc_roslin-variant-cmo-utils:1.9.15.sif
+singularity-pull-cmoutils:
+	. "$(ENVSH)" singularity && \
+	singularity pull --force --name "$(CMOUTILS_SIF)" docker://$(CMOUTILS_DOCKERTAG)
+
+singularity-pull-all: singularity-pull singularity-pull-dev singularity-pull-facets singularity-pull-fillout singularity-pull-igv-reports singularity-pull-cmoutils
 
 # change the Docker tag for all the CWL files from the old pattern to the new pattern
 OLD_TAG:=
@@ -177,7 +185,9 @@ update-container-tags:
 
 # ~~~~~ Debug & Development ~~~~~ #
 # Run the test suite
+# NOTE: run with `$ LARGE_TESTS=True python3 tests/... ` to enable large test cases
 export FIXTURES_DIR:=/juno/work/ci/helix_filters_01/fixtures
+
 # TODO: figure out why this is missing some tests
 test2:
 	. "$(ENVSH)" test && \
