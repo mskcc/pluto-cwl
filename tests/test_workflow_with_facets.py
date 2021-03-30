@@ -245,8 +245,8 @@ class TestWorkflowWithFacets(PlutoTestCase):
                             'location': 'file://' + os.path.join(output_dir, 'portal/data_clinical_sample.txt'),
                             'basename': 'data_clinical_sample.txt',
                             'class': 'File',
-                            'checksum': 'sha1$678e003ed09df4f63a9a3a013623b7a18b6c9359',
-                            'size': 1401,
+                            'checksum': 'sha1$6e2aab917c557ab4611fc59b083a45aa44b5d825',
+                            'size': 1523,
                             'path': os.path.join(output_dir, 'portal/data_clinical_sample.txt')
                         },
                         {
@@ -406,11 +406,21 @@ class TestWorkflowWithFacets(PlutoTestCase):
         self.assertEqual(comments, expected_comments)
 
         tmbs = {}
+        msis = {}
+        msi_statuses = {}
         for record in records:
             tmbs[record['SAMPLE_ID']] = record['CMO_TMB_SCORE']
+            msis[record['SAMPLE_ID']] = record['MSI_SCORE']
+            msi_statuses[record['SAMPLE_ID']] = record['MSI_STATUS']
 
         expected_tmbs = {'Sample1': '17000.0', 'Sample4': 'NA'}
         self.assertEqual(tmbs, expected_tmbs)
+
+        expected_msis = {'Sample1': '17000.0', 'Sample4': 'NA'}
+        self.assertEqual(msis, expected_msis)
+
+        expected_msi_statuses = {'Sample1': '17000.0', 'Sample4': 'NA'}
+        self.assertEqual(msi_statuses, expected_msi_statuses)
 
 
 
@@ -731,8 +741,8 @@ class TestWorkflowWithFacets(PlutoTestCase):
                             'location': 'file://' + os.path.join(output_dir, 'portal/data_clinical_sample.txt'),
                             'basename': 'data_clinical_sample.txt',
                             'class': 'File',
-                            'checksum': 'sha1$2846305ce5bee0ea049aebdec9150114bc35c299',
-                            'size': 1419,
+                            'checksum': 'sha1$ba0d56b6ae210a7814b61837156c475cdf35d598',
+                            'size': 1546,
                             'path': os.path.join(output_dir, 'portal/data_clinical_sample.txt')
                         },
                         {

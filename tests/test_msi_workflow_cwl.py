@@ -67,9 +67,9 @@ class TestMsiWorkflow(PlutoTestCase):
 
             "pairs": [
                 {
-                    "pair_id": "Sample1-T.Sample1-N",
-                    "tumor_id": "Sample1-T",
-                    "normal_id": "Sample1-N"
+                    "pair_id": "Sample1.Sample2",
+                    "tumor_id": "Sample1",
+                    "normal_id": "Sample2"
                 }
             ],
 
@@ -89,8 +89,8 @@ class TestMsiWorkflow(PlutoTestCase):
                 'location': 'file://' + os.path.join(output_dir,'data_clinical_sample.txt'),
                 'basename': 'data_clinical_sample.txt',
                 'class': 'File',
-                'checksum': 'sha1$1de2dc1ab3d49022b451e23485ce5e9ddd7daad9',
-                'size': 418,
+                'checksum': 'sha1$749f2c93dc1cc0f43bcb7e92ec5151b58f842dc3',
+                'size': 357,
                 'path':  os.path.join(output_dir,'data_clinical_sample.txt')
                 }
             }
@@ -105,10 +105,8 @@ class TestMsiWorkflow(PlutoTestCase):
             ['#STRING', 'STRING', 'NUMBER', 'NUMBER','STRING'],
             ['#1', '1', '1', '0','0'],
             ['SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'MSI_SCORE','MSI_STATUS'],
-            ['Sample1-T', 'Patient1',   '108',             '21.97',    'Instable'  ],
-            ['Sample1-N', 'Patient2',   '58',              'NA',       'NA'        ],
-            ['Sample2-T', 'Patient3',   '502',             'NA',       'NA'        ],
-            ['Sample2-N', 'Patient4',   '56',              'NA',       'NA'        ],
+            ['Sample1', 'Patient1',   '108',             '21.97',    'Instable'  ],
+            ['Sample2', 'Patient2',   '58',              'NA',       'NA'        ],
             ['Sample6-T', 'Patient4',   '57',              'NA',       'NA'        ],
             ['Sample7-N', 'Patient4',   '58',              'NA',       'NA'        ]
             ]
