@@ -1,8 +1,6 @@
 #!/usr/bin/env cwl-runner
 
-cwlVersion: cwl:v1.1
-
-#msisensor:
+# example command;
 #    msisensor msi \
 #    -d msi_sites
 #    -n normal_bam
@@ -12,6 +10,7 @@ cwlVersion: cwl:v1.1
 #    -o ${ return inputs.tumor_sample_name +"."+inputs.normal_sample_name+".msi.txt" }
 #
 
+cwlVersion: v1.0
 class: CommandLineTool
 baseCommand: [ "msisensor", "msi", "-b", "8" ]
 
@@ -153,11 +152,3 @@ outputs:
     type: File
     outputBinding:
       glob: $(inputs.o)
-      # glob: "*.txt"
-
-      # glob: |-
-      #   ${
-      #     if (inputs.o)
-      #       return inputs.o;
-      #     return null;
-      #   }
