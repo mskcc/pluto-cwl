@@ -12,12 +12,13 @@ THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 PARENT_DIR = os.path.dirname(THIS_DIR)
 sys.path.insert(0, PARENT_DIR)
 from pluto.tools import load_mutations, run_cwl, CWLFile
-from pluto.settings import DATA_SETS, KNOWN_FUSIONS_FILE
+from pluto.settings import DATA_SETS, KNOWN_FUSIONS_FILE, ENABLE_LARGE_TESTS
 sys.path.pop(0)
 
 cwl_file = CWLFile('portal-workflow.cwl')
 
 class TestPortalWorkflow(unittest.TestCase):
+    @unittest.skipIf(ENABLE_LARGE_TESTS!=True, "is a large test")
     def test_run_worflow_one_maf(self):
         """
         Test that the workflow works correctly when run with a single maf
@@ -255,6 +256,7 @@ class TestPortalWorkflow(unittest.TestCase):
             expected_header_parts = ['Hugo_Symbol', 's_C_VJ7F47_P001_d']
             self.assertEqual(header_parts, expected_header_parts)
 
+    @unittest.skipIf(ENABLE_LARGE_TESTS!=True, "is a large test")
     def test_run_worflow_two_mafs(self):
         """
         Test that the workflow works correctly when run with two maf files
@@ -507,6 +509,7 @@ class TestPortalWorkflow(unittest.TestCase):
             expected_header_parts = ['Hugo_Symbol', 's_C_VJ7F47_P001_d', 's_C_X50T9Y_P001_d']
             self.assertEqual(header_parts, expected_header_parts)
 
+    @unittest.skipIf(ENABLE_LARGE_TESTS!=True, "is a large test")
     def test_with_facets_txt(self):
         """
         Test that the workflow produces expected output when Facets Suite .txt files are added
@@ -789,6 +792,7 @@ class TestPortalWorkflow(unittest.TestCase):
             expected_header_parts = ['Hugo_Symbol', 's_C_A11NF2_P001_d', 's_C_A5NEWD_P001_d']
             self.assertEqual(header_parts, expected_header_parts)
 
+    @unittest.skipIf(ENABLE_LARGE_TESTS!=True, "is a large test")
     def test_with_facets_txt_and_facets_mafs(self):
         """
         Test that the workflow produces expected output when Facets Suite .txt files are added and annotated .maf files from the Facets Suite workflow are used
@@ -1087,6 +1091,7 @@ class TestPortalWorkflow(unittest.TestCase):
             expected_header_parts = ['Hugo_Symbol', 's_C_A11NF2_P001_d', 's_C_A5NEWD_P001_d']
             self.assertEqual(header_parts, expected_header_parts)
 
+    @unittest.skipIf(ENABLE_LARGE_TESTS!=True, "is a large test")
     def test_with_mixed_mafs(self):
         """
         Test that the workflow produces expected output when both Argos maf files and Facets Suite maf files are used in the workflow
