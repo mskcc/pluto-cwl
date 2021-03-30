@@ -11,7 +11,7 @@ THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 PARENT_DIR = os.path.dirname(THIS_DIR)
 sys.path.insert(0, PARENT_DIR)
 from pluto.tools import TableReader, PlutoTestCase
-from pluto.settings import ENABLE_LARGE_TESTS
+from pluto.settings import ENABLE_LARGE_TESTS, MICROSATELLITES_LIST
 sys.path.pop(0)
 
 class TestWorkflowWithFacets(PlutoTestCase):
@@ -29,6 +29,8 @@ class TestWorkflowWithFacets(PlutoTestCase):
         mutation_svs_maf = os.path.join(self.DATA_SETS['demo']['MAF_DIR'], "Sample1.Sample2.svs.pass.vep.maf")
         pair_maf = os.path.join(self.DATA_SETS['demo']['MAF_DIR'], "Sample1.Sample2.muts.maf")
         snp_pileup = os.path.join(self.DATA_SETS['demo']['SNP_PILEUP_DIR'], "Sample1.Sample2.snp_pileup.gz")
+        normal_bam = os.path.join(self.DATA_SETS['demo']['BAM_DIR'], "Sample2.bam")
+        tumor_bam = os.path.join(self.DATA_SETS['demo']['BAM_DIR'], "Sample1.bam")
 
         self.input = {
             "assay_coverage": "1000", # TODO: get this from an assay reference key
@@ -52,6 +54,10 @@ class TestWorkflowWithFacets(PlutoTestCase):
             "helix_filter_version": "20.06.1",
             'IMPACT_gene_list': {
                 "path": self.IMPACT_FILE,
+                "class": "File"
+            },
+            "microsatellites_file": {
+                "path": MICROSATELLITES_LIST,
                 "class": "File"
             },
             "data_clinical_file": {
@@ -80,6 +86,13 @@ class TestWorkflowWithFacets(PlutoTestCase):
                     "tumor_id": "Sample1",
                     "normal_id": "Sample2"
                 }
+            ],
+            # these must be in the same order as pairs
+            "normal_bam_files": [
+                {'class': 'File', 'path': normal_bam}
+            ],
+            "tumor_bam_files": [
+                {'class': 'File', 'path': tumor_bam}
             ]
         }
 
@@ -406,8 +419,6 @@ class TestWorkflowWithFacets(PlutoTestCase):
         """
         Test case for two small demo datasets
         """
-        self.preserve = True
-        print(self.tmpdir)
         data_clinical_file = os.path.join(self.DATA_SETS['demo']['INPUTS_DIR'], "demo_sample_data_clinical.txt")
         sample_summary_file = os.path.join(self.DATA_SETS['demo']['QC_DIR'], "demo_SampleSummary.txt")
 
@@ -415,11 +426,15 @@ class TestWorkflowWithFacets(PlutoTestCase):
         mutation_svs_maf1 = os.path.join(self.DATA_SETS['demo']['MAF_DIR'], "Sample1.Sample2.svs.pass.vep.maf")
         pair_maf1 = os.path.join(self.DATA_SETS['demo']['MAF_DIR'], "Sample1.Sample2.muts.maf")
         snp_pileup1 = os.path.join(self.DATA_SETS['demo']['SNP_PILEUP_DIR'], "Sample1.Sample2.snp_pileup.gz")
+        normal_bam1 = os.path.join(self.DATA_SETS['demo']['BAM_DIR'], "Sample2.bam")
+        tumor_bam1 = os.path.join(self.DATA_SETS['demo']['BAM_DIR'], "Sample1.bam")
 
         mutation_svs_txt_file2 = os.path.join(self.DATA_SETS['demo']['MAF_DIR'], "Sample4.Sample3.svs.pass.vep.portal.txt")
         mutation_svs_maf2 = os.path.join(self.DATA_SETS['demo']['MAF_DIR'], "Sample4.Sample3.svs.pass.vep.maf")
         pair_maf2 = os.path.join(self.DATA_SETS['demo']['MAF_DIR'], "Sample4.Sample3.muts.maf")
         snp_pileup2 = os.path.join(self.DATA_SETS['demo']['SNP_PILEUP_DIR'], "Sample4.Sample3.snp_pileup.gz")
+        normal_bam2 = os.path.join(self.DATA_SETS['demo']['BAM_DIR'], "Sample3.bam")
+        tumor_bam2 = os.path.join(self.DATA_SETS['demo']['BAM_DIR'], "Sample4.bam")
 
         self.input = {
             "assay_coverage": "1000", # TODO: get this from an assay reference key
@@ -443,6 +458,10 @@ class TestWorkflowWithFacets(PlutoTestCase):
             "helix_filter_version": "20.06.1",
             'IMPACT_gene_list': {
                 "path": self.IMPACT_FILE,
+                "class": "File"
+            },
+            "microsatellites_file": {
+                "path": MICROSATELLITES_LIST,
                 "class": "File"
             },
             "data_clinical_file": {
@@ -484,6 +503,15 @@ class TestWorkflowWithFacets(PlutoTestCase):
                     "tumor_id": "Sample4",
                     "normal_id": "Sample3"
                 },
+            ],
+            # these must be in the same order as pairs
+            "normal_bam_files": [
+                {'class': 'File', 'path': normal_bam1},
+                {'class': 'File', 'path': normal_bam2}
+            ],
+            "tumor_bam_files": [
+                {'class': 'File', 'path': tumor_bam1},
+                {'class': 'File', 'path': tumor_bam2}
             ]
         }
 
