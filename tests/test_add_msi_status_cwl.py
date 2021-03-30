@@ -16,19 +16,15 @@ class TestAddMSIStatus(PlutoTestCase):
     cwl_file = CWLFile('add_msi_status.cwl')
 
     def test_add_msi_status(self):
-
-        self.runner_args['debug']= True
-        self.preserve = True
-        print("----->",self.tmpdir)
-
-
+        """
+        Test case for adding the MSI Status label to a table
+        """
         lines1 = [
             ['Total_Number_of_Sites', 'Number_of_Somatic_Sites', 'MSI_SCORE', 'SAMPLE_ID'],
             ['123',                   '987',                     '11',     'Sample1-T'],
             ['456',                   '654',                     '2',      'Sample2-T'],
             ['789',                   '321',                     '5',      'Sample3-T']
         ]
-
 
         tmb_file = self.write_table(self.tmpdir, filename = "msi.tsv", lines = lines1)
         self.input = {
@@ -41,7 +37,6 @@ class TestAddMSIStatus(PlutoTestCase):
         }
 
         output_json, output_dir = self.run_cwl()
-        print ( output_json, output_dir)
 
         expected_output = {
             'output_file': {
@@ -59,7 +54,6 @@ class TestAddMSIStatus(PlutoTestCase):
 
         lines = self.read_table(output_file)
 
-        #  NOTE: need to use cBioPortal flag to get correct output headers
         expected_lines = [
             ['Total_Number_of_Sites',   'Number_of_Somatic_Sites', 'MSI_SCORE',       'SAMPLE_ID',       'MSI_STATUS'],
             ['123',                     '987',                     '11',              'Sample1-T',       'Instable'],
