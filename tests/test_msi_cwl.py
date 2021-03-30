@@ -49,7 +49,7 @@ class TestMSI(PlutoTestCase):
 
         expected_lines = [
             ['Total_Number_of_Sites', 'Number_of_Somatic_Sites', '%'],
-            ['628', '138', '21.97']
+            ['1110', '232', '20.90']
             ]
         self.assertEqual(lines, expected_lines)
 
