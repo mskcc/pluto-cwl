@@ -11,7 +11,7 @@ THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 PARENT_DIR = os.path.dirname(THIS_DIR)
 sys.path.insert(0, PARENT_DIR)
 from pluto.tools import TableReader, PlutoTestCase
-from pluto.settings import DATA_SETS, KNOWN_FUSIONS_FILE, IMPACT_FILE
+from pluto.settings import DATA_SETS, KNOWN_FUSIONS_FILE, IMPACT_FILE, ENABLE_LARGE_TESTS
 from operators.workflow_with_facets import WorkflowWithFacets
 sys.path.pop(0)
 
@@ -165,6 +165,7 @@ class TestTmbWorkflowOperator(PlutoTestCase):
         }
         self.assertEqual(operator.input, expected_input)
 
+    @unittest.skipIf(ENABLE_LARGE_TESTS!=True, "is a large test")
     def test_tmb_workflow_operator1(self):
         """
         Test case for the running the workflow with facets operator
