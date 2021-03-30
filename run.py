@@ -27,6 +27,7 @@ from operators.igv_reports import IgvReports
 from operators.run_facets import RunFacets
 from operators.snp_pileup import SnpPileup
 from operators.head import HeadCWL
+from operators.msi import MSI
 from operators.input import generate_sample_summary, generate_pairs_sheet, generate_data_clinical, generate_samples_fillout_sheet
 
 def main():
@@ -230,6 +231,21 @@ def main():
     --snps-vcf /juno/work/ci/resources/genomes/GRCh37/facets_snps/dbsnp_137.b37__RmDupsClean__plusPseudo50__DROP_SORT.vcf \
     --output-prefix Sample34.Sample33
     """
+
+    _msi = subparsers.add_parser('msi', help = 'Run the MSI tool')
+    _msi.add_argument('--output-prefix', dest = 'o', required = True)
+    _msi.add_argument('--normal-bam', dest = 'n', required = True)
+    _msi.add_argument('--tumor-bam', dest = 't', required = True)
+    _msi.add_argument('--microsatellites-file', dest = 'd', required = True)
+    _msi.set_defaults(func = MSI._run)
+    """
+    $ ./run.py msi \
+    --tumor-bam /juno/work/ci/helix_filters_01/fixtures/Proj_08390_G/bam/Sample34.rg.md.abra.printreads.bam \
+    --normal-bam /juno/work/ci/helix_filters_01/fixtures/Proj_08390_G/bam/Sample33.rg.md.abra.printreads.bam \
+    --microsatellites-file /work/ci/resources/request_files/msisensor/microsatellites.list \
+    --output-prefix Sample34.Sample33
+    """
+
 
 
 
