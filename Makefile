@@ -169,7 +169,7 @@ singularity-pull-cmoutils:
 	. "$(ENVSH)" singularity && \
 	singularity pull --force --name "$(CMOUTILS_SIF)" docker://$(CMOUTILS_DOCKERTAG)
 
-singularity-pull-all: singularity-pull singularity-pull-dev singularity-pull-facets singularity-pull-fillout singularity-pull-igv-reports singularity-pull-cmoutils
+singularity-pull-all: singularity-pull singularity-pull-dev singularity-pull-facets singularity-pull-fillout singularity-pull-igv-reports singularity-pull-cmoutils singularity-pull-msi
 
 # change the Docker tag for all the CWL files from the old pattern to the new pattern
 OLD_TAG:=
