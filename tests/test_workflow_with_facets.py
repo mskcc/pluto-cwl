@@ -406,22 +406,25 @@ class TestWorkflowWithFacets(PlutoTestCase):
         ]
         self.assertEqual(comments, expected_comments)
 
-        tmbs = {}
-        msis = {}
-        msi_statuses = {}
+
+        metrics = {}
+        metrics['tmb'] = {}
+        metrics['msi'] = {}
+        metrics['msi_status'] = {}
         for record in records:
-            tmbs[record['SAMPLE_ID']] = record['CMO_TMB_SCORE']
-            msis[record['SAMPLE_ID']] = record['MSI_SCORE']
-            msi_statuses[record['SAMPLE_ID']] = record['MSI_STATUS']
+            sample_id = record['SAMPLE_ID']
+            metrics['tmb'][sample_id] = record['CMO_TMB_SCORE']
+            metrics['msi'][sample_id] = record['MSI_SCORE']
+            metrics['msi_status'][sample_id] = record['MSI_STATUS']
 
         expected_tmbs = {'Sample1': '17000.0', 'Sample4': 'NA'}
-        self.assertEqual(tmbs, expected_tmbs)
+        self.assertEqual(metrics['tmb'], expected_tmbs)
 
         expected_msis = {'Sample1': '28.00', 'Sample4': 'NA'}
-        self.assertEqual(msis, expected_msis)
+        self.assertEqual(metrics['msi'], expected_msis)
 
         expected_msi_statuses = {'Sample1': 'Instable', 'Sample4': 'NA'}
-        self.assertEqual(msi_statuses, expected_msi_statuses)
+        self.assertEqual(metrics['msi_status'], expected_msi_statuses)
 
 
 
@@ -903,22 +906,24 @@ class TestWorkflowWithFacets(PlutoTestCase):
         ]
         self.assertEqual(comments, expected_comments)
 
-        tmbs = {}
-        msis = {}
-        msi_statuses = {}
+        metrics = {}
+        metrics['tmb'] = {}
+        metrics['msi'] = {}
+        metrics['msi_status'] = {}
         for record in records:
-            tmbs[record['SAMPLE_ID']] = record['CMO_TMB_SCORE']
-            msis[record['SAMPLE_ID']] = record['MSI_SCORE']
-            msi_statuses[record['SAMPLE_ID']] = record['MSI_STATUS']
+            sample_id = record['SAMPLE_ID']
+            metrics['tmb'][sample_id] = record['CMO_TMB_SCORE']
+            metrics['msi'][sample_id] = record['MSI_SCORE']
+            metrics['msi_status'][sample_id] = record['MSI_STATUS']
 
         expected_tmbs = {'Sample1': '17000.0', 'Sample4': '9000.0'}
-        self.assertEqual(tmbs, expected_tmbs)
+        self.assertEqual(metrics['tmb'], expected_tmbs)
 
         expected_msis = {'Sample1': '28.00', 'Sample4': '11.76'}
-        self.assertEqual(msis, expected_msis)
+        self.assertEqual(metrics['msi'], expected_msis)
 
         expected_msi_statuses = {'Sample1': 'Instable', 'Sample4': 'Instable'}
-        self.assertEqual(msi_statuses, expected_msi_statuses)
+        self.assertEqual(metrics['msi_status'], expected_msi_statuses)
 
 
 
@@ -1321,14 +1326,37 @@ class TestWorkflowWithFacets(PlutoTestCase):
         ]
         self.assertEqual(comments, expected_comments)
 
-        tmbs = {}
+        metrics = {}
+        metrics['tmb'] = {}
+        metrics['msi'] = {}
+        metrics['msi_status'] = {}
         for record in records:
-            tmbs[record['SAMPLE_ID']] = record['CMO_TMB_SCORE']
+            sample_id = record['SAMPLE_ID']
+            metrics['tmb'][sample_id] = record['CMO_TMB_SCORE']
+            metrics['msi'][sample_id] = record['MSI_SCORE']
+            metrics['msi_status'][sample_id] = record['MSI_STATUS']
+
+        print(metrics['msi'])
+        print(metrics['msi_status'])
 
         expected_tmbs = {
         'Sample46': 'NA', 'Sample44': 'NA', 'Sample80': 'NA', 'Sample20': 'NA', 'Sample38': 'NA', 'Sample26': 'NA', 'Sample94': 'NA', 'Sample48': 'NA', 'Sample68': 'NA', 'Sample90': 'NA', 'Sample18': 'NA', 'Sample54': 'NA', 'Sample52': 'NA', 'Sample86': 'NA', 'Sample30': 'NA', 'Sample78': 'NA', 'Sample84': 'NA', 'Sample82': 'NA', 'Sample6': 'NA', 'Sample96': 'NA', 'Sample72': 'NA', 'Sample56': 'NA', 'Sample64': 'NA', 'Sample58': 'NA', 'Sample92': 'NA', 'Sample62': 'NA', 'Sample8': 'NA', 'Sample24': 'NA', 'Sample12': 'NA', 'Sample16': 'NA', 'Sample88': 'NA', 'Sample22': 'NA', 'Sample42': 'NA', 'Sample76': 'NA', 'Sample28': 'NA', 'Sample74': 'NA', 'Sample50': 'NA', 'Sample60': 'NA', 'Sample10': 'NA', 'Sample36': 'NA', 'Sample34': 'NA', 'Sample40': 'NA', 'Sample66': 'NA', 'Sample14': 'NA', 'Sample32': 'NA', 'Sample70': 'NA', 'Sample4': 'NA', 'Sample1': '47.5'
         }
-        self.assertEqual(tmbs, expected_tmbs)
+        self.assertEqual(metrics['tmb'], expected_tmbs)
+
+        expected_msis = {'Sample1': '28.00', 'Sample4': '11.76'}
+        self.assertEqual(metrics['msi'], expected_msis)
+
+        expected_msi_statuses = {'Sample1': 'Instable', 'Sample4': 'Instable'}
+        self.assertEqual(metrics['msi_status'], expected_msi_statuses)
+
+
+
+
+
+
+
+
 
     @unittest.skipIf(ENABLE_LARGE_TESTS!=True, "is a large test")
     def test_run_worflow_two_mafs(self):
@@ -1765,14 +1793,29 @@ class TestWorkflowWithFacets(PlutoTestCase):
         ]
         self.assertEqual(comments, expected_comments)
 
-        tmbs = {}
+        metrics = {}
+        metrics['tmb'] = {}
+        metrics['msi'] = {}
+        metrics['msi_status'] = {}
         for record in records:
-            tmbs[record['SAMPLE_ID']] = record['CMO_TMB_SCORE']
+            sample_id = record['SAMPLE_ID']
+            metrics['tmb'][sample_id] = record['CMO_TMB_SCORE']
+            metrics['msi'][sample_id] = record['MSI_SCORE']
+            metrics['msi_status'][sample_id] = record['MSI_STATUS']
+
+        print(metrics['msi'])
+        print(metrics['msi_status'])
 
         expected_tmbs = {
         'Sample46': 'NA', 'Sample44': 'NA', 'Sample80': 'NA', 'Sample20': 'NA', 'Sample38': 'NA', 'Sample26': 'NA', 'Sample94': 'NA', 'Sample48': 'NA', 'Sample68': 'NA', 'Sample90': 'NA', 'Sample18': 'NA', 'Sample54': 'NA', 'Sample52': 'NA', 'Sample86': 'NA', 'Sample30': 'NA', 'Sample78': 'NA', 'Sample84': 'NA', 'Sample82': 'NA', 'Sample6': 'NA', 'Sample96': 'NA', 'Sample72': 'NA', 'Sample56': 'NA', 'Sample64': 'NA', 'Sample58': 'NA', 'Sample92': 'NA', 'Sample62': 'NA', 'Sample8': 'NA', 'Sample24': 'NA', 'Sample12': 'NA', 'Sample16': 'NA', 'Sample88': 'NA', 'Sample22': 'NA', 'Sample42': 'NA', 'Sample76': 'NA', 'Sample28': 'NA', 'Sample74': 'NA', 'Sample50': 'NA', 'Sample60': 'NA', 'Sample10': 'NA', 'Sample36': 'NA', 'Sample34': 'NA', 'Sample40': 'NA', 'Sample66': 'NA', 'Sample14': 'NA', 'Sample32': 'NA', 'Sample70': 'NA', 'Sample4': '5.5', 'Sample1': '47.5'
         }
-        self.assertEqual(tmbs, expected_tmbs)
+        self.assertEqual(metrics['tmb'], expected_tmbs)
+
+        expected_msis = {'Sample1': '28.00', 'Sample4': '11.76'}
+        self.assertEqual(metrics['msi'], expected_msis)
+
+        expected_msi_statuses = {'Sample1': 'Instable', 'Sample4': 'Instable'}
+        self.assertEqual(metrics['msi_status'], expected_msi_statuses)
 
 if __name__ == "__main__":
     unittest.main()
