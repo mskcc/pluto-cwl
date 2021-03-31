@@ -945,6 +945,10 @@ class TestWorkflowWithFacets(PlutoTestCase):
         """
         data_clinical_file = os.path.join(self.DATA_SETS['Proj_08390_G']['INPUTS_DIR'], "Proj_08390_G_sample_data_clinical.txt")
         sample_summary_file = os.path.join(self.DATA_SETS['Proj_08390_G']['QC_DIR'], "Proj_08390_G_SampleSummary.txt")
+        microsatellites_file = self.DATA_SETS['demo']['microsatellites_file']
+        tumor_bam = os.path.join(self.DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample1.rg.md.abra.printreads.bam")
+        normal_bam = os.path.join(self.DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample2.rg.md.abra.printreads.bam")
+
         self.input = {
             "assay_coverage": "10000000", # TODO: get this from an assay reference key
             "project_id": "Proj_08390_G",
@@ -967,6 +971,10 @@ class TestWorkflowWithFacets(PlutoTestCase):
             "helix_filter_version": "20.06.1",
             'IMPACT_gene_list': {
                 "path": self.IMPACT_FILE,
+                "class": "File"
+            },
+            "microsatellites_file": {
+                "path": microsatellites_file,
                 "class": "File"
             },
             "data_clinical_file": {
@@ -1011,6 +1019,13 @@ class TestWorkflowWithFacets(PlutoTestCase):
                     "tumor_id": "Sample1",
                     "normal_id": "Sample2"
                 }
+            ],
+            # these must be in the same order as pairs
+            "normal_bam_files": [
+                {'class': 'File', 'path': normal_bam}
+            ],
+            "tumor_bam_files": [
+                {'class': 'File', 'path': tumor_bam}
             ]
         }
 
@@ -1365,6 +1380,14 @@ class TestWorkflowWithFacets(PlutoTestCase):
         """
         data_clinical_file = os.path.join(self.DATA_SETS['Proj_08390_G']['INPUTS_DIR'], "Proj_08390_G_sample_data_clinical.txt")
         sample_summary_file = os.path.join(self.DATA_SETS['Proj_08390_G']['QC_DIR'], "Proj_08390_G_SampleSummary.txt")
+        microsatellites_file = self.DATA_SETS['demo']['microsatellites_file']
+
+        tumor_bam1 = os.path.join(self.DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample1.rg.md.abra.printreads.bam")
+        normal_bam1 = os.path.join(self.DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample2.rg.md.abra.printreads.bam")
+
+        tumor_bam2 = os.path.join(self.DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample4.rg.md.abra.printreads.bam")
+        normal_bam2 = os.path.join(self.DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample3.rg.md.abra.printreads.bam")
+
         self.input = {
             "assay_coverage": "10000000", # TODO: get this from an assay reference key
             "project_id": "Proj_08390_G",
@@ -1387,6 +1410,10 @@ class TestWorkflowWithFacets(PlutoTestCase):
             "helix_filter_version": "20.06.1",
             'IMPACT_gene_list': {
                 "path": self.IMPACT_FILE,
+                "class": "File"
+            },
+            "microsatellites_file": {
+                "path": microsatellites_file,
                 "class": "File"
             },
             "data_clinical_file": {
@@ -1452,6 +1479,15 @@ class TestWorkflowWithFacets(PlutoTestCase):
                     "tumor_id": "Sample4",
                     "normal_id": "Sample3"
                 }
+            ],
+            # these must be in the same order as pairs
+            "normal_bam_files": [
+                {'class': 'File', 'path': normal_bam1},
+                {'class': 'File', 'path': normal_bam2}
+            ],
+            "tumor_bam_files": [
+                {'class': 'File', 'path': tumor_bam1},
+                {'class': 'File', 'path': tumor_bam2}
             ]
         }
 
