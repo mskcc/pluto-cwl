@@ -414,16 +414,13 @@ class TestWorkflowWithFacets(PlutoTestCase):
             msis[record['SAMPLE_ID']] = record['MSI_SCORE']
             msi_statuses[record['SAMPLE_ID']] = record['MSI_STATUS']
 
-        print(msis)
-        print(msi_statuses)
-
         expected_tmbs = {'Sample1': '17000.0', 'Sample4': 'NA'}
         self.assertEqual(tmbs, expected_tmbs)
 
-        expected_msis = {'Sample1': '17000.0', 'Sample4': 'NA'}
+        expected_msis = {'Sample1': '28.00', 'Sample4': 'NA'}
         self.assertEqual(msis, expected_msis)
 
-        expected_msi_statuses = {'Sample1': '17000.0', 'Sample4': 'NA'}
+        expected_msi_statuses = {'Sample1': 'Instable', 'Sample4': 'NA'}
         self.assertEqual(msi_statuses, expected_msi_statuses)
 
 
@@ -914,16 +911,13 @@ class TestWorkflowWithFacets(PlutoTestCase):
             msis[record['SAMPLE_ID']] = record['MSI_SCORE']
             msi_statuses[record['SAMPLE_ID']] = record['MSI_STATUS']
 
-        print(msis)
-        print(msi_statuses)
-
         expected_tmbs = {'Sample1': '17000.0', 'Sample4': '9000.0'}
         self.assertEqual(tmbs, expected_tmbs)
 
-        expected_msis = {'Sample1': '17000.0', 'Sample4': 'NA'}
+        expected_msis = {'Sample1': '28.00', 'Sample4': '11.76'}
         self.assertEqual(msis, expected_msis)
 
-        expected_msi_statuses = {'Sample1': '17000.0', 'Sample4': 'NA'}
+        expected_msi_statuses = {'Sample1': 'Instable', 'Sample4': 'Instable'}
         self.assertEqual(msi_statuses, expected_msi_statuses)
 
 
