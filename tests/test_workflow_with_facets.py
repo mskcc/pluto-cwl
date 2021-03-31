@@ -11,7 +11,7 @@ THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 PARENT_DIR = os.path.dirname(THIS_DIR)
 sys.path.insert(0, PARENT_DIR)
 from pluto.tools import TableReader, PlutoTestCase
-from pluto.settings import ENABLE_LARGE_TESTS
+from pluto.settings import ENABLE_LARGE_TESTS, MICROSATELLITES_LIST
 sys.path.pop(0)
 
 class TestWorkflowWithFacets(PlutoTestCase):
@@ -29,6 +29,9 @@ class TestWorkflowWithFacets(PlutoTestCase):
         mutation_svs_maf = os.path.join(self.DATA_SETS['demo']['MAF_DIR'], "Sample1.Sample2.svs.pass.vep.maf")
         pair_maf = os.path.join(self.DATA_SETS['demo']['MAF_DIR'], "Sample1.Sample2.muts.maf")
         snp_pileup = os.path.join(self.DATA_SETS['demo']['SNP_PILEUP_DIR'], "Sample1.Sample2.snp_pileup.gz")
+        normal_bam = os.path.join(self.DATA_SETS['demo']['BAM_DIR'], "Sample2.bam")
+        tumor_bam = os.path.join(self.DATA_SETS['demo']['BAM_DIR'], "Sample1.bam")
+        microsatellites_file = self.DATA_SETS['demo']['microsatellites_file']
 
         self.input = {
             "assay_coverage": "1000", # TODO: get this from an assay reference key
@@ -52,6 +55,10 @@ class TestWorkflowWithFacets(PlutoTestCase):
             "helix_filter_version": "20.06.1",
             'IMPACT_gene_list': {
                 "path": self.IMPACT_FILE,
+                "class": "File"
+            },
+            "microsatellites_file": {
+                "path": microsatellites_file,
                 "class": "File"
             },
             "data_clinical_file": {
@@ -80,6 +87,13 @@ class TestWorkflowWithFacets(PlutoTestCase):
                     "tumor_id": "Sample1",
                     "normal_id": "Sample2"
                 }
+            ],
+            # these must be in the same order as pairs
+            "normal_bam_files": [
+                {'class': 'File', 'path': normal_bam}
+            ],
+            "tumor_bam_files": [
+                {'class': 'File', 'path': tumor_bam}
             ]
         }
 
@@ -232,8 +246,8 @@ class TestWorkflowWithFacets(PlutoTestCase):
                             'location': 'file://' + os.path.join(output_dir, 'portal/data_clinical_sample.txt'),
                             'basename': 'data_clinical_sample.txt',
                             'class': 'File',
-                            'checksum': 'sha1$678e003ed09df4f63a9a3a013623b7a18b6c9359',
-                            'size': 1401,
+                            'checksum': 'sha1$40caf8f2180df9f8b7e9af8b6913f27274d3aa87',
+                            'size': 1523,
                             'path': os.path.join(output_dir, 'portal/data_clinical_sample.txt')
                         },
                         {
@@ -388,16 +402,29 @@ class TestWorkflowWithFacets(PlutoTestCase):
         records = [ rec for rec in table_reader.read() ]
 
         expected_comments = [
-        '#SAMPLE_ID\tIGO_ID\tPATIENT_ID\tCOLLAB_ID\tSAMPLE_TYPE\tSAMPLE_CLASS\tGENE_PANEL\tONCOTREE_CODE\tSPECIMEN_PRESERVATION_TYPE\tTISSUE_SITE\tREQUEST_ID\tPROJECT_ID\tPIPELINE\tPIPELINE_VERSION\tSAMPLE_COVERAGE\tPROJECT_PI\tREQUEST_PI\tgenome_doubled\tASCN_PURITY\tASCN_PLOIDY\tASCN_VERSION\tASCN_WGD\tCMO_TMB_SCORE\n', '#SAMPLE_ID\tIGO_ID\tPATIENT_ID\tCOLLAB_ID\tSAMPLE_TYPE\tSAMPLE_CLASS\tGENE_PANEL\tONCOTREE_CODE\tSPECIMEN_PRESERVATION_TYPE\tTISSUE_SITE\tREQUEST_ID\tPROJECT_ID\tPIPELINE\tPIPELINE_VERSION\tSAMPLE_COVERAGE\tPROJECT_PI\tREQUEST_PI\tgenome_doubled\tASCN_PURITY\tASCN_PLOIDY\tASCN_VERSION\tASCN_WGD\tCMO_TMB_SCORE\n', '#STRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tNUMBER\tSTRING\tSTRING\tSTRING\tNUMBER\tNUMBER\tSTRING\tSTRING\tNUMBER\n', '#1\t1\t1\t0\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t0\t1\t1\t0\t1\t1\n'
+        '#SAMPLE_ID\tIGO_ID\tPATIENT_ID\tCOLLAB_ID\tSAMPLE_TYPE\tSAMPLE_CLASS\tGENE_PANEL\tONCOTREE_CODE\tSPECIMEN_PRESERVATION_TYPE\tTISSUE_SITE\tREQUEST_ID\tPROJECT_ID\tPIPELINE\tPIPELINE_VERSION\tSAMPLE_COVERAGE\tPROJECT_PI\tREQUEST_PI\tgenome_doubled\tASCN_PURITY\tASCN_PLOIDY\tASCN_VERSION\tASCN_WGD\tCMO_TMB_SCORE\tCMO_MSI_SCORE\tCMO_MSI_STATUS\n', '#SAMPLE_ID\tIGO_ID\tPATIENT_ID\tCOLLAB_ID\tSAMPLE_TYPE\tSAMPLE_CLASS\tGENE_PANEL\tONCOTREE_CODE\tSPECIMEN_PRESERVATION_TYPE\tTISSUE_SITE\tREQUEST_ID\tPROJECT_ID\tPIPELINE\tPIPELINE_VERSION\tSAMPLE_COVERAGE\tPROJECT_PI\tREQUEST_PI\tgenome_doubled\tASCN_PURITY\tASCN_PLOIDY\tASCN_VERSION\tASCN_WGD\tCMO_TMB_SCORE\tCMO_MSI_SCORE\tCMO_MSI_STATUS\n', '#STRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tNUMBER\tSTRING\tSTRING\tSTRING\tNUMBER\tNUMBER\tSTRING\tSTRING\tNUMBER\tNUMBER\tSTRING\n', '#1\t1\t1\t0\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t0\t1\t1\t0\t1\t1\t0\t0\n'
         ]
         self.assertEqual(comments, expected_comments)
 
-        tmbs = {}
+
+        metrics = {}
+        metrics['tmb'] = {}
+        metrics['msi'] = {}
+        metrics['msi_status'] = {}
         for record in records:
-            tmbs[record['SAMPLE_ID']] = record['CMO_TMB_SCORE']
+            sample_id = record['SAMPLE_ID']
+            metrics['tmb'][sample_id] = record['CMO_TMB_SCORE']
+            metrics['msi'][sample_id] = record['MSI_SCORE']
+            metrics['msi_status'][sample_id] = record['MSI_STATUS']
 
         expected_tmbs = {'Sample1': '17000.0', 'Sample4': 'NA'}
-        self.assertEqual(tmbs, expected_tmbs)
+        self.assertEqual(metrics['tmb'], expected_tmbs)
+
+        expected_msis = {'Sample1': '28.00', 'Sample4': 'NA'}
+        self.assertEqual(metrics['msi'], expected_msis)
+
+        expected_msi_statuses = {'Sample1': 'Instable', 'Sample4': 'NA'}
+        self.assertEqual(metrics['msi_status'], expected_msi_statuses)
 
 
 
@@ -406,20 +433,23 @@ class TestWorkflowWithFacets(PlutoTestCase):
         """
         Test case for two small demo datasets
         """
-        self.preserve = True
-        print(self.tmpdir)
         data_clinical_file = os.path.join(self.DATA_SETS['demo']['INPUTS_DIR'], "demo_sample_data_clinical.txt")
         sample_summary_file = os.path.join(self.DATA_SETS['demo']['QC_DIR'], "demo_SampleSummary.txt")
+        microsatellites_file = self.DATA_SETS['demo']['microsatellites_file']
 
         mutation_svs_txt_file1 = os.path.join(self.DATA_SETS['demo']['MAF_DIR'], "Sample1.Sample2.svs.pass.vep.portal.txt")
         mutation_svs_maf1 = os.path.join(self.DATA_SETS['demo']['MAF_DIR'], "Sample1.Sample2.svs.pass.vep.maf")
         pair_maf1 = os.path.join(self.DATA_SETS['demo']['MAF_DIR'], "Sample1.Sample2.muts.maf")
         snp_pileup1 = os.path.join(self.DATA_SETS['demo']['SNP_PILEUP_DIR'], "Sample1.Sample2.snp_pileup.gz")
+        normal_bam1 = os.path.join(self.DATA_SETS['demo']['BAM_DIR'], "Sample2.bam")
+        tumor_bam1 = os.path.join(self.DATA_SETS['demo']['BAM_DIR'], "Sample1.bam")
 
         mutation_svs_txt_file2 = os.path.join(self.DATA_SETS['demo']['MAF_DIR'], "Sample4.Sample3.svs.pass.vep.portal.txt")
         mutation_svs_maf2 = os.path.join(self.DATA_SETS['demo']['MAF_DIR'], "Sample4.Sample3.svs.pass.vep.maf")
         pair_maf2 = os.path.join(self.DATA_SETS['demo']['MAF_DIR'], "Sample4.Sample3.muts.maf")
         snp_pileup2 = os.path.join(self.DATA_SETS['demo']['SNP_PILEUP_DIR'], "Sample4.Sample3.snp_pileup.gz")
+        normal_bam2 = os.path.join(self.DATA_SETS['demo']['BAM_DIR'], "Sample3.bam")
+        tumor_bam2 = os.path.join(self.DATA_SETS['demo']['BAM_DIR'], "Sample4.bam")
 
         self.input = {
             "assay_coverage": "1000", # TODO: get this from an assay reference key
@@ -443,6 +473,10 @@ class TestWorkflowWithFacets(PlutoTestCase):
             "helix_filter_version": "20.06.1",
             'IMPACT_gene_list': {
                 "path": self.IMPACT_FILE,
+                "class": "File"
+            },
+            "microsatellites_file": {
+                "path": microsatellites_file,
                 "class": "File"
             },
             "data_clinical_file": {
@@ -484,6 +518,15 @@ class TestWorkflowWithFacets(PlutoTestCase):
                     "tumor_id": "Sample4",
                     "normal_id": "Sample3"
                 },
+            ],
+            # these must be in the same order as pairs
+            "normal_bam_files": [
+                {'class': 'File', 'path': normal_bam1},
+                {'class': 'File', 'path': normal_bam2}
+            ],
+            "tumor_bam_files": [
+                {'class': 'File', 'path': tumor_bam1},
+                {'class': 'File', 'path': tumor_bam2}
             ]
         }
 
@@ -703,8 +746,8 @@ class TestWorkflowWithFacets(PlutoTestCase):
                             'location': 'file://' + os.path.join(output_dir, 'portal/data_clinical_sample.txt'),
                             'basename': 'data_clinical_sample.txt',
                             'class': 'File',
-                            'checksum': 'sha1$2846305ce5bee0ea049aebdec9150114bc35c299',
-                            'size': 1419,
+                            'checksum': 'sha1$a975d9be1ade1185a2d78ed3be0d45ffb584be52',
+                            'size': 1546,
                             'path': os.path.join(output_dir, 'portal/data_clinical_sample.txt')
                         },
                         {
@@ -859,16 +902,28 @@ class TestWorkflowWithFacets(PlutoTestCase):
         records = [ rec for rec in table_reader.read() ]
 
         expected_comments = [
-        '#SAMPLE_ID\tIGO_ID\tPATIENT_ID\tCOLLAB_ID\tSAMPLE_TYPE\tSAMPLE_CLASS\tGENE_PANEL\tONCOTREE_CODE\tSPECIMEN_PRESERVATION_TYPE\tTISSUE_SITE\tREQUEST_ID\tPROJECT_ID\tPIPELINE\tPIPELINE_VERSION\tSAMPLE_COVERAGE\tPROJECT_PI\tREQUEST_PI\tgenome_doubled\tASCN_PURITY\tASCN_PLOIDY\tASCN_VERSION\tASCN_WGD\tCMO_TMB_SCORE\n', '#SAMPLE_ID\tIGO_ID\tPATIENT_ID\tCOLLAB_ID\tSAMPLE_TYPE\tSAMPLE_CLASS\tGENE_PANEL\tONCOTREE_CODE\tSPECIMEN_PRESERVATION_TYPE\tTISSUE_SITE\tREQUEST_ID\tPROJECT_ID\tPIPELINE\tPIPELINE_VERSION\tSAMPLE_COVERAGE\tPROJECT_PI\tREQUEST_PI\tgenome_doubled\tASCN_PURITY\tASCN_PLOIDY\tASCN_VERSION\tASCN_WGD\tCMO_TMB_SCORE\n', '#STRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tNUMBER\tSTRING\tSTRING\tSTRING\tNUMBER\tNUMBER\tSTRING\tSTRING\tNUMBER\n', '#1\t1\t1\t0\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t0\t1\t1\t0\t1\t1\n'
+        '#SAMPLE_ID\tIGO_ID\tPATIENT_ID\tCOLLAB_ID\tSAMPLE_TYPE\tSAMPLE_CLASS\tGENE_PANEL\tONCOTREE_CODE\tSPECIMEN_PRESERVATION_TYPE\tTISSUE_SITE\tREQUEST_ID\tPROJECT_ID\tPIPELINE\tPIPELINE_VERSION\tSAMPLE_COVERAGE\tPROJECT_PI\tREQUEST_PI\tgenome_doubled\tASCN_PURITY\tASCN_PLOIDY\tASCN_VERSION\tASCN_WGD\tCMO_TMB_SCORE\tCMO_MSI_SCORE\tCMO_MSI_STATUS\n', '#SAMPLE_ID\tIGO_ID\tPATIENT_ID\tCOLLAB_ID\tSAMPLE_TYPE\tSAMPLE_CLASS\tGENE_PANEL\tONCOTREE_CODE\tSPECIMEN_PRESERVATION_TYPE\tTISSUE_SITE\tREQUEST_ID\tPROJECT_ID\tPIPELINE\tPIPELINE_VERSION\tSAMPLE_COVERAGE\tPROJECT_PI\tREQUEST_PI\tgenome_doubled\tASCN_PURITY\tASCN_PLOIDY\tASCN_VERSION\tASCN_WGD\tCMO_TMB_SCORE\tCMO_MSI_SCORE\tCMO_MSI_STATUS\n', '#STRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tNUMBER\tSTRING\tSTRING\tSTRING\tNUMBER\tNUMBER\tSTRING\tSTRING\tNUMBER\tNUMBER\tSTRING\n', '#1\t1\t1\t0\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t0\t1\t1\t0\t1\t1\t0\t0\n'
         ]
         self.assertEqual(comments, expected_comments)
 
-        tmbs = {}
+        metrics = {}
+        metrics['tmb'] = {}
+        metrics['msi'] = {}
+        metrics['msi_status'] = {}
         for record in records:
-            tmbs[record['SAMPLE_ID']] = record['CMO_TMB_SCORE']
+            sample_id = record['SAMPLE_ID']
+            metrics['tmb'][sample_id] = record['CMO_TMB_SCORE']
+            metrics['msi'][sample_id] = record['MSI_SCORE']
+            metrics['msi_status'][sample_id] = record['MSI_STATUS']
 
         expected_tmbs = {'Sample1': '17000.0', 'Sample4': '9000.0'}
-        self.assertEqual(tmbs, expected_tmbs)
+        self.assertEqual(metrics['tmb'], expected_tmbs)
+
+        expected_msis = {'Sample1': '28.00', 'Sample4': '11.76'}
+        self.assertEqual(metrics['msi'], expected_msis)
+
+        expected_msi_statuses = {'Sample1': 'Instable', 'Sample4': 'Instable'}
+        self.assertEqual(metrics['msi_status'], expected_msi_statuses)
 
 
 
@@ -1271,14 +1326,37 @@ class TestWorkflowWithFacets(PlutoTestCase):
         ]
         self.assertEqual(comments, expected_comments)
 
-        tmbs = {}
+        metrics = {}
+        metrics['tmb'] = {}
+        metrics['msi'] = {}
+        metrics['msi_status'] = {}
         for record in records:
-            tmbs[record['SAMPLE_ID']] = record['CMO_TMB_SCORE']
+            sample_id = record['SAMPLE_ID']
+            metrics['tmb'][sample_id] = record['CMO_TMB_SCORE']
+            metrics['msi'][sample_id] = record['MSI_SCORE']
+            metrics['msi_status'][sample_id] = record['MSI_STATUS']
+
+        print(metrics['msi'])
+        print(metrics['msi_status'])
 
         expected_tmbs = {
         'Sample46': 'NA', 'Sample44': 'NA', 'Sample80': 'NA', 'Sample20': 'NA', 'Sample38': 'NA', 'Sample26': 'NA', 'Sample94': 'NA', 'Sample48': 'NA', 'Sample68': 'NA', 'Sample90': 'NA', 'Sample18': 'NA', 'Sample54': 'NA', 'Sample52': 'NA', 'Sample86': 'NA', 'Sample30': 'NA', 'Sample78': 'NA', 'Sample84': 'NA', 'Sample82': 'NA', 'Sample6': 'NA', 'Sample96': 'NA', 'Sample72': 'NA', 'Sample56': 'NA', 'Sample64': 'NA', 'Sample58': 'NA', 'Sample92': 'NA', 'Sample62': 'NA', 'Sample8': 'NA', 'Sample24': 'NA', 'Sample12': 'NA', 'Sample16': 'NA', 'Sample88': 'NA', 'Sample22': 'NA', 'Sample42': 'NA', 'Sample76': 'NA', 'Sample28': 'NA', 'Sample74': 'NA', 'Sample50': 'NA', 'Sample60': 'NA', 'Sample10': 'NA', 'Sample36': 'NA', 'Sample34': 'NA', 'Sample40': 'NA', 'Sample66': 'NA', 'Sample14': 'NA', 'Sample32': 'NA', 'Sample70': 'NA', 'Sample4': 'NA', 'Sample1': '47.5'
         }
-        self.assertEqual(tmbs, expected_tmbs)
+        self.assertEqual(metrics['tmb'], expected_tmbs)
+
+        expected_msis = {'Sample1': '28.00', 'Sample4': '11.76'}
+        self.assertEqual(metrics['msi'], expected_msis)
+
+        expected_msi_statuses = {'Sample1': 'Instable', 'Sample4': 'Instable'}
+        self.assertEqual(metrics['msi_status'], expected_msi_statuses)
+
+
+
+
+
+
+
+
 
     @unittest.skipIf(ENABLE_LARGE_TESTS!=True, "is a large test")
     def test_run_worflow_two_mafs(self):
@@ -1715,14 +1793,29 @@ class TestWorkflowWithFacets(PlutoTestCase):
         ]
         self.assertEqual(comments, expected_comments)
 
-        tmbs = {}
+        metrics = {}
+        metrics['tmb'] = {}
+        metrics['msi'] = {}
+        metrics['msi_status'] = {}
         for record in records:
-            tmbs[record['SAMPLE_ID']] = record['CMO_TMB_SCORE']
+            sample_id = record['SAMPLE_ID']
+            metrics['tmb'][sample_id] = record['CMO_TMB_SCORE']
+            metrics['msi'][sample_id] = record['MSI_SCORE']
+            metrics['msi_status'][sample_id] = record['MSI_STATUS']
+
+        print(metrics['msi'])
+        print(metrics['msi_status'])
 
         expected_tmbs = {
         'Sample46': 'NA', 'Sample44': 'NA', 'Sample80': 'NA', 'Sample20': 'NA', 'Sample38': 'NA', 'Sample26': 'NA', 'Sample94': 'NA', 'Sample48': 'NA', 'Sample68': 'NA', 'Sample90': 'NA', 'Sample18': 'NA', 'Sample54': 'NA', 'Sample52': 'NA', 'Sample86': 'NA', 'Sample30': 'NA', 'Sample78': 'NA', 'Sample84': 'NA', 'Sample82': 'NA', 'Sample6': 'NA', 'Sample96': 'NA', 'Sample72': 'NA', 'Sample56': 'NA', 'Sample64': 'NA', 'Sample58': 'NA', 'Sample92': 'NA', 'Sample62': 'NA', 'Sample8': 'NA', 'Sample24': 'NA', 'Sample12': 'NA', 'Sample16': 'NA', 'Sample88': 'NA', 'Sample22': 'NA', 'Sample42': 'NA', 'Sample76': 'NA', 'Sample28': 'NA', 'Sample74': 'NA', 'Sample50': 'NA', 'Sample60': 'NA', 'Sample10': 'NA', 'Sample36': 'NA', 'Sample34': 'NA', 'Sample40': 'NA', 'Sample66': 'NA', 'Sample14': 'NA', 'Sample32': 'NA', 'Sample70': 'NA', 'Sample4': '5.5', 'Sample1': '47.5'
         }
-        self.assertEqual(tmbs, expected_tmbs)
+        self.assertEqual(metrics['tmb'], expected_tmbs)
+
+        expected_msis = {'Sample1': '28.00', 'Sample4': '11.76'}
+        self.assertEqual(metrics['msi'], expected_msis)
+
+        expected_msi_statuses = {'Sample1': 'Instable', 'Sample4': 'Instable'}
+        self.assertEqual(metrics['msi_status'], expected_msi_statuses)
 
 if __name__ == "__main__":
     unittest.main()

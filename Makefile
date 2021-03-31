@@ -149,6 +149,12 @@ singularity-pull-fillout:
 	. "$(ENVSH)" singularity && \
 	singularity pull --force --name "$(FILLOUT_SIF)" docker://$(FILLOUT_DOCKERTAG)
 
+MSI_DOCKERTAG:=mskcc/msisensor:0.2
+MSI_SIF:=mskcc_msisensor:0.2.sif
+singularity-pull-msi:
+	. "$(ENVSH)" singularity && \
+	singularity pull --force --name "$(MSI_SIF)" docker://$(MSI_DOCKERTAG)
+
 IGV_REPORTS_DOCKERTAG:=$(HF_CONTAINER):igv-reports-1.0.1
 IGV_REPORTS_SIF:=mskcc_helix_filters_01:igv-reports-1.0.1.sif
 singularity-pull-igv-reports:
@@ -163,7 +169,7 @@ singularity-pull-cmoutils:
 	. "$(ENVSH)" singularity && \
 	singularity pull --force --name "$(CMOUTILS_SIF)" docker://$(CMOUTILS_DOCKERTAG)
 
-singularity-pull-all: singularity-pull singularity-pull-dev singularity-pull-facets singularity-pull-fillout singularity-pull-igv-reports singularity-pull-cmoutils
+singularity-pull-all: singularity-pull singularity-pull-dev singularity-pull-facets singularity-pull-fillout singularity-pull-igv-reports singularity-pull-cmoutils singularity-pull-msi
 
 # change the Docker tag for all the CWL files from the old pattern to the new pattern
 OLD_TAG:=
