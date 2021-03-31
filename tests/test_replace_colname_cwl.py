@@ -14,7 +14,7 @@ from pluto.tools import PlutoTestCase, CWLFile, TableReader
 from pluto.settings import DATA_SETS
 sys.path.pop(0)
 
-class TestMsiWorkflow(PlutoTestCase):
+class TestReplaceColname(PlutoTestCase):
     cwl_file = CWLFile('replace_colname.cwl')
 
     def setUp(self):

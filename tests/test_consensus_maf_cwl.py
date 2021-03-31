@@ -14,7 +14,7 @@ sys.path.insert(0, PARENT_DIR)
 from pluto.tools import PlutoTestCase, CWLFile, TableReader
 sys.path.pop(0)
 
-class TestConcatMafs(PlutoTestCase):
+class TestConsensusMafs(PlutoTestCase):
     cwl_file = CWLFile('consensus_maf.cwl')
 
     def setUp(self):

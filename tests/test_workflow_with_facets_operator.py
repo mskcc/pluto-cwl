@@ -15,7 +15,7 @@ from pluto.settings import DATA_SETS, KNOWN_FUSIONS_FILE, IMPACT_FILE, ENABLE_LA
 from operators.workflow_with_facets import WorkflowWithFacets
 sys.path.pop(0)
 
-class TestTmbWorkflowOperator(PlutoTestCase):
+class TestWorkflowWithFacetsOperator(PlutoTestCase):
     def setUp(self):
         super().setUp()
         self.mutation_svs_txt_files_file = os.path.join(self.tmpdir, "mutation_svs.txt")

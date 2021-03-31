@@ -18,7 +18,7 @@ sys.path.pop(0)
 
 cwl_file = CWLFile('run-facets-legacy-wrapper.cwl')
 
-class TestRunFacetsWrapperCWL(unittest.TestCase):
+class TestRunFacetsLegacyWrapperCWL(unittest.TestCase):
     def test_run_facets_wrapper(self):
         """
         """

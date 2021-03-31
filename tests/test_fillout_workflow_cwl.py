@@ -14,7 +14,7 @@ sys.path.insert(0, PARENT_DIR)
 from pluto.tools import PlutoTestCase, CWLFile
 sys.path.pop(0)
 
-class TestGetBaseCounts(PlutoTestCase):
+class TestFilloutWorkflow(PlutoTestCase):
     cwl_file = CWLFile('fillout_workflow.cwl')
 
     def setUp(self):
