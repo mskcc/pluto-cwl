@@ -105,7 +105,7 @@ class TestMsiWorkflow(PlutoTestCase):
             ['#STRING', 'STRING', 'NUMBER', 'NUMBER','STRING'],
             ['#1', '1', '1', '0','0'],
             ['SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE', 'MSI_SCORE','MSI_STATUS'],
-            ['Sample1', 'Patient1',   '108',             '21.97',    'Instable'  ],
+            ['Sample1', 'Patient1',   '108',             '20.90',    'Instable'  ],
             ['Sample2', 'Patient2',   '58',              'NA',       'NA'        ],
             ['Sample6-T', 'Patient4',   '57',              'NA',       'NA'        ],
             ['Sample7-N', 'Patient4',   '58',              'NA',       'NA'        ]

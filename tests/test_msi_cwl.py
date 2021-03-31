@@ -97,6 +97,22 @@ class TestMSI(PlutoTestCase):
                 'checksum': 'sha1$8d5856202b859fc0da427bf9069eb870f2adcd55',
                 'size': 62,
                 'path': os.path.join(output_dir, "Sample24.Sample23")
+                },
+            'dis_file': {
+                'basename': 'Sample24.Sample23_dis',
+                'checksum': 'sha1$4129165a2034041595052a4e94c28c58c8d44a00',
+                'class': 'File',
+                'location': 'file://' + os.path.join(output_dir, 'Sample24.Sample23_dis'),
+                'path': os.path.join(output_dir, 'Sample24.Sample23_dis'),
+                'size': 772099729
+                },
+           'somatic_file': {
+               'basename': 'Sample24.Sample23_somatic',
+                'checksum': 'sha1$ad5556df9f02aee0e43d74a4b7855d5d8cfc4def',
+                'class': 'File',
+                'location': 'file://' + os.path.join(output_dir, 'Sample24.Sample23_somatic'),
+                'path': os.path.join(output_dir, 'Sample24.Sample23_somatic'),
+                'size': 8432
                 }
             }
         self.assertDictEqual(output_json, expected_output)
