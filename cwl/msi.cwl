@@ -152,3 +152,11 @@ outputs:
     type: File
     outputBinding:
       glob: $(inputs.o)
+  dis_file:
+    type: File
+    outputBinding:
+      glob: $(inputs.o)_dis
+  somatic_file:
+    type: File
+    outputBinding:
+      glob: $(inputs.o)_somatic

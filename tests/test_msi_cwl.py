@@ -11,7 +11,7 @@ THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 PARENT_DIR = os.path.dirname(THIS_DIR)
 sys.path.insert(0, PARENT_DIR)
 from pluto.tools import PlutoTestCase, CWLFile
-from pluto.settings import MICROSATELLITES_LIST, ENABLE_LARGE_TESTS
+from pluto.settings import ENABLE_LARGE_TESTS
 sys.path.pop(0)
 
 class TestMSI(PlutoTestCase):
@@ -21,11 +21,13 @@ class TestMSI(PlutoTestCase):
         """
         Test case for running MSI on small demo dataset
         """
+        self.maxDiff = None
         tumor_bam = os.path.join(self.DATA_SETS['demo']['BAM_DIR'], "Sample1.bam")
         normal_bam = os.path.join(self.DATA_SETS['demo']['BAM_DIR'], "Sample2.bam")
+        microsatellites_file = self.DATA_SETS['demo']['microsatellites_file']
 
         self.input = {
-              "d":    {"class": "File", "path": MICROSATELLITES_LIST },
+              "d":    {"class": "File", "path": microsatellites_file },
               "n":    {"class": "File", "path": normal_bam },
               "t":    {"class": "File", "path": tumor_bam },
               "o": "Sample1.Sample2"
@@ -37,9 +39,25 @@ class TestMSI(PlutoTestCase):
                 'location': 'file://' + os.path.join(output_dir, "Sample1.Sample2"),
                 'basename': "Sample1.Sample2",
                 'class': 'File',
-                'checksum': 'sha1$5d96daa02b2e081497aba95dc92e0bf8a33ef7f4',
-                'size': 63,
+                'checksum': 'sha1$d307badbf88a82ce0c368d5d41d816d0e053da4c',
+                'size': 59,
                 'path': os.path.join(output_dir, "Sample1.Sample2")
+                },
+            'dis_file': {
+                'basename': 'Sample1.Sample2_dis',
+                'checksum': 'sha1$0ba8807a47e0cfe14533e4bcaf80219687b59857',
+                'class': 'File',
+                'location': 'file://' + os.path.join(output_dir, 'Sample1.Sample2_dis'),
+                'path': os.path.join(output_dir, 'Sample1.Sample2_dis'),
+                'size': 14687751
+                },
+           'somatic_file': {
+               'basename': 'Sample1.Sample2_somatic',
+                'checksum': 'sha1$e9391ea6b9063aafe8f9718932abe2429fc253da',
+                'class': 'File',
+                'location': 'file://' + os.path.join(output_dir, 'Sample1.Sample2_somatic'),
+                'path': os.path.join(output_dir, 'Sample1.Sample2_somatic'),
+                'size': 397
                 }
             }
         self.assertDictEqual(output_json, expected_output)
@@ -49,7 +67,7 @@ class TestMSI(PlutoTestCase):
 
         expected_lines = [
             ['Total_Number_of_Sites', 'Number_of_Somatic_Sites', '%'],
-            ['1110', '232', '20.90']
+            ['25', '7', '28.00']
             ]
         self.assertEqual(lines, expected_lines)
 
@@ -59,13 +77,12 @@ class TestMSI(PlutoTestCase):
         Test case for the MSI analysis workflow
         """
         self.maxDiff = None
-        # self.preserve = True
-        # print(self.tmpdir)
         tumor_bam = os.path.join(self.DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample24.rg.md.abra.printreads.bam")
         normal_bam = os.path.join(self.DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample23.rg.md.abra.printreads.bam")
+        microsatellites_file = self.DATA_SETS['Proj_08390_G']['microsatellites_file']
 
         self.input = {
-              "d":    {"class": "File", "path": MICROSATELLITES_LIST },
+              "d":    {"class": "File", "path": microsatellites_file },
               "n":    {"class": "File", "path": normal_bam },
               "t":    {"class": "File", "path": tumor_bam },
               "o": "Sample24.Sample23"
