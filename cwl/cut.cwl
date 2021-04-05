@@ -5,7 +5,7 @@ class: CommandLineTool
 baseCommand: [ cut ]
 requirements:
   DockerRequirement:
-    dockerPull: mskcc/helix_filters_01:21.02.2
+    dockerPull: mskcc/helix_filters_01:21.03.1
 stdout: output.txt
 inputs:
   field_indexes:
