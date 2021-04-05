@@ -8,7 +8,7 @@ doc: "CWL to save a copy of the execution Directory for debugging"
 requirements:
   InlineJavascriptRequirement: {}
   # DockerRequirement:
-  #   dockerPull: mskcc/helix_filters_01:21.03.0
+  #   dockerPull: mskcc/helix_filters_01:21.03.1
   InitialWorkDirRequirement:
     listing:
       - entryname: some_dir
