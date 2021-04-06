@@ -25,6 +25,58 @@ To run manually in your current environment, source the environment script with 
 
 Alternatively, use the Makefile recipes since they already include environment configuration when running on Juno / Silo HPC servers.
 
+# Usage
+
+The primary entry point for the workflow is [`cwl/workflow_with_facets.cwl`](https://github.com/mskcc/pluto-cwl/blob/master/cwl/workflow_with_facets.cwl). 
+
+## Run a CWL
+
+### Setup
+
+To run a CWL, you first need to make sure dependencies are available.
+
+Running on Juno requires that the Singularity containers mentioned above are available;
+
+```
+make singularity-pull-all
+```
+
+If you are on Juno server using `cwltool` you can just load the included config for the `test` environment;
+
+```
+. env.juno.sh test
+```
+
+If you want to use Toil to submit jobs to LSF then you will need the `toil` environment config;
+
+```
+. env.juno.sh toil
+```
+
+### Run with `run.py`
+
+The included `run.py` script presents an easy command line interface to run CWL files, by mapping standard CLI flags and arguments to the CWL input arguments via the included [`operators`](https://github.com/mskcc/pluto-cwl/tree/master/operators). The script will automatically create the required `input.json` file for you, set up temporary directories for pipeline execution, and run the desired CWL with either the `cwltool` reference runner or Toil. See `run.py -h` for available options and CWL's to run.
+
+Example usages;
+
+- run a TMB workflow
+
+```
+$ ./run.py tmb_workflow --data-clinical examples/data_clinical.txt --assay-coverage 10000 --pairs examples/pairs.tsv
+```
+
+- run the main `workflow_with_facets` workflow
+
+```
+$ ./run.py workflow_with_facets --assay-coverage 100000 --project-id Project1 --cancer-type MEL --pairs examples/pairs.tsv --data-clinical examples/data_clinical.txt --sample-summary examples/sample_summary.txt --mutation-svs-txts examples/mutation_svs.txt --mutation-svs-mafs examples/mutation_svs_mafs.txt
+```
+
+Output will be in the `cwltool_output` or `toil_output` directories. Note that this includes `tmp` and `work` directories for the run, which may need to be deleted periodically.
+
+### Run with `run-json.py`
+
+If you already have a pre-made JSON file (such as debugging a production pipeline run) and want to run it easily, you can use the `run-json.py` script instead. 
+
 ## Test Suite
 
 Development and testing takes place via the test suite.
@@ -34,7 +86,6 @@ Make sure that you have copies of the Singularity containers used cached locally
 ```
 make singularity-pull-all
 ```
-
 
 The included test suite can be run with:
 
@@ -85,47 +136,3 @@ python tests/test_workflow_cwl.py TestClassName
 
 python tests/test_workflow_cwl.py TestClassName.test_function
 ```
-
-## Run a CWL
-
-### Setup
-
-To run a CWL, you first need to make sure dependencies are available.
-
-Running on Juno requires that the Singularity containers mentioned above are available;
-
-```
-make singularity-pull-all
-```
-
-If you are on Juno server using `cwltool` you can just load the included config for the `test` environment;
-
-```
-. env.juno.sh test
-```
-
-If you want to use Toil to submit jobs to LSF then you will need the `toil` environment config;
-
-```
-. env.juno.sh toil
-```
-
-### Run
-
-You can run a specific CWL workflow manually using the included `run.py` script. See `run.py -h` for available CWL's to run.
-
-Example usages;
-
-- run a TMB workflow
-
-```
-$ ./run.py tmb_workflow --data-clinical examples/data_clinical.txt --assay-coverage 10000 --pairs examples/pairs.tsv
-```
-
-- run the main `workflow_with_facets` workflow
-
-```
-$ ./run.py workflow_with_facets --assay-coverage 100000 --project-id Project1 --cancer-type MEL --pairs examples/pairs.tsv --data-clinical examples/data_clinical.txt --sample-summary examples/sample_summary.txt --mutation-svs-txts examples/mutation_svs.txt --mutation-svs-mafs examples/mutation_svs_mafs.txt
-```
-
-Output will be in the `cwltool_output` or `toil_output` directories. Note that this includes `tmp` and `work` directories for the run, which may need to be deleted periodically.
