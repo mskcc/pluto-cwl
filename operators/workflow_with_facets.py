@@ -20,6 +20,8 @@ except:
 
 class WorkflowWithFacets(Operator):
     cwl_file = CWLFile('workflow_with_facets.cwl')
+
+    # map these columns from the pairs.tsv samplesheet
     pair_template = {
         "pair_maf": {
             "path": None,
@@ -33,7 +35,7 @@ class WorkflowWithFacets(Operator):
         "tumor_id": None,
         "normal_id": None
     }
-    
+
     def __init__(self,
         assay_coverage,
         project_id,
@@ -47,6 +49,8 @@ class WorkflowWithFacets(Operator):
         targets_list = DATA_SETS['Proj_08390_G']["targets_list"],
         known_fusions_file = KNOWN_FUSIONS_FILE,
         version = version,
+        array_File_keys = ['mutation_svs_txt_files', 'mutation_svs_maf_files'], # read these files from a .txt file with file paths
+        list_File_keys = None, # read these files from a Python list of file paths
         **kwargs):
         super().__init__(**kwargs)
         # handling for required values with defaults
@@ -62,6 +66,8 @@ class WorkflowWithFacets(Operator):
         self.args['targets_list'] = targets_list
         self.args['known_fusions_file'] = known_fusions_file
         self.version = version
+        self.array_File_keys = array_File_keys
+        self.list_File_keys = list_File_keys
         self.generate_input_data()
 
     def generate_input_data(self): # **kwargs
@@ -100,5 +106,6 @@ class WorkflowWithFacets(Operator):
             pair_template = self.pair_template,
             bool_keys = ['is_impact'],
             File_keys = ['IMPACT_gene_list', 'data_clinical_file', 'sample_summary_file', 'targets_list', 'known_fusions_file'],
-            array_File_keys = ['mutation_svs_txt_files', 'mutation_svs_maf_files']
+            array_File_keys = self.array_File_keys,
+            list_File_keys = self.list_File_keys
         )

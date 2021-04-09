@@ -8,6 +8,25 @@ import copy
 def generate_pairs(pairs_file, pair_template):
     """
     Parse a pairs samplesheet file to create a list of pair records for CWL 'pairs' input
+
+    pairs_file: str
+        path to a pairs.tsv samplesheet file
+    pair_template: dict
+        dict with template CWL classes for key values
+
+    pair_template = {
+        "pair_maf": {
+            "path": None,
+            "class": "File"
+        },
+        "snp_pileup": {
+            "path": None,
+            "class": "File"
+        },
+        "pair_id": None,
+        "tumor_id": None,
+        "normal_id": None
+    }
     """
     table_reader = TableReader(pairs_file)
     comments = table_reader.comment_lines

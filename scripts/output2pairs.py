@@ -2,6 +2,12 @@
 """
 Script to parse the output of an Argos pipeline run
 and convert it into a pairs samplesheet for use with various pipeline CLI operators
+
+Usage
+$ ./output2pairs.py /path/to/argos_output /path/to/argos_output/sample_pairing.txt pairs.tsv
+
+Example
+$ ./output2pairs.py /juno/work/ci/helix_filters_01/fixtures/demo/ /juno/work/ci/helix_filters_01/fixtures/demo/inputs/demo_sample_pairing.txt pairs.tsv
 """
 import sys
 import os
@@ -9,6 +15,7 @@ from collections import OrderedDict
 
 def main():
     """
+    Main control function for the script
     """
     args = sys.argv[1:]
     argos_output_dir = args[0]

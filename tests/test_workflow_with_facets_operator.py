@@ -52,6 +52,7 @@ class TestWorkflowWithFacetsOperator(PlutoTestCase):
 
     def test_build_facets_operator_input(self):
         self.maxDiff = None
+        microsatellites_file = self.DATA_SETS['demo']['microsatellites_file']
         operator = WorkflowWithFacets(
             assay_coverage = '10000000',
             project_id = 'Proj_08390_G',
@@ -72,7 +73,8 @@ class TestWorkflowWithFacetsOperator(PlutoTestCase):
             known_fusions_file = KNOWN_FUSIONS_FILE,
             targets_list = self.targets_list,
             verbose = False,
-            print_input = True)
+            print_input = True,
+            microsatellites_file = microsatellites_file)
 
         expected_input = {
             "assay_coverage": "10000000",
@@ -125,6 +127,10 @@ class TestWorkflowWithFacetsOperator(PlutoTestCase):
             "IMPACT_gene_list": {
                 "class": "File",
                 "path": IMPACT_FILE
+            },
+            "microsatellites_file": {
+                "class": "File",
+                "path": microsatellites_file
             },
             "targets_list": {
                 "class": "File",
