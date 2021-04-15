@@ -9,7 +9,8 @@ baseCommand: [
   "--omaf",
   "--maq", "20",
   "--baq", "20",
-  "--filter_improper_pair", "0"
+  "--filter_improper_pair", "0",
+  "--thread", "4"
   ]
 #   --fasta b37.fasta \
 # --maf Proj_08390_G.cols_subset.muts.maf \
