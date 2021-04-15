@@ -43,6 +43,10 @@ def generate_pairs(pairs_file, pair_template):
         # add the snp_pileup if it was included
         if 'snp_pileup' in pair_template:
             pair['snp_pileup']['path'] = record.pop('snp_pileup')
+        if 'tumor_bam' in pair_template:
+            pair['tumor_bam']['path'] = record.pop('tumor_bam')
+        if 'normal_bam' in pair_template:
+            pair['normal_bam']['path'] = record.pop('normal_bam')
         # add all the other items from the input record
         for k, v in record.items():
             if k in pair:
