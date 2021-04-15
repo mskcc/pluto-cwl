@@ -33,7 +33,15 @@ class WorkflowWithFacets(Operator):
         },
         "pair_id": None,
         "tumor_id": None,
-        "normal_id": None
+        "normal_id": None,
+        "tumor_bam" : {
+            "path": None,
+            "class": "File"
+        },
+        "normal_bam": {
+            "path": None,
+            "class": "File"
+        }
     }
 
     def __init__(self,
@@ -105,7 +113,20 @@ class WorkflowWithFacets(Operator):
             input_args,
             pair_template = self.pair_template,
             bool_keys = ['is_impact'],
-            File_keys = ['IMPACT_gene_list', 'data_clinical_file', 'sample_summary_file', 'targets_list', 'known_fusions_file'],
+            File_keys = [
+                'IMPACT_gene_list',
+                'data_clinical_file',
+                'sample_summary_file',
+                'targets_list',
+                'known_fusions_file',
+                'microsatellites_file'],
             array_File_keys = self.array_File_keys,
             list_File_keys = self.list_File_keys
         )
+
+        # hotfix for adding the lists of normal_bam_files and tumor_bam_files
+        self.input['tumor_bam_files'] = []
+        self.input['normal_bam_files'] = []
+        for pair in self.input['pairs']:
+            self.input['tumor_bam_files'].append(pair.pop('tumor_bam'))
+            self.input['normal_bam_files'].append(pair.pop('normal_bam'))

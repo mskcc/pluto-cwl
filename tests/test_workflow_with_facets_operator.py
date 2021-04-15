@@ -28,20 +28,29 @@ class TestWorkflowWithFacetsOperator(PlutoTestCase):
             f.write(os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample1.Sample2.svs.pass.vep.maf") + '\n')
             f.write(os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample4.Sample3.svs.pass.vep.maf") + '\n')
 
+        self.normal_bam1 = os.path.join(self.DATA_SETS['demo']['BAM_DIR'], "Sample2.bam")
+        self.tumor_bam1 = os.path.join(self.DATA_SETS['demo']['BAM_DIR'], "Sample1.bam")
+        self.normal_bam2 = os.path.join(self.DATA_SETS['demo']['BAM_DIR'], "Sample3.bam")
+        self.tumor_bam2 = os.path.join(self.DATA_SETS['demo']['BAM_DIR'], "Sample4.bam")
+
         self.pairs_dicts = [
             {
                 'tumor_id': 'Sample1',
                 'normal_id': 'Sample2',
                 'pair_id': 'Sample1.Sample2',
                 'pair_maf': os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample1.Sample2.muts.maf"),
-                'snp_pileup': os.path.join(DATA_SETS['Proj_08390_G']['FACETS_DIR'], "Sample2.rg.md.abra.printreads__Sample1.rg.md.abra.printreads.dat.gz")
+                'snp_pileup': os.path.join(DATA_SETS['Proj_08390_G']['FACETS_DIR'], "Sample2.rg.md.abra.printreads__Sample1.rg.md.abra.printreads.dat.gz"),
+                "normal_bam": self.normal_bam1,
+                "tumor_bam" : self.tumor_bam1
             },
             {
                 'tumor_id': 'Sample4',
                 'normal_id': 'Sample3',
                 'pair_id': 'Sample4.Sample3',
                 'pair_maf': os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample4.Sample3.muts.maf"),
-                'snp_pileup': os.path.join(DATA_SETS['Proj_08390_G']['FACETS_DIR'], "Sample3.rg.md.abra.printreads__Sample4.rg.md.abra.printreads.dat.gz")
+                'snp_pileup': os.path.join(DATA_SETS['Proj_08390_G']['FACETS_DIR'], "Sample3.rg.md.abra.printreads__Sample4.rg.md.abra.printreads.dat.gz"),
+                "normal_bam": self.normal_bam2,
+                "tumor_bam" : self.tumor_bam2
             }
         ]
         self.pairs_lines = self.dicts2lines(dict_list = self.pairs_dicts, comment_list = [])
@@ -49,10 +58,11 @@ class TestWorkflowWithFacetsOperator(PlutoTestCase):
         self.data_clinical_file = os.path.join(DATA_SETS['Proj_08390_G']['INPUTS_DIR'], "Proj_08390_G_sample_data_clinical.txt")
         self.sample_summary_file = os.path.join(DATA_SETS['Proj_08390_G']['QC_DIR'], "Proj_08390_G_SampleSummary.txt")
         self.targets_list = DATA_SETS['Proj_08390_G']["targets_list"]
+        self.microsatellites_file = self.DATA_SETS['demo']['microsatellites_file']
 
     def test_build_facets_operator_input(self):
         self.maxDiff = None
-        microsatellites_file = self.DATA_SETS['demo']['microsatellites_file']
+
         operator = WorkflowWithFacets(
             assay_coverage = '10000000',
             project_id = 'Proj_08390_G',
@@ -74,7 +84,7 @@ class TestWorkflowWithFacetsOperator(PlutoTestCase):
             targets_list = self.targets_list,
             verbose = False,
             print_input = True,
-            microsatellites_file = microsatellites_file)
+            microsatellites_file = self.microsatellites_file)
 
         expected_input = {
             "assay_coverage": "10000000",
@@ -130,7 +140,7 @@ class TestWorkflowWithFacetsOperator(PlutoTestCase):
             },
             "microsatellites_file": {
                 "class": "File",
-                "path": microsatellites_file
+                "path": self.microsatellites_file
             },
             "targets_list": {
                 "class": "File",
@@ -167,6 +177,14 @@ class TestWorkflowWithFacetsOperator(PlutoTestCase):
                     "tumor_id": "Sample4",
                     "normal_id": "Sample3"
                 }
+            ],
+            "normal_bam_files": [
+                {'class': 'File', 'path': self.normal_bam1},
+                {'class': 'File', 'path': self.normal_bam2}
+            ],
+            "tumor_bam_files": [
+                {'class': 'File', 'path': self.tumor_bam1},
+                {'class': 'File', 'path': self.tumor_bam2}
             ]
         }
         self.assertEqual(operator.input, expected_input)
@@ -195,7 +213,9 @@ class TestWorkflowWithFacetsOperator(PlutoTestCase):
             IMPACT_gene_list = IMPACT_FILE,
             known_fusions_file = KNOWN_FUSIONS_FILE,
             targets_list = self.targets_list,
-            verbose = False)
+            verbose = False,
+            microsatellites_file = self.microsatellites_file
+            )
 
         output_json, output_dir, output_json_file = operator.run()
 
@@ -395,8 +415,8 @@ class TestWorkflowWithFacetsOperator(PlutoTestCase):
                     {'location': 'file://' + os.path.join(output_dir, 'portal/data_clinical_sample.txt'),
                     'basename': 'data_clinical_sample.txt',
                     'class': 'File',
-                    'checksum': 'sha1$013055a53721fece2488a88c16751f8a8dd26901', # d7f68fdadb2ad4d23d1bdeb22669fefe1a55c1e8
-                    'size': 8769,
+                    'checksum': 'sha1$519bf38651910dd2954ba959d845962da377f1c0',
+                    'size': 9161,
                     'path': os.path.join(output_dir, 'portal/data_clinical_sample.txt')},
                     {'location': 'file://' + os.path.join(output_dir, 'portal/meta_study.txt'),
                     'basename': 'meta_study.txt',
@@ -509,10 +529,10 @@ class TestWorkflowWithFacetsOperator(PlutoTestCase):
         records = [ rec for rec in table_reader.read() ]
 
         expected_comments = [
-        '#SAMPLE_ID\tIGO_ID\tPATIENT_ID\tCOLLAB_ID\tSAMPLE_TYPE\tSAMPLE_CLASS\tGENE_PANEL\tONCOTREE_CODE\tSPECIMEN_PRESERVATION_TYPE\tTISSUE_SITE\tREQUEST_ID\tPROJECT_ID\tPIPELINE\tPIPELINE_VERSION\tSAMPLE_COVERAGE\tPROJECT_PI\tREQUEST_PI\tASCN_PURITY\tASCN_PLOIDY\tASCN_VERSION\tgenome_doubled\tASCN_WGD\tCMO_TMB_SCORE\n',
-        '#SAMPLE_ID\tIGO_ID\tPATIENT_ID\tCOLLAB_ID\tSAMPLE_TYPE\tSAMPLE_CLASS\tGENE_PANEL\tONCOTREE_CODE\tSPECIMEN_PRESERVATION_TYPE\tTISSUE_SITE\tREQUEST_ID\tPROJECT_ID\tPIPELINE\tPIPELINE_VERSION\tSAMPLE_COVERAGE\tPROJECT_PI\tREQUEST_PI\tASCN_PURITY\tASCN_PLOIDY\tASCN_VERSION\tgenome_doubled\tASCN_WGD\tCMO_TMB_SCORE\n',
-        '#STRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tNUMBER\tSTRING\tSTRING\tNUMBER\tNUMBER\tSTRING\tSTRING\tSTRING\tNUMBER\n',
-        '#1\t1\t1\t0\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t0\t0\t1\t1\n'
+        '#SAMPLE_ID\tIGO_ID\tPATIENT_ID\tCOLLAB_ID\tSAMPLE_TYPE\tSAMPLE_CLASS\tGENE_PANEL\tONCOTREE_CODE\tSPECIMEN_PRESERVATION_TYPE\tTISSUE_SITE\tREQUEST_ID\tPROJECT_ID\tPIPELINE\tPIPELINE_VERSION\tSAMPLE_COVERAGE\tPROJECT_PI\tREQUEST_PI\tASCN_PURITY\tASCN_PLOIDY\tASCN_VERSION\tgenome_doubled\tASCN_WGD\tCMO_TMB_SCORE\tCMO_MSI_SCORE\tCMO_MSI_STATUS\n',
+        '#SAMPLE_ID\tIGO_ID\tPATIENT_ID\tCOLLAB_ID\tSAMPLE_TYPE\tSAMPLE_CLASS\tGENE_PANEL\tONCOTREE_CODE\tSPECIMEN_PRESERVATION_TYPE\tTISSUE_SITE\tREQUEST_ID\tPROJECT_ID\tPIPELINE\tPIPELINE_VERSION\tSAMPLE_COVERAGE\tPROJECT_PI\tREQUEST_PI\tASCN_PURITY\tASCN_PLOIDY\tASCN_VERSION\tgenome_doubled\tASCN_WGD\tCMO_TMB_SCORE\tCMO_MSI_SCORE\tCMO_MSI_STATUS\n',
+        '#STRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tNUMBER\tSTRING\tSTRING\tNUMBER\tNUMBER\tSTRING\tSTRING\tSTRING\tNUMBER\tNUMBER\tSTRING\n',
+        '#1\t1\t1\t0\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t0\t0\t1\t1\t0\t0\n'
         ]
         self.assertEqual(comments, expected_comments)
 
