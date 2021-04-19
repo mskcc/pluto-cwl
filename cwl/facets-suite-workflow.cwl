@@ -657,7 +657,7 @@ outputs:
   hisens_rds: # Tumor1.Normal1_hisens.rds
     type: File?
     outputSource: check_results/hisens_rds
-  annotated_maf: # Tumor1.Normal1_hisens.ccf.maf
+  annotated_maf: # Tumor1.Normal1_hisens.ccf.maf ; _hisens.ccf.portal.maf
     type: File?
     outputSource: check_results/annotated_maf
   output_dir:
