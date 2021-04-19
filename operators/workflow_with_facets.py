@@ -115,6 +115,7 @@ class WorkflowWithFacets(Operator):
             bool_keys = ['is_impact'],
             File_keys = [
                 'IMPACT_gene_list',
+                'microsatellites_file',
                 'data_clinical_file',
                 'sample_summary_file',
                 'targets_list',
