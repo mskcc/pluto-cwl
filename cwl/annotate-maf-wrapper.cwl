@@ -14,7 +14,7 @@ baseCommand: ["bash","run_annotate_maf_wrapper.sh"]
 
 requirements:
   ResourceRequirement:
-    ramMin: 8
+    ramMin: 8000
     coresMin: 4
     # annotate-maf-wrapper.R does not actually accept an arg for the number of CPUs to use, it defaults to using all available CPUs
   DockerRequirement:
