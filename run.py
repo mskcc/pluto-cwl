@@ -261,8 +261,8 @@ def main():
     _workflow_with_facets.add_argument('--data-clinical', dest = 'data_clinical_file', required = True)
     _workflow_with_facets.add_argument('--sample-summary', dest = 'sample_summary_file', required = True)
     # optional file samplesheets
-    _workflow_with_facets.add_argument('--mutation-svs-txts', dest = 'mutation_svs_txt_files') # mutation_svs.txt; Sample1.Sample2.svs.pass.vep.portal.txt
-    _workflow_with_facets.add_argument('--mutation-svs-mafs', dest = 'mutation_svs_maf_files') # mutation_svs_mafs.txt; Sample1.Sample2.svs.pass.vep.maf
+    _workflow_with_facets.add_argument('--mutation-svs-txts', dest = 'mutation_svs_txt_files', help = "A .txt file with filepaths to mutation_svs.txt files (.svs.pass.vep.portal.txt), one per line") # mutation_svs.txt; Sample1.Sample2.svs.pass.vep.portal.txt
+    _workflow_with_facets.add_argument('--mutation-svs-mafs', dest = 'mutation_svs_maf_files', help = "A .txt file with filepaths to mutation_svs_mafs.txt files (.svs.pass.vep.maf), one per line") # mutation_svs_mafs.txt; Sample1.Sample2.svs.pass.vep.maf
     # optional args
     _workflow_with_facets.add_argument('--cancer-study-identifier', dest = 'cancer_study_identifier')
     _workflow_with_facets.add_argument('--project-name', dest = 'project_name')
@@ -277,9 +277,10 @@ def main():
     _workflow_with_facets.add_argument('--targets-list', dest = 'targets_list')
     _workflow_with_facets.add_argument('--known-fusions', dest = 'known_fusions_file')
     _workflow_with_facets.add_argument('--print-input', dest = 'print_input', action = 'store_true')
+    _workflow_with_facets.add_argument('--microsatellites-file', dest = 'microsatellites_file', required = True)
     _workflow_with_facets.set_defaults(func = WorkflowWithFacets._run)
     """
-    $ ./run.py workflow_with_facets --assay-coverage 100000 --project-id Project1 --cancer-type MEL --pairs examples/pairs.tsv --data-clinical examples/data_clinical.txt --sample-summary examples/sample_summary.txt --mutation-svs-txts examples/mutation_svs.txt --mutation-svs-mafs examples/mutation_svs_mafs.txt --print-input
+    $ ./run.py workflow_with_facets --assay-coverage 100000 --project-id Project1 --cancer-type MEL --pairs examples/pairs.tsv --data-clinical examples/data_clinical.txt --sample-summary examples/sample_summary.txt --mutation-svs-txts examples/mutation_svs.txt --mutation-svs-mafs examples/mutation_svs_mafs.txt --microsatellites-file /work/ci/resources/request_files/msisensor/microsatellites.list
     """
 
     args = parser.parse_args()
