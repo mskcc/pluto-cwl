@@ -7,7 +7,7 @@ baseCommand: ['add_is_in_impact.py', '--include-assay']
 
 requirements:
   DockerRequirement:
-    dockerPull: mskcc/helix_filters_01:21.3.2
+    dockerPull: mskcc/helix_filters_01:21.3.3
 
 inputs:
   input_file:
