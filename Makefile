@@ -169,7 +169,23 @@ singularity-pull-cmoutils:
 	. "$(ENVSH)" singularity && \
 	singularity pull --force --name "$(CMOUTILS_SIF)" docker://$(CMOUTILS_DOCKERTAG)
 
-singularity-pull-all: singularity-pull singularity-pull-dev singularity-pull-facets singularity-pull-fillout singularity-pull-igv-reports singularity-pull-cmoutils singularity-pull-msi
+# Need this container for the VEP cache dir; its too large to pass as CWL workflow inputs
+# https://hub.docker.com/r/mskcc/roslin-variant-vcf2maf/tags?page=1&ordering=last_updated
+# if there is a local copy of the file then copy it here
+VEP_SIF:=roslin-variant-vcf2maf_1.6.17.sif
+VEP_SIF_LOCAL:=/juno/work/ci/singularity_images/roslin-variant-vcf2maf_1.6.17.sif
+VEP_DOCKERTAG:=mskcc/roslin-variant-vcf2maf:1.6.17
+singularity-pull-vep:
+	if [ ! -e "$(VEP_SIF)" ]; then
+	if [ -e "$(VEP_SIF_LOCAL)" ]; then
+	ln -s "$(VEP_SIF_LOCAL)" "$(VEP_SIF)"
+	else
+	. "$(ENVSH)" singularity && singularity pull --force --name "$(VEP_SIF)" docker://$(VEP_DOCKERTAG)
+	fi
+	fi
+# rsync -vrthP "$(VEP_SIF_LOCAL)" "$(VEP_SIF)"
+
+singularity-pull-all: singularity-pull singularity-pull-dev singularity-pull-facets singularity-pull-fillout singularity-pull-igv-reports singularity-pull-cmoutils singularity-pull-msi singularity-pull-vep
 
 # change the Docker tag for all the CWL files from the old pattern to the new pattern
 OLD_TAG:=

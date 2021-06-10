@@ -37,6 +37,17 @@ inputs:
       - .sa
       - .fai
       - ^.dict
+  exac_filter:
+    type: File
+    default:
+      class: File
+      path: /juno/work/ci/resources/vep/cache/ExAC_nonTCGA.r0.3.1.sites.vep.vcf.gz
+  # NOTE: VEP cache dir is too large to use as an input item, need to pack it inside the container instead ?
+  # vep_cache:
+  #   type: Directory
+  #   default:
+  #     class: Directory
+  #     path: /juno/work/ci/resources/vep/cache
 
 steps:
   # convert all maf input files back to vcf because they are much easier to manipulate that way
@@ -284,26 +295,8 @@ steps:
                 --annotations "\${fillout_merged_annotation_gz}" \\
                 -c CHROM,POS,REF,ALT,SRC \\
                 --output "\${fillout_merged_samplesources}" \\
-                --output-type v "\${fillout_merged_vcf}"
-              # # convert the multi-sample annotated fillout vcf back into individual sample maf files
-              # for sampleid in \${samples_arg}; do
-              # sample_maf="\${sampleid}.fillout.maf"
-              # vcf2maf.pl \\
-              # --input-vcf "\${fillout_merged_samplesources}" \\
-              # --output-maf "\${sample_maf}" \\
-              # --ref-fasta "\${ref_fasta}" \\
-              # --cache-version 86 \\
-              # --species homo_sapiens \\
-              # --ncbi-build GRCh37 \\
-              # --vep-path /usr/bin/vep \\
-              # --vep-data /var/cache \\
-              # --filter-vcf /juno/work/ci/resources/vep/cache/ExAC_nonTCGA.r0.3.1.sites.vep.vcf.gz \\
-              # --retain-info AC,AN,SRC \\
-              # --retain-fmt GT,FL_AD,FL_ADN,FL_ADP,FL_DP,FL_DPN,FL_DPP,FL_RD,FL_RDN,FL_RDP,FL_VF,AD,DP \\
-              # --vcf-tumor-id \\
-              # "\${sampleid}" \\
-              # --tumor-id "\${sampleid}"
-              # done
+                --output-type v \\
+                "\${fillout_merged_vcf}"
       inputs:
         fillout_vcf: File # output from GetBaseCountsMultiSample
         merged_vcf: File # the vcf merged from all sample inputs # TODO: do not actually need this could just use the gz version
@@ -311,20 +304,6 @@ steps:
           type: File
           secondaryFiles:
             - .tbi
-        # sample_ids: string[]
-        # ref_fasta:
-        #   type: File
-        #   secondaryFiles:
-        #     - .amb
-        #     - .ann
-        #     - .bwt
-        #     - .pac
-        #     - .sa
-        #     - .fai
-        #     - ^.dict
-        # get a space-delim string of the sample names
-        # samples_arg="${ return inputs.sample_ids.join(' ') }"
-        # ref_fasta="${ return inputs.ref_fasta.path ; }"
       outputs:
         fillout_sources_vcf:
           type: File
@@ -332,13 +311,79 @@ steps:
             glob: fillout.merged.sources.vcf
 
   # next we need to split apart the merged fillout vcf back into individual sample maf files
-  # split_merged_vcf:
-  #   scatter: [ sample_id ]
-  #   in:
-  #     sample_id: sample_ids
-  #     fillout_vcf: fix_labels_and_merge_vcfs/fillout_sources_vcf
-  #   out: []
-  #   run: []
+  split_merged_vcf:
+    scatter: [ sample_id ]
+    in:
+      sample_id: sample_ids
+      fillout_vcf: fix_labels_and_merge_vcfs/fillout_sources_vcf
+      ref_fasta: ref_fasta
+      exac_filter: exac_filter
+    out: [ fillout_maf ]
+    run:
+      class: CommandLineTool
+      baseCommand: [ "sh", "run.sh" ]
+      requirements:
+        ResourceRequirement:
+          coresMin: 8
+        DockerRequirement:
+          dockerPull: mskcc/roslin-variant-vcf2maf:1.6.17
+        InitialWorkDirRequirement:
+          listing:
+            - entryname: run.sh
+              entry: |-
+                set -eu
+                # convert the multi-sample annotated fillout vcf back into individual sample maf files
+                sample_id="${ return inputs.sample_id ; }"
+                ref_fasta="${ return inputs.ref_fasta.path ; }"
+                input_vcf="${ return inputs.fillout_vcf.path ; }"
+                exac_filter="${ return inputs.exac_filter.path ; }"
+
+                # not sure why I have to do this but if I dont then it breaks looking for some file;
+                # ERROR: Couldn't open VCF: /var/lib/cwl/stg640f09da-4a21-46eb-bc90-a27199b424bc/fillout.merged.sources.split.vcf!
+                cp "\${input_vcf}" input.vcf
+
+                # main output file:
+                sample_maf="\${sample_id}.fillout.maf"
+
+                # NOTE: /usr/bin/vep, /var/cache is inside the container already
+                perl /usr/bin/vcf2maf/vcf2maf.pl \\
+                --input-vcf input.vcf \\
+                --output-maf "\${sample_maf}" \\
+                --ref-fasta "\${ref_fasta}" \\
+                --cache-version 86 \\
+                --species homo_sapiens \\
+                --ncbi-build GRCh37 \\
+                --vep-path /usr/bin/vep \\
+                --vep-data /var/cache \\
+                --filter-vcf "\${exac_filter}" \\
+                --retain-info AC,AN,SRC \\
+                --retain-fmt GT,FL_AD,FL_ADN,FL_ADP,FL_DP,FL_DPN,FL_DPP,FL_RD,FL_RDN,FL_RDP,FL_VF,AD,DP \\
+                --vep-forks 8 \\
+                --vcf-tumor-id "\${sample_id}" \\
+                --tumor-id "\${sample_id}"
+      inputs:
+        sample_id: string
+        ref_fasta:
+          type: File
+          secondaryFiles:
+            - .amb
+            - .ann
+            - .bwt
+            - .pac
+            - .sa
+            - .fai
+            - ^.dict
+        fillout_vcf: File
+        exac_filter: File
+        # NOTE: this might need secondaryFiles
+        # Could not load .tbi/.csi index of /var/lib/cwl/stg2e0eeed1-680c-4c33-beeb-c4dd90309998/ExAC_nonTCGA.r0.3.1.sites.vep.vcf.gz
+      outputs:
+        fillout_maf:
+          type: File
+          outputBinding:
+            glob: ${ return inputs.sample_id + '.fillout.maf' ; }
+
+
 
 
 
@@ -348,3 +393,6 @@ outputs:
   fillout_vcf:
     type: File
     outputSource: fix_labels_and_merge_vcfs/fillout_sources_vcf
+  fillout_mafs:
+    type: File[]
+    outputSource: split_merged_vcf/fillout_maf
