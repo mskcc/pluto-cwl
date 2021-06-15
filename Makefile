@@ -143,8 +143,8 @@ singularity-pull-facets:
 	singularity pull --force --name "$(FACETS_SIF)" docker://$(FACETS_DOCKERTAG)
 
 # docker://cmopipeline/getbasecountsmultisample:1.2.2
-FILLOUT_DOCKERTAG:=cmopipeline/getbasecountsmultisample:1.2.2
-FILLOUT_SIF:=cmopipeline_getbasecountsmultisample:1.2.2.sif
+FILLOUT_DOCKERTAG:=mskcc/helix_filters_01:getbasecountsmultisample-1.2.2
+FILLOUT_SIF:=helix_filters_01_getbasecountsmultisample-1.2.2.sif
 singularity-pull-fillout:
 	. "$(ENVSH)" singularity && \
 	singularity pull --force --name "$(FILLOUT_SIF)" docker://$(FILLOUT_DOCKERTAG)

@@ -24,7 +24,7 @@ requirements:
   ResourceRequirement:
     coresMin: 4
   DockerRequirement:
-    dockerPull: cmopipeline/getbasecountsmultisample:1.2.2
+    dockerPull: mskcc/helix_filters_01:getbasecountsmultisample-1.2.2
 
 arguments:
   - valueFrom: $(inputs.output_filename)
