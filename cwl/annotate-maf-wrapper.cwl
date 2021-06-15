@@ -18,7 +18,7 @@ requirements:
     coresMin: 4
     # annotate-maf-wrapper.R does not actually accept an arg for the number of CPUs to use, it defaults to using all available CPUs
   DockerRequirement:
-    dockerPull: stevekm/facets-suite:2.0.6
+    dockerPull: mskcc/helix_filters_01:facets-suite-2.0.6
   InitialWorkDirRequirement:
     listing:
       - entryname: run_annotate_maf_wrapper.sh

@@ -136,11 +136,19 @@ singularity-shell:
 	- . "$(ENVSH)" singularity && \
 	singularity shell "$(SINGULARITY_SIF)"
 
-FACETS_DOCKERTAG:=stevekm/facets-suite:2.0.6
-FACETS_SIF:=stevekm_facets-suite:2.0.6.sif
+# mskcc/roslin-variant-facets:1.6.3
+# mskcc/helix_filters_01:facets-1.6.3
+FACETS_DOCKERTAG:=mskcc/helix_filters_01:facets-1.6.3
+FACETS_SIF:=mskcc_helix_filters_01:facets-1.6.3.sif
 singularity-pull-facets:
 	. "$(ENVSH)" singularity && \
 	singularity pull --force --name "$(FACETS_SIF)" docker://$(FACETS_DOCKERTAG)
+
+FACETS_SUITE_DOCKERTAG:=mskcc/helix_filters_01:facets-suite-2.0.6
+FACETS_SUITE_SIF:=helix_filters_01_facets-suite-2.0.6.sif
+singularity-pull-facets-suite:
+	. "$(ENVSH)" singularity && \
+	singularity pull --force --name "$(FACETS_SUITE_SIF)" docker://$(FACETS_SUITE_DOCKERTAG)
 
 # docker://cmopipeline/getbasecountsmultisample:1.2.2
 FILLOUT_DOCKERTAG:=mskcc/helix_filters_01:getbasecountsmultisample-1.2.2
@@ -169,7 +177,7 @@ singularity-pull-cmoutils:
 	. "$(ENVSH)" singularity && \
 	singularity pull --force --name "$(CMOUTILS_SIF)" docker://$(CMOUTILS_DOCKERTAG)
 
-singularity-pull-all: singularity-pull singularity-pull-dev singularity-pull-facets singularity-pull-fillout singularity-pull-igv-reports singularity-pull-cmoutils singularity-pull-msi
+singularity-pull-all: singularity-pull singularity-pull-dev singularity-pull-facets-suite singularity-pull-facets singularity-pull-fillout singularity-pull-igv-reports singularity-pull-cmoutils singularity-pull-msi
 
 # change the Docker tag for all the CWL files from the old pattern to the new pattern
 OLD_TAG:=
