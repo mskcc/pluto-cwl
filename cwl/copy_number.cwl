@@ -17,6 +17,8 @@ baseCommand: ["python", "/usr/bin/facets-suite/facets", "geneLevel", "--cnaMatri
 requirements:
   DockerRequirement:
     dockerPull: mskcc/roslin-variant-facets:1.6.3
+    # TODO: switch to this container when it is working;
+    # dockerPull: mskcc/helix_filters_01:facets-1.6.3
 
 inputs:
   output_cna_filename:

@@ -21,7 +21,7 @@ baseCommand: ["bash", "run_facets_wrapper.sh"]
 
 requirements:
   DockerRequirement:
-    dockerPull: stevekm/facets-suite:2.0.6
+    dockerPull: mskcc/helix_filters_01:facets-suite-2.0.6
   InitialWorkDirRequirement:
     listing:
       - entryname: run_facets_wrapper.sh
