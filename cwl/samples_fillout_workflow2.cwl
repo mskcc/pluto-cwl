@@ -390,9 +390,6 @@ steps:
 
 
 outputs:
-  fillout_vcf:
-    type: File
-    outputSource: fix_labels_and_merge_vcfs/fillout_sources_vcf
   fillout_mafs:
     type: File[]
     outputSource: split_merged_vcf/fillout_maf
