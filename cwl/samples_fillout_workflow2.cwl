@@ -311,7 +311,7 @@ steps:
             glob: fillout.merged.sources.vcf
 
   # next we need to split apart the merged fillout vcf back into individual sample maf files
-  split_merged_vcf:
+  split_vcf_to_mafs:
     scatter: [ sample_id ]
     in:
       sample_id: sample_ids
@@ -383,13 +383,59 @@ steps:
           outputBinding:
             glob: ${ return inputs.sample_id + '.fillout.maf' ; }
 
-
-
-
-
-
+  # combine all the individual mafs into a single maf; add comment headers; fix some values
+  concat_with_comments:
+    in:
+      mafs: split_vcf_to_mafs/fillout_maf
+    out: [ output_file ]
+    run:
+      class: CommandLineTool
+      baseCommand: [ "bash", "run.sh" ]
+      requirements:
+        DockerRequirement:
+          dockerPull: mskcc/helix_filters_01:latest
+        InitialWorkDirRequirement:
+          listing:
+            - entryname: run.sh
+              entry: |-
+                set -eu
+                # get a space-delim string of file paths
+                input_files="${ return inputs.mafs.map((a) => a.path).join(' ') }"
+                concat-tables.py -o fillout.maf --no-carriage-returns --comments --progress --na-str '' \${input_files}
+                # fix issues with blank ref alt count cols for fillout variants
+                update_fillout_maf.py fillout.maf tmp.tsv
+                # need to add header comments for new columns
+                echo '# SRC="Samples variant was originally found in (Fillout)"' > comments
+                echo '# FL_AD="Depth matching alternate (ALT) allele (Fillout)"' >> comments
+                echo '# FL_ADN="Alternate depth on negative strand (Fillout)"' >> comments
+                echo '# FL_ADP="Alternate depth on postitive strand (Fillout)"' >> comments
+                echo '# FL_DP="Total depth (Fillout)"' >> comments
+                echo '# FL_DPN="Depth on negative strand (Fillout)"' >> comments
+                echo '# FL_DPP="Depth on postitive strand (Fillout)"' >> comments
+                echo '# FL_RD="Depth matching reference (REF) allele (Fillout)"' >> comments
+                echo '# FL_RDN="Reference depth on negative strand (Fillout)"' >> comments
+                echo '# FL_RDP="Reference depth on postitive strand (Fillout)"' >> comments
+                echo '# FL_VF="Variant frequence (AD/DP) (Fillout)"' >> comments
+                echo '# AD="Allelic Depths of REF and ALT(s) in the order listed (Sample)"' >> comments
+                echo '# DP="Read Depth (Sample)"' >> comments
+                echo '# depth="Final Read Depth value; Sample Depth if present, otherwise based on Fillout Depth"' >> comments
+                echo '# ref_count="Final Allelic Depth of REF; Sample Allelic Depth if present, otherwise based on Fillout Allelic Depth"' >> comments
+                echo '# alt_count="Final Allelic Depth of ALT; Sample Allelic Depth if present, otherwise based on Fillout Allelic Depth"' >> comments
+                echo '# depth_sample="Read Depth (Sample)"' >> comments
+                echo '# ref_count_sample="Allelic Depths of REF (Sample)"' >> comments
+                echo '# alt_count_sample="Allelic Depths of ALT (Sample)"' >> comments
+                echo '# is_fillout="Whether the variant was present in the original Sample (FALSE) or was generated via Fillout from related samples (TRUE)"' >> comments
+                cat comments > output.maf
+                cat tmp.tsv >> output.maf
+      inputs:
+        mafs: File[]
+      outputs:
+        output_file:
+          type: File
+          outputBinding:
+            glob: ${ return "output.maf" ; }
 
 outputs:
-  fillout_mafs:
-    type: File[]
-    outputSource: split_merged_vcf/fillout_maf
+  fillout_maf:
+    type: File
+    outputSource: concat_with_comments/output_file
