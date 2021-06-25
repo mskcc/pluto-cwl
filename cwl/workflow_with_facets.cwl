@@ -249,13 +249,13 @@ inputs:
     type:
       type: array
       items:
-        type: record
-        fields:
-          pair_maf: File
-          snp_pileup: File
-          pair_id: string
-          tumor_id: string
-          normal_id: string
+        - type: record
+          fields:
+            pair_maf: File
+            snp_pileup: File
+            pair_id: string
+            tumor_id: string
+            normal_id: string
   IMPACT_gene_list:
     type: File
     doc: "TSV file with gene labels and corresponding impact assays"
