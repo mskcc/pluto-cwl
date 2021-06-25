@@ -11,7 +11,8 @@ from collections import OrderedDict
 THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 PARENT_DIR = os.path.dirname(THIS_DIR)
 sys.path.insert(0, PARENT_DIR)
-from pluto.tools import PlutoTestCase, CWLFile, TableReader
+from pluto.tools import PlutoTestCase, CWLFile, TableReader, md5_obj
+from pluto.settings import ENABLE_LARGE_TESTS
 sys.path.pop(0)
 
 class TestSamplesFillout(PlutoTestCase):
@@ -163,6 +164,126 @@ class TestSamplesFillout(PlutoTestCase):
         ]
 
         self.assertEqual(records, expected_records)
+
+
+
+
+
+
+    @unittest.skipIf(ENABLE_LARGE_TESTS!=True, "is a large test")
+    def test_run_fillout_workflow2(self):
+        """
+        Test case for running the fillout workflow on a number of samples, each with a bam and maf
+        This test uses full samples
+        """
+        self.maxDiff = None
+
+        self.input = {
+            "ref_fasta": {"class": "File", "path": self.DATA_SETS['Proj_1']['REF_FASTA']},
+            "sample_ids": ["Sample1", "Sample24"],
+            "bam_files": [
+                { "class": "File", "path": os.path.join(self.DATA_SETS['Proj_1']['BAM_DIR'], "Sample1.bam") },
+                { "class": "File", "path": os.path.join(self.DATA_SETS['Proj_1']['BAM_DIR'], "Sample24.bam") }
+            ],
+            "maf_files": [
+                { "class": "File", "path": os.path.join(self.DATA_SETS['Proj_1']['MAF_DIR'], "Sample1.Sample2.muts.maf") },
+                { "class": "File", "path": os.path.join(self.DATA_SETS['Proj_1']['MAF_DIR'], "Sample24.Sample23.muts.maf") }
+            ]
+        }
+
+        output_json, output_dir = self.run_cwl()
+
+        expected_output = {
+            'output_file': {
+                'location': 'file://' + os.path.join(output_dir,'output.maf'),
+                'basename': 'output.maf',
+                'class': 'File',
+                # 'checksum': 'sha1$be8534bcaf326de029790a832ab5b44a17a03d22',
+                # 'size': 40194610,
+                'path':  os.path.join(output_dir,'output.maf')
+                }
+            }
+        # NOTE: for some reason, this file keeps coming out with different annotations for 'splice_acceptor_variant' or `splice_donor_variant`
+        # this keeps changing the byte size and checksum so need to remove those here for now
+        output_json['output_file'].pop('checksum')
+        output_json['output_file'].pop('size')
+        self.assertEqual(output_json, expected_output)
+
+        output_file = output_json['output_file']['path']
+        comments, mutations = self.load_mutations(output_file)
+
+        hash = md5_obj(mutations)
+
+        self.assertEqual(len(mutations), 38920)
+
+        # Need to remove these fields because they are inconsistent on the output maf file;
+        for mut in mutations:
+            mut.pop('all_effects')
+            mut.pop('Consequence')
+            mut.pop('Variant_Classification')
+
+        hash = md5_obj(mutations)
+        expected_hash = '4b25d900ab90e0ed0b3702666ff01e94'
+        self.assertEqual(hash, expected_hash)
+
+
+
+
+    @unittest.skipIf(ENABLE_LARGE_TESTS!=True, "is a large test")
+    def test_run_fillout_workflow3(self):
+        """
+        Test case for running the fillout workflow on a number of samples, each with a bam and maf
+        This test uses full samples
+        """
+        self.maxDiff = None
+
+        self.input = {
+            "ref_fasta": {"class": "File", "path": self.DATA_SETS['Proj_1']['REF_FASTA']},
+            "sample_ids": ["Sample1", "Sample4"],
+            "bam_files": [
+                { "class": "File", "path": os.path.join(self.DATA_SETS['Proj_1']['BAM_DIR'], "Sample1.bam") },
+                { "class": "File", "path": os.path.join(self.DATA_SETS['Proj_1']['BAM_DIR'], "Sample4.bam") }
+            ],
+            "maf_files": [
+                { "class": "File", "path": os.path.join(self.DATA_SETS['Proj_1']['MAF_DIR'], "Sample1.Sample2.muts.maf") },
+                { "class": "File", "path": os.path.join(self.DATA_SETS['Proj_1']['MAF_DIR'], "Sample4.Sample3.muts.maf") }
+            ]
+        }
+
+        output_json, output_dir = self.run_cwl()
+
+        expected_output = {
+            'output_file': {
+                'location': 'file://' + os.path.join(output_dir,'output.maf'),
+                'basename': 'output.maf',
+                'class': 'File',
+                # 'checksum': 'sha1$2f60f58389ec65af87612c7532ad28b882fb84ba',
+                # 'size': 26238820,
+                'path':  os.path.join(output_dir,'output.maf')
+                }
+            }
+        output_json['output_file'].pop('checksum')
+        output_json['output_file'].pop('size')
+        self.assertEqual(output_json, expected_output)
+
+        output_file = output_json['output_file']['path']
+        comments, mutations = self.load_mutations(output_file)
+
+        hash = md5_obj(mutations)
+
+        self.assertEqual(len(mutations), 26404)
+
+        # Need to remove these fields because they are inconsistent on the output maf file;
+        for mut in mutations:
+            mut.pop('all_effects')
+            mut.pop('Consequence')
+            mut.pop('Variant_Classification')
+
+        hash = md5_obj(mutations)
+        expected_hash = '77fb1f3aa26ddf06029232ee720a709c'
+        self.assertEqual(hash, expected_hash)
+
+
 
 if __name__ == "__main__":
     unittest.main()
