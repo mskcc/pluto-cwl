@@ -212,8 +212,6 @@ class TestSamplesFillout(PlutoTestCase):
         output_file = output_json['output_file']['path']
         comments, mutations = self.load_mutations(output_file)
 
-        hash = md5_obj(mutations)
-
         self.assertEqual(len(mutations), 38920)
 
         # Need to remove these fields because they are inconsistent on the output maf file;

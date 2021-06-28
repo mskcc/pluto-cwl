@@ -10,7 +10,7 @@ import unittest
 THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 PARENT_DIR = os.path.dirname(THIS_DIR)
 sys.path.insert(0, PARENT_DIR)
-from pluto.tools import TableReader, PlutoTestCase
+from pluto.tools import TableReader, PlutoTestCase, md5_obj
 from operators.samples_fillout import SamplesFillout
 sys.path.pop(0)
 
@@ -66,6 +66,7 @@ class TestSamplesFilloutWorkflowOperator(PlutoTestCase):
         """
         Test case that the Operator can run the CWL correctly
         """
+        self.maxDiff = None
         operator = SamplesFillout(samplesheet = self.samplesheet, ref_fasta = self.ref_fasta,
             dir=self.tmpdir, output_dir=self.tmpdir, verbose = False)
         output_json, output_dir, output_json_file = operator.run()
@@ -75,17 +76,27 @@ class TestSamplesFilloutWorkflowOperator(PlutoTestCase):
                 'location': 'file://' + os.path.join(output_dir, 'output.maf'),
                 'basename': 'output.maf',
                 'class': 'File',
-                'checksum': 'sha1$3fec625cac6d500a0bc074753ce686a5685229f4',
-                'size': 17724,
+                # 'checksum': 'sha1$29ec9860901ba2e0bfe9abaf6ec51498200cc272',
+                # 'size': 26238532,
                 'path': os.path.join(output_dir, 'output.maf')
                 }
             }
-        self.maxDiff = None
+        output_json['output_file'].pop('checksum')
+        output_json['output_file'].pop('size')
         self.assertDictEqual(output_json, expected_output)
 
         path = output_json['output_file']['path']
         comments, mutations = self.load_mutations(path)
-        self.assertEqual(len(mutations), 106)
+        self.assertEqual(len(mutations), 26404)
+
+        for mut in mutations:
+            mut.pop('all_effects')
+            mut.pop('Consequence')
+            mut.pop('Variant_Classification')
+
+        hash = md5_obj(mutations)
+        expected_hash = '77fb1f3aa26ddf06029232ee720a709c'
+        self.assertEqual(hash, expected_hash)
 
 
 
