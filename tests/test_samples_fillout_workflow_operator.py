@@ -18,10 +18,10 @@ class TestSamplesFilloutWorkflowOperator(PlutoTestCase):
     def setUp(self):
         super().setUp()
         # make a demo samplesheet from the demo files
-        self.maf1 = os.path.join(self.DATA_SETS['demo']['MAF_DIR'], "Sample1.Sample2.muts.maf")
-        self.maf2 = os.path.join(self.DATA_SETS['demo']['MAF_DIR'], "Sample4.Sample3.muts.maf")
-        self.bam1 = os.path.join(self.DATA_SETS['demo']['BAM_DIR'], "Sample1.bam")
-        self.bam2 = os.path.join(self.DATA_SETS['demo']['BAM_DIR'], "Sample4.bam")
+        self.maf1 = os.path.join(self.DATA_SETS['Proj_1']['MAF_DIR'], "Sample1.Sample2.muts.maf")
+        self.maf2 = os.path.join(self.DATA_SETS['Proj_1']['MAF_DIR'], "Sample4.Sample3.muts.maf")
+        self.bam1 = os.path.join(self.DATA_SETS['Proj_1']['BAM_DIR'], "Sample1.bam")
+        self.bam2 = os.path.join(self.DATA_SETS['Proj_1']['BAM_DIR'], "Sample4.bam")
         self.ref_fasta = self.DATA_SETS['demo']['REF_FASTA']
         lines = [
         ['sample_id', 'bam_file', 'maf_file'],

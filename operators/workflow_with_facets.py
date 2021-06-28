@@ -119,8 +119,7 @@ class WorkflowWithFacets(Operator):
                 'data_clinical_file',
                 'sample_summary_file',
                 'targets_list',
-                'known_fusions_file',
-                'microsatellites_file'],
+                'known_fusions_file'],
             array_File_keys = self.array_File_keys,
             list_File_keys = self.list_File_keys
         )
