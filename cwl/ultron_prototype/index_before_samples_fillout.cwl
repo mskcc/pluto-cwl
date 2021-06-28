@@ -1,1 +1,0 @@
-../samples_fillout_index_workflow.cwl
