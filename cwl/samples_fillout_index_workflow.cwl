@@ -54,9 +54,13 @@ inputs:
       - .sa
       - .fai
       - ^.dict
+  exac_filter: # need this to resolve error in subworkflow: Anonymous file object must have 'contents' and 'basename' fields.
+    type: File
+    default:
+      class: File
+      path: /juno/work/ci/resources/vep/cache/ExAC_nonTCGA.r0.3.1.sites.vep.vcf.gz
 
 steps:
-
   # index files
   run_indexer:
     run: index_bam.cwl
@@ -69,6 +73,7 @@ steps:
   run_samples_fillout:
     run: samples_fillout_workflow.cwl
     in:
+      exac_filter: exac_filter
       sample_ids:
         source: [ sample_ids, unindexed_sample_ids ]
         linkMerge: merge_flattened
