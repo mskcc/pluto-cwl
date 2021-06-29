@@ -16,7 +16,7 @@ baseCommand: [
 requirements:
   InlineJavascriptRequirement: {}
   DockerRequirement:
-    dockerPull: mskcc/helix_filters_01:21.3.3
+    dockerPull: mskcc/helix_filters_01:21.3.4
   InitialWorkDirRequirement:
     listing:
       - entryname: inputs_dir

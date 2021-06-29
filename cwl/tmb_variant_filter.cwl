@@ -6,7 +6,7 @@ baseCommand: ["tmb_variant_filter.py"]
 
 requirements:
   DockerRequirement:
-    dockerPull: mskcc/helix_filters_01:21.3.3
+    dockerPull: mskcc/helix_filters_01:21.3.4
     # TODO: change this version back to a release version
 
 inputs:
