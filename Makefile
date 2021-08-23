@@ -177,6 +177,12 @@ singularity-pull-cmoutils:
 	. "$(ENVSH)" singularity && \
 	singularity pull --force --name "$(CMOUTILS_SIF)" docker://$(CMOUTILS_DOCKERTAG)
 
+R_DOCKERTAG:=mskcc/helix_filters_01:R-3.6.1
+R_SIF:=mskcc_helix_filters_01:R-3.6.1.sif
+singularity-pull-r:
+	. "$(ENVSH)" singularity && \
+	singularity pull --force --name "$(R_SIF)" docker://$(R_DOCKERTAG)
+
 # Need this container for the VEP cache dir; its too large to pass as CWL workflow inputs
 # https://hub.docker.com/r/mskcc/roslin-variant-vcf2maf/tags?page=1&ordering=last_updated
 # if there is a local copy of the file then copy it here
