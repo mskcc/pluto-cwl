@@ -12,7 +12,9 @@ inputs:
     inputBinding:
       position: 1
   table2:
-    type: ['null', File]
+    type:
+      - 'null'
+      - File[] 
     inputBinding:
       position: 2
       prefix: '--t2'

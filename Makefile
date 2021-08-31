@@ -177,8 +177,8 @@ singularity-pull-cmoutils:
 	. "$(ENVSH)" singularity && \
 	singularity pull --force --name "$(CMOUTILS_SIF)" docker://$(CMOUTILS_DOCKERTAG)
 
-R_DOCKERTAG:=mskcc/helix_filters_01:R-3.6.1
-R_SIF:=mskcc_helix_filters_01:R-3.6.1.sif
+R_DOCKERTAG:=mskcc/helix_filters_01:R-3.5.1
+R_SIF:=mskcc_helix_filters_01:R-3.5.1.sif
 singularity-pull-r:
 	. "$(ENVSH)" singularity && \
 	singularity pull --force --name "$(R_SIF)" docker://$(R_DOCKERTAG)
@@ -199,7 +199,7 @@ singularity-pull-vep:
 	fi
 # rsync -vrthP "$(VEP_SIF_LOCAL)" "$(VEP_SIF)"
 
-singularity-pull-all: singularity-pull singularity-pull-dev singularity-pull-facets-suite singularity-pull-facets singularity-pull-fillout singularity-pull-igv-reports singularity-pull-cmoutils singularity-pull-msi singularity-pull-vep
+singularity-pull-all: singularity-pull singularity-pull-dev singularity-pull-facets-suite singularity-pull-facets singularity-pull-fillout singularity-pull-igv-reports singularity-pull-cmoutils singularity-pull-msi singularity-pull-vep singularity-pull-r
 
 # change the Docker tag for all the CWL files from the old pattern to the new pattern
 OLD_TAG:=

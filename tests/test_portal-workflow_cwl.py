@@ -933,7 +933,7 @@ class TestPortalWorkflow(PlutoTestCase):
                     "class": "File"
                 },
             ],
-            "extra_cna_file": {"class": "File", "path": cna_file1}
+            "extra_cna_files": [{"class": "File", "path": cna_file1}]
         }
 
         with TemporaryDirectory() as tmpdir:

@@ -149,11 +149,11 @@ inputs:
     type:
     - "null"
     - File
-  extra_cna_file:
+  extra_cna_files:
     doc: "An extra CNA data file to be merged in with the portal CNA data"
     type:
     - "null"
-    - File
+    - File[]
 
 steps:
   # meta_clinical_sample.txt (cbio_clinical_sample_meta_filename; meta_clinical_sample_file)
@@ -366,7 +366,7 @@ steps:
     run: full-outer-join.cwl
     in:
       table1: clean_cna_headers/output_file
-      table2: extra_cna_file
+      table2: extra_cna_files
       join_key:
         valueFrom: ${ return "Hugo_Symbol" }
       output_filename:
