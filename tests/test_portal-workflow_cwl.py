@@ -11,13 +11,14 @@ from tempfile import TemporaryDirectory
 THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 PARENT_DIR = os.path.dirname(THIS_DIR)
 sys.path.insert(0, PARENT_DIR)
-from pluto.tools import load_mutations, run_cwl, CWLFile
+from pluto.tools import load_mutations, run_cwl, CWLFile, PlutoTestCase
 from pluto.settings import DATA_SETS, KNOWN_FUSIONS_FILE, ENABLE_LARGE_TESTS
 sys.path.pop(0)
 
 cwl_file = CWLFile('portal-workflow.cwl')
 
-class TestPortalWorkflow(unittest.TestCase):
+class TestPortalWorkflow(PlutoTestCase):
+    cwl_file = cwl_file
     @unittest.skipIf(ENABLE_LARGE_TESTS!=True, "is a large test")
     def test_run_worflow_one_maf(self):
         """
@@ -796,7 +797,16 @@ class TestPortalWorkflow(unittest.TestCase):
     def test_with_facets_txt_and_facets_mafs(self):
         """
         Test that the workflow produces expected output when Facets Suite .txt files are added and annotated .maf files from the Facets Suite workflow are used
+
+        Also test that merged CNA files work correctly
         """
+        lines1 = [
+        ['Hugo_Symbol', 'Sample1', 'Sample2'],
+        ["TAP1", "0", "0"],
+        ["ERRFI1", "0", "0"],
+        ["STK19", "", "0"],
+        ]
+        cna_file1 = self.write_table(self.tmpdir, filename = "cna1.txt", lines = lines1)
         # use reduced file for only these sample pairs
         # Sample45	Sample46
         # Sample43	Sample44
@@ -886,6 +896,7 @@ class TestPortalWorkflow(unittest.TestCase):
                     "class": "File"
                 },
             ],
+            "extra_cna_file": {"class": "File", "path": cna_file1}
         }
 
         with TemporaryDirectory() as tmpdir:
@@ -1040,7 +1051,15 @@ class TestPortalWorkflow(unittest.TestCase):
                             'size': 231,
                             'path': os.path.join(output_dir, 'case_lists/cases_sequenced.txt')}
                         ]
-                    }
+                    },
+                    'merged_cna_file': {
+                        'basename': 'data_CNA_merged.txt',
+                        'checksum': 'sha1$7a76e4ba3507693cdb34d24fecc8e293caff3179',
+                        'class': 'File',
+                        'location': 'file://' + os.path.join(output_dir, 'data_CNA_merged.txt'),
+                        'path': os.path.join(output_dir, 'data_CNA_merged.txt'),
+                        'size': 9937
+                    },
                 }
             self.maxDiff = None
             self.assertDictEqual(output_json, expected_output)
@@ -1090,6 +1109,19 @@ class TestPortalWorkflow(unittest.TestCase):
             header_parts = header.split()
             expected_header_parts = ['Hugo_Symbol', 's_C_A11NF2_P001_d', 's_C_A5NEWD_P001_d']
             self.assertEqual(header_parts, expected_header_parts)
+
+            # Test that CNA file looks correct
+            # output_file = expected_output['merged_cna_file']['path']
+            # lines = self.read_table(output_file)
+            # print(lines)
+            # expected_lines = [
+            #     ['Hugo_Symbol', 'Sample1', 'Sample2', 'Sample3', 'Sample4'],
+            #     ['ERRFI1', '0', '0', '0', '0'],
+            #     ['STK19', 'NA', '0', '-2', '0'],
+            #     ['TAP1', '0', '0', 'NA', 'NA'],
+            #     ['STK11', 'NA', 'NA', '0', 'NA']
+            #     ]
+            # self.assertEqual(lines, expected_lines)
 
     @unittest.skipIf(ENABLE_LARGE_TESTS!=True, "is a large test")
     def test_with_mixed_mafs(self):

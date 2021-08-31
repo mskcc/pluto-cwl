@@ -149,6 +149,11 @@ inputs:
     type:
     - "null"
     - File
+  extra_cna_file:
+    doc: "An extra CNA data file to be merged in with the portal CNA data"
+    type:
+    - "null"
+    - File
 
 steps:
   # meta_clinical_sample.txt (cbio_clinical_sample_meta_filename; meta_clinical_sample_file)
@@ -356,6 +361,18 @@ steps:
       output_filename: cbio_cna_ascna_data_filename  # data_CNA.ascna.txt
     out:
       [output_file]
+  # if there was extra CNA file, merge it in
+  merge_cna:
+    run: full-outer-join.cwl
+    in:
+      table1: clean_cna_headers/output_file
+      table2: extra_cna_file
+      join_key:
+        valueFrom: ${ return "Hugo_Symbol" }
+      output_filename:
+        valueFrom: ${ return "data_CNA_merged.txt" }
+    out:
+      [ output_file ]
 
 
 
@@ -489,3 +506,6 @@ outputs:
   portal_case_list_dir:
     type: Directory
     outputSource: make_case_list_dir/directory
+  merged_cna_file:
+    type: File
+    outputSource: merge_cna/output_file # data_CNA_merged.txt
