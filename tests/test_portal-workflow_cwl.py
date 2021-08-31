@@ -234,6 +234,14 @@ class TestPortalWorkflow(PlutoTestCase):
                             'size': 641,
                             'path': os.path.join(output_dir, 'case_lists/cases_sequenced.txt')}
                         ]
+                    },
+                    'merged_cna_file': {
+                        'basename': 'data_CNA_merged.txt',
+                        'checksum': 'sha1$931d82412733d7f93dd4117cd955f35e5dcbacc1',
+                        'class': 'File',
+                        'location': 'file://' + os.path.join(output_dir, 'data_CNA_merged.txt'),
+                        'path': os.path.join(output_dir, 'data_CNA_merged.txt'),
+                        'size': 5365
                     }
                 }
             self.maxDiff = None
@@ -256,6 +264,19 @@ class TestPortalWorkflow(PlutoTestCase):
             header_parts = header.split()
             expected_header_parts = ['Hugo_Symbol', 's_C_VJ7F47_P001_d']
             self.assertEqual(header_parts, expected_header_parts)
+
+            # Test that CNA file looks correct
+            # output_file = expected_output['merged_cna_file']['path']
+            # lines = self.read_table(output_file)
+            # print(lines)
+            # expected_lines = [
+            #     ['Hugo_Symbol', 'Sample1', 'Sample2', 'Sample3', 'Sample4'],
+            #     ['ERRFI1', '0', '0', '0', '0'],
+            #     ['STK19', 'NA', '0', '-2', '0'],
+            #     ['TAP1', '0', '0', 'NA', 'NA'],
+            #     ['STK11', 'NA', 'NA', '0', 'NA']
+            #     ]
+            # self.assertEqual(lines, expected_lines)
 
     @unittest.skipIf(ENABLE_LARGE_TESTS!=True, "is a large test")
     def test_run_worflow_two_mafs(self):
@@ -487,6 +508,14 @@ class TestPortalWorkflow(PlutoTestCase):
                     ],
                     'location': 'file://' + os.path.join(output_dir, 'case_lists'),
                     'path': os.path.join(output_dir, 'case_lists')
+                },
+                'merged_cna_file': {
+                    'basename': 'data_CNA_merged.txt',
+                    'checksum': 'sha1$09b4d944e50ea9d0e7567e04ce55b0f21d281255',
+                    'class': 'File',
+                    'location': 'file://' + os.path.join(output_dir, 'data_CNA_merged.txt'),
+                    'path': os.path.join(output_dir, 'data_CNA_merged.txt'),
+                    'size': 6784
                 }
             }
             self.maxDiff = None
@@ -756,6 +785,14 @@ class TestPortalWorkflow(PlutoTestCase):
                             'size': 231,
                             'path': os.path.join(output_dir, 'case_lists/cases_sequenced.txt')}
                         ]
+                    },
+                    'merged_cna_file': {
+                        'basename': 'data_CNA_merged.txt',
+                        'checksum': 'sha1$ec8541f7ecf6d843bf4d939a9b136ccc2f4578ef',
+                        'class': 'File',
+                        'location': 'file://' + os.path.join(output_dir, 'data_CNA_merged.txt'),
+                        'path': os.path.join(output_dir, 'data_CNA_merged.txt'),
+                        'size': 6416
                     }
                 }
             self.maxDiff = None
@@ -1059,7 +1096,7 @@ class TestPortalWorkflow(PlutoTestCase):
                         'location': 'file://' + os.path.join(output_dir, 'data_CNA_merged.txt'),
                         'path': os.path.join(output_dir, 'data_CNA_merged.txt'),
                         'size': 9937
-                    },
+                    }
                 }
             self.maxDiff = None
             self.assertDictEqual(output_json, expected_output)
@@ -1354,6 +1391,14 @@ class TestPortalWorkflow(PlutoTestCase):
                             'size': 231,
                             'path': os.path.join(output_dir, 'case_lists/cases_sequenced.txt')}
                         ]
+                    },
+                    'merged_cna_file': {
+                        'basename': 'data_CNA_merged.txt',
+                        'checksum': 'sha1$ec8541f7ecf6d843bf4d939a9b136ccc2f4578ef',
+                        'class': 'File',
+                        'location': 'file://' + os.path.join(output_dir, 'data_CNA_merged.txt'),
+                        'path': os.path.join(output_dir, 'data_CNA_merged.txt'),
+                        'size': 6416
                     }
                 }
             self.maxDiff = None
