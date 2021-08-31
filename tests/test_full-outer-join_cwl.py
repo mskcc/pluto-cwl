@@ -15,7 +15,7 @@ sys.path.pop(0)
 class TestMergeTables(PlutoTestCase):
     cwl_file = CWLFile('full-outer-join.cwl')
 
-    def test_merge_tables1(self):
+    def test_merge_two_tables(self):
         lines1 = [
         ['Hugo_Symbol', 'Sample1', 'Sample2'],
         ["TAP1", "0", "0"],
@@ -63,6 +63,52 @@ class TestMergeTables(PlutoTestCase):
             ['TAP1', '0', '0', 'NA', 'NA'],
             ['STK11', 'NA', 'NA', '0', 'NA']
             ]
+        self.assertEqual(lines, expected_lines)
+
+
+    def test_merge_no_tables(self):
+        """
+        Test case for merge when only a single file is passed
+        """
+        lines1 = [
+        ['Hugo_Symbol', 'Sample1', 'Sample2'],
+        ["TAP1", "0", "0"],
+        ["ERRFI1", "0", "0"],
+        ["STK19", "", "0"],
+        ]
+
+        cna_file1 = self.write_table(self.tmpdir, filename = "cna1.txt", lines = lines1)
+
+        self.input = {
+            'table1': { "class": "File", "path": cna_file1 },
+            'join_key': 'Hugo_Symbol',
+            'output_filename': 'output.tsv'
+        }
+
+        output_json, output_dir = self.run_cwl()
+
+        expected_output = {
+            'output_file': {
+                'location': 'file://' + os.path.join(output_dir,'output.tsv'),
+                'basename': 'output.tsv',
+                'class': 'File',
+                'checksum': 'sha1$70296b6dc149d6b61af7a14557d075a0690f2a1d',
+                'size': 59,
+                'path':  os.path.join(output_dir,'output.tsv')
+                }
+            }
+        self.assertDictEqual(output_json, expected_output)
+
+        output_file = expected_output['output_file']['path']
+
+        lines = self.read_table(output_file)
+
+        expected_lines = [
+            ['Hugo_Symbol', 'Sample1', 'Sample2'],
+            ["TAP1", "0", "0"],
+            ["ERRFI1", "0", "0"],
+            ["STK19", "NA", "0"],
+        ]
         self.assertEqual(lines, expected_lines)
 
 
