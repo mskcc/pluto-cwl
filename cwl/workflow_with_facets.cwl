@@ -281,6 +281,11 @@ inputs:
     doc: "Array of tumor bam files. Must match the same order of sample pairs in 'pairs' input field"
     secondaryFiles:
         - ^.bai
+  extra_cna_files:
+    doc: "Extra CNA data files to be merged in with the portal CNA data"
+    type:
+    - "null"
+    - File[]
 
 
 steps:
@@ -396,7 +401,8 @@ steps:
       portal_muts_file, # data_mutations_extended.txt
       portal_hisens_segs, # <project_id>_data_cna_hg19.seg
       portal_fusions_data_file, # data_fusions.txt
-      portal_case_list_dir
+      portal_case_list_dir,
+      merged_cna_file # data_CNA_merged.txt
       ]
 
   # need to merge the portal mutations maf with the Facets maf to get some extra information in the output
@@ -473,6 +479,7 @@ steps:
       portal_hisens_segs: run_portal_workflow/portal_hisens_segs # # <project_id>_data_cna_hg19.seg
       portal_fusions_data_file: run_portal_workflow/portal_fusions_data_file # data_fusions.txt
       portal_case_list_dir: run_portal_workflow/portal_case_list_dir
+      merged_cna_file: run_portal_workflow/merged_cna_file
       output_directory_name:
         valueFrom: ${ return "portal"; }
       files:
@@ -492,6 +499,7 @@ steps:
           inputs.portal_hisens_segs,
           inputs.portal_fusions_data_file,
           inputs.portal_case_list_dir,
+          inputs.merged_cna_file
           ]}
     out: [ directory ]
 

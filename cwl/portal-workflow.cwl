@@ -150,7 +150,7 @@ inputs:
     - "null"
     - File
   extra_cna_files:
-    doc: "An extra CNA data file to be merged in with the portal CNA data"
+    doc: "Extra CNA data files to be merged in with the portal CNA data"
     type:
     - "null"
     - File[]

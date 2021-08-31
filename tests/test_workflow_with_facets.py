@@ -369,6 +369,14 @@ class TestWorkflowWithFacets(PlutoTestCase):
                                 'size': 213,
                                 'path': os.path.join(output_dir, 'portal/case_lists/cases_sequenced.txt')}
                             ]
+                        },
+                        {
+                            'basename': 'data_CNA_merged.txt',
+                            'checksum': 'sha1$df07ff6b94392c470e2c8c47ca6e35cc2f6cc791',
+                            'class': 'File',
+                            'location': 'file://' + os.path.join(output_dir, 'portal/data_CNA_merged.txt'),
+                            'path': os.path.join(output_dir, 'portal/data_CNA_merged.txt'),
+                            'size': 2343
                         }
                     ]
                 }
@@ -878,7 +886,15 @@ class TestWorkflowWithFacets(PlutoTestCase):
                                 'size': 213,
                                 'path': os.path.join(output_dir, 'portal/case_lists/cases_sequenced.txt')}
                             ]
-                        }
+                        },
+                        {
+                            'basename': 'data_CNA_merged.txt',
+                            'checksum': 'sha1$ddc7acafdb61a3ea2aa1ec02e01df7bcc1691267',
+                            'class': 'File',
+                            'location': 'file://' + os.path.join(output_dir, 'portal/data_CNA_merged.txt'),
+                            'path': os.path.join(output_dir, 'portal/data_CNA_merged.txt'),
+                            'size': 3808
+                        },
                     ]
                 }
             }
@@ -1308,7 +1324,15 @@ class TestWorkflowWithFacets(PlutoTestCase):
                                 'size': 641,
                                 'path': os.path.join(output_dir, 'portal/case_lists/cases_sequenced.txt')}
                             ]
-                        }
+                        },
+                        {
+                            'basename': 'data_CNA_merged.txt',
+                            'checksum': 'sha1$dca846b4f25ca20bca814fa15351de8d322d3439',
+                            'class': 'File',
+                            'location': 'file://' + os.path.join(output_dir, 'portal/data_CNA_merged.txt'),
+                            'path': os.path.join(output_dir, 'portal/data_CNA_merged.txt'),
+                            'size': 5319
+                        },
                     ]
                 }
             }
@@ -1792,7 +1816,15 @@ class TestWorkflowWithFacets(PlutoTestCase):
                     'size': 641,
                     'path': os.path.join(output_dir, 'portal/case_lists/cases_sequenced.txt')}],
                     'location': 'file://' + os.path.join(output_dir, 'portal/case_lists'),
-                    'path': os.path.join(output_dir, 'portal/case_lists')}
+                    'path': os.path.join(output_dir, 'portal/case_lists')},
+                    {
+                        'basename': 'data_CNA_merged.txt',
+                        'checksum': 'sha1$4795ba3d6c30a028d21bafbb55227ede294b61d5',
+                        'class': 'File',
+                        'location': 'file://' + os.path.join(output_dir, 'portal/data_CNA_merged.txt'),
+                        'path': os.path.join(output_dir, 'portal/data_CNA_merged.txt'),
+                        'size': 6727
+                    }
                 ]
             }
         }
