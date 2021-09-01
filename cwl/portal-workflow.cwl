@@ -460,6 +460,14 @@ steps:
           ]}
     out: [ directory ]
 
+  compile_report:
+    run: report.cwl
+    in:
+      mutation_file: concat_cbio_muts_maf/output_file
+      samples_file: generate_data_clinical_sample/output_file
+      patients_file: generate_data_clinical_patient/output_file
+    out: [ output_file ]
+
 outputs:
   portal_meta_clinical_sample_file:
     type: File
@@ -509,3 +517,6 @@ outputs:
   merged_cna_file:
     type: File
     outputSource: merge_cna/output_file # data_CNA_merged.txt
+  portal_report:
+    type: File
+    outputSource: compile_report/output_file
