@@ -10,6 +10,7 @@ import unittest
 PARENT_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.insert(0, PARENT_DIR)
 from pluto.tools import PlutoTestCase, CWLFile
+from pluto.serializer import OFile
 sys.path.pop(0)
 
 class TestMergeTables(PlutoTestCase):
@@ -81,15 +82,9 @@ class TestMergeTables(PlutoTestCase):
         output_json['output_file'].pop('size')
 
         expected_output = {
-            'output_file': {
-                'location': 'file://' + os.path.join(output_dir,'report.html'),
-                'basename': 'report.html',
-                'class': 'File',
-                # 'checksum': 'sha1$13720099887ee01f718eaf2464b8a6eb81212678',
-                # 'size': 1011248,
-                'path':  os.path.join(output_dir,'report.html')
-                }
+            'output_file': OFile(name = 'report.html', dir = output_dir)
             }
+
         self.assertDictEqual(output_json, expected_output)
 
 if __name__ == "__main__":
