@@ -377,10 +377,22 @@ class TestWorkflowWithFacets(PlutoTestCase):
                             'location': 'file://' + os.path.join(output_dir, 'portal/data_CNA_merged.txt'),
                             'path': os.path.join(output_dir, 'portal/data_CNA_merged.txt'),
                             'size': 2343
+                        },
+                        {
+                            'basename': 'report.html',
+                            # 'checksum': 'sha1$8bdc1fa8ff1d1316e60162d537c87bb3a592fb23',
+                            'class': 'File',
+                            'location': 'file://' + os.path.join(output_dir, 'portal/report.html'),
+                            'path': os.path.join(output_dir, 'portal/report.html'),
+                            # 'size': 1016476
                         }
                     ]
                 }
             }
+        for item in output_json['portal_dir']['listing']:
+            if item['basename'] == 'report.html':
+                item.pop('checksum')
+                item.pop('size')
         self.maxDiff = None
         self.assertDictEqual(output_json, expected_output)
         comments, mutations = self.load_mutations(os.path.join(output_dir, 'analysis', 'demo.muts.maf'))
@@ -884,7 +896,7 @@ class TestWorkflowWithFacets(PlutoTestCase):
                                 'class': 'File',
                                 'checksum': 'sha1$78d1d0acb6928349b4448a73f2cdf1ed4edcb1a3',
                                 'size': 213,
-                                'path': os.path.join(output_dir, 'portal/case_lists/cases_sequenced.txt')}
+                                'path': os.path.join(output_dir, 'portal/case_lists/cases_sequenced.txt')},
                             ]
                         },
                         {
@@ -895,9 +907,23 @@ class TestWorkflowWithFacets(PlutoTestCase):
                             'path': os.path.join(output_dir, 'portal/data_CNA_merged.txt'),
                             'size': 3808
                         },
+                        {
+                            'basename': 'report.html',
+                            # 'checksum': 'sha1$8bdc1fa8ff1d1316e60162d537c87bb3a592fb23',
+                            'class': 'File',
+                            'location': 'file://' + os.path.join(output_dir, 'portal/report.html'),
+                            'path': os.path.join(output_dir, 'portal/report.html'),
+                            # 'size': 1016476
+                        }
                     ]
                 }
             }
+
+        for item in output_json['portal_dir']['listing']:
+            if item['basename'] == 'report.html':
+                item.pop('checksum')
+                item.pop('size')
+
         self.maxDiff = None
         self.assertDictEqual(output_json, expected_output)
         comments, mutations = self.load_mutations(os.path.join(output_dir, 'analysis', 'demo.muts.maf'))
@@ -1333,9 +1359,23 @@ class TestWorkflowWithFacets(PlutoTestCase):
                             'path': os.path.join(output_dir, 'portal/data_CNA_merged.txt'),
                             'size': 5319
                         },
+                        {
+                            'basename': 'report.html',
+                            # 'checksum': 'sha1$8bdc1fa8ff1d1316e60162d537c87bb3a592fb23',
+                            'class': 'File',
+                            'location': 'file://' + os.path.join(output_dir, 'portal/report.html'),
+                            'path': os.path.join(output_dir, 'portal/report.html'),
+                            # 'size': 1016476
+                        }
                     ]
                 }
             }
+
+        for item in output_json['portal_dir']['listing']:
+            if item['basename'] == 'report.html':
+                item.pop('checksum')
+                item.pop('size')
+
         self.maxDiff = None
         self.assertDictEqual(output_json, expected_output)
         comments, mutations = self.load_mutations(os.path.join(output_dir, 'analysis', 'Proj_08390_G.muts.maf'))
@@ -1824,10 +1864,24 @@ class TestWorkflowWithFacets(PlutoTestCase):
                         'location': 'file://' + os.path.join(output_dir, 'portal/data_CNA_merged.txt'),
                         'path': os.path.join(output_dir, 'portal/data_CNA_merged.txt'),
                         'size': 6727
+                    },
+                    {
+                        'basename': 'report.html',
+                        # 'checksum': 'sha1$8bdc1fa8ff1d1316e60162d537c87bb3a592fb23',
+                        'class': 'File',
+                        'location': 'file://' + os.path.join(output_dir, 'portal/report.html'),
+                        'path': os.path.join(output_dir, 'portal/report.html'),
+                        # 'size': 1016476
                     }
                 ]
             }
         }
+
+        for item in output_json['portal_dir']['listing']:
+            if item['basename'] == 'report.html':
+                item.pop('checksum')
+                item.pop('size')
+
         self.maxDiff = None
         self.assertDictEqual(output_json, expected_output)
         comments, mutations = self.load_mutations(os.path.join(output_dir, 'analysis', 'Proj_08390_G.muts.maf'))

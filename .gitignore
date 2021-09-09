@@ -19,3 +19,5 @@ pipeline_output/
 *__pycache__*
 inputs/
 worker_log.txt
+*.Rdata
+*.html

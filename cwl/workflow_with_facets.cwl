@@ -402,7 +402,8 @@ steps:
       portal_hisens_segs, # <project_id>_data_cna_hg19.seg
       portal_fusions_data_file, # data_fusions.txt
       portal_case_list_dir,
-      merged_cna_file # data_CNA_merged.txt
+      merged_cna_file, # data_CNA_merged.txt
+      portal_report
       ]
 
   # need to merge the portal mutations maf with the Facets maf to get some extra information in the output
@@ -480,6 +481,7 @@ steps:
       portal_fusions_data_file: run_portal_workflow/portal_fusions_data_file # data_fusions.txt
       portal_case_list_dir: run_portal_workflow/portal_case_list_dir
       merged_cna_file: run_portal_workflow/merged_cna_file
+      portal_report: run_portal_workflow/portal_report
       output_directory_name:
         valueFrom: ${ return "portal"; }
       files:
@@ -499,7 +501,8 @@ steps:
           inputs.portal_hisens_segs,
           inputs.portal_fusions_data_file,
           inputs.portal_case_list_dir,
-          inputs.merged_cna_file
+          inputs.merged_cna_file,
+          inputs.portal_report
           ]}
     out: [ directory ]
 
