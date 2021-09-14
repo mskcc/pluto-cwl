@@ -138,7 +138,6 @@ class TestWorkflowWithFacets(PlutoTestCase):
                     OFile(name = 'data_mutations_extended.txt', size = 5623, hash = 'f4575aaf80b6b4e22cbfed5e7743d3285f7a9a88'),
                     OFile(name = 'Proj_08390_G_data_cna_hg19.seg', size = 525, hash = 'e99e98d33598c423448cba44a37da712c9c933c5'),
                     OFile(name = 'data_fusions.txt', size = 99, hash = 'c16f763b248813fcdde76f7486f1ddc4e9856038'),
-
                     ODir(name = 'case_lists', items = [
                         OFile(name = 'cases_all.txt', size = 188, hash = '3d3d54b5cbd98e751adf926d07884eeaed94aaef'),
 
@@ -146,7 +145,6 @@ class TestWorkflowWithFacets(PlutoTestCase):
                         OFile(name = 'cases_cna.txt', size = 200, hash = '117563761d7cb4690dea363f40b77ef1a0444fc1'),
                         OFile(name = 'cases_sequenced.txt', size = 213, hash = '78d1d0acb6928349b4448a73f2cdf1ed4edcb1a3'),
                     ]),
-                    OFile(name = 'data_CNA_merged.txt', size = 2343, hash = 'df07ff6b94392c470e2c8c47ca6e35cc2f6cc791'),
                     OFile(name = 'report.html')
                 ])
             }

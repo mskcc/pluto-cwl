@@ -402,7 +402,7 @@ steps:
       portal_hisens_segs, # <project_id>_data_cna_hg19.seg
       portal_fusions_data_file, # data_fusions.txt
       portal_case_list_dir,
-      merged_cna_file, # data_CNA_merged.txt
+      merged_cna_file, # data_CNA_merged.txt -> data_CNA.txt
       portal_report
       ]
 
@@ -474,13 +474,12 @@ steps:
       portal_meta_fusions_file: run_portal_workflow/portal_meta_fusions_file # meta_fusions.txt
       portal_meta_mutations_extended_file: run_portal_workflow/portal_meta_mutations_extended_file # meta_mutations_extended.txt
       portal_meta_cna_segments_file: run_portal_workflow/portal_meta_cna_segments_file  # <project_id>_meta_cna_hg19_seg.txt
-      portal_cna_data_file: run_portal_workflow/portal_cna_data_file # data_CNA.txt
+      portal_cna_data_file: run_portal_workflow/merged_cna_file # data_CNA.txt ; replaces # portal_cna_data_file: run_portal_workflow/portal_cna_data_file # data_CNA.txt
       portal_cna_ascna_file: run_portal_workflow/portal_cna_ascna_file # data_CNA.ascna.txt
       portal_muts_file: merge_maf/output_file # data_mutations_extended.txt
       portal_hisens_segs: run_portal_workflow/portal_hisens_segs # # <project_id>_data_cna_hg19.seg
       portal_fusions_data_file: run_portal_workflow/portal_fusions_data_file # data_fusions.txt
       portal_case_list_dir: run_portal_workflow/portal_case_list_dir
-      merged_cna_file: run_portal_workflow/merged_cna_file
       portal_report: run_portal_workflow/portal_report
       output_directory_name:
         valueFrom: ${ return "portal"; }
@@ -501,7 +500,6 @@ steps:
           inputs.portal_hisens_segs,
           inputs.portal_fusions_data_file,
           inputs.portal_case_list_dir,
-          inputs.merged_cna_file,
           inputs.portal_report
           ]}
     out: [ directory ]

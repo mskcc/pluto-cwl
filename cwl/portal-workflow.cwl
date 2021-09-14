@@ -370,7 +370,7 @@ steps:
       join_key:
         valueFrom: ${ return "Hugo_Symbol" }
       output_filename:
-        valueFrom: ${ return "data_CNA_merged.txt" }
+        valueFrom: ${ return "data_CNA.txt" } # data_CNA_merged.txt
     out:
       [ output_file ]
 
