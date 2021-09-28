@@ -47,7 +47,7 @@ case $arg in
         # need to get these env vars to propagate into the HPC jobs
         # SINGULARITY_DOCKER_USERNAME
         # SINGULARITY_DOCKER_PASSWORD
-        [ -e ../toil-settings.sh ] && . ../toil-settings.sh || :
+        [ -e ../toil-settings.sh ] && . ../toil-settings.sh || echo ">>> WARNING: could not find file toil-settings.sh, needed for SINGULARITY_DOCKER_USERNAME and SINGULARITY_DOCKER_PASSWORD; HPC jobs might break!"
         # NOTE: in the future might also need these
         # TOIL_LSF_ARGS
         # SINGULARITY_PULLDIR
