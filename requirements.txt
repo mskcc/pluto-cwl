@@ -1,3 +1,3 @@
-cwltool==3.0.20201203173111
+cwltool==3.1.20210922203925
 cwlref-runner==1.0
-toil[all]==5.2.0
+toil[all]==5.5.0
