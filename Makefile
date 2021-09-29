@@ -112,7 +112,8 @@ init:
 
 # ~~~~~ Container ~~~~~ #
 # pull the Docker container and convert it to Singularity container image file
-export SINGULARITY_CACHEDIR:=/juno/work/ci/pluto-cwl-test/cache
+# export SINGULARITY_CACHEDIR:=/juno/work/ci/pluto-cwl-test/cache
+# NOTE: Need to get SINGULARITY_CACHEDIR location from env.sh Toil settings
 # GIT_TAG:=$(shell git describe --tags --abbrev=0)
 HF_CONTAINER:=mskcc/helix_filters_01
 HF_TAG:=21.3.2
@@ -170,6 +171,21 @@ singularity-pull-cmoutils:
 	singularity pull --force --name "$(CMOUTILS_SIF)" docker://$(CMOUTILS_DOCKERTAG)
 
 singularity-pull-all: singularity-pull singularity-pull-dev singularity-pull-facets singularity-pull-fillout singularity-pull-igv-reports singularity-pull-cmoutils singularity-pull-msi
+
+# Update all the Singularity containers in the Singularity Cache as specified by the Toil env settings
+singularity-pull-all-toil:
+	. "$(ENVSH)" toil
+	[ $$SINGULARITY_CACHEDIR ] || echo ">>> ERROR: SINGULARITY_CACHEDIR is not set" || exit 1 && :
+	singularity pull --force --name "$(SINGULARITY_SIF)" docker://$(DOCKER_TAG)
+	singularity pull --force --name "$(SINGULARITY_DEV_SIF)" docker://$(DOCKER_DEV_TAG)
+	singularity pull --force --name "$(FACETS_SIF)" docker://$(FACETS_DOCKERTAG)
+	singularity pull --force --name "$(FILLOUT_SIF)" docker://$(FILLOUT_DOCKERTAG)
+	singularity pull --force --name "$(MSI_SIF)" docker://$(MSI_DOCKERTAG)
+	singularity pull --force --name "$(IGV_REPORTS_SIF)" docker://$(IGV_REPORTS_DOCKERTAG)
+	singularity pull --force --name "$(CMOUTILS_SIF)" docker://$(CMOUTILS_DOCKERTAG)
+
+
+
 
 # change the Docker tag for all the CWL files from the old pattern to the new pattern
 OLD_TAG:=
@@ -230,7 +246,7 @@ run-toil: WORKDIR=$(OUTPUTDIR)/work
 run-toil: ENV=toil
 run-toil:
 	. $(ENVSH) $(ENV)
-	unset SINGULARITY_CACHEDIR
+	# unset SINGULARITY_CACHEDIR
 	mkdir -p "$(OUTPUTDIR)"
 	mkdir -p "$(WORKDIR)"
 	[ -e "$(JOBSTORE)" ] && rm -rf "$(JOBSTORE)" || :
@@ -246,3 +262,4 @@ run-toil:
 	cwl/example_workflow.cwl cwl/example_input.json ) > toil.stdout.txt
 # --preserve-environment PATH TMPDIR TOIL_LSF_ARGS SINGULARITY_CACHEDIR SINGULARITY_TMPDIR SINGULARITY_PULLDIR PWD \
 # --maxLocalJobs 500 \
+# NOTE: see also; https://github.com/mskcc/roslin/blob/3ae9ffccc417d1baaefd05e0540be586854b237c/roslin-runner-juno.sh
