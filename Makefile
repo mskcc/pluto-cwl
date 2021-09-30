@@ -114,6 +114,9 @@ init:
 # pull the Docker container and convert it to Singularity container image file
 # export SINGULARITY_CACHEDIR:=/juno/work/ci/pluto-cwl-test/cache
 # NOTE: Need to get SINGULARITY_CACHEDIR location from env.sh Toil settings
+# NOTE: the default 'singularity' env settings leave SINGULARITY_CACHEDIR unset, which should default to using the cache at $HOME/.singularity and pull a copy of the .sif file to the local dir here for use in the pipeline
+# NOTE: if the singularity containers are not all pre-cached before trying to run the pipeline, tons of issues arise especially when running with parallel task execution, so make sure they are all cached locally before running! This is super important
+
 # GIT_TAG:=$(shell git describe --tags --abbrev=0)
 HF_CONTAINER:=mskcc/helix_filters_01
 HF_TAG:=21.3.2
@@ -142,6 +145,13 @@ FACETS_SIF:=stevekm_facets-suite:2.0.6.sif
 singularity-pull-facets:
 	. "$(ENVSH)" singularity && \
 	singularity pull --force --name "$(FACETS_SIF)" docker://$(FACETS_DOCKERTAG)
+
+# used by copy_number.cwl ; TODO: replace this with mskcc/helix_filters_01:facets-1.6.3
+ROSLIN_FACETS_DOCKERTAG:=mskcc/roslin-variant-facets:1.6.3
+ROSLIN_FACETS_SIF:=mskcc_roslin-variant-facets:1.6.3.sif
+singularity-pull-roslin-facets:
+	. "$(ENVSH)" singularity && \
+	singularity pull --force --name "$(ROSLIN_FACETS_SIF)" docker://$(ROSLIN_FACETS_DOCKERTAG)
 
 # docker://cmopipeline/getbasecountsmultisample:1.2.2
 FILLOUT_DOCKERTAG:=cmopipeline/getbasecountsmultisample:1.2.2
@@ -183,6 +193,7 @@ singularity-pull-all-toil:
 	singularity pull --force --name "$(MSI_SIF)" docker://$(MSI_DOCKERTAG)
 	singularity pull --force --name "$(IGV_REPORTS_SIF)" docker://$(IGV_REPORTS_DOCKERTAG)
 	singularity pull --force --name "$(CMOUTILS_SIF)" docker://$(CMOUTILS_DOCKERTAG)
+	singularity pull --force --name "$(ROSLIN_FACETS_SIF)" docker://$(ROSLIN_FACETS_DOCKERTAG)
 
 
 
