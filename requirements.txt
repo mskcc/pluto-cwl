@@ -1,3 +1,4 @@
-cwltool==3.1.20210922203925
+cwltool==3.1.20211004060744
 cwlref-runner==1.0
-toil[all]==5.5.0
+git+https://github.com/DataBiosphere/toil.git@issues/3838-fix-double-mem
+
