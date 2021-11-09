@@ -1,3 +1,2 @@
-cwltool==3.1.20210922203925
+git+https://github.com/mskcc/toil.git@5.4.2#egg=toil[cwl]
 cwlref-runner==1.0
-toil[all]==5.5.0
