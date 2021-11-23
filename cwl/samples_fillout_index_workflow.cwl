@@ -21,24 +21,29 @@ inputs:
     type:
         type: array
         items: string
+
   bam_files:
     type:
         type: array
         items: File
     secondaryFiles:
         - ^.bai
+
   maf_files:
     type:
       type: array
       items: File
+
   unindexed_bam_files:
     type:
       type: array
       items: File
+
   unindexed_sample_ids:
     type:
       type: array
       items: string
+
   unindexed_maf_files:
     type:
       type: array
@@ -54,11 +59,21 @@ inputs:
       - .sa
       - .fai
       - ^.dict
+
   exac_filter: # need this to resolve error in subworkflow: Anonymous file object must have 'contents' and 'basename' fields.
     type: File
     default:
       class: File
       path: /juno/work/ci/resources/vep/cache/ExAC_nonTCGA.r0.3.1.sites.vep.vcf.gz
+
+  is_impact:
+    type: boolean
+    default: True
+
+  argos_version_string:
+    type: [ "null", string ]
+    default: "
+      value: ${ return "Unspecified"; }
 
 steps:
   # index files
@@ -69,6 +84,16 @@ steps:
     scatter: [ bam ]
     scatterMethod: dotproduct
     out: [ bam_indexed ]
+
+  run_maf_filter:
+    run: maf_filter.cwl
+    in:
+      maf_file: maf_files
+      is_impact: is_impact
+      argos_version_string: argos_version_string
+    scatter: [ maf_file ]
+    scatterMethod: dotproduct
+    out: [ analysis_mutations_file ]
 
   run_samples_fillout:
     run: samples_fillout_workflow.cwl
@@ -81,7 +106,7 @@ steps:
         source: [ bam_files, run_indexer/bam_indexed ]
         linkMerge: merge_flattened
       maf_files:
-        source: [ maf_files, unindexed_maf_files ]
+        source: [ run_maf_filter/analysis_mutations_file, unindexed_maf_files ]
         linkMerge: merge_flattened
       ref_fasta: ref_fasta
     out: [ output_file ]
