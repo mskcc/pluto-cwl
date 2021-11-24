@@ -72,7 +72,7 @@ inputs:
 
   argos_version_string:
     type: [ "null", string ]
-    default: "
+    default: 
       value: ${ return "Unspecified"; }
 
 steps:
