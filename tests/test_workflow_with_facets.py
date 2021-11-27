@@ -2,6 +2,17 @@
 # -*- coding: utf-8 -*-
 """
 unit tests for the workflow_with_facets.cwl
+
+This is the primary integration test for the repo since workflow_with_facets.cwl is the main workflow in use
+
+Example usages;
+
+$ python tests/test_workflow_with_facets.py TestWorkflowWithFacets.test_demo_dataset1
+
+(ENABLE_LARGE_TESTS)
+$ LARGE_TESTS=True python tests/test_workflow_with_facets.py TestWorkflowWithFacets.test_run_worflow_two_mafs
+
+$ USE_LSF=True PRINT_COMMAND=True PRESERVE_TEST_DIR=True CWL_ENGINE=toil python tests/test_workflow_with_facets.py TestWorkflowWithFacets.test_demo_dataset1
 """
 import os
 import sys
@@ -15,6 +26,7 @@ from pluto.settings import ENABLE_LARGE_TESTS, MICROSATELLITES_LIST
 from pluto.serializer import OFile, ODir
 sys.path.pop(0)
 
+
 class TestWorkflowWithFacets(PlutoTestCase):
     cwl_file = 'workflow_with_facets.cwl'
 
@@ -22,8 +34,6 @@ class TestWorkflowWithFacets(PlutoTestCase):
         """
         Test case for using a single demo sample; tiny dataset
         """
-        # self.preserve = True
-        # print(self.tmpdir)
         data_clinical_file = os.path.join(self.DATA_SETS['demo']['INPUTS_DIR'], "demo_sample_data_clinical.txt")
         sample_summary_file = os.path.join(self.DATA_SETS['demo']['QC_DIR'], "demo_SampleSummary.txt")
         mutation_svs_txt_file = os.path.join(self.DATA_SETS['demo']['MAF_DIR'], "Sample1.Sample2.svs.pass.vep.portal.txt")
