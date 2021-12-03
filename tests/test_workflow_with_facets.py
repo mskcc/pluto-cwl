@@ -395,7 +395,7 @@ class TestWorkflowWithFacets(PlutoTestCase):
                 item.pop('size')
 
         self.maxDiff = None
-        self.assertDictEqual(output_json, expected_output)
+        self.assertCWLDictEqual(output_json, expected_output)
         comments, mutations = self.load_mutations(os.path.join(output_dir, 'analysis', 'demo.muts.maf'))
         self.assertEqual(len(mutations), 34)
         comments, mutations = self.load_mutations(os.path.join(output_dir, 'portal', 'data_mutations_extended.txt'))
