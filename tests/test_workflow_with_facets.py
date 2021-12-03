@@ -13,6 +13,9 @@ $ python tests/test_workflow_with_facets.py TestWorkflowWithFacets.test_demo_dat
 $ LARGE_TESTS=True python tests/test_workflow_with_facets.py TestWorkflowWithFacets.test_run_worflow_two_mafs
 
 $ USE_LSF=True PRINT_COMMAND=True PRESERVE_TEST_DIR=True CWL_ENGINE=toil python tests/test_workflow_with_facets.py TestWorkflowWithFacets.test_demo_dataset1
+
+# this should take ~16 minutes to complete
+$ LARGE_TESTS=True CWL_ENGINE=toil python tests/test_workflow_with_facets.py
 """
 import os
 import sys
@@ -157,10 +160,6 @@ class TestWorkflowWithFacets(PlutoTestCase):
                     OFile(name = 'report.html')
                 ])
             }
-        for item in output_json['portal_dir']['listing']:
-            if item['basename'] == 'report.html':
-                item.pop('checksum')
-                item.pop('size')
         self.maxDiff = None
         self.assertCWLDictEqual(output_json, expected_output)
         comments, mutations = self.load_mutations(os.path.join(output_dir, 'analysis', 'demo.muts.maf'))
@@ -388,12 +387,6 @@ class TestWorkflowWithFacets(PlutoTestCase):
                     OFile(name = 'report.html')
                 ])
             }
-
-        for item in output_json['portal_dir']['listing']:
-            if item['basename'] == 'report.html':
-                item.pop('checksum')
-                item.pop('size')
-
         self.maxDiff = None
         self.assertCWLDictEqual(output_json, expected_output)
         comments, mutations = self.load_mutations(os.path.join(output_dir, 'analysis', 'demo.muts.maf'))
@@ -597,14 +590,8 @@ class TestWorkflowWithFacets(PlutoTestCase):
                     OFile(name = 'report.html')
                 ])
             }
-
-        for item in output_json['portal_dir']['listing']:
-            if item['basename'] == 'report.html':
-                item.pop('checksum')
-                item.pop('size')
-
         self.maxDiff = None
-        self.assertDictEqual(output_json, expected_output)
+        self.assertCWLDictEqual(output_json, expected_output)
         comments, mutations = self.load_mutations(os.path.join(output_dir, 'analysis', 'Proj_08390_G.muts.maf'))
         self.assertEqual(len(mutations), 22)
         comments, mutations = self.load_mutations(os.path.join(output_dir, 'portal', 'data_mutations_extended.txt'))
@@ -851,13 +838,8 @@ class TestWorkflowWithFacets(PlutoTestCase):
                 ])
             }
 
-        for item in output_json['portal_dir']['listing']:
-            if item['basename'] == 'report.html':
-                item.pop('checksum')
-                item.pop('size')
-
         self.maxDiff = None
-        self.assertDictEqual(output_json, expected_output)
+        self.assertCWLDictEqual(output_json, expected_output)
         comments, mutations = self.load_mutations(os.path.join(output_dir, 'analysis', 'Proj_08390_G.muts.maf'))
         self.assertEqual(len(mutations), 34)
         comments, mutations = self.load_mutations(os.path.join(output_dir, 'portal', 'data_mutations_extended.txt'))
