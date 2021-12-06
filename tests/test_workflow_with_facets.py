@@ -25,7 +25,7 @@ THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 PARENT_DIR = os.path.dirname(THIS_DIR)
 sys.path.insert(0, PARENT_DIR)
 from pluto.tools import TableReader, PlutoTestCase
-from pluto.settings import ENABLE_LARGE_TESTS, MICROSATELLITES_LIST
+from pluto.settings import ENABLE_LARGE_TESTS
 from pluto.serializer import OFile, ODir
 sys.path.pop(0)
 
