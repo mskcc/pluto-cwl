@@ -55,6 +55,12 @@ If you want to use Toil to submit jobs to LSF then you will need the `toil` envi
 
 ### Run with `run.py`
 
+-----
+
+NOTE: using `run.py` is deprecated; instead check out [`run-cwltool.sh`](https://github.com/mskcc/pluto/blob/master/run-cwltool.sh) and [`run-toil.sh`](https://github.com/mskcc/pluto/blob/master/run-toil.sh)
+
+-----
+
 The included `run.py` script presents an easy command line interface to run CWL files, by mapping standard CLI flags and arguments to the CWL input arguments via the included [`operators`](https://github.com/mskcc/pluto-cwl/tree/master/operators). The script will automatically create the required `input.json` file for you, set up temporary directories for pipeline execution, and run the desired CWL with either the `cwltool` reference runner or Toil. See `run.py -h` for available options and CWL's to run.
 
 Example usages;
