@@ -1,11 +1,11 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Integration tests for the workflow_with_facets.cwl using medium sized dataset
 
 Usage:
 
-    $ INTEGRATION_TESTS=True USE_LSF=True CWL_ENGINE=toil python tests/test_workflow_with_facets.medium.py
+    $ INTEGRATION_TESTS=True USE_LSF=True CWL_ENGINE=toil python3 tests/test_workflow_with_facets.medium.py
 
 """
 import os
