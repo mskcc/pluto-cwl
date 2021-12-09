@@ -36,7 +36,11 @@ class TestWorkflowWithFacetsMedium(PlutoTestCase):
         output_json, output_dir = self.run_cwl(input = input_json, input_is_file = True)
         expected_output = {
         'analysis_dir': ODir(name='analysis', items=[
-                OFile(name='11089_G.gene.cna.txt', size=6547460, hash='72c2eb26e69f8dcb53cb0ff2d90997f2ae69f308'), OFile(name='11089_G.muts.maf', size=416363, hash='16ee2715491a5f61810cfd7233163905fb497361'), OFile(name='11089_G.muts.share.maf', size=66088, hash='8b3e0924733421535a3fc5a5d174eef4d5d92a28'), OFile(name='11089_G.seg.cna.txt', size=69171, hash='7d13e1422b9d7112e60f9ab748d524d7446d1dde'), OFile(name='11089_G.svs.maf', size=706820, hash='a4a799461650e4cc832e54de2df50a9e1b28a41c')], dir=output_dir),
+                OFile(name='11089_G.gene.cna.txt', size=6547460, hash='72c2eb26e69f8dcb53cb0ff2d90997f2ae69f308'),
+                OFile(name='11089_G.muts.maf', size=416363, hash='16ee2715491a5f61810cfd7233163905fb497361'),
+                OFile(name='11089_G.muts.share.maf', size=66088, hash='8b3e0924733421535a3fc5a5d174eef4d5d92a28'),
+                OFile(name='11089_G.seg.cna.txt', size=69171, hash='7d13e1422b9d7112e60f9ab748d524d7446d1dde'),
+                OFile(name='11089_G.svs.maf', size=706820, hash='a4a799461650e4cc832e54de2df50a9e1b28a41c')], dir=output_dir),
         'facets_dir': ODir(name='facets', items=[
             ODir(name='Sample21.s_C_Patient21_N001_d', items=[
                 OFile(name='Sample21.s_C_Patient21_N001_d_hisens.ccf.portal.maf', size=108887494, hash='f4f5d6e0dae3c8ad89279910a4e083dc8471bcc2'),
