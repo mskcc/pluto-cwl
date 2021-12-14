@@ -14,7 +14,7 @@ requirements:
 inputs:
   # NOTE: arrays for sample_ids, bam_files, maf_files must all be the same length and in the same order by sample
   
-  ouptput_fname:
+  output_fname:
     type: string
     default: "output.maf"
   sample_ids:
