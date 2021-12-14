@@ -73,7 +73,12 @@ inputs:
   argos_version_string:
     type: [ "null", string ]
     default: 
-      value: ${ return "Unspecified"; }
+      valueFrom: ${ return "Unspecified"; }
+
+  fillout_output_fname:
+    type: string
+    default:
+      valueFrom: ${ return "fillout.maf"; }
 
 steps:
   # index files
@@ -98,6 +103,7 @@ steps:
   run_samples_fillout:
     run: samples_fillout_workflow.cwl
     in:
+      output_fname: fillout_output_fname
       exac_filter: exac_filter
       sample_ids:
         source: [ sample_ids, unindexed_sample_ids ]

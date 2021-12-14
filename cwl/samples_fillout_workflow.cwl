@@ -13,6 +13,10 @@ requirements:
 
 inputs:
   # NOTE: arrays for sample_ids, bam_files, maf_files must all be the same length and in the same order by sample
+  
+  ouptput_fname:
+    type: string
+    default: "output.maf"
   sample_ids:
     type:
         type: array
@@ -425,15 +429,15 @@ steps:
                 echo '# ref_count_sample="Allelic Depths of REF (Sample)"' >> comments
                 echo '# alt_count_sample="Allelic Depths of ALT (Sample)"' >> comments
                 echo '# is_fillout="Whether the variant was present in the original Sample (FALSE) or was generated via Fillout from related samples (TRUE)"' >> comments
-                cat comments > output.maf
-                cat tmp.tsv >> output.maf
+                cat comments > "${ return inputs.output_fname }"
+                cat tmp.tsv >> "${ return inputs.output_fname }"
       inputs:
         mafs: File[]
       outputs:
         output_file:
           type: File
           outputBinding:
-            glob: ${ return "output.maf" ; }
+            glob: ${ return inputs.output_fname ; }
 
 outputs:
   output_file:
