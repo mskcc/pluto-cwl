@@ -435,6 +435,7 @@ steps:
                 cat tmp.tsv >> \${output_filename}
       inputs:
         mafs: File[]
+        this_output_fname: string
       outputs:
         output_file:
           type: File
