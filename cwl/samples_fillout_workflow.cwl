@@ -15,7 +15,7 @@ inputs:
   # NOTE: arrays for sample_ids, bam_files, maf_files must all be the same length and in the same order by sample
   
   output_fname:
-    type: string
+    type: [ 'null', string ]
     default: "output.maf"
   sample_ids:
     type:
@@ -391,6 +391,7 @@ steps:
   concat_with_comments:
     in:
       mafs: split_vcf_to_mafs/fillout_maf
+      this_output_fname: output_fname
     out: [ output_file ]
     run:
       class: CommandLineTool
@@ -405,6 +406,7 @@ steps:
                 set -eu
                 # get a space-delim string of file paths
                 input_files="${ return inputs.mafs.map((a) => a.path).join(' ') }"
+                output_filename="${ return inputs.this_output_fname }"
                 concat-tables.py -o fillout.maf --no-carriage-returns --comments --progress --na-str '' \${input_files}
                 # fix issues with blank ref alt count cols for fillout variants
                 update_fillout_maf.py fillout.maf tmp.tsv
@@ -429,15 +431,15 @@ steps:
                 echo '# ref_count_sample="Allelic Depths of REF (Sample)"' >> comments
                 echo '# alt_count_sample="Allelic Depths of ALT (Sample)"' >> comments
                 echo '# is_fillout="Whether the variant was present in the original Sample (FALSE) or was generated via Fillout from related samples (TRUE)"' >> comments
-                cat comments > "${ return inputs.output_fname }"
-                cat tmp.tsv >> "${ return inputs.output_fname }"
+                cat comments > \${output_filename}
+                cat tmp.tsv >> \${output_filename}
       inputs:
         mafs: File[]
       outputs:
         output_file:
           type: File
           outputBinding:
-            glob: ${ return inputs.output_fname ; }
+            glob: ${ return inputs.this_output_fname ; }
 
 outputs:
   output_file:

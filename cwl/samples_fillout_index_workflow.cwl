@@ -72,13 +72,11 @@ inputs:
 
   argos_version_string:
     type: [ "null", string ]
-    default: 
-      valueFrom: ${ return "Unspecified"; }
+    default: "Unspecified"
 
   fillout_output_fname:
     type: string
-    default:
-      valueFrom: ${ return "fillout.maf"; }
+    default: "fillout.maf"
 
 steps:
   # index files
