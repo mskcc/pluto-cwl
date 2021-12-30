@@ -48,6 +48,11 @@ make test
 
 # run tests in parallel
 make test3 -j 8
+
+# or
+
+# run integration tests only
+make integration_test
 ```
 
 To do a version bump of all CWL files to a new version of the helix_filters container, use:
@@ -246,6 +251,9 @@ $(TESTS):
 .PHONY:$(TESTS)
 test3:$(TESTS)
 
+integration_test:
+	INTEGRATION_TESTS=True USE_LSF=True CWL_ENGINE=toil python3 tests/test_workflow_with_facets.xl.py
+	INTEGRATION_TESTS=True USE_LSF=True CWL_ENGINE=toil python3 tests/test_workflow_with_facets.medium.py
 
 # interactive session with environment populated
 bash: ENV=shell
