@@ -252,8 +252,8 @@ $(TESTS):
 test3:$(TESTS)
 
 integration_test:
-	INTEGRATION_TESTS=True USE_LSF=True CWL_ENGINE=toil python3 tests/test_workflow_with_facets.xl.py
-	INTEGRATION_TESTS=True USE_LSF=True CWL_ENGINE=toil python3 tests/test_workflow_with_facets.medium.py
+	INTEGRATION_TESTS=True USE_LSF=True CWL_ENGINE=toil python tests/test_workflow_with_facets.xl.py
+	INTEGRATION_TESTS=True USE_LSF=True CWL_ENGINE=toil python tests/test_workflow_with_facets.medium.py
 
 # interactive session with environment populated
 bash: ENV=shell
