@@ -252,12 +252,9 @@ $(TESTS):
 test3:$(TESTS)
 
 integration_test:
-	. ./env.juno.sh toil
-	export INTEGRATION_TESTS=True
-	export USE_LSF=True
-	export CWL_ENGINE=toil
-	export PRINT_COMMAND=True
-	python tests/test_workflow_with_facets.xl.py
+	. "$(ENVSH)" toil && \
+	. "$(ENVSH)" integration_test && \
+	python tests/test_workflow_with_facets.xl.py && \
 	python tests/test_workflow_with_facets.medium.py
 
 # interactive session with environment populated

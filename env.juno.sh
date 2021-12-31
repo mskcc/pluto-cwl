@@ -15,6 +15,15 @@ case $arg in
         module load cwl/cwltool
         ;;
 
+    integration_test)
+	export INTEGRATION_TESTS=True
+	export USE_LSF=True
+	export CWL_ENGINE=toil
+	export PRINT_COMMAND="True"
+        ;;	
+
+
+
     # for running all test cases including the large integration tests
     test-full)
         export LARGE_TESTS=True
