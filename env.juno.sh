@@ -20,7 +20,6 @@ case $arg in
 	export USE_LSF=True
 	export CWL_ENGINE=toil
 	export PRINT_COMMAND="True"
-	env
         ;;	
 
 
