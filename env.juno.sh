@@ -20,6 +20,7 @@ case $arg in
 	export USE_LSF=True
 	export CWL_ENGINE=toil
 	export PRINT_COMMAND="True"
+	export PRESERVE_TEST_DIR=True
 	unset TOIL_LSF_ARGS
         ;;	
 
