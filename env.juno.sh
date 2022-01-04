@@ -20,6 +20,7 @@ case $arg in
 	export USE_LSF=True
 	export CWL_ENGINE=toil
 	export PRINT_COMMAND="True"
+	export PRESERVE_TEST_DIR=True
 	. /juno/work/ci/jenkins/pluto-cwl/toil-settings.sh
 	module load singularity/3.7.1
 	export PATH=${PWD}/conda/bin:${PATH}
