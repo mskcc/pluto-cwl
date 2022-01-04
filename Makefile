@@ -253,8 +253,10 @@ test3:$(TESTS)
 
 integration_test:
 	. "$(ENVSH)" integration_test && \
-	python pluto/test_tools.py && \
-	python pluto/test_serializer.py && \
+	cd pluto && \
+	python test_tools.py && \
+	python test_serializer.py && \
+	cd .. && \
 	python tests/test_workflow_with_facets.xl.py && \
 	python tests/test_workflow_with_facets.medium.py
 
