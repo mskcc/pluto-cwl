@@ -252,7 +252,6 @@ $(TESTS):
 test3:$(TESTS)
 
 integration_test:
-	. "$(ENVSH)" toil && \
 	. "$(ENVSH)" integration_test && \
 	python tests/test_workflow_with_facets.xl.py && \
 	python tests/test_workflow_with_facets.medium.py
