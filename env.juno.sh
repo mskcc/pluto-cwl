@@ -5,6 +5,8 @@
 # set -eu # NOTE: do not use this because it can propagate into cwl-tool subprocesses and make them break unneccessarily
 arg="${1:-None}"
 
+. /etc/profile.d/modules.sh
+
 case $arg in
     # for running test cases
     test)
@@ -12,6 +14,21 @@ case $arg in
         module load python/3.7.1
         module load cwl/cwltool
         ;;
+
+    integration_test)
+	export INTEGRATION_TESTS=True
+	export USE_LSF=True
+	export CWL_ENGINE=toil
+	export PRINT_COMMAND="True"
+	. /juno/work/ci/jenkins/pluto-cwl/toil-settings.sh
+	module load singularity/3.7.1
+	export PATH=/juno/work/ci/jenkins/pluto-cwl/pluto-cwl/conda/bin:${PATH}
+	export PATH="$(dirname $(which singularity))":${PATH}
+	unset PYTHONPATH
+	unset PYTHONHOME
+	;;
+
+
 
     # for running all test cases including the large integration tests
     test-full)
