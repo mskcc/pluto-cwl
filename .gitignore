@@ -21,3 +21,6 @@ inputs/
 worker_log.txt
 *.Rdata
 *.html
+toil_runs/
+tmp*
+run-toil.sh
