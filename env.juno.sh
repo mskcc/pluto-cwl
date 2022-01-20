@@ -5,7 +5,7 @@
 # set -eu # NOTE: do not use this because it can propagate into cwl-tool subprocesses and make them break unneccessarily
 arg="${1:-None}"
 
-. /etc/profile.d/modules.sh
+[ -e /etc/profile.d/modules.sh ]
 
 case $arg in
     # for running test cases
