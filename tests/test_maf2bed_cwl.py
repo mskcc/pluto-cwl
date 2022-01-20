@@ -98,12 +98,11 @@ class TestMaf2Bed(PlutoTestCase):
 
         self.input = {
             "maf_file": { "class": "File", "path": maf }
-            # "output_filename": "output.bed"
         }
         output_json, output_dir = self.run_cwl()
-        path = output_json['output_file'].pop('path')
         location = output_json['output_file'].pop('location')
         basename = output_json['output_file'].pop('basename')
+        path = os.path.join(output_dir,basename)
 
         self.assertTrue(basename.startswith('_maf2bed_merged'))
 

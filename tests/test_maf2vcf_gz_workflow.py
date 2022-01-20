@@ -54,7 +54,7 @@ class TestMaf2VcfGz(PlutoTestCase):
                 ],
                 'path': os.path.join(output_dir,'variants.vcf.gz') }}
 
-        self.assertEqual(output_json, expected_output)
+        self.assertCWLDictEqual(output_json, expected_output)
 
 
 if __name__ == "__main__":
