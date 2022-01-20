@@ -54,7 +54,7 @@ class TestExampleWorkflow(PlutoTestCase):
 
         self.assertCWLDictEqual(output_json, expected_output)
 
-        output_file = output_json['output_file']['path']
+        output_file = os.path.join(output_dir, "output.concat.tsv")
         with open(output_file) as f:
             lines = [ l.strip() for l in f ]
 
