@@ -75,6 +75,7 @@ case $arg in
         export PATH="$(dirname $(which singularity))":${PATH}
         unset PYTHONPATH
         unset PYTHONHOME
+	unset SINGULARITY_PULLDIR
         ;;
 
     *)
