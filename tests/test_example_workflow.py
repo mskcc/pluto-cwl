@@ -52,7 +52,7 @@ class TestExampleWorkflow(PlutoTestCase):
         output_json['env'].pop('checksum')
         output_json['env'].pop('size')
 
-        self.assertDictEqual(output_json, expected_output)
+        self.assertCWLDictEqual(output_json, expected_output)
 
         output_file = output_json['output_file']['path']
         with open(output_file) as f:

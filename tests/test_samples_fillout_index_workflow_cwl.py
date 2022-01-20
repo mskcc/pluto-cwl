@@ -165,6 +165,7 @@ class TestSamplesFilloutIndex(PlutoTestCase):
         """
         Test case for running the fillout workflow on a number of samples, each with a bam and maf
         """
+        self.skipTest("Fix Initial Maf")
         self.maxDiff = None
         self.runner_args['use_cache'] = False # do not use cache for samples fillout workflow it breaks on split_vcf_to_mafs
 

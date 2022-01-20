@@ -91,7 +91,7 @@ class TestCopyNumber(unittest.TestCase):
                 }
             }
             self.maxDiff = None
-            self.assertDictEqual(output_json, expected_output)
+            self.assertEqual(output_json, expected_output)
 
             # load the data_CNA.txt file
             path = output_json['output_cna_file']['path']
@@ -191,7 +191,7 @@ class TestCopyNumber(unittest.TestCase):
                 }
             }
             self.maxDiff = None
-            self.assertDictEqual(output_json, expected_output)
+            self.assertEqual(output_json, expected_output)
 
 if __name__ == "__main__":
     unittest.main()

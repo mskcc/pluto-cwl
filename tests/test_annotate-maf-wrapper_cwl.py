@@ -67,7 +67,12 @@ class TestAnnotateMafWrapperCWL(PlutoTestCase):
             }
         }
         self.maxDiff = None
-        self.assertDictEqual(output_json, expected_output)
+        expected_output['stderr_txt']['checksum'] = None
+        expected_output['stderr_txt']['size'] = None
+        output_json['stderr_txt']['checksum'] = None
+        output_json['stderr_txt']['size'] = None
+
+        self.assertCWLDictEqual(output_json, expected_output)
 
         path = os.path.join(output_dir, 'Sample1_hisens.ccf.maf')
         table_reader = TableReader(path)

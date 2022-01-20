@@ -202,7 +202,7 @@ class TestTmbWorkflowOperator(PlutoTestCase):
                 'path':  os.path.join(output_dir,'data_clinical_sample.txt')
                 }
             }
-        self.assertDictEqual(output_json, expected_output)
+        self.assertCWLDictEqual(output_json, expected_output)
 
         output_file = expected_output['output_file']['path']
         with open(output_file) as fin:

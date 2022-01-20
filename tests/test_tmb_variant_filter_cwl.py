@@ -118,9 +118,9 @@ class TestTMBVariantFilter(PlutoTestCase):
                 'path':  os.path.join(output_dir,'output.maf')
                 }
             }
-        self.assertDictEqual(output_json, expected_output)
+        self.assertCWLDictEqual(output_json, expected_output)
 
-        comments, mutations = self.load_mutations(output_json['output_file']['path'])
+        comments, mutations = self.load_mutations(os.path.join(output_dir,'output.maf'))
 
         expected_comments = ['# comment 1', '# comment 2']
         expected_mutations = [

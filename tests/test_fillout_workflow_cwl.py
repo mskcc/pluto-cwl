@@ -138,9 +138,9 @@ class TestFilloutWorkflow(PlutoTestCase):
                 'path':  os.path.join(output_dir,'output.maf')
                 }
             }
-        self.assertEqual(output_json, expected_output)
+        self.assertCWLDictEqual(output_json, expected_output)
 
-        output_file = output_json['output_file']['path']
+        output_file = os.path.join(output_dir,'output.maf')
 
         lines = self.read_table(output_file)
 

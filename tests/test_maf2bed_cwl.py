@@ -117,7 +117,7 @@ class TestMaf2Bed(PlutoTestCase):
                 # 'path': os.path.join(output_dir,'output.bed'),
                 }
             }
-        self.assertDictEqual(output_json, expected_output)
+        self.assertCWLDictEqual(output_json, expected_output)
 
         with open(path) as fin:
             lines = [ line for line in fin ]

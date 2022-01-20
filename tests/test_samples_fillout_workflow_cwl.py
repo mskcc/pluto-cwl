@@ -145,7 +145,7 @@ class TestSamplesFillout(PlutoTestCase):
             }
         self.assertEqual(output_json, expected_output)
 
-        output_file = output_json['output_file']['path']
+        output_file = os.path.join(output_dir,'output.maf')
         reader = TableReader(output_file)
         comments = reader.comment_lines
         fieldnames = reader.get_fieldnames()
@@ -209,7 +209,7 @@ class TestSamplesFillout(PlutoTestCase):
         output_json['output_file'].pop('size')
         self.assertEqual(output_json, expected_output)
 
-        output_file = output_json['output_file']['path']
+        output_file = os.path.join(output_dir,'output.maf')
         comments, mutations = self.load_mutations(output_file)
 
         self.assertEqual(len(mutations), 38920)
@@ -264,7 +264,7 @@ class TestSamplesFillout(PlutoTestCase):
         output_json['output_file'].pop('size')
         self.assertEqual(output_json, expected_output)
 
-        output_file = output_json['output_file']['path']
+        output_file = os.path.join(output_dir,'output.maf')
         comments, mutations = self.load_mutations(output_file)
 
         hash = md5_obj(mutations)

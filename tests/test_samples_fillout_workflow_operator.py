@@ -85,7 +85,7 @@ class TestSamplesFilloutWorkflowOperator(PlutoTestCase):
         output_json['output_file'].pop('size')
         self.assertDictEqual(output_json, expected_output)
 
-        path = output_json['output_file']['path']
+        path = os.path.join(output_dir, 'output.maf')
         comments, mutations = self.load_mutations(path)
         self.assertEqual(len(mutations), 26404)
 

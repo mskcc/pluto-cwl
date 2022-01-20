@@ -252,7 +252,7 @@ class TestPortalWorkflow(PlutoTestCase):
         self.maxDiff = None
         output_json['portal_report'].pop('checksum')
         output_json['portal_report'].pop('size')
-        self.assertDictEqual(output_json, expected_output)
+        self.assertCWLDictEqual(output_json, expected_output)
 
         comments, mutations = load_mutations(os.path.join(output_dir,  'data_mutations_extended.txt'))
         self.assertEqual(len(mutations), 17)
@@ -823,7 +823,7 @@ class TestPortalWorkflow(PlutoTestCase):
             self.maxDiff = None
             output_json['portal_report'].pop('checksum')
             output_json['portal_report'].pop('size')
-            self.assertDictEqual(output_json, expected_output)
+            self.assertCWLDictEqual(output_json, expected_output)
 
             comments, mutations = load_mutations(os.path.join(output_dir,  'data_mutations_extended.txt'))
             self.assertEqual(len(mutations), 18)
@@ -1136,7 +1136,7 @@ class TestPortalWorkflow(PlutoTestCase):
             self.maxDiff = None
             output_json['portal_report'].pop('checksum')
             output_json['portal_report'].pop('size')
-            self.assertDictEqual(output_json, expected_output)
+            self.assertCWLDictEqual(output_json, expected_output)
 
             with open(os.path.join(output_dir,  'data_clinical_sample.txt')) as fin:
                 lines = [ line.strip().split('\t') for line in fin ]
@@ -1448,7 +1448,7 @@ class TestPortalWorkflow(PlutoTestCase):
         self.maxDiff = None
         output_json['portal_report'].pop('checksum')
         output_json['portal_report'].pop('size')
-        self.assertDictEqual(output_json, expected_output)
+        self.assertCWLDictEqual(output_json, expected_output)
 
         comments, mutations = load_mutations(os.path.join(output_dir,  'data_mutations_extended.txt'))
         self.assertEqual(len(mutations), 18)

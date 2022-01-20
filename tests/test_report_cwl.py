@@ -85,7 +85,7 @@ class TestMergeTables(PlutoTestCase):
             'output_file': OFile(name = 'report.html', dir = output_dir)
             }
 
-        self.assertDictEqual(output_json, expected_output)
+        self.assertCWLDictEqual(output_json, expected_output)
 
 if __name__ == "__main__":
     unittest.main()

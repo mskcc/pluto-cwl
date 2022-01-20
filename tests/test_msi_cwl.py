@@ -60,9 +60,9 @@ class TestMSI(PlutoTestCase):
                 'size': 397
                 }
             }
-        self.assertDictEqual(output_json, expected_output)
+        self.assertCWLDictEqual(output_json, expected_output)
 
-        output_file = expected_output['output_file']['path']
+        output_file = os.path.join(output_dir, "Sample1.Sample2")
         lines = self.read_table(output_file)
 
         expected_lines = [
@@ -115,9 +115,9 @@ class TestMSI(PlutoTestCase):
                 'size': 8432
                 }
             }
-        self.assertDictEqual(output_json, expected_output)
+        self.assertCWLDictEqual(output_json, expected_output)
 
-        output_file = expected_output['output_file']['path']
+        output_file = os.path.join(output_dir, "Sample24.Sample23")
         lines = self.read_table(output_file)
 
         expected_lines = [
