@@ -201,9 +201,9 @@ class TestSamplesFilloutIndex(PlutoTestCase):
                 'path':  os.path.join(output_dir,'output.maf')
                 }
             }
-        self.assertEqual(output_json, expected_output)
+        self.assertCWLDictEqual(output_json, expected_output)
 
-        output_file = output_json['output_file']['path']
+        output_file =  os.path.join(output_dir,'output.maf')
         comments, mutations = self.load_mutations(output_file)
 
         expected_mutations = [

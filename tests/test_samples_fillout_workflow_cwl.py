@@ -143,7 +143,7 @@ class TestSamplesFillout(PlutoTestCase):
                 'path':  os.path.join(output_dir,'output.maf')
                 }
             }
-        self.assertEqual(output_json, expected_output)
+        self.assertCWLDictEqual(output_json, expected_output)
 
         output_file = os.path.join(output_dir,'output.maf')
         reader = TableReader(output_file)
@@ -207,7 +207,7 @@ class TestSamplesFillout(PlutoTestCase):
         # this keeps changing the byte size and checksum so need to remove those here for now
         output_json['output_file'].pop('checksum')
         output_json['output_file'].pop('size')
-        self.assertEqual(output_json, expected_output)
+        self.assertCWLDictEqual(output_json, expected_output)
 
         output_file = os.path.join(output_dir,'output.maf')
         comments, mutations = self.load_mutations(output_file)
@@ -262,7 +262,7 @@ class TestSamplesFillout(PlutoTestCase):
             }
         output_json['output_file'].pop('checksum')
         output_json['output_file'].pop('size')
-        self.assertEqual(output_json, expected_output)
+        self.assertCWLDictEqual(output_json, expected_output)
 
         output_file = os.path.join(output_dir,'output.maf')
         comments, mutations = self.load_mutations(output_file)

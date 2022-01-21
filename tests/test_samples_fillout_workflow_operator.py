@@ -83,7 +83,7 @@ class TestSamplesFilloutWorkflowOperator(PlutoTestCase):
             }
         output_json['output_file'].pop('checksum')
         output_json['output_file'].pop('size')
-        self.assertDictEqual(output_json, expected_output)
+        self.assertCWLDictEqual(output_json, expected_output)
 
         path = os.path.join(output_dir, 'output.maf')
         comments, mutations = self.load_mutations(path)
