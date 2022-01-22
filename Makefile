@@ -257,9 +257,9 @@ integration_test:
 	python test_tools.py && \
 	python test_serializer.py && \
 	cd .. && \
-	for i in tests/test_*workflow*.py; do echo $$i; python3 $$i; rm -rf $TMP_DIR/tmp* /scratch/jenkins/tmp*; done
-	#python tests/test_workflow_with_facets.xl.py && \
-	#python tests/test_workflow_with_facets.medium.py
+	#for i in tests/test_*workflow*.py; do echo $$i; python3 $$i; rm -rf $TMP_DIR/tmp* /scratch/jenkins/tmp*; done
+	python tests/test_workflow_with_facets.xl.py && \
+	python tests/test_workflow_with_facets.medium.py
 
 # interactive session with environment populated
 bash: ENV=shell
