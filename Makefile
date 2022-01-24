@@ -259,8 +259,10 @@ integration_test:
 	cd .. && \
 	#for i in tests/test_*workflow*.py; do echo $$i; python3 $$i; rm -rf $TMP_DIR/tmp* /scratch/jenkins/tmp*; done
 	python tests/test_workflow_with_facets.xl.py && \
-	python tests/test_workflow_with_facets.medium.py && \
-	rm -rf $TMP_DIR/tmp* /scratch/jenkins/tmp* && \
+	python tests/test_workflow_with_facets.medium.py
+
+integration_test_1:
+	. "$(ENVSH)" integration_test && \
 	for i in tests/test_*cwl*.py; do echo $$i; python3 $$i; done
 
 # interactive session with environment populated
