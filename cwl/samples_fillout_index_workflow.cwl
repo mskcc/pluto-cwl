@@ -5,6 +5,7 @@ class: Workflow
 doc: "
 Wrapper to run indexing on all bams before submitting for samples fillout
 Includes secondary input channels to allow for including .bam files that do not have indexes
+Also include other extra handling needed for files that might not meet needs for the fillout workflow
 
 NOTE: need v1.1 upgrade so we can do it all from a single channel with optional secondary files;
 https://www.commonwl.org/v1.1/CommandLineTool.html#SecondaryFileSchema
@@ -79,7 +80,7 @@ inputs:
     default: "fillout.maf"
 
 steps:
-  # index files
+  # index any bam files that lacked .bai indexes
   run_indexer:
     run: index_bam.cwl
     in:
@@ -88,6 +89,7 @@ steps:
     scatterMethod: dotproduct
     out: [ bam_indexed ]
 
+  # run filter script to apply cBioPortal filters on variants for fillout
   run_maf_filter:
     run: maf_filter.cwl
     in:
@@ -96,8 +98,9 @@ steps:
       argos_version_string: argos_version_string
     scatter: [ maf_file ]
     scatterMethod: dotproduct
-    out: [ analysis_mutations_file ]
+    out: [ cbio_mutation_data_file ]
 
+  # run the actual fillout workflow
   run_samples_fillout:
     run: samples_fillout_workflow.cwl
     in:
@@ -110,7 +113,7 @@ steps:
         source: [ bam_files, run_indexer/bam_indexed ]
         linkMerge: merge_flattened
       maf_files:
-        source: [ run_maf_filter/analysis_mutations_file, unindexed_maf_files ]
+        source: [ run_maf_filter/cbio_mutation_data_file, unindexed_maf_files ]
         linkMerge: merge_flattened
       ref_fasta: ref_fasta
     out: [ output_file ]
