@@ -246,6 +246,13 @@ $(TESTS):
 .PHONY:$(TESTS)
 test3:$(TESTS)
 
+# run the integration tests with Jenkins
+integration_test:
+	. "$(ENVSH)" integration_test
+	python tests/test_workflow_with_facets.xl.py
+	python tests/test_workflow_with_facets.medium.py
+	python tests/test_samples_fillout_index_workflow_cwl.py
+	( cd pluto && python test_tools.py && python test_serializer.py )
 
 # interactive session with environment populated
 bash: ENV=shell
