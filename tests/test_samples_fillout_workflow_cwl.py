@@ -143,21 +143,21 @@ class TestSamplesFillout(PlutoTestCase):
         }
 
         output_json, output_dir = self.run_cwl()
+        output_path = os.path.join(output_dir,'output.maf')
 
         expected_output = {
             'output_file': {
-                'location': 'file://' + os.path.join(output_dir,'output.maf'),
+                'location': 'file://' + output_path,
                 'basename': 'output.maf',
                 'class': 'File',
                 'checksum': 'sha1$7932ae9938a5686f6328f143a6c82308877cb822',
                 'size': 8008,
-                'path':  os.path.join(output_dir,'output.maf')
+                'path':  output_path
                 }
             }
-        self.assertEqual(output_json, expected_output)
+        self.assertCWLDictEqual(output_json, expected_output)
 
-        output_file = output_json['output_file']['path']
-        reader = TableReader(output_file)
+        reader = TableReader(output_path)
         comments = reader.comment_lines
         fieldnames = reader.get_fieldnames()
         records = [ rec for rec in reader.read() ]
@@ -188,40 +188,47 @@ class TestSamplesFillout(PlutoTestCase):
         This test uses full samples
         """
         self.maxDiff = None
-
+        maf1 = os.path.join(self.DATA_SETS['Proj_1']['MAF_DIR'], "Sample1.Sample2.muts.maf")
+        maf24 = os.path.join(self.DATA_SETS['Proj_1']['MAF_DIR'], "Sample24.Sample23.muts.maf")
         self.input = {
+            "samples": [
+                {
+                    "sample_id": "Sample1",
+                    "normal_id": "Sample1-N",
+                    "maf_file": { "class": "File", "path": maf1 }
+                },
+                {
+                    "sample_id": "Sample24",
+                    "normal_id": "Sample24-N",
+                    "maf_file": { "class": "File", "path": maf24 }
+                },
+            ],
             "ref_fasta": {"class": "File", "path": self.DATA_SETS['Proj_1']['REF_FASTA']},
-            "sample_ids": ["Sample1", "Sample24"],
             "bam_files": [
                 { "class": "File", "path": os.path.join(self.DATA_SETS['Proj_1']['BAM_DIR'], "Sample1.bam") },
                 { "class": "File", "path": os.path.join(self.DATA_SETS['Proj_1']['BAM_DIR'], "Sample24.bam") }
-            ],
-            "maf_files": [
-                { "class": "File", "path": os.path.join(self.DATA_SETS['Proj_1']['MAF_DIR'], "Sample1.Sample2.muts.maf") },
-                { "class": "File", "path": os.path.join(self.DATA_SETS['Proj_1']['MAF_DIR'], "Sample24.Sample23.muts.maf") }
             ]
         }
 
         output_json, output_dir = self.run_cwl()
-
+        output_path = os.path.join(output_dir,'output.maf')
         expected_output = {
             'output_file': {
-                'location': 'file://' + os.path.join(output_dir,'output.maf'),
+                'location': 'file://' + output_path,
                 'basename': 'output.maf',
                 'class': 'File',
                 # 'checksum': 'sha1$be8534bcaf326de029790a832ab5b44a17a03d22',
                 # 'size': 40194610,
-                'path':  os.path.join(output_dir,'output.maf')
+                'path':  output_path
                 }
             }
         # NOTE: for some reason, this file keeps coming out with different annotations for 'splice_acceptor_variant' or `splice_donor_variant`
         # this keeps changing the byte size and checksum so need to remove those here for now
         output_json['output_file'].pop('checksum')
         output_json['output_file'].pop('size')
-        self.assertEqual(output_json, expected_output)
+        self.assertCWLDictEqual(output_json, expected_output)
 
-        output_file = output_json['output_file']['path']
-        comments, mutations = self.load_mutations(output_file)
+        comments, mutations = self.load_mutations(output_path)
 
         self.assertEqual(len(mutations), 38920)
 
@@ -232,7 +239,7 @@ class TestSamplesFillout(PlutoTestCase):
             mut.pop('Variant_Classification')
 
         hash = md5_obj(mutations)
-        expected_hash = '4b25d900ab90e0ed0b3702666ff01e94'
+        expected_hash = 'bc5f54f1057a7ba29f55d9d4aac92a01'
         self.assertEqual(hash, expected_hash)
 
 
@@ -245,38 +252,51 @@ class TestSamplesFillout(PlutoTestCase):
         This test uses full samples
         """
         self.maxDiff = None
-
+        maf1 = os.path.join(self.DATA_SETS['Proj_1']['MAF_DIR'], "Sample1.Sample2.muts.maf")
+        maf4 = os.path.join(self.DATA_SETS['Proj_1']['MAF_DIR'], "Sample4.Sample3.muts.maf")
         self.input = {
+            "samples": [
+                {
+                    "sample_id": "Sample1",
+                    "normal_id": "Sample1-N",
+                    "maf_file": { "class": "File", "path": maf1 }
+                },
+                {
+                    "sample_id": "Sample4",
+                    "normal_id": "Sample4-N",
+                    "maf_file": { "class": "File", "path": maf4 }
+                },
+            ],
             "ref_fasta": {"class": "File", "path": self.DATA_SETS['Proj_1']['REF_FASTA']},
-            "sample_ids": ["Sample1", "Sample4"],
+            # "sample_ids": ["Sample1", "Sample4"],
             "bam_files": [
                 { "class": "File", "path": os.path.join(self.DATA_SETS['Proj_1']['BAM_DIR'], "Sample1.bam") },
                 { "class": "File", "path": os.path.join(self.DATA_SETS['Proj_1']['BAM_DIR'], "Sample4.bam") }
-            ],
-            "maf_files": [
-                { "class": "File", "path": os.path.join(self.DATA_SETS['Proj_1']['MAF_DIR'], "Sample1.Sample2.muts.maf") },
-                { "class": "File", "path": os.path.join(self.DATA_SETS['Proj_1']['MAF_DIR'], "Sample4.Sample3.muts.maf") }
             ]
+            # "maf_files": [
+            #     { "class": "File", "path": os.path.join(self.DATA_SETS['Proj_1']['MAF_DIR'], "Sample1.Sample2.muts.maf") },
+            #     { "class": "File", "path": os.path.join(self.DATA_SETS['Proj_1']['MAF_DIR'], "Sample4.Sample3.muts.maf") }
+            # ]
         }
 
         output_json, output_dir = self.run_cwl()
+        output_path = os.path.join(output_dir,'output.maf')
 
         expected_output = {
             'output_file': {
-                'location': 'file://' + os.path.join(output_dir,'output.maf'),
+                'location': 'file://' + output_path,
                 'basename': 'output.maf',
                 'class': 'File',
                 # 'checksum': 'sha1$2f60f58389ec65af87612c7532ad28b882fb84ba',
                 # 'size': 26238820,
-                'path':  os.path.join(output_dir,'output.maf')
+                'path':  output_path
                 }
             }
         output_json['output_file'].pop('checksum')
         output_json['output_file'].pop('size')
-        self.assertEqual(output_json, expected_output)
+        self.assertCWLDictEqual(output_json, expected_output)
 
-        output_file = output_json['output_file']['path']
-        comments, mutations = self.load_mutations(output_file)
+        comments, mutations = self.load_mutations(output_path)
 
         hash = md5_obj(mutations)
 
@@ -289,7 +309,7 @@ class TestSamplesFillout(PlutoTestCase):
             mut.pop('Variant_Classification')
 
         hash = md5_obj(mutations)
-        expected_hash = '77fb1f3aa26ddf06029232ee720a709c'
+        expected_hash = '4a03d128d76b72328b62a87814d89993'
         self.assertEqual(hash, expected_hash)
 
 
