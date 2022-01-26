@@ -268,15 +268,10 @@ class TestSamplesFillout(PlutoTestCase):
                 },
             ],
             "ref_fasta": {"class": "File", "path": self.DATA_SETS['Proj_1']['REF_FASTA']},
-            # "sample_ids": ["Sample1", "Sample4"],
             "bam_files": [
                 { "class": "File", "path": os.path.join(self.DATA_SETS['Proj_1']['BAM_DIR'], "Sample1.bam") },
                 { "class": "File", "path": os.path.join(self.DATA_SETS['Proj_1']['BAM_DIR'], "Sample4.bam") }
             ]
-            # "maf_files": [
-            #     { "class": "File", "path": os.path.join(self.DATA_SETS['Proj_1']['MAF_DIR'], "Sample1.Sample2.muts.maf") },
-            #     { "class": "File", "path": os.path.join(self.DATA_SETS['Proj_1']['MAF_DIR'], "Sample4.Sample3.muts.maf") }
-            # ]
         }
 
         output_json, output_dir = self.run_cwl()

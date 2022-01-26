@@ -71,6 +71,8 @@ steps:
                 sample_id: string
       outputs:
         sample_ids: string[]
+      # NOTE: in the line below `var i in inputs.samples`, `i` is an int representing the index position in the array `inputs.samples`
+      # in Python it would look like ` x = ['a', 'b']; for i in range(len(x)): print(i, x[i]) `
       expression: "${
         var sample_ids = [];
         for ( var i in inputs.samples ){
