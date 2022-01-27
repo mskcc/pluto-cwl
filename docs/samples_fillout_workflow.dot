@@ -1,0 +1,108 @@
+/* https://view.commonwl.org/workflows/github.com/mskcc/pluto-cwl/blob/fillout-normal-id/cwl/samples_fillout_workflow.cwl */
+/* https://www.freeformatter.com/html-entities.html */
+/* <FONT POINT-SIZE="8"></FONT> */
+digraph workflow {
+  graph [
+    fontname = "Helvetica"
+    bgcolor = "#eeeeee"
+    color = "black"
+    fontsize = "12"
+    labeljust = "left"
+    clusterrank = "local"
+    ranksep = "0.22"
+    nodesep = "0.05"
+    label=<<FONT POINT-SIZE="18">Mutation Fillout Workflow</FONT>>
+    labelloc="t"
+  ]
+  node [
+    fontname = "Helvetica"
+    fontsize = "12"
+    fontcolor = "black"
+    shape = "record"
+    height = "0"
+    width = "0"
+    color = "black"
+    fillcolor = "lightgoldenrodyellow"
+    style = "filled"
+  ];
+  edge [
+    fontname="Helvetica"
+    fontsize="10"
+    fontcolor="black"
+    color="black"
+    arrowsize="0.7"
+  ];
+
+  subgraph cluster_inputs {
+    rank = "same";
+    style = "dashed";
+    label = "Workflow Inputs";
+    "ref_fasta" [fillcolor="#94DDF4",label="ref fasta"];
+    "samples" [fillcolor="#94DDF4",label=<
+samples <BR/>
+<FONT POINT-SIZE="8">
+&#45; sample id <BR/>
+&#45; normal id <BR/>
+&#45; maf file
+</FONT>
+>];
+    "bam_files" [fillcolor="#94DDF4",label="bam files"];
+    /* "output_fname" [fillcolor="#94DDF4",label="output filename"]; */
+    "exac_filter" [fillcolor="#94DDF4",label="ExAC file"];
+  }
+  subgraph cluster_outputs {
+    rank = "same";
+    style = "dashed";
+    labelloc = "b";
+    label = "Workflow Outputs";
+    "output_file" [fillcolor="#94DDF4",label="fillout maf"];
+  }
+  "maf2vcf" [label="maf2vcf"];
+  "gbcms" [label=<
+GetBaseCountsMultiSample<BR/>
+<FONT POINT-SIZE="8">
+check base counts in the .bam files for all loci
+</FONT>
+>];
+  "split_vcf_to_mafs" [label=<
+vcf2maf<BR/>
+<FONT POINT-SIZE="8">
+split fillout vcf into per-sample mafs, <BR/>
+annotate, add sample labels
+</FONT>
+>];
+  "create_samples_list" [label="list of sample id's"];
+  "merge_vcfs" [label=<
+merge all vcfs<BR/>
+<FONT POINT-SIZE="8">
+get all mutation loci from input data
+</FONT>
+>];
+  "fix_labels_and_merge_vcfs" [label="fix vcf labels"];
+  "concat_with_comments" [label=<
+combine per-sample maf's into single file, <BR/>
+apply table formatting
+>];
+
+
+  "samples" -> "maf2vcf" [label="sample"];
+  "ref_fasta" -> "maf2vcf" [label="ref_fasta"];
+  "create_samples_list" -> "gbcms" [label="sample_ids"];
+  "merge_vcfs" -> "gbcms" [label="targets_vcf"];
+  "ref_fasta" -> "gbcms" [label="ref_fasta"];
+  "bam_files" -> "gbcms" [label="bam_files"];
+  "samples" -> "split_vcf_to_mafs" [label="sample"];
+  "ref_fasta" -> "split_vcf_to_mafs" [label="ref_fasta"];
+  "fix_labels_and_merge_vcfs" -> "split_vcf_to_mafs" [label="fillout_vcf"];
+  "exac_filter" -> "split_vcf_to_mafs" [label="exac_filter"];
+  "samples" -> "create_samples_list" [label="samples"];
+  "create_samples_list" -> "merge_vcfs" [label="sample_ids"];
+  "maf2vcf" -> "merge_vcfs" [label="vcf_gz_files"];
+  "merge_vcfs" -> "fix_labels_and_merge_vcfs" [label="merged_vcf_gz"];
+  "ref_fasta" -> "fix_labels_and_merge_vcfs" [label="ref_fasta"];
+  "merge_vcfs" -> "fix_labels_and_merge_vcfs" [label="merged_vcf"];
+  "gbcms" -> "fix_labels_and_merge_vcfs" [label="fillout_vcf"];
+  "split_vcf_to_mafs" -> "concat_with_comments" [label="mafs"];
+  /* "output_fname" -> "concat_with_comments" [label="output_filename"]; */
+  "concat_with_comments" -> "output_file";
+}

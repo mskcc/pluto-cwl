@@ -27,10 +27,6 @@ Sample 2 <BR/>
 <FONT POINT-SIZE="8" COLOR="blue"><BR/>BRCA2 c.6803G&gt;T ref=200, alt=80</FONT>
 >]
 
-/* BRCA2 c.6803G>T
-200,80
-300,0 */
-
 /* sample after fillout */
 Sample1_after[label=<
 Sample 1 <BR/>
