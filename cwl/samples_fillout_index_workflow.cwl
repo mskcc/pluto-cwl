@@ -18,7 +18,7 @@ requirements:
   SubworkflowFeatureRequirement: {}
 
 inputs:
-  samples:
+  samples: # NOTE: in prod, these end up being the research samples
     type:
       type: array
       items:
@@ -34,7 +34,7 @@ inputs:
     secondaryFiles:
         - ^.bai
 
-  unindexed_samples:
+  unindexed_samples: # NOTE: in prod, these end up being the clinical samples
     type:
       type: array
       items:
@@ -65,6 +65,7 @@ inputs:
       class: File
       path: /juno/work/ci/resources/vep/cache/ExAC_nonTCGA.r0.3.1.sites.vep.vcf.gz
 
+  # these are needed for the filter script
   is_impact:
     type: boolean
     default: True
@@ -98,26 +99,27 @@ steps:
     scatter: sample
     out: [ cbio_mutation_data_file ]
 
-  run_maf_filter_unindexed:
-    run: maf_filter.cwl
-    in:
-      sample: unindexed_samples
-      maf_file:
-        valueFrom: ${ return inputs.sample['maf_file']; }
-      is_impact: is_impact
-      argos_version_string: argos_version_string
-    scatter: sample
-    out: [ cbio_mutation_data_file ]
+  # NOTE: In prod, the unindexed_samples end up being the clinical samples; we do not want to apply filter to the clinical mutations input files
+  # run_maf_filter_unindexed:
+  #   run: maf_filter.cwl
+  #   in:
+  #     sample: unindexed_samples
+  #     maf_file:
+  #       valueFrom: ${ return inputs.sample['maf_file']; }
+  #     is_impact: is_impact
+  #     argos_version_string: argos_version_string
+  #   scatter: sample
+  #   out: [ cbio_mutation_data_file ]
 
   # update the samples to use the new filtered maf files and output a single list of samples
   merge_samples_replace_mafs:
     in:
-      samples:
-        source: [ samples, unindexed_samples ]
-        linkMerge: merge_flattened
-      maf_files:
-        source: [ run_maf_filter/cbio_mutation_data_file, run_maf_filter_unindexed/cbio_mutation_data_file ]
-        linkMerge: merge_flattened
+      samples: samples
+        # source: [ samples, unindexed_samples ]
+        # linkMerge: merge_flattened
+      maf_files: run_maf_filter/cbio_mutation_data_file
+        # source: [ run_maf_filter/cbio_mutation_data_file, run_maf_filter_unindexed/cbio_mutation_data_file ]
+        # linkMerge: merge_flattened
     out: [ samples ]
     run:
       class: ExpressionTool
@@ -164,7 +166,10 @@ steps:
     in:
       output_fname: fillout_output_fname
       exac_filter: exac_filter
-      samples: merge_samples_replace_mafs/samples
+      # samples: merge_samples_replace_mafs/samples
+      samples:
+        source: [ merge_samples_replace_mafs/samples, unindexed_samples ]
+        linkMerge: merge_flattened
       bam_files:
         source: [ bam_files, run_indexer/bam_indexed ]
         linkMerge: merge_flattened

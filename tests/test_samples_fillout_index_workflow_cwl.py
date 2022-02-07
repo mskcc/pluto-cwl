@@ -90,7 +90,7 @@ class TestSamplesFilloutIndex(PlutoTestCase):
 
         # instead of checksum and size, count the number of mutations and take a checksum on the mutation contents
         comments, mutations = self.load_mutations(output_file)
-        self.assertEqual(len(mutations), 117)
+        self.assertEqual(len(mutations), 23742)
 
         # Need to remove these fields because they are inconsistent on the output maf file;
         for mut in mutations:
@@ -99,7 +99,7 @@ class TestSamplesFilloutIndex(PlutoTestCase):
             mut.pop('Variant_Classification')
 
         hash = md5_obj(mutations)
-        expected_hash = '01af6b281f70e6821addce80a2ec5cf8'
+        expected_hash = 'c96f641cb134ed99c49aed7d42a0f5af'
         self.assertEqual(hash, expected_hash)
 
 
