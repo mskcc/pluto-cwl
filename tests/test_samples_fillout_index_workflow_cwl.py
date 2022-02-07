@@ -32,40 +32,54 @@ class TestSamplesFilloutIndex(PlutoTestCase):
         """
         Test case for running the fillout workflow on a number of samples, each with a bam and maf
         """
+        # self.preserve = True
         self.maxDiff = None
         self.runner_args['use_cache'] = False # do not use cache for samples fillout workflow it breaks on split_vcf_to_mafs
+        # self.runner_args['debug'] = True
+        # self.runner_args['js_console'] = True
 
         self.input = {
-            "ref_fasta": {"class": "File", "path": self.DATA_SETS['Proj_08390_G']['REF_FASTA']},
-            "sample_ids": ["Sample1"],
+            "samples": [
+                {
+                    "sample_id": "Sample1",
+                    "normal_id": "Sample1-N",
+                    "maf_file": { "class": "File", "path": self.sample1_maf }
+                }
+            ],
             "bam_files": [
                 { "class": "File", "path": self.sample1_bam }
             ],
-            "maf_files": [
-                { "class": "File", "path": self.sample1_maf }
+            "unindexed_samples": [
+                {
+                    "sample_id": "Sample4",
+                    "normal_id": "DMP-MATCHED-NORMAL",
+                    "maf_file": { "class": "File", "path": self.sample4_maf }
+                },
+                {
+                    "sample_id": "Sample24",
+                    "normal_id": "DMP-UNMATCHED-NORMAL",
+                    "maf_file": { "class": "File", "path": self.sample24_maf }
+                },
             ],
-            "unindexed_sample_ids": ["Sample4", "Sample24"],
             "unindexed_bam_files": [
                 { "class": "File", "path": self.sample4_bam },
                 { "class": "File", "path": self.sample24_bam }
             ],
-            "unindexed_maf_files": [
-                { "class": "File", "path": self.sample4_maf },
-                { "class": "File", "path": self.sample24_maf }
-            ],
-            "fillout_output_fname": 'output.maf'
+            "fillout_output_fname": 'output.maf',
+            "ref_fasta": {"class": "File", "path": self.DATA_SETS['Proj_08390_G']['REF_FASTA']},
         }
 
         output_json, output_dir = self.run_cwl()
+        output_file = os.path.join(output_dir,'output.maf')
 
         expected_output = {
             'output_file': {
-                'location': 'file://' + os.path.join(output_dir,'output.maf'),
+                'location': 'file://' + output_file,
                 'basename': 'output.maf',
                 'class': 'File',
                 # 'checksum': 'sha1$d8d63a0aca2da20d2d15e26fcf64fd6295eda05e',
                 # 'size': 25838928,
-                'path':  os.path.join(output_dir,'output.maf')
+                'path':  output_file
                 }
             }
         # NOTE: for some reason, this file keeps coming out with different annotations for 'splice_acceptor_variant' or `splice_donor_variant`
@@ -74,10 +88,9 @@ class TestSamplesFilloutIndex(PlutoTestCase):
         output_json['output_file'].pop('size')
         self.assertCWLDictEqual(output_json, expected_output)
 
-        output_file = output_json['output_file']['path']
+        # instead of checksum and size, count the number of mutations and take a checksum on the mutation contents
         comments, mutations = self.load_mutations(output_file)
-
-        self.assertEqual(len(mutations), 23742)
+        self.assertEqual(len(mutations), 117)
 
         # Need to remove these fields because they are inconsistent on the output maf file;
         for mut in mutations:
@@ -86,7 +99,7 @@ class TestSamplesFilloutIndex(PlutoTestCase):
             mut.pop('Variant_Classification')
 
         hash = md5_obj(mutations)
-        expected_hash = 'f153c68bc79a6f28e261ec04f51b2111'
+        expected_hash = '01af6b281f70e6821addce80a2ec5cf8'
         self.assertEqual(hash, expected_hash)
 
 

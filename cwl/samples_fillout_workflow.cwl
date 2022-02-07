@@ -13,24 +13,24 @@ requirements:
 
 inputs:
   # NOTE: arrays for sample_ids, bam_files, maf_files must all be the same length and in the same order by sample
-  
+  samples:
+    type:
+      type: array
+      items:
+        type: record
+        fields:
+          maf_file: File
+          sample_id: string # must match sample ID used inside maf file
+          normal_id: string
   output_fname:
     type: [ 'null', string ]
     default: "output.maf"
-  sample_ids:
-    type:
-        type: array
-        items: string
   bam_files:
     type:
         type: array
         items: File
     secondaryFiles:
         - ^.bai
-  maf_files:
-    type:
-        type: array
-        items: File
   ref_fasta:
     type: File
     secondaryFiles:
@@ -54,14 +54,44 @@ inputs:
   #     path: /juno/work/ci/resources/vep/cache
 
 steps:
+  # create a list of just sample_ids out of the samples record array
+  create_samples_list:
+    in:
+      samples: samples
+    out: [ sample_ids ]
+    run:
+      class: ExpressionTool
+      inputs:
+        samples:
+          type:
+            type: array
+            items:
+              type: record
+              fields:
+                sample_id: string
+      outputs:
+        sample_ids: string[]
+      # NOTE: in the line below `var i in inputs.samples`, `i` is an int representing the index position in the array `inputs.samples`
+      # in Python it would look like ` x = ['a', 'b']; for i in range(len(x)): print(i, x[i]) `
+      expression: "${
+        var sample_ids = [];
+        for ( var i in inputs.samples ){
+            sample_ids.push(inputs.samples[i]['sample_id']);
+          };
+        return {'sample_ids': sample_ids};
+        }"
+
+
   # convert all maf input files back to vcf because they are much easier to manipulate that way
   # NOTE: This is important; do NOT try to do these complex manipulations on maf format file
   maf2vcf:
-    scatter: [ sample_id, maf_file ]
-    scatterMethod: dotproduct
+    scatter: sample
     in:
-      sample_id: sample_ids
-      maf_file: maf_files
+      sample: samples
+      sample_id:
+        valueFrom: ${ return inputs.sample['sample_id']; }
+      maf_file:
+        valueFrom: ${ return inputs.sample['maf_file']; }
       ref_fasta: ref_fasta
     out:
       [ output_file ]
@@ -116,7 +146,7 @@ steps:
   # this will be used as the target regions for fillout
   merge_vcfs:
     in:
-      sample_ids: sample_ids
+      sample_ids: create_samples_list/sample_ids
       vcf_gz_files: maf2vcf/output_file
     out:
       [ merged_vcf, merged_vcf_gz ]
@@ -163,9 +193,11 @@ steps:
             - .tbi
 
   # run GetBaseCountsMultiSample on all the bam files against the target regions (the merged vcf from all samples)
+  # TODO: convert this to a `scatter` step that runs per-sample in parallel, then merge the outputs
+  # otherwise we will hit the command line arg length issues
   gbcms:
     in:
-      sample_ids: sample_ids
+      sample_ids: create_samples_list/sample_ids
       bam_files: bam_files
       targets_vcf: merge_vcfs/merged_vcf
       ref_fasta: ref_fasta
@@ -227,7 +259,6 @@ steps:
   # also we are going to add a column called SRC telling the source (which sample) each variant was originally found in
   fix_labels_and_merge_vcfs:
     in:
-      sample_ids: sample_ids
       fillout_vcf: gbcms/output_file
       merged_vcf: merge_vcfs/merged_vcf
       merged_vcf_gz: merge_vcfs/merged_vcf_gz
@@ -316,9 +347,13 @@ steps:
 
   # next we need to split apart the merged fillout vcf back into individual sample maf files
   split_vcf_to_mafs:
-    scatter: [ sample_id ]
+    scatter: sample
     in:
-      sample_id: sample_ids
+      sample: samples
+      sample_id:
+        valueFrom: ${ return inputs.sample['sample_id']; }
+      normal_id:
+        valueFrom: ${ return inputs.sample['normal_id']; }
       fillout_vcf: fix_labels_and_merge_vcfs/fillout_sources_vcf
       ref_fasta: ref_fasta
       exac_filter: exac_filter
@@ -338,6 +373,7 @@ steps:
                 set -eu
                 # convert the multi-sample annotated fillout vcf back into individual sample maf files
                 sample_id="${ return inputs.sample_id ; }"
+                normal_id="${ return inputs.normal_id ; }"
                 ref_fasta="${ return inputs.ref_fasta.path ; }"
                 input_vcf="${ return inputs.fillout_vcf.path ; }"
                 exac_filter="${ return inputs.exac_filter.path ; }"
@@ -364,9 +400,11 @@ steps:
                 --retain-fmt GT,FL_AD,FL_ADN,FL_ADP,FL_DP,FL_DPN,FL_DPP,FL_RD,FL_RDN,FL_RDP,FL_VF,AD,DP \\
                 --vep-forks 8 \\
                 --vcf-tumor-id "\${sample_id}" \\
-                --tumor-id "\${sample_id}"
+                --tumor-id "\${sample_id}" \\
+                --normal-id "\${normal_id}"
       inputs:
         sample_id: string
+        normal_id: string
         ref_fasta:
           type: File
           secondaryFiles:
