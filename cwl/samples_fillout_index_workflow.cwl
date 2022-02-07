@@ -83,7 +83,9 @@ steps:
   run_indexer:
     run: index_bam.cwl
     in:
-      bam: unindexed_bam_files
+      bam:
+        source: [ bam_files, unindexed_bam_files ]
+        linkMerge: merge_flattened
     scatter: bam
     out: [ bam_indexed ]
 
@@ -170,9 +172,7 @@ steps:
       samples:
         source: [ merge_samples_replace_mafs/samples, unindexed_samples ]
         linkMerge: merge_flattened
-      bam_files:
-        source: [ bam_files, run_indexer/bam_indexed ]
-        linkMerge: merge_flattened
+      bam_files: run_indexer/bam_indexed
       ref_fasta: ref_fasta
     out: [ output_file ]
 
