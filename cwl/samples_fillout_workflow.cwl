@@ -22,6 +22,7 @@ inputs:
           maf_file: File
           sample_id: string # must match sample ID used inside maf file
           normal_id: string
+          sample_type: string # "research" or "clinical" to dictate downstream handling and germline filtering
           bam_file:
             type: File
             secondaryFiles:

@@ -128,12 +128,14 @@ class TestSamplesFillout(PlutoTestCase):
                 {
                     "sample_id": "Sample24",
                     "normal_id": "Sample24-N",
+                    "sample_type": "research",
                     "maf_file": { "class": "File", "path": self.maf1 },
                     "bam_file": { "class": "File", "path": os.path.join(self.DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample24.rg.md.abra.printreads.bam") }
                 },
                 {
                     "sample_id": "Sample23",
                     "normal_id": "Sample23-N",
+                    "sample_type": "research",
                     "maf_file": { "class": "File", "path": self.maf2 },
                     "bam_file": { "class": "File", "path": os.path.join(self.DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample23.rg.md.abra.printreads.bam") }
                 },
