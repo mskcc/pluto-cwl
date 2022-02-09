@@ -117,6 +117,7 @@ class TestSamplesFillout(PlutoTestCase):
         Test case for running the fillout workflow on a number of samples, each with a bam and maf
         """
         self.maxDiff = None
+        self.runner_args['use_cache'] = False # do not use cache because it breaks for some reason
         # self.runner_args['debug'] = True
         # self.runner_args['js_console'] = True
         # self.preserve = True
@@ -127,19 +128,17 @@ class TestSamplesFillout(PlutoTestCase):
                 {
                     "sample_id": "Sample24",
                     "normal_id": "Sample24-N",
-                    "maf_file": { "class": "File", "path": self.maf1 }
+                    "maf_file": { "class": "File", "path": self.maf1 },
+                    "bam_file": { "class": "File", "path": os.path.join(self.DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample24.rg.md.abra.printreads.bam") }
                 },
                 {
                     "sample_id": "Sample23",
                     "normal_id": "Sample23-N",
-                    "maf_file": { "class": "File", "path": self.maf2 }
+                    "maf_file": { "class": "File", "path": self.maf2 },
+                    "bam_file": { "class": "File", "path": os.path.join(self.DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample23.rg.md.abra.printreads.bam") }
                 },
             ],
-            "ref_fasta": {"class": "File", "path": self.DATA_SETS['Proj_08390_G']['REF_FASTA']},
-            "bam_files": [
-                { "class": "File", "path": os.path.join(self.DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample24.rg.md.abra.printreads.bam") },
-                { "class": "File", "path": os.path.join(self.DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample23.rg.md.abra.printreads.bam") }
-            ]
+            "ref_fasta": {"class": "File", "path": self.DATA_SETS['Proj_08390_G']['REF_FASTA']}
         }
 
         output_json, output_dir = self.run_cwl()

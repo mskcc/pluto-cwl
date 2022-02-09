@@ -1,5 +1,5 @@
 #!/usr/bin/env cwl-runner
-cwlVersion: v1.0
+cwlVersion: v1.1
 class: Workflow
 doc: "
 Workflow to run GetBaseCountsMultiSample fillout on a number of samples, each with their own bam and maf files
@@ -22,15 +22,13 @@ inputs:
           maf_file: File
           sample_id: string # must match sample ID used inside maf file
           normal_id: string
+          bam_file:
+            type: File
+            secondaryFiles:
+                - ^.bai
   output_fname:
     type: [ 'null', string ]
     default: "output.maf"
-  bam_files:
-    type:
-        type: array
-        items: File
-    secondaryFiles:
-        - ^.bai
   ref_fasta:
     type: File
     secondaryFiles:
@@ -79,6 +77,40 @@ steps:
             sample_ids.push(inputs.samples[i]['sample_id']);
           };
         return {'sample_ids': sample_ids};
+        }"
+
+  # get a list of just the bam files for downstream process
+  create_bam_list:
+    in:
+      samples: samples
+    out:
+      [ bam_files ]
+    run:
+      class: ExpressionTool
+      inputs:
+        samples:
+          type:
+            type: array
+            items:
+              type: record
+              fields:
+                bam_file:
+                  type: File
+                  secondaryFiles:
+                      - ^.bai
+      outputs:
+        bam_files:
+          type:
+              type: array
+              items: File
+          secondaryFiles:
+              - ^.bai
+      expression: "${
+        var bam_files = [];
+        for ( var i in inputs.samples ){
+            bam_files.push(inputs.samples[i]['bam_file']);
+          };
+        return {'bam_files': bam_files};
         }"
 
 
@@ -198,7 +230,7 @@ steps:
   gbcms:
     in:
       sample_ids: create_samples_list/sample_ids
-      bam_files: bam_files
+      bam_files: create_bam_list/bam_files
       targets_vcf: merge_vcfs/merged_vcf
       ref_fasta: ref_fasta
     out: [ output_file ]

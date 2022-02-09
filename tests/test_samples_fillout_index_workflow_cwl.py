@@ -35,35 +35,35 @@ class TestSamplesFilloutIndex(PlutoTestCase):
         # self.preserve = True
         self.maxDiff = None
         self.runner_args['use_cache'] = False # do not use cache for samples fillout workflow it breaks on split_vcf_to_mafs
-        # self.runner_args['debug'] = True
-        # self.runner_args['js_console'] = True
+        self.runner_args['debug'] = True
+        self.runner_args['js_console'] = True
 
         self.input = {
             "samples": [
                 {
                     "sample_id": "Sample1",
                     "normal_id": "Sample1-N",
-                    "maf_file": { "class": "File", "path": self.sample1_maf }
-                }
-            ],
-            "bam_files": [
-                { "class": "File", "path": self.sample1_bam }
-            ],
-            "unindexed_samples": [
+                    "prefilter": True,
+                    "sample_type": "research",
+                    "maf_file": { "class": "File", "path": self.sample1_maf },
+                    "bam_file": { "class": "File", "path": self.sample1_bam }
+                },
                 {
                     "sample_id": "Sample4",
                     "normal_id": "DMP-MATCHED-NORMAL",
-                    "maf_file": { "class": "File", "path": self.sample4_maf }
+                    "prefilter": False,
+                    "sample_type": "clinical",
+                    "maf_file": { "class": "File", "path": self.sample4_maf },
+                    "bam_file": { "class": "File", "path": self.sample4_bam }
                 },
                 {
                     "sample_id": "Sample24",
                     "normal_id": "DMP-UNMATCHED-NORMAL",
-                    "maf_file": { "class": "File", "path": self.sample24_maf }
+                    "prefilter": False,
+                    "sample_type": "clinical",
+                    "maf_file": { "class": "File", "path": self.sample24_maf },
+                    "bam_file": { "class": "File", "path": self.sample24_bam }
                 },
-            ],
-            "unindexed_bam_files": [
-                { "class": "File", "path": self.sample4_bam },
-                { "class": "File", "path": self.sample24_bam }
             ],
             "fillout_output_fname": 'output.maf',
             "ref_fasta": {"class": "File", "path": self.DATA_SETS['Proj_08390_G']['REF_FASTA']},
