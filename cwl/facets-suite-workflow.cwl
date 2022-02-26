@@ -181,7 +181,7 @@ steps:
             label_maf_normal/stderr_txt,
             update_maf/stderr_txt
             ]
-          linkMerge: merge_flattened
+          pickValue: all_non_null
         results:
           source: [
             run_facets/failed,
@@ -193,7 +193,7 @@ steps:
             label_maf_normal/failed,
             update_maf/failed
           ]
-          linkMerge: merge_flattened
+          pickValue: all_non_null
       out: [
         hisens_cncf_txt,
         purity_seg,hisens_seg,
