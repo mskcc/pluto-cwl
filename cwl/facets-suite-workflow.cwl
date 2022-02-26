@@ -244,11 +244,14 @@ steps:
             output_dir: Directory
             results_passed: boolean
           expression: "${ var output_object = {};
-            var results_passed = !inputs.results.includes(false);
+            var results_passed = !inputs.results.includes(true);
+            if( inputs.results.length != 8 ){
+              results_passed = false
+            }
             var facets_files = [];
             for(var key in inputs){
               var output_value = inputs[key];
-              if (key != 'log_files' || key != 'results' || != 'pair_id'){
+              if (key != 'log_files' || key != 'results' || key != 'pair_id'){
                 if ( ! output_value ){
                   results_passed = false;
                   output_object[key] = null;
