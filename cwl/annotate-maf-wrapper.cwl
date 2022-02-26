@@ -13,6 +13,7 @@ stderr: annotate_maf_stderr.txt
 baseCommand: ["annotate-maf-wrapper.R","--parallel","TRUE"]
 
 requirements:
+  InlineJavascriptRequirement: {}
   ResourceRequirement:
     ramMin: 8000
     coresMin: 4

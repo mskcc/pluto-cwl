@@ -8,6 +8,7 @@ stderr: $(inputs.output_filename)_stderr.txt
 baseCommand: ["paste-col.py"]
 
 requirements:
+  InlineJavascriptRequirement: {}
   DockerRequirement:
     dockerPull: mskcc/helix_filters_01:21.3.4
 inputs:

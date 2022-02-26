@@ -20,6 +20,7 @@ stderr: facets_stderr.txt
 baseCommand: ["run-facets-wrapper.R","--everything","-D",".","--facets-lib-path","/usr/local/lib/R/site-library"]
 
 requirements:
+  InlineJavascriptRequirement: {}
   DockerRequirement:
     dockerPull: mskcc/helix_filters_01:facets-suite-2.0.6
 
