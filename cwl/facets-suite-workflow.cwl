@@ -60,7 +60,7 @@ steps:
       facets_rds: run_facets/hisens_rds
       output_filename:
         valueFrom: $(inputs.pair_id)_hisens.ccf.maf
-    when: $(inputs.facets_failed == false)
+    when: $(inputs.facets_failed == false && inputs.facets_rds != null)
     out: [output_file, failed, stdout_txt, stderr_txt ]
 
   # need to apply some extra column labels to the facets suite .txt file for downstream ease of use
@@ -76,7 +76,7 @@ steps:
         valueFrom: ${ return "tumor"; }
       value:
         valueFrom: $(inputs.tumor_id)
-    when: $(inputs.facets_failed == false)
+    when: $(inputs.facets_failed == false && inputs.input_file != null )
     out:
       [ output_file, failed, stdout_txt, stderr_txt ]
 
@@ -93,7 +93,7 @@ steps:
         valueFrom: ${ return "normal"; }
       value:
         valueFrom: $(inputs.normal_id)
-    when: $(inputs.label_facets_failed == false)
+    when: $(inputs.label_facets_failed == false && inputs.input_file != null )
     out:
       [ output_file, failed, stdout_txt, stderr_txt ]
 
@@ -111,7 +111,7 @@ steps:
         valueFrom: ${ return "sample"; }
       value:
         valueFrom: $(inputs.tumor_id)
-    when: $(inputs.annotate_maf_failed == false)
+    when: $(inputs.annotate_maf_failed == false && inputs.input_file != null )
     out:
       [ output_file, failed, stdout_txt, stderr_txt ]  
 
@@ -128,7 +128,7 @@ steps:
         valueFrom: ${ return "normal"; }
       value:
         valueFrom: $(inputs.normal_id)
-    when: $(inputs.label_maf_sample_failed == false)
+    when: $(inputs.label_maf_sample_failed == false && inputs.input_file != null )
     out:
       [ output_file, failed, stdout_txt, stderr_txt ]
 
@@ -145,7 +145,7 @@ steps:
         valueFrom: $(inputs.pair_id)_hisens.ccf.portal.maf
       facets_txt: run_facets/output_txt
       facets_failed: run_facets/failed
-    when: $( inputs.label_maf_normal_failed == false && inputs.facets_failed == false)
+    when: $( inputs.label_maf_normal_failed == false && inputs.facets_failed == false && inputs.input_file != null )
     out:
       [ output_file, failed, stdout_txt, stderr_txt ]
 
