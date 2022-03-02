@@ -1,0 +1,19 @@
+class: SchemaDefRequirement
+types:
+- name: FilloutSample
+  type: record
+  fields:
+    - name: sample_id
+      type: string
+    - name: normal_id
+      type: string
+    - name: sample_type
+      type: string
+    - name: maf_file
+      type: File
+    - name: vcf_file
+      type: File?
+    - name: bam_file
+      type: File
+      secondaryFiles:
+          - ^.bai
