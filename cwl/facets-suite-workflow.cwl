@@ -251,7 +251,7 @@ steps:
             var facets_files = [];
             for(var key in inputs){
               var output_value = inputs[key];
-              if (key != 'log_files' || key != 'results' || key != 'pair_id'){
+              if (key != 'log_files' && key != 'results' && key != 'pair_id'){
                 if ( ! output_value ){
                   results_passed = false;
                   output_object[key] = null;
