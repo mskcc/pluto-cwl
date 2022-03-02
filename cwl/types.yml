@@ -1,19 +1,83 @@
 class: SchemaDefRequirement
 types:
 - name: FilloutSample
+  doc: A tumor sample record to be used for variant fillout
   type: record
   fields:
     - name: sample_id
       type: string
+      doc: sample identifier must match the ID used inside the maf file
     - name: normal_id
       type: string
     - name: sample_type
       type: string
+      doc: should be one of "research" or "clinical"
     - name: maf_file
       type: File
+      doc: the sample's input .maf file
     - name: vcf_file
       type: File?
+      doc: fillout vcf file produced for the sample; this gets added downstream in the workflow
     - name: bam_file
       type: File
       secondaryFiles:
           - ^.bai
+
+- name: FilloutIndexSample
+  doc: A FilloutSample needs .bam indexing and prefiltering applied
+  type: record
+  fields:
+    - name: sample_id
+      type: string
+      doc: sample identifier must match the ID used inside the maf file
+    - name: normal_id
+      type: string
+    - name: sample_type
+      type: string
+      doc: should be one of "research" or "clinical"
+    - name: prefilter
+      type: boolean
+      doc: if the sample maf file needs to be pre-filtered (true) or not (false)
+    - name: maf_file
+      type: File
+      doc: the sample's input .maf file
+    - name: bam_file
+      type: File
+      doc: bam file that needs a .bai file generated
+
+
+- name: FilloutIndexedSample
+  doc: A FilloutIndexSample that had its .bam indexed and prefiltering applied
+  type: record
+  fields:
+    - name: sample_id
+      type: string
+      doc: sample identifier must match the ID used inside the maf file
+    - name: normal_id
+      type: string
+    - name: sample_type
+      type: string
+      doc: should be one of "research" or "clinical"
+    - name: prefilter
+      type: boolean
+      doc: if the sample maf file needs to be pre-filtered (true) or not (false)
+    - name: maf_file
+      type: File
+      doc: the sample's input .maf file
+    - name: bam_file
+      type: File
+      doc: bam file that needs a .bai file generated
+      secondaryFiles:
+          - ^.bai
+
+# - name: RefFasta
+#   doc: reference genome .fasta file
+#   type: File
+#   secondaryFiles:
+#     - .amb
+#     - .ann
+#     - .bwt
+#     - .pac
+#     - .sa
+#     - .fai
+#     - ^.dict

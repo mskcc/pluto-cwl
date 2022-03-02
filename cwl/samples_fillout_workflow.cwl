@@ -485,7 +485,7 @@ steps:
         sample:
           type: "types.yml#FilloutSample"
           outputBinding:
-            # set the output_vcf to the vcf_file field in the sample record
+            # set the output_vcf to the vcf_file
             outputEval: ${
               var ret = inputs.sample;
               ret['vcf_file'] = {"class":"File", "path":runtime.outdir + "/" + inputs.sample["sample_id"] + ".vcf"};
