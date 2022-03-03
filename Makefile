@@ -115,7 +115,7 @@ init:
 export SINGULARITY_CACHEDIR:=/juno/work/ci/pluto-cwl-test/cache
 # GIT_TAG:=$(shell git describe --tags --abbrev=0)
 HF_CONTAINER:=mskcc/helix_filters_01
-HF_TAG:=21.3.4
+HF_TAG:=21.3.5
 DOCKER_TAG:=$(HF_CONTAINER):$(HF_TAG)
 DOCKER_DEV_TAG:=$(HF_CONTAINER):latest
 # NOTE: you cannot use a filename with a ':' as a Makefile target

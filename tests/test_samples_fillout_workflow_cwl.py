@@ -12,113 +12,33 @@ THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 PARENT_DIR = os.path.dirname(THIS_DIR)
 sys.path.insert(0, PARENT_DIR)
 from pluto.tools import PlutoTestCase, CWLFile, TableReader, md5_obj
-from pluto.settings import ENABLE_LARGE_TESTS
+from pluto.settings import ENABLE_LARGE_TESTS, DATA_SETS
 sys.path.pop(0)
+
+from fixtures_fillout import rows
 
 class TestSamplesFillout(PlutoTestCase):
     cwl_file = CWLFile('samples_fillout_workflow.cwl')
 
     def setUp(self):
         super().setUp()
-        self.comments = [
-        ['# comment 1'],
-        ['# comment 2']
-        ]
-        self.maf_row1 = OrderedDict([
-        ('Hugo_Symbol', 'RTEL1'),
-        ('Entrez_Gene_Id', '51750'),
-        ('Center', 'mskcc.org'),
-        ('NCBI_Build', 'GRCh37'),
-        ('Chromosome', '20'),
-        ('Start_Position', '62321135'),
-        ('End_Position', '62321135'),
-        ('Matched_Norm_Sample_Barcode', 'Sample24-N'),
-        ('Tumor_Sample_Barcode', 'Sample24'),
-        ('Variant_Classification', 'Silent'), # all the columns after this do not matter # NOTE: is that true?
-        ('Reference_Allele', 'G'),
-        ('Tumor_Seq_Allele1', 'G'),
-        ('Tumor_Seq_Allele2', 'A'),
-        ('n_alt_count', '1'),
-        ('t_alt_count', '142'),
-        ('t_ref_count', '511'),
-        ('n_ref_count', '212')
-        ])
-        self.maf_row2 = OrderedDict([
-        ('Hugo_Symbol', 'FAM46C'),
-        ('Entrez_Gene_Id', '54855'),
-        ('Center', 'mskcc.org'),
-        ('NCBI_Build', 'GRCh37'),
-        ('Chromosome', '1'),
-        ('Start_Position', '118166398'),
-        ('End_Position', '118166398'),
-        ('Matched_Norm_Sample_Barcode', 'Sample24-N'),
-        ('Tumor_Sample_Barcode', 'Sample24'),
-        ('Variant_Classification', 'Silent'),
-        ('Reference_Allele', 'G'),
-        ('Tumor_Seq_Allele1', 'G'),
-        ('Tumor_Seq_Allele2', 'A'),
-        ('n_alt_count', '1'),
-        ('t_alt_count', '142'),
-        ('t_ref_count', '511'),
-        ('n_ref_count', '212')
-        ])
-
-        self.maf_row3 = OrderedDict([
-        ('Hugo_Symbol', 'IL7R'),
-        ('Entrez_Gene_Id', '3575'),
-        ('Center', 'mskcc.org'),
-        ('NCBI_Build', 'GRCh37'),
-        ('Chromosome', '5'),
-        ('Start_Position', '35876484'),
-        ('End_Position', '35876484'),
-        ('Matched_Norm_Sample_Barcode', 'Sample23-N'),
-        ('Tumor_Sample_Barcode', 'Sample23'),
-        ('Variant_Classification', 'Silent'),
-        ('Reference_Allele', 'G'),
-        ('Tumor_Seq_Allele1', 'G'),
-        ('Tumor_Seq_Allele2', 'A'),
-        ('n_alt_count', '1'),
-        ('t_alt_count', '142'),
-        ('t_ref_count', '511'),
-        ('n_ref_count', '212')
-        ])
-        self.maf_row4 = OrderedDict([
-        ('Hugo_Symbol', 'KMT2C'),
-        ('Entrez_Gene_Id', '58508'),
-        ('Center', 'mskcc.org'),
-        ('NCBI_Build', 'GRCh37'),
-        ('Chromosome', '7'),
-        ('Start_Position', '151845367'),
-        ('End_Position', '151845367'),
-        ('Matched_Norm_Sample_Barcode', 'Sample23-N'),
-        ('Tumor_Sample_Barcode', 'Sample23'),
-        ('Variant_Classification', 'Silent'),
-        ('Reference_Allele', 'G'),
-        ('Tumor_Seq_Allele1', 'G'),
-        ('Tumor_Seq_Allele2', 'A'),
-        ('n_alt_count', '1'),
-        ('t_alt_count', '142'),
-        ('t_ref_count', '511'),
-        ('n_ref_count', '212')
-        ])
 
         # Sample24
-        rows1 = [ self.maf_row1, self.maf_row2 ]
-        lines1 = self.dicts2lines(rows1, comment_list = self.comments)
+        lines1 = self.dicts2lines([ rows.r1, rows.r2 ], comment_list = rows.comments)
         self.maf1 = self.write_table(tmpdir = self.tmpdir, filename = "1.maf", lines = lines1)
 
         # Sample23
-        rows2 = [ self.maf_row3, self.maf_row4 ]
-        lines2 = self.dicts2lines(rows2, comment_list = self.comments)
+        lines2 = self.dicts2lines([ rows.r3, rows.r4 ], comment_list = rows.comments)
         self.maf2 = self.write_table(tmpdir = self.tmpdir, filename = "2.maf", lines = lines2)
 
-    def test_run_fillout_workflow(self):
+    def test_run_fillout_workflow_small_1(self):
         """
         Test case for running the fillout workflow on a number of samples, each with a bam and maf
         """
         self.maxDiff = None
-        # self.runner_args['debug'] = True
-        # self.runner_args['js_console'] = True
+        self.runner_args['use_cache'] = False # do not use cache because it breaks for some reason
+        self.runner_args['debug'] = True
+        self.runner_args['js_console'] = True
         # self.preserve = True
         # print(self.tmpdir)
 
@@ -127,19 +47,19 @@ class TestSamplesFillout(PlutoTestCase):
                 {
                     "sample_id": "Sample24",
                     "normal_id": "Sample24-N",
-                    "maf_file": { "class": "File", "path": self.maf1 }
+                    "sample_type": "research",
+                    "maf_file": { "class": "File", "path": self.maf1 },
+                    "bam_file": { "class": "File", "path": os.path.join(self.DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample24.rg.md.abra.printreads.bam") }
                 },
                 {
                     "sample_id": "Sample23",
                     "normal_id": "Sample23-N",
-                    "maf_file": { "class": "File", "path": self.maf2 }
+                    "sample_type": "research",
+                    "maf_file": { "class": "File", "path": self.maf2 },
+                    "bam_file": { "class": "File", "path": os.path.join(self.DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample23.rg.md.abra.printreads.bam") }
                 },
             ],
-            "ref_fasta": {"class": "File", "path": self.DATA_SETS['Proj_08390_G']['REF_FASTA']},
-            "bam_files": [
-                { "class": "File", "path": os.path.join(self.DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample24.rg.md.abra.printreads.bam") },
-                { "class": "File", "path": os.path.join(self.DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample23.rg.md.abra.printreads.bam") }
-            ]
+            "ref_fasta": {"class": "File", "path": self.DATA_SETS['Proj_08390_G']['REF_FASTA']}
         }
 
         output_json, output_dir = self.run_cwl()
@@ -176,6 +96,203 @@ class TestSamplesFillout(PlutoTestCase):
 
         self.assertEqual(records, expected_records)
 
+    def test_run_fillout_workflow_small_2(self):
+        """
+        Test case with small variant set that should have filters applied inside the pipeline
+
+        run the fillout like this:
+
+        sample_id       sample_type
+        Sample3 research
+        Sample5 research
+        Sample2 research
+        Sample1 research
+        Sample4 research
+        """
+        self.maxDiff = None
+        self.runner_args['use_cache'] = False # do not use cache because it breaks for some reason
+        self.runner_args['debug'] = True
+        self.runner_args['js_console'] = True
+        # self.preserve = True
+        # print(self.tmpdir)
+
+        sample1_maf = os.path.join(DATA_SETS['07618_AG']['MAF_DIR'], 'Sample1.FROZENPOOLEDNORMAL_IMPACT505_V2.muts.maf')
+        sample2_maf = os.path.join(DATA_SETS['07618_AG']['MAF_DIR'], 'Sample2.FROZENPOOLEDNORMAL_IMPACT505_V2.muts.maf')
+        sample3_maf = os.path.join(DATA_SETS['07618_AG']['MAF_DIR'], 'Sample3.FROZENPOOLEDNORMAL_IMPACT505_V2.muts.maf')
+        sample4_maf = os.path.join(DATA_SETS['07618_AG']['MAF_DIR'], 'Sample4.FROZENPOOLEDNORMAL_IMPACT505_V2.muts.maf')
+        sample5_maf = os.path.join(DATA_SETS['07618_AG']['MAF_DIR'], 'Sample5.FROZENPOOLEDNORMAL_IMPACT505_V2.muts.maf')
+
+        sample1_bam = os.path.join(DATA_SETS['07618_AG']['BAM_DIR'], 'Sample1.rg.md.abra.printreads.bam')
+        sample2_bam =os.path.join(DATA_SETS['07618_AG']['BAM_DIR'], 'Sample2.rg.md.abra.printreads.bam')
+        sample3_bam =os.path.join(DATA_SETS['07618_AG']['BAM_DIR'], 'Sample3.rg.md.abra.printreads.bam')
+        sample4_bam =os.path.join(DATA_SETS['07618_AG']['BAM_DIR'], 'Sample4.rg.md.abra.printreads.bam')
+        sample5_bam =os.path.join(DATA_SETS['07618_AG']['BAM_DIR'], 'Sample4.rg.md.abra.printreads.bam')
+
+        self.input = {
+            "samples": [
+                {
+                    "sample_id": "Sample1",
+                    "normal_id": "FROZENPOOLEDNORMAL_IMPACT505_V2",
+                    "sample_type": "research",
+                    "maf_file": { "class": "File", "path": sample1_maf },
+                    "bam_file": { "class": "File", "path": sample1_bam }
+                },
+                {
+                    "sample_id": "Sample2",
+                    "normal_id": "FROZENPOOLEDNORMAL_IMPACT505_V2",
+                    "sample_type": "research",
+                    "maf_file": { "class": "File", "path": sample2_maf },
+                    "bam_file": { "class": "File", "path": sample2_bam }
+                },
+                {
+                    "sample_id": "Sample3",
+                    "normal_id": "FROZENPOOLEDNORMAL_IMPACT505_V2",
+                    "sample_type": "research",
+                    "maf_file": { "class": "File", "path": sample3_maf },
+                    "bam_file": { "class": "File", "path": sample3_bam }
+                },
+                {
+                    "sample_id": "Sample4",
+                    "normal_id": "FROZENPOOLEDNORMAL_IMPACT505_V2",
+                    "sample_type": "research",
+                    "maf_file": { "class": "File", "path": sample4_maf },
+                    "bam_file": { "class": "File", "path": sample4_bam }
+                },
+                {
+                    "sample_id": "Sample5",
+                    "normal_id": "FROZENPOOLEDNORMAL_IMPACT505_V2",
+                    "sample_type": "research",
+                    "maf_file": { "class": "File", "path": sample5_maf },
+                    "bam_file": { "class": "File", "path": sample5_bam }
+                },
+            ],
+            "ref_fasta": {"class": "File", "path": self.DATA_SETS['Proj_08390_G']['REF_FASTA']}
+        }
+
+        output_json, output_dir = self.run_cwl()
+        output_path = os.path.join(output_dir,'output.maf')
+
+        expected_output = {
+            'output_file': {
+                'location': 'file://' + output_path,
+                'basename': 'output.maf',
+                'class': 'File',
+                # 'checksum': 'sha1$2513c14c720e9e1ba02bb4a61fe0f31a80f60d12',
+                # 'size': 114008492,
+                'path':  output_path
+                }
+            }
+        output_json['output_file'].pop('checksum')
+        output_json['output_file'].pop('size')
+        self.assertCWLDictEqual(output_json, expected_output)
+        # all_effects field is variable and changes bytes and checksum
+        # need to check number of variant outputs instead
+
+        comments, mutations = self.load_mutations(output_path, strip = True)
+        self.assertEqual(len(mutations), 126975)
+        hash = md5_obj(mutations)
+        expected_hash = '07da17199694ccc2c08a93f545d4e2b0'
+        self.assertEqual(hash, expected_hash)
+
+
+    def test_run_fillout_workflow_small_3(self):
+        """
+        Test case with small variant set that should have filters applied inside the pipeline
+
+        run the fillout like this:
+
+        sample_id       sample_type
+        Sample3 clinical
+        Sample5 research
+        Sample2 research
+        Sample1 research
+        Sample4 clinical
+        """
+        self.maxDiff = None
+        self.runner_args['use_cache'] = False # do not use cache because it breaks for some reason
+        self.runner_args['debug'] = True
+        self.runner_args['js_console'] = True
+        # self.preserve = True
+        # print(self.tmpdir)
+
+        sample1_maf = os.path.join(DATA_SETS['07618_AG']['MAF_DIR'], 'Sample1.FROZENPOOLEDNORMAL_IMPACT505_V2.muts.maf')
+        sample2_maf = os.path.join(DATA_SETS['07618_AG']['MAF_DIR'], 'Sample2.FROZENPOOLEDNORMAL_IMPACT505_V2.muts.maf')
+        sample3_maf = os.path.join(DATA_SETS['07618_AG']['MAF_DIR'], 'Sample3.FROZENPOOLEDNORMAL_IMPACT505_V2.muts.maf')
+        sample4_maf = os.path.join(DATA_SETS['07618_AG']['MAF_DIR'], 'Sample4.FROZENPOOLEDNORMAL_IMPACT505_V2.muts.maf')
+        sample5_maf = os.path.join(DATA_SETS['07618_AG']['MAF_DIR'], 'Sample5.FROZENPOOLEDNORMAL_IMPACT505_V2.muts.maf')
+
+        sample1_bam = os.path.join(DATA_SETS['07618_AG']['BAM_DIR'], 'Sample1.rg.md.abra.printreads.bam')
+        sample2_bam =os.path.join(DATA_SETS['07618_AG']['BAM_DIR'], 'Sample2.rg.md.abra.printreads.bam')
+        sample3_bam =os.path.join(DATA_SETS['07618_AG']['BAM_DIR'], 'Sample3.rg.md.abra.printreads.bam')
+        sample4_bam =os.path.join(DATA_SETS['07618_AG']['BAM_DIR'], 'Sample4.rg.md.abra.printreads.bam')
+        sample5_bam =os.path.join(DATA_SETS['07618_AG']['BAM_DIR'], 'Sample4.rg.md.abra.printreads.bam')
+
+        self.input = {
+            "samples": [
+                {
+                    "sample_id": "Sample1",
+                    "normal_id": "FROZENPOOLEDNORMAL_IMPACT505_V2",
+                    "sample_type": "research",
+                    "maf_file": { "class": "File", "path": sample1_maf },
+                    "bam_file": { "class": "File", "path": sample1_bam }
+                },
+                {
+                    "sample_id": "Sample2",
+                    "normal_id": "FROZENPOOLEDNORMAL_IMPACT505_V2",
+                    "sample_type": "research",
+                    "maf_file": { "class": "File", "path": sample2_maf },
+                    "bam_file": { "class": "File", "path": sample2_bam }
+                },
+                {
+                    "sample_id": "Sample3",
+                    "normal_id": "FROZENPOOLEDNORMAL_IMPACT505_V2",
+                    "sample_type": "clinical",
+                    "maf_file": { "class": "File", "path": sample3_maf },
+                    "bam_file": { "class": "File", "path": sample3_bam }
+                },
+                {
+                    "sample_id": "Sample4",
+                    "normal_id": "FROZENPOOLEDNORMAL_IMPACT505_V2",
+                    "sample_type": "clinical",
+                    "maf_file": { "class": "File", "path": sample4_maf },
+                    "bam_file": { "class": "File", "path": sample4_bam }
+                },
+                {
+                    "sample_id": "Sample5",
+                    "normal_id": "FROZENPOOLEDNORMAL_IMPACT505_V2",
+                    "sample_type": "research",
+                    "maf_file": { "class": "File", "path": sample5_maf },
+                    "bam_file": { "class": "File", "path": sample5_bam }
+                },
+            ],
+            "ref_fasta": {"class": "File", "path": self.DATA_SETS['Proj_08390_G']['REF_FASTA']}
+        }
+
+        output_json, output_dir = self.run_cwl()
+        output_path = os.path.join(output_dir,'output.maf')
+
+        expected_output = {
+            'output_file': {
+                'location': 'file://' + output_path,
+                'basename': 'output.maf',
+                'class': 'File',
+                # 'checksum': 'sha1$2513c14c720e9e1ba02bb4a61fe0f31a80f60d12',
+                # 'size': 114008492,
+                'path':  output_path
+                }
+            }
+        output_json['output_file'].pop('checksum')
+        output_json['output_file'].pop('size')
+        self.assertCWLDictEqual(output_json, expected_output)
+        # all_effects field is variable and changes bytes and checksum
+        # need to check number of variant outputs instead
+
+        comments, mutations = self.load_mutations(output_path, strip = True)
+        self.assertEqual(len(mutations), 121699)
+        hash = md5_obj(mutations)
+        expected_hash = 'c2c8916adb37eb1da607dbfd0d65512b'
+        self.assertEqual(hash, expected_hash)
+
 
 
 
@@ -190,24 +307,26 @@ class TestSamplesFillout(PlutoTestCase):
         self.maxDiff = None
         maf1 = os.path.join(self.DATA_SETS['Proj_1']['MAF_DIR'], "Sample1.Sample2.muts.maf")
         maf24 = os.path.join(self.DATA_SETS['Proj_1']['MAF_DIR'], "Sample24.Sample23.muts.maf")
+        bam1 = os.path.join(self.DATA_SETS['Proj_1']['BAM_DIR'], "Sample1.bam")
+        bam24 = os.path.join(self.DATA_SETS['Proj_1']['BAM_DIR'], "Sample24.bam")
         self.input = {
             "samples": [
                 {
                     "sample_id": "Sample1",
                     "normal_id": "Sample1-N",
-                    "maf_file": { "class": "File", "path": maf1 }
+                    "sample_type": "research",
+                    "maf_file": { "class": "File", "path": maf1 },
+                    "bam_file": { "class": "File", "path": bam1 },
                 },
                 {
                     "sample_id": "Sample24",
                     "normal_id": "Sample24-N",
-                    "maf_file": { "class": "File", "path": maf24 }
+                    "sample_type": "research",
+                    "maf_file": { "class": "File", "path": maf24 },
+                    "bam_file": { "class": "File", "path": bam24 },
                 },
             ],
-            "ref_fasta": {"class": "File", "path": self.DATA_SETS['Proj_1']['REF_FASTA']},
-            "bam_files": [
-                { "class": "File", "path": os.path.join(self.DATA_SETS['Proj_1']['BAM_DIR'], "Sample1.bam") },
-                { "class": "File", "path": os.path.join(self.DATA_SETS['Proj_1']['BAM_DIR'], "Sample24.bam") }
-            ]
+            "ref_fasta": {"class": "File", "path": self.DATA_SETS['Proj_1']['REF_FASTA']}
         }
 
         output_json, output_dir = self.run_cwl()
@@ -254,24 +373,26 @@ class TestSamplesFillout(PlutoTestCase):
         self.maxDiff = None
         maf1 = os.path.join(self.DATA_SETS['Proj_1']['MAF_DIR'], "Sample1.Sample2.muts.maf")
         maf4 = os.path.join(self.DATA_SETS['Proj_1']['MAF_DIR'], "Sample4.Sample3.muts.maf")
+        bam1 = os.path.join(self.DATA_SETS['Proj_1']['BAM_DIR'], "Sample1.bam")
+        bam4 = os.path.join(self.DATA_SETS['Proj_1']['BAM_DIR'], "Sample4.bam")
         self.input = {
             "samples": [
                 {
                     "sample_id": "Sample1",
                     "normal_id": "Sample1-N",
-                    "maf_file": { "class": "File", "path": maf1 }
+                    "sample_type": "research",
+                    "maf_file": { "class": "File", "path": maf1 },
+                    "bam_file": { "class": "File", "path": bam1 },
                 },
                 {
                     "sample_id": "Sample4",
                     "normal_id": "Sample4-N",
-                    "maf_file": { "class": "File", "path": maf4 }
+                    "sample_type": "research",
+                    "maf_file": { "class": "File", "path": maf4 },
+                    "bam_file": { "class": "File", "path": bam4 },
                 },
             ],
-            "ref_fasta": {"class": "File", "path": self.DATA_SETS['Proj_1']['REF_FASTA']},
-            "bam_files": [
-                { "class": "File", "path": os.path.join(self.DATA_SETS['Proj_1']['BAM_DIR'], "Sample1.bam") },
-                { "class": "File", "path": os.path.join(self.DATA_SETS['Proj_1']['BAM_DIR'], "Sample4.bam") }
-            ]
+            "ref_fasta": {"class": "File", "path": self.DATA_SETS['Proj_1']['REF_FASTA']}
         }
 
         output_json, output_dir = self.run_cwl()
