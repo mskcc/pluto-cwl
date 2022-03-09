@@ -15,13 +15,25 @@ types:
     - name: maf_file
       type: File
       doc: the sample's input .maf file
-    - name: vcf_file
-      type: File?
-      doc: fillout vcf file produced for the sample; this gets added downstream in the workflow
     - name: bam_file
+      doc: sample's alignment file
       type: File
       secondaryFiles:
           - ^.bai
+    # These files get added during downstream processing
+    - name: unfiltered_vcf
+      type: File?
+      doc: fillout vcf file produced for the sample with no filtering applied
+    - name: filtered_vcf
+      type: File?
+      doc: fillout vcf that has had extra filters applied such as germline filtering
+    - name: unfiltered_maf
+      type: File?
+      doc: fillout maf file produced for the sample
+    - name: filtered_maf
+      type: File?
+      doc: fillout maf that has had extra filters applied such as germline filtering
+
 
 - name: FilloutIndexSample
   doc: A FilloutSample needs .bam indexing and prefiltering applied

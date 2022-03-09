@@ -171,6 +171,7 @@ class TestSamplesFillout(PlutoTestCase):
 
         output_json, output_dir = self.run_cwl()
         output_path = os.path.join(output_dir,'output.maf')
+        output_filtered_path = os.path.join(output_dir,'output.filtered.maf')
 
         expected_output = {
             'output_file': {
@@ -180,10 +181,20 @@ class TestSamplesFillout(PlutoTestCase):
                 # 'checksum': 'sha1$2513c14c720e9e1ba02bb4a61fe0f31a80f60d12',
                 # 'size': 114008492,
                 'path':  output_path
+                },
+            'filtered_file': {
+                'basename': 'output.filtered.maf',
+                # 'checksum': 'sha1$90ec78a051db9186d7645cc76f125e6f20ccd077',
+                'class': 'File',
+                'location': 'file://' + output_filtered_path,
+                'path': output_filtered_path
+                # 'size': 115187724
                 }
             }
         output_json['output_file'].pop('checksum')
         output_json['output_file'].pop('size')
+        output_json['filtered_file'].pop('checksum')
+        output_json['filtered_file'].pop('size')
         self.assertCWLDictEqual(output_json, expected_output)
         # all_effects field is variable and changes bytes and checksum
         # need to check number of variant outputs instead
@@ -191,7 +202,13 @@ class TestSamplesFillout(PlutoTestCase):
         comments, mutations = self.load_mutations(output_path, strip = True)
         self.assertEqual(len(mutations), 126975)
         hash = md5_obj(mutations)
-        expected_hash = '07da17199694ccc2c08a93f545d4e2b0'
+        expected_hash = '80a0695ce2a2ee8a784b6092e36e0dd4'
+        self.assertEqual(hash, expected_hash)
+
+        comments, mutations = self.load_mutations(output_filtered_path, strip = True)
+        self.assertEqual(len(mutations), 126975)
+        hash = md5_obj(mutations)
+        expected_hash = '80a0695ce2a2ee8a784b6092e36e0dd4'
         self.assertEqual(hash, expected_hash)
 
 
@@ -270,6 +287,7 @@ class TestSamplesFillout(PlutoTestCase):
 
         output_json, output_dir = self.run_cwl()
         output_path = os.path.join(output_dir,'output.maf')
+        filtered_output_path = os.path.join(output_dir,'output.filtered.maf')
 
         expected_output = {
             'output_file': {
@@ -279,10 +297,20 @@ class TestSamplesFillout(PlutoTestCase):
                 # 'checksum': 'sha1$2513c14c720e9e1ba02bb4a61fe0f31a80f60d12',
                 # 'size': 114008492,
                 'path':  output_path
+                },
+            'filtered_file': {
+                'basename': 'output.filtered.maf',
+                # 'checksum': 'sha1$7800c1244d1b60b82e86f2fd3db87e1aff93afbc',
+                'class': 'File',
+                'location': 'file://' + filtered_output_path,
+                'path': filtered_output_path
+                # 'size': 110956123
                 }
             }
         output_json['output_file'].pop('checksum')
         output_json['output_file'].pop('size')
+        output_json['filtered_file'].pop('checksum')
+        output_json['filtered_file'].pop('size')
         self.assertCWLDictEqual(output_json, expected_output)
         # all_effects field is variable and changes bytes and checksum
         # need to check number of variant outputs instead
@@ -290,7 +318,13 @@ class TestSamplesFillout(PlutoTestCase):
         comments, mutations = self.load_mutations(output_path, strip = True)
         self.assertEqual(len(mutations), 121699)
         hash = md5_obj(mutations)
-        expected_hash = 'c2c8916adb37eb1da607dbfd0d65512b'
+        expected_hash = '4b55be411af84915ab07e01bb04d0619'
+        self.assertEqual(hash, expected_hash)
+
+        comments, mutations = self.load_mutations(filtered_output_path, strip = True)
+        self.assertEqual(len(mutations), 121699)
+        hash = md5_obj(mutations)
+        expected_hash = '4b55be411af84915ab07e01bb04d0619'
         self.assertEqual(hash, expected_hash)
 
 

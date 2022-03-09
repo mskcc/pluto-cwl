@@ -4,6 +4,7 @@ class: Workflow
 doc: "
 Workflow to run GetBaseCountsMultiSample fillout on a number of samples, each with their own bam and maf files
 "
+
 requirements:
   - class: MultipleInputFeatureRequirement
   - class: ScatterFeatureRequirement
@@ -29,6 +30,8 @@ inputs:
       - ^.dict
   exac_filter:
     type: File
+    secondaryFiles:
+      - .tbi
     default:
       class: File
       path: /juno/work/ci/resources/vep/cache/ExAC_nonTCGA.r0.3.1.sites.vep.vcf.gz
@@ -213,7 +216,7 @@ steps:
       requirements:
         InlineJavascriptRequirement: {}
         ResourceRequirement:
-          coresMin: 4
+          coresMin: 8
         DockerRequirement:
           dockerPull: cmopipeline/getbasecountsmultisample:1.2.2
         InitialWorkDirRequirement:
@@ -231,7 +234,7 @@ steps:
                 fasta="${ return inputs.ref_fasta.path; }"
                 vcf="${ return inputs.targets_vcf.path }"
                 fillout_vcf="fillout.vcf"
-                GetBaseCountsMultiSample --fasta "\${fasta}" --vcf "\${vcf}" --maq 20 --baq 20 --filter_improper_pair 0 --thread 4 --output "\${fillout_vcf}" \${bams_arg}
+                GetBaseCountsMultiSample --fasta "\${fasta}" --vcf "\${vcf}" --maq 20 --baq 20 --filter_improper_pair 0 --thread 8 --output "\${fillout_vcf}" \${bams_arg}
       inputs:
         sample_ids: string[]
         ref_fasta:
@@ -402,8 +405,6 @@ steps:
       class: CommandLineTool
       baseCommand: [ "bash", "run.sh" ]
       requirements:
-        ResourceRequirement:
-          coresMin: 8
         DockerRequirement:
           dockerPull: mskcc/helix_filters_01:21.3.5
         InitialWorkDirRequirement:
@@ -430,15 +431,13 @@ steps:
                 # file where we will save the list of variants to keep
                 filter_inclusion_file="\${sample_id}.include.txt"
 
-                # final output file
-                output_vcf="\${sample_id}.vcf"
+                # final output filename
+                unfiltered_vcf="\${sample_id}.vcf"
 
                 mkdir "\${split_dir}"
 
                 # split the multi-sample vcf into per-sample vcf files
                 bcftools +split "\${input_vcf}" --output-type v --output "\${split_dir}"
-
-                echo "\${split_dir} \${split_vcf}" > file.txt
 
                 # CONDITIONAL VARIANT FILTERING
                 # in clinical samples ONLY;
@@ -446,8 +445,9 @@ steps:
                 # from research samples (not in any clinical samples)
                 # that have VAF >0.1
                 if [ "\${sample_type}" == "clinical" ]; then
+
                 # create file to hold list of variants to exclude
-                # exclusion list should include:
+                # exclusion list criteria:
                 # variants with fillout VAF >0.1
                 # that were not present in the original sample (invalid 'AD' value = "is_fillout=TRUE")
                 # which originated in some research sample
@@ -467,28 +467,39 @@ steps:
                 # filter the original vcf down to only include the loci from the inclusion file
                 bcftools filter --targets-file "\${filter_inclusion_file}" "\${split_vcf}" > "\${filtered_vcf}"
 
-                # move the filtered to the designated output path
-                cp "\${filtered_vcf}" "\${output_vcf}"
+                # move the unfiltered_vcf to the designated output path
+                cp "\${split_vcf}" "\${unfiltered_vcf}"
 
                 else
 
                 # sample did not need filtering; copy the sample's vcf to the designated path
-                cp "\${split_vcf}" "\${output_vcf}"
+                cp "\${split_vcf}" "\${unfiltered_vcf}"
+                cp "\${unfiltered_vcf}" "\${filtered_vcf}"
 
                 fi
       inputs:
         sample: "types.yml#FilloutSample"
         clinical_arg: string
         research_arg: string
+        # multi-sample vcf generated from GetBaseCountsMultiSample on all samples at once
         fillout_vcf: File
       outputs:
+        unfiltered_vcf:
+          type: File
+          outputBinding:
+            glob: $(inputs.sample['sample_id']).vcf
+        filtered_vcf:
+          type: File
+          outputBinding:
+            glob: $(inputs.sample['sample_id']).filtered.vcf
         sample:
           type: "types.yml#FilloutSample"
           outputBinding:
-            # set the output_vcf to the vcf_file
+            # set the unfiltered_vcf to the unfiltered_vcf
             outputEval: ${
               var ret = inputs.sample;
-              ret['vcf_file'] = {"class":"File", "path":runtime.outdir + "/" + inputs.sample["sample_id"] + ".vcf"};
+              ret['unfiltered_vcf'] = {"class":"File", "path":runtime.outdir + "/" + inputs.sample["sample_id"] + ".vcf"};
+              ret['filtered_vcf'] = {"class":"File", "path":runtime.outdir + "/" + inputs.sample["sample_id"] + ".filtered.vcf"};
               return ret;
               }
 
@@ -500,7 +511,7 @@ steps:
       sample: split_filter_vcf/sample
       ref_fasta: ref_fasta
       exac_filter: exac_filter
-    out: [ fillout_maf ]
+    out: [ unfiltered_maf, filtered_maf, sample ]
     run:
       class: CommandLineTool
       baseCommand: [ "sh", "run.sh" ]
@@ -511,28 +522,48 @@ steps:
           dockerPull: mskcc/roslin-variant-vcf2maf:1.6.17
         InitialWorkDirRequirement:
           listing:
+            - $(inputs.sample['unfiltered_vcf'])
+            - $(inputs.sample['filtered_vcf'])
             - entryname: run.sh
               entry: |-
                 set -eu
                 # convert the multi-sample annotated fillout vcf back into individual sample maf files
                 sample_id="${ return inputs.sample['sample_id'] ; }"
                 normal_id="${ return inputs.sample['normal_id'] ; }"
-                sample_type="${ return inputs.sample['sample_type'] ; }"
                 ref_fasta="${ return inputs.ref_fasta.path ; }"
-                input_vcf="${ return inputs.sample['vcf_file'].path ; }"
+                unfiltered_vcf="${ return inputs.sample['unfiltered_vcf'].basename ; }"
+                filtered_vcf="${ return inputs.sample['filtered_vcf'].basename ; }"
                 exac_filter="${ return inputs.exac_filter.path ; }"
 
                 # not sure why I have to do this but if I dont then it breaks looking for some file;
                 # ERROR: Couldn't open VCF: /var/lib/cwl/stg640f09da-4a21-46eb-bc90-a27199b424bc/fillout.merged.sources.split.vcf!
-                cp "\${input_vcf}" input.vcf
+                # cp "\${unfiltered_vcf}" input.vcf
 
-                # main output file:
-                sample_maf="\${sample_id}.fillout.maf"
+                # main output files:
+                unfiltered_maf="\${sample_id}.fillout.maf"
+                filtered_maf="\${sample_id}.fillout.filtered.maf"
 
                 # NOTE: /usr/bin/vep, /var/cache is inside the container already
                 perl /usr/bin/vcf2maf/vcf2maf.pl \\
-                --input-vcf input.vcf \\
-                --output-maf "\${sample_maf}" \\
+                --input-vcf "\${unfiltered_vcf}" \\
+                --output-maf "\${unfiltered_maf}" \\
+                --ref-fasta "\${ref_fasta}" \\
+                --cache-version 86 \\
+                --species homo_sapiens \\
+                --ncbi-build GRCh37 \\
+                --vep-path /usr/bin/vep \\
+                --vep-data /var/cache \\
+                --filter-vcf "\${exac_filter}" \\
+                --retain-info AC,AN,SRC \\
+                --retain-fmt GT,FL_AD,FL_ADN,FL_ADP,FL_DP,FL_DPN,FL_DPP,FL_RD,FL_RDN,FL_RDP,FL_VF,AD,DP \\
+                --vep-forks 8 \\
+                --vcf-tumor-id "\${sample_id}" \\
+                --tumor-id "\${sample_id}" \\
+                --normal-id "\${normal_id}"
+
+                perl /usr/bin/vcf2maf/vcf2maf.pl \\
+                --input-vcf "\${filtered_vcf}" \\
+                --output-maf "\${filtered_maf}" \\
                 --ref-fasta "\${ref_fasta}" \\
                 --cache-version 86 \\
                 --species homo_sapiens \\
@@ -562,17 +593,32 @@ steps:
         # NOTE: this might need secondaryFiles
         # Could not load .tbi/.csi index of /var/lib/cwl/stg2e0eeed1-680c-4c33-beeb-c4dd90309998/ExAC_nonTCGA.r0.3.1.sites.vep.vcf.gz
       outputs:
-        fillout_maf:
+        unfiltered_maf:
           type: File
           outputBinding:
             glob: $(inputs.sample['sample_id']).fillout.maf
+        filtered_maf:
+          type: File
+          outputBinding:
+            glob: $(inputs.sample['sample_id']).fillout.filtered.maf
+        sample:
+          type: "types.yml#FilloutSample"
+          outputBinding:
+            # set the unfiltered_maf for the sample
+            outputEval: ${
+              var ret = inputs.sample;
+              ret['unfiltered_maf'] = {"class":"File", "path":runtime.outdir + "/" + inputs.sample["sample_id"] + ".fillout.maf"};
+              ret['filtered_maf'] = {"class":"File", "path":runtime.outdir + "/" + inputs.sample["sample_id"] + ".fillout.filtered.maf"};
+              return ret;
+              }
 
   # combine all the individual mafs into a single maf; add comment headers; fix some values
   concat_with_comments:
     in:
-      mafs: vcf_to_maf/fillout_maf
-      output_filename: output_fname
-    out: [ output_file ]
+      unfiltered_mafs: vcf_to_maf/unfiltered_maf
+      filtered_mafs: vcf_to_maf/filtered_maf
+      output_unfiltered_filename: output_fname
+    out: [ output_file, filtered_file ]
     run:
       class: CommandLineTool
       baseCommand: [ "bash", "run.sh" ]
@@ -585,11 +631,25 @@ steps:
               entry: |-
                 set -eu
                 # get a space-delim string of file paths
-                input_files="${ return inputs.mafs.map((a) => a.path).join(' ') }"
-                output_filename="${ return inputs.output_filename }"
-                concat-tables.py -o fillout.maf --no-carriage-returns --comments --progress --na-str '' \${input_files}
+                input_unfiltered_files="${ return inputs.unfiltered_mafs.map((a) => a.path).join(' ') }"
+                input_filtered_files="${ return inputs.filtered_mafs.map((a) => a.path).join(' ') }"
+                output_unfiltered_filename="${ return inputs.output_unfiltered_filename }"
+                output_filtered_filename="${ return inputs.output_filtered_filename }"
+
+                concat_fillout_maf=fillout.maf
+                concat_filtered_maf=fillout.filtered.maf
+
+                concat-tables.py -o "\${concat_fillout_maf}" --no-carriage-returns --comments --progress --na-str '' \${input_unfiltered_files}
+
+                concat-tables.py -o "\${concat_filtered_maf}" --no-carriage-returns --comments --progress --na-str '' \${input_filtered_files}
+
                 # fix issues with blank ref alt count cols for fillout variants
-                update_fillout_maf.py fillout.maf tmp.tsv
+                fillout_tmp=tmp.tsv
+                fillout_filtered_tmp=tmp.filtered.tsv
+
+                update_fillout_maf.py "\${concat_fillout_maf}" "\${fillout_tmp}"
+                update_fillout_maf.py "\${concat_filtered_maf}" "\${fillout_filtered_tmp}"
+
                 # need to add header comments for new columns
                 echo '# SRC="Samples variant was originally found in (Fillout)"' > comments
                 echo '# FL_AD="Depth matching alternate (ALT) allele (Fillout)"' >> comments
@@ -611,18 +671,36 @@ steps:
                 echo '# ref_count_sample="Allelic Depths of REF (Sample)"' >> comments
                 echo '# alt_count_sample="Allelic Depths of ALT (Sample)"' >> comments
                 echo '# is_fillout="Whether the variant was present in the original Sample (FALSE) or was generated via Fillout from related samples (TRUE)"' >> comments
-                cat comments > \${output_filename}
-                cat tmp.tsv >> \${output_filename}
+
+                cat comments > \${output_unfiltered_filename}
+                cat comments > \${output_filtered_filename}
+
+                cat "\${fillout_tmp}" >> \${output_unfiltered_filename}
+                cat "\${fillout_filtered_tmp}" >> \${output_filtered_filename}
       inputs:
-        mafs: File[]
-        output_filename: string
+        unfiltered_mafs: File[]
+        filtered_mafs: File[]
+        # for the unfiltered file output;
+        output_unfiltered_filename:
+          type: string
+          default: "output.maf"
+        output_filtered_filename:
+          type: string
+          default: "output.filtered.maf"
       outputs:
         output_file:
           type: File
           outputBinding:
-            glob: ${ return inputs.output_filename ; }
+            glob: $(inputs.output_unfiltered_filename)
+        filtered_file:
+          type: File
+          outputBinding:
+            glob: $(inputs.output_filtered_filename)
 
 outputs:
   output_file:
     type: File
     outputSource: concat_with_comments/output_file
+  filtered_file:
+    type: File
+    outputSource: concat_with_comments/filtered_file
