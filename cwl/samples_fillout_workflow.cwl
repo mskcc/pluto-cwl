@@ -360,37 +360,66 @@ steps:
   make_filter_args:
     in:
       samples: samples
-    out: [ research_arg, clinical_arg ]
+    out: [ research_arg, clinical_expression ]
     run:
       class: ExpressionTool
       inputs:
         samples: "types.yml#FilloutSample[]"
       outputs:
         research_arg: string
-        clinical_arg: string
-      expression: "${
-        var research_samples = [];
-        var clinical_samples = [];
+        clinical_expression: string
+      expression: |
+        ${
+          // split the list of samples into research and clinical samples
+          var research_samples = [];
+          var clinical_samples = [];
 
-        for ( var i in inputs.samples ){
+          for ( var i in inputs.samples ){
 
-          var sample_type = inputs.samples[i]['sample_type'];
-          var sample_id = inputs.samples[i]['sample_id'];
+            var sample_type = inputs.samples[i]['sample_type'];
+            var sample_id = inputs.samples[i]['sample_id'];
 
-          if ( sample_type == 'research' ){
-            research_samples.push(sample_id);
+            if ( sample_type == 'research' ){
+              research_samples.push(sample_id);
 
-          } else if ( sample_type == 'clinical' ) {
-            clinical_samples.push(sample_id);
-          }
+            } else if ( sample_type == 'clinical' ) {
+              clinical_samples.push(sample_id);
+            }
 
-        };
+          };
 
-        var research_arg = `SRC='${research_samples.join(',')}'`;
-        var clinical_arg = `SRC='${clinical_samples.join(',')}'`;
+          // create the bcftools expression for research samples;
+          // SRC='Sample1,Sample2'
+          var research_arg = `SRC='${research_samples.join(',')}'`;
 
-        return {'research_arg': research_arg, 'clinical_arg': clinical_arg};
-        }"
+          // create a set of bcftools view -e commands for the clinical samples
+          // need to chain together individual exclusions for each clinical sample_id
+          // it will look like
+          // bcftools view -e "SRC='Sample3'" - |  bcftools view -e "SRC='Sample4'" - | ...
+
+          // start with empty string and build up the final bash command
+          var expr = '';
+
+          // check if there are >0
+          var num_clinical_samples = research_samples.length;
+          if (num_clinical_samples > 0){
+            // need to start the command with a | character if there are any samples
+            expr = expr + ' | '
+          };
+
+          for ( var i in research_samples ){
+            var sample_id = research_samples[i];
+
+            expr = expr + 'bcftools view -e "SRC=' + sample_id + '" ';
+
+            // need to apply the | between all args except the final one
+            if (i < num_clinical_samples - 1){
+              expr = expr + ' | ';
+            };
+          };
+
+          return {'research_arg': research_arg, 'clinical_expression': expr};
+        }
 
   # split the multi-sample vcf into individual per-sample vcf files and apply conditional filters
   split_filter_vcf:
@@ -399,7 +428,7 @@ steps:
       sample: samples
       fillout_vcf: fix_labels_and_merge_vcfs/fillout_sources_vcf
       research_arg: make_filter_args/research_arg
-      clinical_arg: make_filter_args/clinical_arg
+      clinical_expression: make_filter_args/clinical_expression
     out: [ sample ]
     run:
       class: CommandLineTool
@@ -416,7 +445,7 @@ steps:
                 sample_type='${ return inputs.sample["sample_type"] ; }'
                 sample_id='${ return inputs.sample["sample_id"] ; }'
                 research_filter_arg="${ return inputs.research_arg ; }"
-                clinical_filter_arg="${ return inputs.clinical_arg ; }"
+                clinical_expression="${return inputs.clinical_expression ; }"
 
                 # dir to hold split vcf contents
                 split_dir="split"
@@ -452,10 +481,11 @@ steps:
                 # that were not present in the original sample (invalid 'AD' value = "is_fillout=TRUE")
                 # which originated in some research sample
                 # but were not present in any clinical sample ('SRC' sample list)
+                # # NOTE: https://samtools.github.io/bcftools/bcftools.html#expressions
+                # # > Comma in strings is interpreted as a separator and when multiple values are compared, the OR logic is used
                 bcftools view -i 'FL_VF>0.1' "\${split_vcf}" | \
                 bcftools view -i 'AD="."' | \
-                bcftools view -i \${research_filter_arg} -  | \
-                bcftools view -e \${clinical_filter_arg} - | \
+                bcftools view -i \${research_filter_arg} - ${return inputs.clinical_expression ; } | \
                 bcftools query -f '%CHROM\\t%POS\\t%END\\t%SRC\\t[AD=%AD\\tFL_VF=%FL_VF]\\n' - > "\${filter_exclusion_file}"
 
                 # convert the original vcf to a flat txt format for use with bedtools intersect
@@ -479,7 +509,7 @@ steps:
                 fi
       inputs:
         sample: "types.yml#FilloutSample"
-        clinical_arg: string
+        clinical_expression: string
         research_arg: string
         # multi-sample vcf generated from GetBaseCountsMultiSample on all samples at once
         fillout_vcf: File

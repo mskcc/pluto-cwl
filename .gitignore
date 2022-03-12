@@ -24,3 +24,4 @@ worker_log.txt
 toil_runs/
 tmp*
 run-toil.sh
+old/
