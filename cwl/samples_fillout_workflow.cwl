@@ -401,16 +401,17 @@ steps:
           var expr = '';
 
           // check if there are >0
-          var num_clinical_samples = research_samples.length;
+          var num_clinical_samples = clinical_samples.length;
           if (num_clinical_samples > 0){
             // need to start the command with a | character if there are any samples
             expr = expr + ' | '
           };
 
-          for ( var i in research_samples ){
-            var sample_id = research_samples[i];
+          for ( var i in clinical_samples ){
+            var sample_id = clinical_samples[i];
 
-            expr = expr + 'bcftools view -e "SRC=' + sample_id + '" ';
+            // be careful with the quoting here; must be "SRC='Sample1'"
+            expr = expr + 'bcftools view -e "SRC=' + "'" + sample_id +"'" + '" ';
 
             // need to apply the | between all args except the final one
             if (i < num_clinical_samples - 1){
@@ -438,14 +439,17 @@ steps:
           dockerPull: mskcc/helix_filters_01:21.3.5
         InitialWorkDirRequirement:
           listing:
+            - $(inputs.fillout_vcf)
             - entryname: run.sh
               entry: |-
-                set -eu
-                input_vcf='${ return inputs.fillout_vcf.path ; }'
+                set -eux
+
+                input_vcf='${ return inputs.fillout_vcf.basename ; }'
                 sample_type='${ return inputs.sample["sample_type"] ; }'
                 sample_id='${ return inputs.sample["sample_id"] ; }'
-                research_filter_arg="${ return inputs.research_arg ; }"
-                clinical_expression="${return inputs.clinical_expression ; }"
+                # be careful with the quoting args here;
+                # research_filter_arg="${ return inputs.research_arg ; }"
+                # clinical_expression='${return inputs.clinical_expression ; }'
 
                 # dir to hold split vcf contents
                 split_dir="split"
@@ -463,7 +467,7 @@ steps:
                 # final output filename
                 unfiltered_vcf="\${sample_id}.vcf"
 
-                mkdir "\${split_dir}"
+                mkdir -p "\${split_dir}"
 
                 # split the multi-sample vcf into per-sample vcf files
                 bcftools +split "\${input_vcf}" --output-type v --output "\${split_dir}"
@@ -485,7 +489,7 @@ steps:
                 # # > Comma in strings is interpreted as a separator and when multiple values are compared, the OR logic is used
                 bcftools view -i 'FL_VF>0.1' "\${split_vcf}" | \
                 bcftools view -i 'AD="."' | \
-                bcftools view -i \${research_filter_arg} - ${return inputs.clinical_expression ; } | \
+                bcftools view -i "${ return inputs.research_arg ; }" ${return inputs.clinical_expression ; } | \
                 bcftools query -f '%CHROM\\t%POS\\t%END\\t%SRC\\t[AD=%AD\\tFL_VF=%FL_VF]\\n' - > "\${filter_exclusion_file}"
 
                 # convert the original vcf to a flat txt format for use with bedtools intersect

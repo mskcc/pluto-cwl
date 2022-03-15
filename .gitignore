@@ -25,3 +25,4 @@ toil_runs/
 tmp*
 run-toil.sh
 old/
+cwltool_runs/
