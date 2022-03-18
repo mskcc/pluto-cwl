@@ -31,7 +31,7 @@ class TestSamplesFillout(PlutoTestCase):
         lines2 = self.dicts2lines([ rows.r3, rows.r4 ], comment_list = rows.comments)
         self.maf2 = self.write_table(tmpdir = self.tmpdir, filename = "2.maf", lines = lines2)
 
-    def test_run_fillout_workflow_small_1(self):
+    def test_small_1(self):
         """
         Test case for running the fillout workflow on a number of samples, each with a bam and maf
         """
@@ -120,7 +120,7 @@ class TestSamplesFillout(PlutoTestCase):
         self.assertEqual(r, expected_records)
 
 
-    def test_run_fillout_workflow_small_1_clinical(self):
+    def test_small_1_clinical(self):
         """
         Test case for running the fillout workflow on a number of samples, each with a bam and maf
         """
@@ -209,7 +209,7 @@ class TestSamplesFillout(PlutoTestCase):
         self.assertEqual(r, expected_records)
 
 
-    def test_run_fillout_workflow_small_2(self):
+    def test_small_2(self):
         """
         Test case with small variant set that should have filters applied inside the pipeline
 
@@ -325,7 +325,7 @@ class TestSamplesFillout(PlutoTestCase):
         self.assertEqual(hash, expected_hash)
 
 
-    def test_run_fillout_workflow_small_3(self):
+    def test_small_2_clinical(self):
         """
         Test case with small variant set that should have filters applied inside the pipeline
 
@@ -337,6 +337,8 @@ class TestSamplesFillout(PlutoTestCase):
         Sample2 research
         Sample1 research
         Sample4 clinical
+
+        This test takes about 41min to complete
         """
         self.maxDiff = None
         self.runner_args['use_cache'] = False # do not use cache because it breaks for some reason
@@ -446,7 +448,7 @@ class TestSamplesFillout(PlutoTestCase):
 
 
     @unittest.skipIf(ENABLE_LARGE_TESTS!=True, "is a large test")
-    def test_run_fillout_workflow2(self):
+    def test_large_1(self):
         """
         Test case for running the fillout workflow on a number of samples, each with a bam and maf
         This test uses full samples
@@ -478,6 +480,7 @@ class TestSamplesFillout(PlutoTestCase):
 
         output_json, output_dir = self.run_cwl()
         output_path = os.path.join(output_dir,'output.maf')
+        output_filtered_path = os.path.join(output_dir,'output.filtered.maf')
         expected_output = {
             'output_file': {
                 'location': 'file://' + output_path,
@@ -486,33 +489,40 @@ class TestSamplesFillout(PlutoTestCase):
                 # 'checksum': 'sha1$be8534bcaf326de029790a832ab5b44a17a03d22',
                 # 'size': 40194610,
                 'path':  output_path
-                }
+                },
+            'filtered_file': {
+                'basename': 'output.filtered.maf',
+                # 'checksum': 'sha1$f2dafd621df351af24820791f31bfc01d8dcd6ca',
+                'class': 'File',
+                'location': 'file://' + output_filtered_path,
+                # 'size': 41164887
+            }
             }
         # NOTE: for some reason, this file keeps coming out with different annotations for 'splice_acceptor_variant' or `splice_donor_variant`
         # this keeps changing the byte size and checksum so need to remove those here for now
         output_json['output_file'].pop('checksum')
         output_json['output_file'].pop('size')
+        output_json['filtered_file'].pop('checksum')
+        output_json['filtered_file'].pop('size')
         self.assertCWLDictEqual(output_json, expected_output)
 
-        comments, mutations = self.load_mutations(output_path)
-
+        # Need to remove some extra fields because they are inconsistent on the output maf file
+        comments, mutations = self.load_mutations(output_path, strip = True)
         self.assertEqual(len(mutations), 38920)
-
-        # Need to remove these fields because they are inconsistent on the output maf file;
-        for mut in mutations:
-            mut.pop('all_effects')
-            mut.pop('Consequence')
-            mut.pop('Variant_Classification')
-
         hash = md5_obj(mutations)
-        expected_hash = 'bc5f54f1057a7ba29f55d9d4aac92a01'
+        expected_hash = '0cb1de1922f023a7157f5db273c9fe00'
+        self.assertEqual(hash, expected_hash)
+
+        comments, mutations = self.load_mutations(output_filtered_path, strip = True)
+        self.assertEqual(len(mutations), 38920)
+        hash = md5_obj(mutations)
+        expected_hash = '0cb1de1922f023a7157f5db273c9fe00'
         self.assertEqual(hash, expected_hash)
 
 
 
-
     @unittest.skipIf(ENABLE_LARGE_TESTS!=True, "is a large test")
-    def test_run_fillout_workflow3(self):
+    def test_large_2(self):
         """
         Test case for running the fillout workflow on a number of samples, each with a bam and maf
         This test uses full samples
@@ -544,6 +554,7 @@ class TestSamplesFillout(PlutoTestCase):
 
         output_json, output_dir = self.run_cwl()
         output_path = os.path.join(output_dir,'output.maf')
+        output_filtered_path = os.path.join(output_dir,'output.filtered.maf')
 
         expected_output = {
             'output_file': {
@@ -553,26 +564,103 @@ class TestSamplesFillout(PlutoTestCase):
                 # 'checksum': 'sha1$2f60f58389ec65af87612c7532ad28b882fb84ba',
                 # 'size': 26238820,
                 'path':  output_path
+                },
+                'filtered_file': {
+                    'basename': 'output.filtered.maf',
+                    # 'checksum': 'sha1$f2dafd621df351af24820791f31bfc01d8dcd6ca',
+                    'class': 'File',
+                    'location': 'file://' + output_filtered_path,
+                    # 'size': 41164887
                 }
             }
         output_json['output_file'].pop('checksum')
         output_json['output_file'].pop('size')
+        output_json['filtered_file'].pop('checksum')
+        output_json['filtered_file'].pop('size')
         self.assertCWLDictEqual(output_json, expected_output)
 
-        comments, mutations = self.load_mutations(output_path)
-
-        hash = md5_obj(mutations)
-
+        comments, mutations = self.load_mutations(output_path, strip = True)
         self.assertEqual(len(mutations), 26404)
-
-        # Need to remove these fields because they are inconsistent on the output maf file;
-        for mut in mutations:
-            mut.pop('all_effects')
-            mut.pop('Consequence')
-            mut.pop('Variant_Classification')
-
         hash = md5_obj(mutations)
-        expected_hash = '4a03d128d76b72328b62a87814d89993'
+        expected_hash = 'eecc16c5910c9031831cbf4c44848796'
+        self.assertEqual(hash, expected_hash)
+
+        comments, mutations = self.load_mutations(output_filtered_path, strip = True)
+        self.assertEqual(len(mutations), 26404)
+        hash = md5_obj(mutations)
+        expected_hash = 'eecc16c5910c9031831cbf4c44848796'
+        self.assertEqual(hash, expected_hash)
+
+    # @unittest.skipIf(ENABLE_LARGE_TESTS!=True, "is a large test")
+    def test_large_2_clinical(self):
+        """
+        Test case for running the fillout workflow on a number of samples, each with a bam and maf
+        This test uses full samples
+
+        takes about 9 minutes to complete
+        """
+        self.maxDiff = None
+        maf1 = os.path.join(self.DATA_SETS['Proj_1']['MAF_DIR'], "Sample1.Sample2.muts.maf")
+        maf4 = os.path.join(self.DATA_SETS['Proj_1']['MAF_DIR'], "Sample4.Sample3.muts.maf")
+        bam1 = os.path.join(self.DATA_SETS['Proj_1']['BAM_DIR'], "Sample1.bam")
+        bam4 = os.path.join(self.DATA_SETS['Proj_1']['BAM_DIR'], "Sample4.bam")
+        self.input = {
+            "samples": [
+                {
+                    "sample_id": "Sample1",
+                    "normal_id": "Sample1-N",
+                    "sample_type": "research",
+                    "maf_file": { "class": "File", "path": maf1 },
+                    "bam_file": { "class": "File", "path": bam1 },
+                },
+                {
+                    "sample_id": "Sample4",
+                    "normal_id": "Sample4-N",
+                    "sample_type": "clinical",
+                    "maf_file": { "class": "File", "path": maf4 },
+                    "bam_file": { "class": "File", "path": bam4 },
+                },
+            ],
+            "ref_fasta": {"class": "File", "path": self.DATA_SETS['Proj_1']['REF_FASTA']}
+        }
+
+        output_json, output_dir = self.run_cwl()
+        output_path = os.path.join(output_dir,'output.maf')
+        output_filtered_path = os.path.join(output_dir,'output.filtered.maf')
+
+        expected_output = {
+            'output_file': {
+                'location': 'file://' + output_path,
+                'basename': 'output.maf',
+                'class': 'File',
+                # 'checksum': 'sha1$2f60f58389ec65af87612c7532ad28b882fb84ba',
+                # 'size': 26238820,
+                'path':  output_path
+                },
+                'filtered_file': {
+                    'basename': 'output.filtered.maf',
+                    # 'checksum': 'sha1$f2dafd621df351af24820791f31bfc01d8dcd6ca',
+                    'class': 'File',
+                    'location': 'file://' + output_filtered_path,
+                    # 'size': 41164887
+                }
+            }
+        output_json['output_file'].pop('checksum')
+        output_json['output_file'].pop('size')
+        output_json['filtered_file'].pop('checksum')
+        output_json['filtered_file'].pop('size')
+        self.assertCWLDictEqual(output_json, expected_output)
+
+        comments, mutations = self.load_mutations(output_path, strip = True)
+        self.assertEqual(len(mutations), 26404)
+        hash = md5_obj(mutations)
+        expected_hash = 'eecc16c5910c9031831cbf4c44848796'
+        self.assertEqual(hash, expected_hash)
+
+        comments, mutations = self.load_mutations(output_filtered_path, strip = True)
+        self.assertEqual(len(mutations), 26403) # 25946
+        hash = md5_obj(mutations)
+        expected_hash = 'ad7dee2dc0c96d04caaf13bdfcc2d45b'
         self.assertEqual(hash, expected_hash)
 
 
