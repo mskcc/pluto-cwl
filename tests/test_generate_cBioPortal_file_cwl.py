@@ -384,8 +384,8 @@ class TestGenerateCbioFilesCWL(unittest.TestCase):
                     'location': 'file://' + os.path.join(output_dir, 'meta_mutations_extended.txt'),
                     'basename': 'meta_mutations_extended.txt',
                     'class': 'File',
-                    'checksum': 'sha1$d6681566b68ec2eba1c16369f6838ed52986b044',
-                    'size': 253,
+                    'checksum': 'sha1$778c1cd5450ede4127023d65af177e0eb6b58db0',# 'sha1$d6681566b68ec2eba1c16369f6838ed52986b044',
+                    'size': 270, #253,
                     'path': os.path.join(output_dir,'meta_mutations_extended.txt')
                 }
             }

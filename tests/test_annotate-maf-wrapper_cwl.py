@@ -40,7 +40,7 @@ class TestAnnotateMafWrapperCWL(PlutoTestCase):
         output_json, output_dir = self.run_cwl()
 
         expected_output = {
-            'failed_txt': None,
+            'failed': False,
             'output_file': {
                 'location': 'file://' + os.path.join(output_dir, 'Sample1_hisens.ccf.maf'),
                 'basename': 'Sample1_hisens.ccf.maf',
@@ -92,7 +92,7 @@ class TestAnnotateMafWrapperCWL(PlutoTestCase):
 
 
     @unittest.skipIf(ENABLE_LARGE_TESTS!=True, "is a large test")
-    def test_run_facets_wrapper(self):
+    def test_run_facets_annotation_wrapper(self):
         """
         Test case for running Facets maf annotation
         """
@@ -113,7 +113,7 @@ class TestAnnotateMafWrapperCWL(PlutoTestCase):
         output_json, output_dir = self.run_cwl()
 
         expected_output = {
-            'failed_txt': None,
+            'failed': False,
             'output_file': {
                 'location': 'file://' + os.path.join(output_dir, 'Sample1_hisens.ccf.maf'),
                 'basename': 'Sample1_hisens.ccf.maf',
@@ -124,11 +124,11 @@ class TestAnnotateMafWrapperCWL(PlutoTestCase):
             },
             'stderr_txt': {
                 'basename': 'annotate_maf_stderr.txt',
-                'checksum': 'sha1$2e672f99c23a2d827c1d33e06377870cdd9c8090',
+                'checksum': 'sha1$0c28147c3a113bcb74ce2cbb34204d18dded3206',
                 'class': 'File',
                 'location': 'file://' + os.path.join(output_dir,'annotate_maf_stderr.txt'),
                 'path': os.path.join(output_dir,'annotate_maf_stderr.txt'),
-                'size': 105
+                'size': 193
             },
            'stdout_txt': {
                 'basename': 'annotate_maf_stdout.txt',
@@ -141,13 +141,6 @@ class TestAnnotateMafWrapperCWL(PlutoTestCase):
         }
         self.maxDiff = None
         self.assertDictEqual(output_json, expected_output)
-        # with open(output_json['stdout_txt']["path"]) as f:
-        #     for line in f:
-        #         print(line)
-        #
-        # with open(output_json['stderr_txt']["path"]) as f:
-        #     for line in f:
-        #         print(line)
 
 if __name__ == "__main__":
     unittest.main()

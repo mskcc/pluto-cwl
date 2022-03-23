@@ -64,7 +64,7 @@ class TestRunFacetsWrapperCWL(unittest.TestCase):
                     'size': 1824,
                     'path': os.path.join(output_dir, 'Sample24.arm_level.txt')
                     },
-                'failed_txt': None,
+                'failed': False,
                 'gene_level_txt': {
                     'location': 'file://' + os.path.join(output_dir, 'Sample24.gene_level.txt'),
                     'basename': 'Sample24.gene_level.txt',
