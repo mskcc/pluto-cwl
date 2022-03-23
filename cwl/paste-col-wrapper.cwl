@@ -10,7 +10,7 @@ baseCommand: ["paste-col.py"]
 requirements:
   InlineJavascriptRequirement: {}
   DockerRequirement:
-    dockerPull: mskcc/helix_filters_01:21.3.4
+    dockerPull: mskcc/helix_filters_01:21.4.0
 inputs:
   input_file:
     type: File
