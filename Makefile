@@ -245,9 +245,11 @@ test:
 
 # run tests in parallel;
 # $ make test3 -j 4
+# the test 
+TEST_ENV:=toil
 TESTS:=$(shell ls tests/test_*.py)
 $(TESTS):
-	. "$(ENVSH)" test && echo $@; python3 $@
+	. "$(ENVSH)" "$(TEST_ENV)" && echo $@; python3 $@
 .PHONY:$(TESTS)
 test3:$(TESTS)
 
