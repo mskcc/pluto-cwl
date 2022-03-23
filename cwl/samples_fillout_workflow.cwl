@@ -759,6 +759,16 @@ steps:
           outputBinding:
             glob: $(inputs.output_filtered_filename)
 
+  convert_to_portal_format:
+    run: update_cBioPortal_data.cwl
+    in:
+      subcommand:
+        valueFrom: ${ return "maf2portal"; }
+      input_file: concat_with_comments/filtered_file
+      output_filename:
+        valueFrom: ${ return "fillout.portal.maf"; }
+    out: [ output_file ]
+
 outputs:
   output_file:
     type: File
@@ -766,3 +776,6 @@ outputs:
   filtered_file:
     type: File
     outputSource: concat_with_comments/filtered_file
+  portal_file:
+    type: File
+    outputSource: convert_to_portal_format/output_file

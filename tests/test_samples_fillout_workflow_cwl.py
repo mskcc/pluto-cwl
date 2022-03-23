@@ -65,6 +65,7 @@ class TestSamplesFillout(PlutoTestCase):
         output_json, output_dir = self.run_cwl()
         output_path = os.path.join(output_dir,'output.maf')
         output_filtered_path = os.path.join(output_dir,'output.filtered.maf')
+        output_portal_path = os.path.join(output_dir,'fillout.portal.maf')
 
         expected_output = {
             'output_file': {
@@ -82,6 +83,14 @@ class TestSamplesFillout(PlutoTestCase):
                 'checksum': 'sha1$70521e72bcf0b5c6ef8660178a8e54fa113d3efa',
                 'size': 8202,
                 'path':  output_filtered_path
+                },
+            'portal_file': {
+                'basename': 'fillout.portal.maf',
+                'checksum': 'sha1$399b7a685d755277c1842d3037d5102af32fc60f',
+                'class': 'File',
+                'location': 'file://' + output_portal_path,
+                'path': output_portal_path,
+                'size': 1380
                 }
             }
         self.assertCWLDictEqual(output_json, expected_output)
@@ -118,6 +127,13 @@ class TestSamplesFillout(PlutoTestCase):
         {'Hugo_Symbol': 'RTEL1', 'Chromosome': '20', 'Start_Position': '62321135', 'End_Position': '62321135', 'Tumor_Sample_Barcode': 'Sample23', 't_depth': '184', 't_ref_count': '184', 't_alt_count': '0', 't_FL_VF': '0', 'is_fillout': 'True', 'SRC': 'Sample24,'}
         ]
         self.assertEqual(r, expected_records)
+
+        reader = TableReader(output_portal_path)
+        comments = reader.comment_lines
+        fieldnames = reader.get_fieldnames()
+        records = [ rec for rec in reader.read() ]
+
+        self.assertTrue(len(records) == 4)
 
 
     def test_small_1_clinical(self):
