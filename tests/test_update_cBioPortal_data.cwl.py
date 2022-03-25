@@ -242,7 +242,7 @@ class TestUpdate_cBioPortal_dataCWL(unittest.TestCase):
                 )
 
             expected_output = {
-                'failed_txt': None,
+                'failed': False,
                 'output_file': {
                     'location': 'file://' + os.path.join(output_dir, 'output.maf'),
                     'basename': 'output.maf',
@@ -322,7 +322,7 @@ class TestUpdate_cBioPortal_dataCWL(unittest.TestCase):
                 )
 
             expected_output = {
-                'failed_txt': None,
+                'failed': False,
                 'output_file': {
                     'location': 'file://' + os.path.join(output_dir, 'output.maf'),
                     'basename': 'output.maf',
@@ -404,7 +404,7 @@ class TestUpdate_cBioPortal_dataCWL(unittest.TestCase):
                 )
 
             expected_output = {
-                'failed_txt': None,
+                'failed': False,
                 'output_file': {
                     'location': 'file://' + os.path.join(output_dir, 'output.maf'),
                     'basename': 'output.maf',
@@ -486,7 +486,7 @@ class TestUpdate_cBioPortal_dataCWL(unittest.TestCase):
                 )
 
             expected_output = {
-                'failed_txt': None,
+                'failed': False,
                 'output_file': {
                     'location': 'file://' + os.path.join(output_dir, 'output.maf'),
                     'basename': 'output.maf',
