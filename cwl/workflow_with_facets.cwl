@@ -416,7 +416,7 @@ steps:
       output_filename: cbio_mutation_data_filename
       facets_maf: concat_facets_maf/output_file
     out:
-      [ output_file, failed_txt, stdout_txt, stderr_txt ]
+      [ output_file, failed, stdout_txt, stderr_txt ]
 
 
 
