@@ -108,7 +108,7 @@ steps:
       baseCommand: ['bash', 'run.sh']
       requirements:
         DockerRequirement:
-          dockerPull: mskcc/helix_filters_01:21.4.0
+          dockerPull: mskcc/helix_filters_01:21.4.1
         InitialWorkDirRequirement:
           listing:
             # NOTE: might need dos2unix for some that give errors ERROR: Your MAF uses CR line breaks, which we can't support. Please use LF or CRLF.
@@ -163,7 +163,7 @@ steps:
       baseCommand: ['bash', 'run.sh']
       requirements:
         DockerRequirement:
-          dockerPull: mskcc/helix_filters_01:21.4.0
+          dockerPull: mskcc/helix_filters_01:21.4.1
         InitialWorkDirRequirement:
           listing:
             - entryname: run.sh
@@ -277,7 +277,7 @@ steps:
       baseCommand: [ "bash", "run.sh" ]
       requirements:
         DockerRequirement:
-          dockerPull: mskcc/helix_filters_01:21.4.0
+          dockerPull: mskcc/helix_filters_01:21.4.1
         InitialWorkDirRequirement:
           listing:
             - entryname: run.sh
@@ -448,7 +448,7 @@ steps:
       baseCommand: [ "bash", "run.sh" ]
       requirements:
         DockerRequirement:
-          dockerPull: mskcc/helix_filters_01:21.4.0
+          dockerPull: mskcc/helix_filters_01:21.4.1
         InitialWorkDirRequirement:
           listing:
             - $(inputs.fillout_vcf)
@@ -686,7 +686,7 @@ steps:
       baseCommand: [ "bash", "run.sh" ]
       requirements:
         DockerRequirement:
-          dockerPull: mskcc/helix_filters_01:21.4.0
+          dockerPull: mskcc/helix_filters_01:21.4.1
         InitialWorkDirRequirement:
           listing:
             - entryname: run.sh

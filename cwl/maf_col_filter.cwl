@@ -8,7 +8,7 @@ baseCommand: ['maf_col_filter.py']
 # NOTE: bump this to the release version when its ready!
 requirements:
   DockerRequirement:
-    dockerPull: mskcc/helix_filters_01:21.4.0
+    dockerPull: mskcc/helix_filters_01:21.4.1
 
 inputs:
   input_file:
