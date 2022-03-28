@@ -99,7 +99,7 @@ class TestSamplesFilloutIndex(PlutoTestCase):
             mut.pop('Variant_Classification')
 
         hash = md5_obj(mutations)
-        expected_hash = '40cb934e354cf985a9d0a03bc65747c8'
+        expected_hash = '53ee95f4e07084992362bba4917d1e82'
         self.assertEqual(hash, expected_hash)
 
 
