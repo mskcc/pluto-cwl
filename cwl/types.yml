@@ -20,6 +20,7 @@ types:
       type: File
       secondaryFiles:
           - ^.bai
+          - .bai
     # These files get added during downstream processing
     - name: unfiltered_vcf
       type: File?
@@ -33,7 +34,6 @@ types:
     - name: filtered_maf
       type: File?
       doc: fillout maf that has had extra filters applied such as germline filtering
-
 
 - name: FilloutIndexSample
   doc: A FilloutSample needs .bam indexing and prefiltering applied
@@ -81,6 +81,7 @@ types:
       doc: bam file that needs a .bai file generated
       secondaryFiles:
           - ^.bai
+          - .bai
 
 # - name: RefFasta
 #   doc: reference genome .fasta file
