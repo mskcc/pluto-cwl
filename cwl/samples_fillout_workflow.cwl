@@ -43,8 +43,9 @@ inputs:
   #     path: /juno/work/ci/resources/vep/cache
 
 steps:
-  # create a list of just sample_ids out of the samples record array
+
   create_samples_list:
+    doc: creates a list of sample_ids out of the samples record array for downstream use
     in:
       samples: samples
     out: [ sample_ids ]
@@ -64,8 +65,30 @@ steps:
         return {'sample_ids': sample_ids};
         }"
 
-  # get a list of just the bam files for downstream process
+  create_clinical_samples_list:
+    doc: creates a list of clinical sample_ids out of the samples record array for downstream use
+    in:
+      samples: samples
+    out: [ clinical_sample_ids ]
+    run:
+      class: ExpressionTool
+      inputs:
+        samples: "types.yml#FilloutSample[]"
+      outputs:
+        clinical_sample_ids: string[]
+      expression: |
+        ${
+          var sample_ids = [];
+          for ( var i in inputs.samples ){
+              if (inputs.samples[i]['sample_type'] === 'clinical' ){
+                sample_ids.push(inputs.samples[i]['sample_id']);
+              };
+            };
+          return {'clinical_sample_ids': sample_ids};
+        }
+
   create_bam_list:
+    doc: gets a list of just the bam files for downstream process
     in:
       samples: samples
     out:
@@ -90,9 +113,9 @@ steps:
         }"
 
 
-  # convert all maf input files back to vcf because they are much easier to manipulate that way
-  # NOTE: This is important; do NOT try to do complex manipulations on maf format file
+  # NOTE: This is important; do NOT try to do complex manipulations on maf format file, do it on vcf format instead
   maf2vcf:
+    doc: converts all maf input files back to vcf for downstream processing
     scatter: sample
     in:
       sample: samples
@@ -150,9 +173,8 @@ steps:
           secondaryFiles:
             - .tbi
 
-  # merge all the vcf files together to create a vcf with all of the variant regions for all samples
-  # this will be used as the target regions for fillout (GetBaseCountsMultiSample)
-  merge_vcfs:
+  create_fillout_targets_list:
+    doc: merge all the vcf files together to create the list of target regions for GetBaseCountsMultiSample for fillout
     in:
       sample_ids: create_samples_list/sample_ids
       vcf_gz_files: maf2vcf/output_file
@@ -200,14 +222,14 @@ steps:
           secondaryFiles:
             - .tbi
 
-  # run GetBaseCountsMultiSample on all the bam files against the target regions (the merged vcf from all samples)
-  # TODO: convert this to a `scatter` step that runs per-sample in parallel, then merge the outputs
-  # otherwise we will hit the command line arg length issues
+  # TODO: convert this to a `scatter` step that runs per-sample in parallel, then merge the outputs otherwise we will hit the command line arg length issues eventually
+  # NOTE: maybe do not do this ^^^ because currently its useful to have a multi-sample vcf output, need to investigate this more
   gbcms:
+    doc: run GetBaseCountsMultiSample on all the bam files against the target regions (the merged vcf from all samples)
     in:
       sample_ids: create_samples_list/sample_ids
       bam_files: create_bam_list/bam_files
-      targets_vcf: merge_vcfs/merged_vcf
+      targets_vcf: create_fillout_targets_list/merged_vcf
       ref_fasta: ref_fasta
     out: [ output_file ]
     run:
@@ -261,15 +283,12 @@ steps:
           outputBinding:
             glob: fillout.vcf
 
-  # need to perform a bunch of steps to clean up the fillout vcf and re-annotate it with sample labels
-  # also we are going to merge in the "merged_vcf" with the original samples' vcf values
-  # into the fillout vcf so we have both old and new (sample + fillout) values in a single vcf
-  # also we are going to add a column called SRC telling the source (which sample) each variant was originally found in
   fix_labels_and_merge_vcfs:
+    doc: clean up, re-annotate, and re-header the fillout vcf, also merge against the fillout targets vcf in order to add a SRC sample source tag to tell which samples each variant originated in, and pull back in each variants original quality metrics
     in:
       fillout_vcf: gbcms/output_file
-      merged_vcf: merge_vcfs/merged_vcf
-      merged_vcf_gz: merge_vcfs/merged_vcf_gz
+      merged_vcf: create_fillout_targets_list/merged_vcf
+      merged_vcf_gz: create_fillout_targets_list/merged_vcf_gz
       ref_fasta: ref_fasta
     out: [ fillout_sources_vcf ]
     run:
@@ -354,94 +373,14 @@ steps:
             glob: fillout.merged.sources.vcf
 
 
-  # create CLI args for bcftools filter in order to filter on sample ID's in SRC INFO tag
-  # use the bash snippet generated here in a downstream process for filtering
-  # should look like this:
-  # 'SRC="Sample1,Sample2,"'
-  make_filter_args:
-    in:
-      samples: samples
-    out: [ research_arg, clinical_arg, clinical_expression ]
-    run:
-      class: ExpressionTool
-      inputs:
-        samples: "types.yml#FilloutSample[]"
-      outputs:
-        # 'SRC="Sample1,Sample2,"'
-        research_arg: string
-        # 'SRC="Sample1,Sample2,"'
-        clinical_arg: string
-        # bcftools view -e "SRC='Sample3'" - |  bcftools view -e "SRC='Sample4'" - | ...
-        clinical_expression: string
-      expression: |
-        ${
-          // split the list of samples into research and clinical samples
-          var research_samples = [];
-          var clinical_samples = [];
-
-          for ( var i in inputs.samples ){
-
-            var sample_type = inputs.samples[i]['sample_type'];
-            var sample_id = inputs.samples[i]['sample_id'];
-
-            if ( sample_type == 'research' ){
-              research_samples.push(sample_id);
-
-            } else if ( sample_type == 'clinical' ) {
-              clinical_samples.push(sample_id);
-            }
-
-          };
-
-          // create the bcftools filter expression for samples;
-          // SRC='Sample1,Sample2'
-          var research_arg = `SRC='${research_samples.join(',')}'`;
-          var clinical_arg = `SRC='${clinical_samples.join(',')}'`;
-
-
-
-
-
-          // create a set of bcftools view -e commands for the clinical samples
-          // need to chain together individual exclusions for each clinical sample_id
-          // it will look like
-          // bcftools view -e "SRC='Sample3'" - |  bcftools view -e "SRC='Sample4'" - | ...
-
-          // start with empty string and build up the final bash command
-          var expr = '';
-
-          // check if there are >0
-          var num_clinical_samples = clinical_samples.length;
-          if (num_clinical_samples > 0){
-            // need to start the command with a | character if there are any samples
-            expr = expr + ' | '
-          };
-
-          for ( var i in clinical_samples ){
-            var sample_id = clinical_samples[i];
-
-            // be careful with the quoting here; must be "SRC='Sample1'"
-            expr = expr + 'bcftools view -e "SRC=' + "'" + sample_id +"'" + '" ';
-
-            // need to apply the | between all args except the final one
-            if (i < num_clinical_samples - 1){
-              expr = expr + ' | ';
-            };
-          };
-
-          return {'research_arg': research_arg, 'clinical_expression': expr, 'clinical_arg': clinical_arg};
-        }
-
-  # split the multi-sample vcf into individual per-sample vcf files and apply conditional filters
   # TODO: deprecate the need for bcftools +split by making GetBaseCountsMultiSample run individually per-sample
   split_filter_vcf:
+    doc: split the multi-sample vcf into individual per-sample vcf files and apply conditional filters
     scatter: sample
     in:
       sample: samples
       fillout_vcf: fix_labels_and_merge_vcfs/fillout_sources_vcf
-      research_arg: make_filter_args/research_arg
-      clinical_arg: make_filter_args/clinical_arg
-      clinical_expression: make_filter_args/clinical_expression
+      clinical_sample_ids: create_clinical_samples_list/clinical_sample_ids
     out: [ sample ]
     run:
       class: CommandLineTool
@@ -454,96 +393,77 @@ steps:
             - $(inputs.fillout_vcf)
             - entryname: run.sh
               entry: |-
-                set -eux
-
+                set -eu
+                # INPUTS:
                 input_vcf='${ return inputs.fillout_vcf.basename ; }'
                 sample_type='${ return inputs.sample["sample_type"] ; }'
                 sample_id='${ return inputs.sample["sample_id"] ; }'
-                # be careful with the quoting args here;
-                # research_filter_arg="${ return inputs.research_arg ; }"
-                # clinical_expression='${return inputs.clinical_expression ; }'
+                clinical_sample_ids='${ return inputs.clinical_sample_ids.join(" "); }'
 
-                # dir to hold split vcf contents
-                split_dir="split"
-                split_vcf="\${split_dir}/\${sample_id}.vcf"
+                clinical_samples_txt=clinical_samples.txt
+                filtered_fillout_filename=filtered.vcf
+                unfiltered_fillout_filename=unfiltered.vcf
 
+                # OUTPUTS:
                 # file where we will save the final filtered variants for conversion to maf
                 filtered_vcf="\${sample_id}.filtered.vcf"
-                # file where we will write out variants to exclude based on filter criteria
-                filter_exclusion_file="\${sample_id}.exclude.txt"
-                # file to save a .txt version of the .vcf for intersecting with the exclusion list
-                sample_vcf_txt="\${sample_id}.vcf.txt"
-                # file where we will save the list of variants to keep
-                filter_inclusion_file="\${sample_id}.include.txt"
-
                 # final output filename
                 unfiltered_vcf="\${sample_id}.vcf"
 
-                mkdir -p "\${split_dir}"
+                # make a file with the list of clinical sample ID's
+                touch "\${clinical_samples_txt}"
+                for i in \${clinical_sample_ids}; do echo "\${i}" >> "\${clinical_samples_txt}" ; done
+
+                # if there is at least 1 clinical sample, then apply filters
+                if [[ \$(wc -l <"\${clinical_samples_txt}") -ge 1 ]]; then
+                  # filter spec:
+                  # Rule 1: If a mutation is in ANY clinical sample; that is if there is a mutation in any clinical sample MAF then that mutation MUST be in the fillout.
+                  # Rule 2: This is the case where NONE of the clinical samples had the mutation. It has two parts
+                  # Rule 2A: If ANY of the clinical samples has a
+                  # t_FL_VF >= 0.10
+                  # Then DO NOT Add this mutation to the fillout
+                  # Rule 2B: If ALL of the clinical samples have
+                  # t_FL_VF < 0.10
+                  # Then put this mutation in the fillout.
+                  # add or subtract a mutation for the fillout for ALL samples. There should never be partial cases where some of the samples have fill out information and not others.
+
+                  # AD='.' : invalid AD value means the mutation was filled out for these samples
+                  # FL_VF>0.1 : the filled out variant had a frequency >0.1 (10%) for these samples
+                  # @clinical_samples.txt applies filters to the samples on the FORMAT tag specified
+                  # make sure to use && to apply conditions to entire variant row in vcf
+                  bcftools filter -e \
+                  "AD[@\${clinical_samples_txt}:*]='.' && FL_VF[@\${clinical_samples_txt}]>0.1" \
+                  "\${input_vcf}" > "\${filtered_fillout_filename}"
+
+                  cp "\${input_vcf}" "\${unfiltered_fillout_filename}"
+                else
+                  # if there were no clinical samples supplied then there is no need for filtering
+                  cp "\${input_vcf}" "\${filtered_fillout_filename}"
+                  cp "\${input_vcf}" "\${unfiltered_fillout_filename}"
+                fi
+
 
                 # split the multi-sample vcf into per-sample vcf files
-                bcftools +split "\${input_vcf}" --output-type v --output "\${split_dir}"
+                # dirs to hold split vcf contents
+                split_dir_filtered="split_filtered"
+                split_dir_unfiltered="split_unfiltered"
+                # the split output vcf filepath for this sample
+                split_vcf_filtered="\${split_dir_filtered}/\${sample_id}.vcf"
+                split_vcf_unfiltered="\${split_dir_unfiltered}/\${sample_id}.vcf"
 
-                # CONDITIONAL VARIANT FILTERING
-                # in clinical samples ONLY;
-                # exclude filled-out variants (identified by invalid AD value of ".")
-                # from research samples (not in any clinical samples)
-                # that have VAF >0.1
-                if [ "\${sample_type}" == "clinical" ]; then
+                mkdir -p "\${split_dir_filtered}"
+                mkdir -p "\${split_dir_unfiltered}"
 
+                bcftools +split "\${filtered_fillout_filename}" --output-type v --output "\${split_dir_filtered}"
+                bcftools +split "\${unfiltered_fillout_filename}" --output-type v --output "\${split_dir_unfiltered}"
 
-                # NOTE: Filter feature is not ready yet; just output the same file twice for now
-                # # keep this section as a placeholder for the upcoming filter feature
-                # # keep these code blocks as examples of how to implement
-                cp "\${split_vcf}" "\${unfiltered_vcf}"
-                cp "\${unfiltered_vcf}" "\${filtered_vcf}"
+                # set the final output files
+                cp "\${split_vcf_filtered}" "\${filtered_vcf}"
+                cp "\${split_vcf_unfiltered}" "\${unfiltered_vcf}"
 
-                # # NEW METHOD
-                # bcftools filter -e "${ return inputs.clinical_arg; } && FL_VF<0.1 & AD='.'" "\${split_vcf}" > "\${filtered_vcf}"
-                # # NOTE: add a bcftools query here for an extra .tsv output file for convenience
-                #
-                #
-                #
-                # # OLD METHOD:
-                # #
-                # # # create file to hold list of variants to exclude
-                # # # exclusion list criteria:
-                # # # variants with fillout VAF >0.1
-                # # # that were not present in the original sample (invalid 'AD' value = "is_fillout=TRUE")
-                # # # which originated in some research sample
-                # # # but were not present in any clinical sample ('SRC' sample list)
-                # # # # NOTE: https://samtools.github.io/bcftools/bcftools.html#expressions
-                # # # # > Comma in strings is interpreted as a separator and when multiple values are compared, the OR logic is used
-                # # bcftools view -i 'FL_VF>0.1' "\${split_vcf}" | \
-                # # bcftools view -i 'AD="."' | \
-                # # bcftools view -i "${ return inputs.research_arg ; }" ${return inputs.clinical_expression ; } | \
-                # # bcftools query -f '%CHROM\\t%POS\\t%END\\t%SRC\\t[AD=%AD\\tFL_VF=%FL_VF]\\n' - > "\${filter_exclusion_file}"
-                # #
-                # # # convert the original vcf to a flat txt format for use with bedtools intersect
-                # # bcftools query -f '%CHROM\\t%POS\\t%END\\t%SRC\\t[AD=%AD\\tFL_VF=%FL_VF]\\n' "\${split_vcf}" > "\${sample_vcf_txt}"
-                # #
-                # # # get the list of variants that are not in the exclusion list
-                # # bedtools intersect -v -a "\${sample_vcf_txt}" -b "\${filter_exclusion_file}" -wa > "\${filter_inclusion_file}"
-                # #
-                # # # filter the original vcf down to only include the loci from the inclusion file
-                # # bcftools filter --targets-file "\${filter_inclusion_file}" "\${split_vcf}" > "\${filtered_vcf}"
-                #
-                # # move the unfiltered_vcf to the designated output path
-                # cp "\${split_vcf}" "\${unfiltered_vcf}"
-
-                else
-
-                # sample did not need filtering; copy the sample's vcf to the designated path
-                cp "\${split_vcf}" "\${unfiltered_vcf}"
-                cp "\${unfiltered_vcf}" "\${filtered_vcf}"
-
-                fi
       inputs:
         sample: "types.yml#FilloutSample"
-        clinical_expression: string
-        research_arg: string
-        clinical_arg: string
-        # multi-sample vcf generated from GetBaseCountsMultiSample on all samples at once
+        clinical_sample_ids: string[]
         fillout_vcf: File
       outputs:
         unfiltered_vcf:
@@ -565,9 +485,8 @@ steps:
               return ret;
               }
 
-
-  # convert each sample filtered vcf back to maf format for cBioPortal and end user
   vcf_to_maf:
+    doc: converts each sample vcf back to maf format for cBioPortal and end users
     scatter: sample
     in:
       sample: split_filter_vcf/sample
@@ -674,8 +593,9 @@ steps:
               return ret;
               }
 
-  # combine all the individual mafs into a single maf; add comment headers; fix some values
+
   concat_with_comments:
+    doc: combine all the individual mafs into a single maf; add comment headers; fix some values
     in:
       unfiltered_mafs: vcf_to_maf/unfiltered_maf
       filtered_mafs: vcf_to_maf/filtered_maf
@@ -742,7 +662,6 @@ steps:
       inputs:
         unfiltered_mafs: File[]
         filtered_mafs: File[]
-        # for the unfiltered file output;
         output_unfiltered_filename:
           type: string
           default: "output.maf"
