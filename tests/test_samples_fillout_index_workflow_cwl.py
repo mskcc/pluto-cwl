@@ -11,6 +11,7 @@ THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 PARENT_DIR = os.path.dirname(THIS_DIR)
 sys.path.insert(0, PARENT_DIR)
 from pluto.tools import PlutoTestCase, CWLFile, md5_obj
+from pluto.serializer import OFile, ODir
 sys.path.pop(0)
 
 class TestSamplesFilloutIndex(PlutoTestCase):
@@ -32,7 +33,6 @@ class TestSamplesFilloutIndex(PlutoTestCase):
         """
         Test case for running the fillout workflow on a number of samples, each with a bam and maf
         """
-        # self.preserve = True
         self.maxDiff = None
         self.runner_args['use_cache'] = False # do not use cache for samples fillout workflow it breaks on split_vcf_to_mafs
         self.runner_args['debug'] = True
@@ -73,31 +73,18 @@ class TestSamplesFilloutIndex(PlutoTestCase):
         output_file = os.path.join(output_dir,'output.maf')
 
         expected_output = {
-            'output_file': {
-                'location': 'file://' + output_file,
-                'basename': 'output.maf',
-                'class': 'File',
-                # 'checksum': 'sha1$d8d63a0aca2da20d2d15e26fcf64fd6295eda05e',
-                # 'size': 25838928,
-                'path':  output_file
-                }
-            }
-        # NOTE: for some reason, this file keeps coming out with different annotations for 'splice_acceptor_variant' or `splice_donor_variant`
-        # this keeps changing the byte size and checksum so need to remove those here for now
-        output_json['output_file'].pop('checksum')
-        output_json['output_file'].pop('size')
-        self.assertCWLDictEqual(output_json, expected_output)
+            'output_file': OFile(name = 'output.maf', dir = output_dir),
+        }
+
+        # file contents are inconsistent so strip some keys from the output dict
+        strip_related_keys = [
+        ('basename', 'output.maf', ['size', 'checksum']),
+        ]
+        self.assertCWLDictEqual(output_json, expected_output, related_keys = strip_related_keys)
 
         # instead of checksum and size, count the number of mutations and take a checksum on the mutation contents
-        comments, mutations = self.load_mutations(output_file)
+        comments, mutations = self.load_mutations(output_file, strip = True)
         self.assertEqual(len(mutations), 23742)
-
-        # Need to remove these fields because they are inconsistent on the output maf file;
-        for mut in mutations:
-            mut.pop('all_effects')
-            mut.pop('Consequence')
-            mut.pop('Variant_Classification')
-
         hash = md5_obj(mutations)
         expected_hash = '53ee95f4e07084992362bba4917d1e82'
         self.assertEqual(hash, expected_hash)
