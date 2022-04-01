@@ -11,23 +11,12 @@ THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 PARENT_DIR = os.path.dirname(THIS_DIR)
 sys.path.insert(0, PARENT_DIR)
 from pluto.tools import PlutoTestCase, CWLFile, md5_obj
+from pluto.settings import DATA_SETS
 from pluto.serializer import OFile, ODir
 sys.path.pop(0)
 
 class TestSamplesFilloutIndex(PlutoTestCase):
     cwl_file = CWLFile('samples_fillout_index_workflow.cwl')
-
-    def setUp(self):
-        super().setUp()
-
-        self.sample1_bam = os.path.join(self.DATA_SETS['Proj_1']['BAM_DIR'], "Sample1.bam")
-        self.sample1_maf = os.path.join(self.DATA_SETS['Proj_1']['MAF_DIR'], "Sample1.Sample2.muts.maf")
-
-        self.sample4_bam = os.path.join(self.DATA_SETS['Proj_1']['BAM_DIR'], "Sample4.bam")
-        self.sample4_maf = os.path.join(self.DATA_SETS['Proj_1']['MAF_DIR'], "Sample4.Sample3.muts.maf")
-
-        self.sample24_bam = os.path.join(self.DATA_SETS['Proj_1']['BAM_DIR'], "Sample24.bam")
-        self.sample24_maf = os.path.join(self.DATA_SETS['Proj_1']['MAF_DIR'], "Sample24.Sample23.muts.maf")
 
     def test_run_fillout_workflow(self):
         """
@@ -38,31 +27,59 @@ class TestSamplesFilloutIndex(PlutoTestCase):
         self.runner_args['debug'] = True
         self.runner_args['js_console'] = True
 
+        sample1_maf = os.path.join(DATA_SETS['Fillout01']['MAF_DIR'], 'Sample1.FillOutUnitTest01.muts.maf')
+        sample2_maf = os.path.join(DATA_SETS['Fillout01']['MAF_DIR'], 'Sample2.FillOutUnitTest01.muts.maf')
+        sample3_maf = os.path.join(DATA_SETS['Fillout01']['MAF_DIR'], 'Sample3.FillOutUnitTest01.muts.maf')
+        sample4_maf = os.path.join(DATA_SETS['Fillout01']['MAF_DIR'], 'Sample4.FillOutUnitTest01.muts.maf')
+        sample5_maf = os.path.join(DATA_SETS['Fillout01']['MAF_DIR'], 'Sample5.FillOutUnitTest01.muts.maf')
+
+        sample1_bam = os.path.join(DATA_SETS['Fillout01']['BAM_DIR'], 'Sample1.UnitTest01.bam')
+        sample2_bam =os.path.join(DATA_SETS['Fillout01']['BAM_DIR'], 'Sample2.UnitTest01.bam')
+        sample3_bam =os.path.join(DATA_SETS['Fillout01']['BAM_DIR'], 'Sample3.UnitTest01.bam')
+        sample4_bam =os.path.join(DATA_SETS['Fillout01']['BAM_DIR'], 'Sample4.UnitTest01.bam')
+        sample5_bam =os.path.join(DATA_SETS['Fillout01']['BAM_DIR'], 'Sample5.UnitTest01.bam')
+
         self.input = {
             "samples": [
                 {
                     "sample_id": "Sample1",
-                    "normal_id": "Sample1-N",
-                    "prefilter": True,
+                    "normal_id": "FROZENPOOLEDNORMAL_IMPACT505_V2",
                     "sample_type": "research",
-                    "maf_file": { "class": "File", "path": self.sample1_maf },
-                    "bam_file": { "class": "File", "path": self.sample1_bam }
+                    "prefilter": True,
+                    "maf_file": { "class": "File", "path": sample1_maf },
+                    "bam_file": { "class": "File", "path": sample1_bam }
+                },
+                {
+                    "sample_id": "Sample2",
+                    "normal_id": "FROZENPOOLEDNORMAL_IMPACT505_V2",
+                    "sample_type": "research",
+                    "prefilter": True,
+                    "maf_file": { "class": "File", "path": sample2_maf },
+                    "bam_file": { "class": "File", "path": sample2_bam }
+                },
+                {
+                    "sample_id": "Sample3",
+                    "normal_id": "FROZENPOOLEDNORMAL_IMPACT505_V2",
+                    "sample_type": "clinical",
+                    "prefilter": False,
+                    "maf_file": { "class": "File", "path": sample3_maf },
+                    "bam_file": { "class": "File", "path": sample3_bam }
                 },
                 {
                     "sample_id": "Sample4",
-                    "normal_id": "DMP-MATCHED-NORMAL",
-                    "prefilter": False,
+                    "normal_id": "FROZENPOOLEDNORMAL_IMPACT505_V2",
                     "sample_type": "clinical",
-                    "maf_file": { "class": "File", "path": self.sample4_maf },
-                    "bam_file": { "class": "File", "path": self.sample4_bam }
+                    "prefilter": False,
+                    "maf_file": { "class": "File", "path": sample4_maf },
+                    "bam_file": { "class": "File", "path": sample4_bam }
                 },
                 {
-                    "sample_id": "Sample24",
-                    "normal_id": "DMP-UNMATCHED-NORMAL",
-                    "prefilter": False,
-                    "sample_type": "clinical",
-                    "maf_file": { "class": "File", "path": self.sample24_maf },
-                    "bam_file": { "class": "File", "path": self.sample24_bam }
+                    "sample_id": "Sample5",
+                    "normal_id": "FROZENPOOLEDNORMAL_IMPACT505_V2",
+                    "sample_type": "research",
+                    "prefilter": True,
+                    "maf_file": { "class": "File", "path": sample5_maf },
+                    "bam_file": { "class": "File", "path": sample5_bam }
                 },
             ],
             "fillout_output_fname": 'output.maf',
@@ -71,22 +88,40 @@ class TestSamplesFilloutIndex(PlutoTestCase):
 
         output_json, output_dir = self.run_cwl()
         output_file = os.path.join(output_dir,'output.maf')
+        filtered_output_path = os.path.join(output_dir,'output.filtered.maf')
+        portal_output_path = os.path.join(output_dir,'fillout.portal.maf')
 
         expected_output = {
             'output_file': OFile(name = 'output.maf', dir = output_dir),
+            'filtered_file': OFile(name = 'output.filtered.maf', dir = output_dir),
+            'portal_file': OFile(name = 'fillout.portal.maf', dir = output_dir),
         }
 
         # file contents are inconsistent so strip some keys from the output dict
         strip_related_keys = [
         ('basename', 'output.maf', ['size', 'checksum']),
+        ('basename', 'output.filtered.maf', ['size', 'checksum']),
+        ('basename', 'fillout.portal.maf', ['size', 'checksum'])
         ]
         self.assertCWLDictEqual(output_json, expected_output, related_keys = strip_related_keys)
 
         # instead of checksum and size, count the number of mutations and take a checksum on the mutation contents
         comments, mutations = self.load_mutations(output_file, strip = True)
-        self.assertEqual(len(mutations), 23742)
+        self.assertEqual(len(mutations), 310)
         hash = md5_obj(mutations)
-        expected_hash = '53ee95f4e07084992362bba4917d1e82'
+        expected_hash = '18fafe6dd335cb62f515e0323e6b74b2'
+        self.assertEqual(hash, expected_hash)
+
+        comments, mutations = self.load_mutations(filtered_output_path, strip = True)
+        self.assertEqual(len(mutations), 225)
+        hash = md5_obj(mutations)
+        expected_hash = '450b97a2b93ed9421c141837f99240ce'
+        self.assertEqual(hash, expected_hash)
+
+        comments, mutations = self.load_mutations(portal_output_path, strip = True)
+        self.assertEqual(len(mutations), 225)
+        hash = md5_obj(mutations)
+        expected_hash = 'cbe6196bc0572d2561e51e41656a89f8'
         self.assertEqual(hash, expected_hash)
 
 

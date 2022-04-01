@@ -226,10 +226,16 @@ steps:
       exac_filter: exac_filter
       samples: convert_sample_types/samples
       ref_fasta: ref_fasta
-    out: [ output_file ]
+    out: [ output_file, filtered_file, portal_file ]
 
 
 outputs:
   output_file:
     type: File
     outputSource: run_samples_fillout/output_file
+  filtered_file:
+    type: File
+    outputSource: run_samples_fillout/filtered_file
+  portal_file:
+    type: File
+    outputSource: run_samples_fillout/portal_file
