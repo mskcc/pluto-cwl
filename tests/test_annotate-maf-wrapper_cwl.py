@@ -5,15 +5,14 @@ unit tests for the annotate-maf-wrapper.cwl file
 """
 import os
 import sys
-# import json
 import unittest
-from tempfile import TemporaryDirectory
 
 THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 PARENT_DIR = os.path.dirname(THIS_DIR)
 sys.path.insert(0, PARENT_DIR)
 from pluto.tools import PlutoTestCase, CWLFile, TableReader
 from pluto.settings import ENABLE_LARGE_TESTS
+from pluto.serializer import OFile, ODir
 sys.path.pop(0)
 
 class TestAnnotateMafWrapperCWL(PlutoTestCase):
@@ -41,38 +40,15 @@ class TestAnnotateMafWrapperCWL(PlutoTestCase):
 
         expected_output = {
             'failed': False,
-            'output_file': {
-                'location': 'file://' + os.path.join(output_dir, 'Sample1_hisens.ccf.maf'),
-                'basename': 'Sample1_hisens.ccf.maf',
-                'class': 'File',
-                'checksum': 'sha1$8cd487056bd86177d19d3dd0fe072747d31fd9b7',
-                'size': 60230,
-                'path': os.path.join(output_dir, 'Sample1_hisens.ccf.maf')
-            },
-            'stderr_txt': {
-                'basename': 'annotate_maf_stderr.txt',
-                'checksum': 'sha1$b87a1dfbeeaf0f3addd5e5efdddbd2e7bbc55f03',
-                'class': 'File',
-                'location': 'file://' + os.path.join(output_dir,'annotate_maf_stderr.txt'),
-                'path': os.path.join(output_dir,'annotate_maf_stderr.txt'),
-                'size': 37
-            },
-           'stdout_txt': {
-                'basename': 'annotate_maf_stdout.txt',
-                'checksum': 'sha1$da39a3ee5e6b4b0d3255bfef95601890afd80709',
-                'class': 'File',
-                'location': 'file://' + os.path.join(output_dir,'annotate_maf_stdout.txt'),
-                'path': os.path.join(output_dir,'annotate_maf_stdout.txt'),
-                'size': 0
-            }
+            'output_file': OFile(name = 'Sample1_hisens.ccf.maf', hash = '8cd487056bd86177d19d3dd0fe072747d31fd9b7', size = 60230, dir = output_dir),
+            'stderr_txt': OFile(name = 'annotate_maf_stderr.txt', dir = output_dir),
+            'stdout_txt': OFile(name = 'annotate_maf_stdout.txt', dir = output_dir),
         }
-        self.maxDiff = None
-        expected_output['stderr_txt']['checksum'] = None
-        expected_output['stderr_txt']['size'] = None
-        output_json['stderr_txt']['checksum'] = None
-        output_json['stderr_txt']['size'] = None
-
-        self.assertCWLDictEqual(output_json, expected_output)
+        strip_related_keys = [
+        ('basename', 'annotate_maf_stderr.txt', ['size', 'checksum']),
+        ('basename', 'annotate_maf_stdout.txt', ['size', 'checksum'])
+        ]
+        self.assertCWLDictEqual(output_json, expected_output, related_keys = strip_related_keys)
 
         path = os.path.join(output_dir, 'Sample1_hisens.ccf.maf')
         table_reader = TableReader(path)
@@ -80,15 +56,6 @@ class TestAnnotateMafWrapperCWL(PlutoTestCase):
         fieldnames = table_reader.get_fieldnames()
         records = [ rec for rec in table_reader.read() ]
         self.assertEqual(len(records), 41)
-
-        stdout_txt = os.path.join(output_dir,'annotate_maf_stdout.txt')
-        stderr_txt = os.path.join(output_dir,'annotate_maf_stderr.txt')
-        # with open(stdout_txt) as f:
-        #     lines = [ l for l in f ]
-        # print(lines)
-        # with open(stderr_txt) as f:
-        #     lines = [ l for l in f ]
-        # self.assertEqual(lines, [])
 
 
     @unittest.skipIf(ENABLE_LARGE_TESTS!=True, "is a large test")
@@ -114,33 +81,15 @@ class TestAnnotateMafWrapperCWL(PlutoTestCase):
 
         expected_output = {
             'failed': False,
-            'output_file': {
-                'location': 'file://' + os.path.join(output_dir, 'Sample1_hisens.ccf.maf'),
-                'basename': 'Sample1_hisens.ccf.maf',
-                'class': 'File',
-                'checksum': 'sha1$7e478a8a44d27735f26e368989c672ed6ef5d52a',
-                'size': 19217199,
-                'path': os.path.join(output_dir, 'Sample1_hisens.ccf.maf')
-            },
-            'stderr_txt': {
-                'basename': 'annotate_maf_stderr.txt',
-                'checksum': 'sha1$0c28147c3a113bcb74ce2cbb34204d18dded3206',
-                'class': 'File',
-                'location': 'file://' + os.path.join(output_dir,'annotate_maf_stderr.txt'),
-                'path': os.path.join(output_dir,'annotate_maf_stderr.txt'),
-                'size': 193
-            },
-           'stdout_txt': {
-                'basename': 'annotate_maf_stdout.txt',
-                'checksum': 'sha1$da39a3ee5e6b4b0d3255bfef95601890afd80709',
-                'class': 'File',
-                'location': 'file://' + os.path.join(output_dir,'annotate_maf_stdout.txt'),
-                'path': os.path.join(output_dir,'annotate_maf_stdout.txt'),
-                'size': 0
-            }
+            'output_file': OFile(name = 'Sample1_hisens.ccf.maf', hash = '7e478a8a44d27735f26e368989c672ed6ef5d52a', size = 19217199, dir = output_dir),
+            'stderr_txt': OFile(name = 'annotate_maf_stderr.txt', dir = output_dir),
+            'stdout_txt': OFile(name = 'annotate_maf_stdout.txt', dir = output_dir),
         }
-        self.maxDiff = None
-        self.assertCWLDictEqual(output_json, expected_output)
+        strip_related_keys = [
+        ('basename', 'annotate_maf_stderr.txt', ['size', 'checksum']),
+        ('basename', 'annotate_maf_stdout.txt', ['size', 'checksum'])
+        ]
+        self.assertCWLDictEqual(output_json, expected_output, related_keys = strip_related_keys)
 
 if __name__ == "__main__":
     unittest.main()
