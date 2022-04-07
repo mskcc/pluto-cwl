@@ -47,7 +47,7 @@ class TestAddHeader(PlutoTestCase):
                 'path':  os.path.join(output_dir,'output.txt')
                 }
             }
-        self.assertDictEqual(output_json, expected_output)
+        self.assertCWLDictEqual(output_json, expected_output)
 
         output_file = expected_output['output_file']['path']
         with open(output_file) as f:
@@ -85,7 +85,7 @@ class TestAddHeader(PlutoTestCase):
                 'path':  os.path.join(output_dir,'output.txt')
                 }
             }
-        self.assertDictEqual(output_json, expected_output)
+        self.assertCWLDictEqual(output_json, expected_output)
 
         output_file = expected_output['output_file']['path']
         with open(output_file) as f:

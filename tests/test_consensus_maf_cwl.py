@@ -172,9 +172,9 @@ class TestConsensusMafs(PlutoTestCase):
                 }
             }
 
-        self.assertEqual(output_json, expected_output)
+        self.assertCWLDictEqual(output_json, expected_output)
 
-        output_file = output_json['output_file']['path']
+        output_file = os.path.join(output_dir,'dedup.maf')
 
         table_reader = TableReader(output_file)
         comments = table_reader.comment_lines

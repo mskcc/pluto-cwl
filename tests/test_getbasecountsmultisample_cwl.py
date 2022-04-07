@@ -125,9 +125,9 @@ class TestGetBaseCounts(PlutoTestCase):
                 'path':  os.path.join(output_dir,'fillout.maf')
                 }
             }
-        self.assertEqual(output_json, expected_output)
+        self.assertCWLDictEqual(output_json, expected_output)
 
-        output_file = output_json['output_file']['path']
+        output_file = os.path.join(output_dir,'fillout.maf')
 
         with open(output_file) as f:
             lines = [ line for line in f ]

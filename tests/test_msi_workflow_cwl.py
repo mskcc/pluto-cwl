@@ -94,9 +94,9 @@ class TestMsiWorkflow(PlutoTestCase):
                 'path':  os.path.join(output_dir,'data_clinical_sample.txt')
                 }
             }
-        self.assertDictEqual(output_json, expected_output)
+        self.assertCWLDictEqual(output_json, expected_output)
 
-        output_file = expected_output['output_file']['path']
+        output_file = os.path.join(output_dir,'data_clinical_sample.txt')
         lines = self.read_table(output_file)
 
         expected_lines = [
@@ -172,9 +172,9 @@ class TestMsiWorkflow(PlutoTestCase):
                 'path':  os.path.join(output_dir,'data_clinical_sample.txt')
                 }
             }
-        self.assertDictEqual(output_json, expected_output)
+        self.assertCWLDictEqual(output_json, expected_output)
 
-        output_file = expected_output['output_file']['path']
+        output_file = os.path.join(output_dir,'data_clinical_sample.txt')
 
         lines = self.read_table(output_file)
 
@@ -244,9 +244,9 @@ class TestMsiWorkflow(PlutoTestCase):
                 'path':  os.path.join(output_dir,'data_clinical_sample.txt')
                 }
             }
-        self.assertDictEqual(output_json, expected_output)
+        self.assertCWLDictEqual(output_json, expected_output)
 
-        output_file = expected_output['output_file']['path']
+        output_file = os.path.join(output_dir,'data_clinical_sample.txt')
         lines = self.read_table(output_file)
 
         expected_lines = [

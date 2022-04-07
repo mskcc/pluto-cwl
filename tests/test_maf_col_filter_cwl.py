@@ -157,12 +157,12 @@ class TestMafColFilter(unittest.TestCase):
             self.assertDictEqual(output_json, expected_output)
 
             # validate number of lines output
-            with open(output_json['output_file']['path']) as fin:
+            with open(os.path.join(output_dir, 'output.maf')) as fin:
                 output_maf_lines = len(fin.readlines())
             self.assertEqual(output_maf_lines, 12518)
 
             # validate file contents
-            comments, mutations = load_mutations(output_json['output_file']['path'])
+            comments, mutations = load_mutations(os.path.join(output_dir, 'output.maf'))
 
             self.assertEqual(len(mutations), 12514)
 

@@ -40,20 +40,20 @@ class TestAddImpactCWL(PlutoTestCase):
             "output_filename":  'output.maf',
             }
         output_json, output_dir = self.run_cwl()
+        output_path = os.path.join(output_dir, 'output.maf')
 
         expected_output = {
             'output_file': {
-                'location': 'file://' + os.path.join(output_dir, 'output.maf'),
+                'location': 'file://' + output_path,
                 'basename': 'output.maf',
                 'class': 'File',
                 'checksum': 'sha1$39de59ad5d736db692504012ce86d3395685112e',
                 'size': 109,
-                'path': os.path.join(output_dir, 'output.maf')
+                'path': output_path
                 }
             }
-        self.assertDictEqual(output_json, expected_output)
-
-        comments, mutations = self.load_mutations(output_json['output_file']['path'])
+        self.assertCWLDictEqual(output_json, expected_output)
+        comments, mutations = self.load_mutations(output_path)
 
         expected_comments = ['# comment 1', '# comment 2']
         self.assertEqual(comments, expected_comments)

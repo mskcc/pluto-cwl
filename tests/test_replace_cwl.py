@@ -64,7 +64,7 @@ class TestReplace(unittest.TestCase):
             output_json = json.loads(proc_stdout)
 
             # check the contents of the concatenated file; should be the same as the input
-            output_file = output_json['output_file']['path']
+            output_file = os.path.join(output_dir, 'output.txt')
             with open(output_file) as fin:
                 output_lines = [ line.strip() for line in fin ]
 

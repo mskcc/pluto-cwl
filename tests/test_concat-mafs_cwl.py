@@ -158,23 +158,22 @@ class TestConcatMafs(PlutoTestCase):
         }
 
         output_json, output_dir = self.run_cwl()
+        output_path = os.path.join(output_dir,'output.maf')
 
         expected_output = {
             'output_file': {
-                'location': 'file://' + os.path.join(output_dir,'output.maf'),
+                'location': 'file://' + output_path,
                 'basename': 'output.maf',
                 'class': 'File',
                 'checksum': 'sha1$7a073aeff90d335f1b77ddd43d31d1fdf9a8cf57',
                 'size': 678,
-                'path':  os.path.join(output_dir,'output.maf')
+                'path':  output_path
                 }
             }
 
-        self.assertEqual(output_json, expected_output)
+        self.assertCWLDictEqual(output_json, expected_output)
 
-        output_file = output_json['output_file']['path']
-
-        table_reader = TableReader(output_file)
+        table_reader = TableReader(output_path)
         comments = table_reader.comment_lines
         fieldnames = table_reader.get_fieldnames()
         records = [ rec for rec in table_reader.read() ]

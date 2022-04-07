@@ -5,7 +5,7 @@ class: CommandLineTool
 baseCommand: [ cat ]
 requirements:
   DockerRequirement:
-    dockerPull: mskcc/helix_filters_01:21.3.4
+    dockerPull: mskcc/helix_filters_01:21.4.1
 stdout: output.txt
 inputs:
   input_files:

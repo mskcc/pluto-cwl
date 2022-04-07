@@ -52,9 +52,9 @@ class TestExampleWorkflow(PlutoTestCase):
         output_json['env'].pop('checksum')
         output_json['env'].pop('size')
 
-        self.assertDictEqual(output_json, expected_output)
+        self.assertCWLDictEqual(output_json, expected_output)
 
-        output_file = output_json['output_file']['path']
+        output_file = os.path.join(output_dir, "output.concat.tsv")
         with open(output_file) as f:
             lines = [ l.strip() for l in f ]
 

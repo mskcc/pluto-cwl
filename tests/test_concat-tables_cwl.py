@@ -46,9 +46,10 @@ class TestConcatTables(PlutoTestCase):
             }
 
         output_json, output_dir = self.run_cwl()
+        output_path = os.path.join(output_dir, 'output.txt')
 
         # check the contents of the concatenated file; should be the same as the input
-        output_file = output_json['output_file']['path']
+        output_file = output_path
         with open(output_file) as fin:
             output_lines = [ line.strip() for line in fin ]
 
@@ -57,15 +58,15 @@ class TestConcatTables(PlutoTestCase):
 
         expected_output = {
             'output_file': {
-                'location': 'file://' + os.path.join(output_dir, 'output.txt'),
+                'location': 'file://' + output_path,
                 'basename': 'output.txt',
                 'class': 'File',
                 'checksum': 'sha1$d92a4e707cb5dad2ec557edfe976680dfffc5f3f',
                 'size': 53,
-                'path': os.path.join(output_dir, 'output.txt')
+                'path': output_path
                 }
             }
-        self.assertDictEqual(output_json, expected_output)
+        self.assertCWLDictEqual(output_json, expected_output)
 
     def test_concat_one_tables(self):
         """
@@ -88,9 +89,10 @@ class TestConcatTables(PlutoTestCase):
             }
 
         output_json, output_dir = self.run_cwl()
+        output_path = os.path.join(output_dir, 'output.txt')
 
         # check the contents of the concatenated file; should be the same as the input
-        output_file = output_json['output_file']['path']
+        output_file = output_path
         with open(output_file) as fin:
             output_lines = [ line.strip() for line in fin ]
 
@@ -99,15 +101,15 @@ class TestConcatTables(PlutoTestCase):
 
         expected_output = {
             'output_file': {
-                'location': 'file://' + os.path.join(output_dir, 'output.txt'),
+                'location': 'file://' + output_path,
                 'basename': 'output.txt',
                 'class': 'File',
                 'checksum': 'sha1$2274c54c24a98e8235e34d78b700d04cb95f48dd',
                 'size': 21,
-                'path': os.path.join(output_dir, 'output.txt')
+                'path': output_path
                 }
             }
-        self.assertDictEqual(output_json, expected_output)
+        self.assertCWLDictEqual(output_json, expected_output)
 
 
 if __name__ == "__main__":

@@ -50,12 +50,12 @@ class TestMafFilter(unittest.TestCase):
                 input_json = input_json,
                 cwl_file = cwl_file)
 
-            with open(output_json['analysis_mutations_file']['path']) as fin:
+            with open(os.path.join(output_dir, "Proj_08390_G.muts.maf")) as fin:
                 output_maf_lines = len(fin.readlines())
             self.assertEqual(output_maf_lines, 27)
 
             # validate output mutation file contents
-            comments, mutations = load_mutations(output_json['analysis_mutations_file']['path'])
+            comments, mutations = load_mutations(os.path.join(output_dir, "Proj_08390_G.muts.maf"))
             expected_comments, expected_mutations = load_mutations(os.path.join(DATA_SETS['Proj_08390_G']['MAF_FILTER_DIR'], "Sample1", "analyst_file.txt"))
 
             for mutation in expected_mutations:
@@ -63,7 +63,7 @@ class TestMafFilter(unittest.TestCase):
 
             self.assertEqual(len(mutations), len(expected_mutations))
 
-            comments, mutations = load_mutations(output_json['cbio_mutation_data_file']['path'])
+            comments, mutations = load_mutations(os.path.join(output_dir, 'data_mutations_extended.txt'))
             expected_comments, expected_mutations = load_mutations(os.path.join(DATA_SETS['Proj_08390_G']['MAF_FILTER_DIR'], "Sample1", "portal_file.txt"))
 
             for mutation in expected_mutations:
@@ -97,7 +97,7 @@ class TestMafFilter(unittest.TestCase):
                     'size': 18627626
                     }
                 }
-            self.assertDictEqual(output_json, expected_output)
+            self.assertEqual(output_json, expected_output)
 
     def test_maf_filter_argos_3_2_0(self):
         """
@@ -131,7 +131,7 @@ class TestMafFilter(unittest.TestCase):
                 cwl_file = cwl_file)
 
             # validate output mutation file contents
-            comments, mutations = load_mutations(output_json['analysis_mutations_file']['path'])
+            comments, mutations = load_mutations(os.path.join(output_dir, "Proj_08390_G.muts.maf"))
             expected_comments, expected_mutations = load_mutations(os.path.join(DATA_SETS['Proj_08390_G']['MAF_FILTER_DIR'], "Sample1", "analyst_file.txt"))
 
             for mutation in expected_mutations:
@@ -139,7 +139,7 @@ class TestMafFilter(unittest.TestCase):
 
             self.assertEqual(len(mutations), len(expected_mutations))
 
-            comments, mutations = load_mutations(output_json['cbio_mutation_data_file']['path'])
+            comments, mutations = load_mutations(os.path.join(output_dir, 'data_mutations_extended.txt'))
             expected_comments, expected_mutations = load_mutations(os.path.join(DATA_SETS['Proj_08390_G']['MAF_FILTER_DIR'], "Sample1", "portal_file.txt"))
 
             for mutation in expected_mutations:
@@ -178,7 +178,7 @@ class TestMafFilter(unittest.TestCase):
                 output_maf_lines = len(fin.readlines())
             self.assertEqual(output_maf_lines, 27)
 
-            self.assertDictEqual(output_json, expected_output)
+            self.assertEqual(output_json, expected_output)
 
     def test_filter_maf_file_impact_false(self):
         """
@@ -211,7 +211,7 @@ class TestMafFilter(unittest.TestCase):
                 input_json = input_json,
                 cwl_file = cwl_file)
 
-            with open(output_json['analysis_mutations_file']['path']) as fin:
+            with open(os.path.join(output_dir, "Proj_08390_G.muts.maf")) as fin:
                 output_maf_lines = len(fin.readlines())
             self.assertEqual(output_maf_lines, 23)
 
@@ -241,7 +241,7 @@ class TestMafFilter(unittest.TestCase):
                     'size': 18790398
                     }
                 }
-            self.assertDictEqual(output_json, expected_output)
+            self.assertEqual(output_json, expected_output)
 
     def test_large_maf_file(self):
         """
@@ -295,18 +295,18 @@ class TestMafFilter(unittest.TestCase):
                     'size': 1047796463
                     }
                 }
-            self.assertDictEqual(output_json, expected_output)
+            self.assertEqual(output_json, expected_output)
 
-            with open(output_json['analysis_mutations_file']['path']) as fin:
+            with open(os.path.join(output_dir, "Proj_08390_G.muts.maf")) as fin:
                 output_maf_lines = len(fin.readlines())
             self.assertEqual(output_maf_lines, 1664)
 
-            with open(output_json['cbio_mutation_data_file']['path']) as fin:
+            with open(os.path.join(output_dir, 'data_mutations_extended.txt')) as fin:
                 output_maf_lines = len(fin.readlines())
             self.assertEqual(output_maf_lines, 1141)
 
             # validate output mutation file contents
-            comments, mutations = load_mutations(output_json['analysis_mutations_file']['path'])
+            comments, mutations = load_mutations(os.path.join(output_dir, "Proj_08390_G.muts.maf"))
             expected_comments, expected_mutations = load_mutations(os.path.join(DATA_SETS['Proj_08390_G']['MAF_FILTER_DIR'], "Proj_08390_G", "analyst_file.txt"))
 
             for mutation in expected_mutations:
@@ -314,7 +314,7 @@ class TestMafFilter(unittest.TestCase):
 
             self.assertEqual(len(mutations), len(expected_mutations))
 
-            comments, mutations = load_mutations(output_json['cbio_mutation_data_file']['path'])
+            comments, mutations = load_mutations(os.path.join(output_dir, 'data_mutations_extended.txt'))
             expected_comments, expected_mutations = load_mutations(os.path.join(DATA_SETS['Proj_08390_G']['MAF_FILTER_DIR'], "Proj_08390_G", "portal_file.txt"))
 
             for mutation in expected_mutations:

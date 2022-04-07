@@ -2,8 +2,11 @@
 # environment settings for use on Juno HPC cluster
 # USAGE: . ./env.juno.sh <target>
 
+# NOTE: use the toil recipe target for everthing now!!
+
 # set -eu # NOTE: do not use this because it can propagate into cwl-tool subprocesses and make them break unneccessarily
 arg="${1:-None}"
+
 
 # load global 'module' command if its present
 [ -e /etc/profile.d/modules.sh ] && . /etc/profile.d/modules.sh || :
@@ -11,12 +14,13 @@ arg="${1:-None}"
 case $arg in
     # TODO: clean this up! Some of these are deprecated
 
-    # for running test cases in dev with cwltool
-    test)
-        module load singularity/3.7.1
-        module load python/3.7.1
-        module load cwl/cwltool
-        ;;
+    #
+    # # for running test cases in dev with cwltool
+    # test)
+    #     module load singularity/3.7.1
+    #     module load python/3.7.1
+    #     module load cwl/cwltool
+    #     ;;
 
     # for running large end-to-end tests with Jenkins
     integration_test)
@@ -32,30 +36,31 @@ case $arg in
         unset PYTHONHOME
         ;;
 
+
     # for running all test cases including the large integration tests
     # TODO: remove this one!
-    test-full)
-        export LARGE_TESTS=True
-        module load singularity/3.7.1
-        module load python/3.7.1
-        module load cwl/cwltool
-        ;;
+    # test-full)
+    #     export LARGE_TESTS=True
+    #     module load singularity/3.7.1
+    #     module load python/3.7.1
+    #     module load cwl/cwltool
+    #     ;;
 
     # for running CWL's with Singularity
     # TODO: remove this one!
-    singularity)
-        unset SINGULARITY_CACHEDIR  # TODO: why do I need to unset this when I am explicitly setting it in the Makefile??
-        module load singularity/3.7.1
-        ;;
+    # singularity)
+    #     unset SINGULARITY_CACHEDIR  # TODO: why do I need to unset this when I am explicitly setting it in the Makefile??
+    #     module load singularity/3.7.1
+    #     ;;
 
     # for interactive shell session
     # TODO: Do we still need this one??
-    shell)
-        module load singularity/3.7.1
-        module load python/3.7.1
-        module load cwl/cwltool
-        module load jq
-        ;;
+    # shell)
+    #     module load singularity/3.7.1
+    #     module load python/3.7.1
+    #     module load cwl/cwltool
+    #     module load jq
+    #     ;;
 
     # for using conda install dependencies
     conda)
@@ -65,6 +70,7 @@ case $arg in
         ;;
 
     # for using conda installed Toil and Singularity to run CWL's
+    # NOTE: just use this env recipe for everything! We need the conda-installed deps anyway for newer CWL features
     toil)
         # need to get these env vars to propagate into the HPC jobs; SINGULARITY_DOCKER_USERNAME  SINGULARITY_DOCKER_PASSWORD
         [ -e /juno/work/ci/kellys5/projects/toil-settings/toil-settings.sh ] && \

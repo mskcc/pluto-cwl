@@ -48,6 +48,11 @@ make test
 
 # run tests in parallel
 make test3 -j 8
+
+# or
+
+# run integration tests only
+make integration_test
 ```
 
 To do a version bump of all CWL files to a new version of the helix_filters container, use:
@@ -115,25 +120,25 @@ init:
 export SINGULARITY_CACHEDIR:=/juno/work/ci/pluto-cwl-test/cache
 # GIT_TAG:=$(shell git describe --tags --abbrev=0)
 HF_CONTAINER:=mskcc/helix_filters_01
-HF_TAG:=21.3.4
+HF_TAG:=21.3.5
 DOCKER_TAG:=$(HF_CONTAINER):$(HF_TAG)
 DOCKER_DEV_TAG:=$(HF_CONTAINER):latest
 # NOTE: you cannot use a filename with a ':' as a Makefile target
 SINGULARITY_SIF:=mskcc_helix_filters_01:$(HF_TAG).sif
 SINGULARITY_DEV_SIF:=mskcc_helix_filters_01:latest.sif
 singularity-pull:
-	. "$(ENVSH)" singularity && \
+	. "$(ENVSH)" toil && \
 	singularity pull --force --name "$(SINGULARITY_SIF)" docker://$(DOCKER_TAG)
 
 singularity-pull-dev:
-	. "$(ENVSH)" singularity && \
+	. "$(ENVSH)" toil && \
 	singularity pull --force --name "$(SINGULARITY_DEV_SIF)" docker://$(DOCKER_DEV_TAG)
 # unset SINGULARITY_CACHEDIR && \
 # module load singularity/3.3.0 && \
 
 # shell into the Singularity container to check that it looks right
 singularity-shell:
-	- . "$(ENVSH)" singularity && \
+	- . "$(ENVSH)" toil && \
 	singularity shell "$(SINGULARITY_SIF)"
 
 # mskcc/roslin-variant-facets:1.6.3
@@ -141,32 +146,32 @@ singularity-shell:
 FACETS_DOCKERTAG:=mskcc/helix_filters_01:facets-1.6.3
 FACETS_SIF:=mskcc_helix_filters_01:facets-1.6.3.sif
 singularity-pull-facets:
-	. "$(ENVSH)" singularity && \
+	. "$(ENVSH)" toil && \
 	singularity pull --force --name "$(FACETS_SIF)" docker://$(FACETS_DOCKERTAG)
 
 FACETS_SUITE_DOCKERTAG:=mskcc/helix_filters_01:facets-suite-2.0.6
 FACETS_SUITE_SIF:=helix_filters_01_facets-suite-2.0.6.sif
 singularity-pull-facets-suite:
-	. "$(ENVSH)" singularity && \
+	. "$(ENVSH)" toil && \
 	singularity pull --force --name "$(FACETS_SUITE_SIF)" docker://$(FACETS_SUITE_DOCKERTAG)
 
 # docker://cmopipeline/getbasecountsmultisample:1.2.2
 FILLOUT_DOCKERTAG:=mskcc/helix_filters_01:getbasecountsmultisample-1.2.2
 FILLOUT_SIF:=helix_filters_01_getbasecountsmultisample-1.2.2.sif
 singularity-pull-fillout:
-	. "$(ENVSH)" singularity && \
+	. "$(ENVSH)" toil && \
 	singularity pull --force --name "$(FILLOUT_SIF)" docker://$(FILLOUT_DOCKERTAG)
 
 MSI_DOCKERTAG:=mskcc/msisensor:0.2
 MSI_SIF:=mskcc_msisensor:0.2.sif
 singularity-pull-msi:
-	. "$(ENVSH)" singularity && \
+	. "$(ENVSH)" toil && \
 	singularity pull --force --name "$(MSI_SIF)" docker://$(MSI_DOCKERTAG)
 
 IGV_REPORTS_DOCKERTAG:=$(HF_CONTAINER):igv-reports-1.0.1
 IGV_REPORTS_SIF:=mskcc_helix_filters_01:igv-reports-1.0.1.sif
 singularity-pull-igv-reports:
-	. "$(ENVSH)" singularity && \
+	. "$(ENVSH)" toil && \
 	singularity pull --force --name "$(IGV_REPORTS_SIF)" docker://$(IGV_REPORTS_DOCKERTAG)
 
 # mskcc/roslin-variant-cmo-utils:1.9.15
@@ -174,19 +179,19 @@ singularity-pull-igv-reports:
 CMOUTILS_DOCKERTAG:=mskcc/roslin-variant-cmo-utils:1.9.15
 CMOUTILS_SIF:=mskcc_roslin-variant-cmo-utils:1.9.15.sif
 singularity-pull-cmoutils:
-	. "$(ENVSH)" singularity && \
+	. "$(ENVSH)" toil && \
 	singularity pull --force --name "$(CMOUTILS_SIF)" docker://$(CMOUTILS_DOCKERTAG)
 
 R_DOCKERTAG:=mskcc/helix_filters_01:R-3.5.1
 R_SIF:=mskcc_helix_filters_01:R-3.5.1.sif
 singularity-pull-r:
-	. "$(ENVSH)" singularity && \
+	. "$(ENVSH)" toil && \
 	singularity pull --force --name "$(R_SIF)" docker://$(R_DOCKERTAG)
 
 REPORT_DOCKERTAG:=mskcc/helix_filters_01:reporting
 REPORT_SIF:=mskcc_helix_filters_01:reporting.sif
 singularity-pull-report:
-	. "$(ENVSH)" singularity && \
+	. "$(ENVSH)" toil && \
 	singularity pull --force --name "$(REPORT_SIF)" docker://$(REPORT_DOCKERTAG)
 
 
@@ -201,7 +206,7 @@ singularity-pull-vep:
 	if [ -e "$(VEP_SIF_LOCAL)" ]; then
 	ln -s "$(VEP_SIF_LOCAL)" "$(VEP_SIF)"
 	else
-	. "$(ENVSH)" singularity && singularity pull --force --name "$(VEP_SIF)" docker://$(VEP_DOCKERTAG)
+	. "$(ENVSH)" toil && singularity pull --force --name "$(VEP_SIF)" docker://$(VEP_DOCKERTAG)
 	fi
 	fi
 # rsync -vrthP "$(VEP_SIF_LOCAL)" "$(VEP_SIF)"
@@ -227,32 +232,48 @@ export FIXTURES_DIR:=/juno/work/ci/helix_filters_01/fixtures
 
 # TODO: figure out why this is missing some tests
 test2:
-	. "$(ENVSH)" test && \
+	. "$(ENVSH)" toil && \
 	if [ ! -e "$(SINGULARITY_SIF)" ]; then $(MAKE) singularity-pull; fi && \
 	python3 test.py
 
 # TODO: figure out if we can run the tests in parallel or otherwise make it faster
 # for some reason the test recipe is not running all tests....
 test:
-	. "$(ENVSH)" test && \
+	. "$(ENVSH)" toil && \
 	if [ ! -e "$(SINGULARITY_SIF)" ]; then $(MAKE) singularity-pull; fi && \
 	for i in tests/test_*.py; do echo $$i; python3 $$i; done
 
 # run tests in parallel;
 # $ make test3 -j 4
+# the test
+TEST_ENV:=toil
 TESTS:=$(shell ls tests/test_*.py)
 $(TESTS):
-	. "$(ENVSH)" test && echo $@; python3 $@
+	. "$(ENVSH)" "$(TEST_ENV)" && echo $@; python3 $@
 .PHONY:$(TESTS)
 test3:$(TESTS)
 
-# run the integration tests with Jenkins
+
 integration_test:
-	. "$(ENVSH)" integration_test
-	python tests/test_workflow_with_facets.xl.py
+	. "$(ENVSH)" integration_test && \
+	cd pluto && \
+	python test_tools.py && \
+	python test_serializer.py && \
+	cd .. && \
+	#for i in tests/test_*workflow*.py; do echo $$i; python3 $$i; rm -rf $TMP_DIR/tmp* /scratch/jenkins/tmp*; done
+	python tests/test_workflow_with_facets.xl.py && \
 	python tests/test_workflow_with_facets.medium.py
-	python tests/test_samples_fillout_index_workflow_cwl.py
-	( cd pluto && python test_tools.py && python test_serializer.py )
+# run the integration tests with Jenkins
+# integration_test:
+# 	. "$(ENVSH)" integration_test
+# 	python tests/test_workflow_with_facets.xl.py
+# 	python tests/test_workflow_with_facets.medium.py
+# 	python tests/test_samples_fillout_index_workflow_cwl.py
+# 	( cd pluto && python test_tools.py && python test_serializer.py )
+
+integration_test_1:
+	. "$(ENVSH)" integration_test && \
+	for i in tests/test_*cwl*.py; do echo $$i; python3 $$i; done
 
 # interactive session with environment populated
 bash: ENV=shell

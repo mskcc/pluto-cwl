@@ -131,9 +131,9 @@ class TestConsensusBed(PlutoTestCase):
                 'path':  os.path.join(output_dir,'merged.bed')
                 }
             }
-        self.assertDictEqual(output_json, expected_output)
+        self.assertCWLDictEqual(output_json, expected_output)
 
-        output_file = output_json['output_file']['path']
+        output_file = os.path.join(output_dir,'merged.bed')
 
         with open(output_file) as f:
             lines = [ l for l in f ]

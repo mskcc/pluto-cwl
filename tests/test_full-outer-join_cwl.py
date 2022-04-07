@@ -64,7 +64,7 @@ class TestMergeTables(PlutoTestCase):
                 'path':  os.path.join(output_dir,'output.tsv')
                 }
             }
-        self.assertDictEqual(output_json, expected_output)
+        self.assertCWLDictEqual(output_json, expected_output)
 
         output_file = expected_output['output_file']['path']
         lines = self.read_table(output_file)
@@ -112,9 +112,9 @@ class TestMergeTables(PlutoTestCase):
                 'path':  os.path.join(output_dir,'output.tsv')
                 }
             }
-        self.assertDictEqual(output_json, expected_output)
+        self.assertCWLDictEqual(output_json, expected_output)
 
-        output_file = expected_output['output_file']['path']
+        output_file = os.path.join(output_dir,'output.tsv')
 
         lines = self.read_table(output_file)
 
@@ -159,9 +159,9 @@ class TestMergeTables(PlutoTestCase):
                 'path':  os.path.join(output_dir,'output.tsv')
                 }
             }
-        self.assertDictEqual(output_json, expected_output)
+        self.assertCWLDictEqual(output_json, expected_output)
 
-        output_file = expected_output['output_file']['path']
+        output_file = os.path.join(output_dir,'output.tsv')
 
         lines = self.read_table(output_file)
 

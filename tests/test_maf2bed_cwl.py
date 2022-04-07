@@ -79,6 +79,7 @@ class TestMaf2Bed(PlutoTestCase):
         ])
 
     def test_maf2bed(self):
+        self.maxDiff = None
         maf_rows = [ self.maf_row1, self.maf_row2, self.maf_row3, self.maf_row4, self.maf_row5, self.maf_row6 ]
         maf_lines = []
         for comment in self.comments:
@@ -98,12 +99,15 @@ class TestMaf2Bed(PlutoTestCase):
 
         self.input = {
             "maf_file": { "class": "File", "path": maf }
-            # "output_filename": "output.bed"
         }
         output_json, output_dir = self.run_cwl()
-        path = output_json['output_file'].pop('path')
+        # remove the location, path, basename, because we are using a UUID random filename for ... reasons ...
+        # see notes in the CWL about it
         location = output_json['output_file'].pop('location')
         basename = output_json['output_file'].pop('basename')
+        if 'path' in output_json['output_file']:
+            output_json['output_file'].pop('path')
+        path = os.path.join(output_dir,basename)
 
         self.assertTrue(basename.startswith('_maf2bed_merged'))
 
@@ -117,7 +121,7 @@ class TestMaf2Bed(PlutoTestCase):
                 # 'path': os.path.join(output_dir,'output.bed'),
                 }
             }
-        self.assertDictEqual(output_json, expected_output)
+        self.assertCWLDictEqual(output_json, expected_output)
 
         with open(path) as fin:
             lines = [ line for line in fin ]

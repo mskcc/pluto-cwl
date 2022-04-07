@@ -48,7 +48,7 @@ class TestAddMSIStatus(PlutoTestCase):
                 'path':  os.path.join(output_dir,'output.tsv')
                 }
             }
-        self.assertDictEqual(output_json, expected_output)
+        self.assertCWLDictEqual(output_json, expected_output)
 
         output_file = expected_output['output_file']['path']
 
