@@ -22,7 +22,10 @@ argos_version_string
 helix_filter_version
 is_impact
 extra_pi_groups
-
+pairs
+normal_bam_files
+tumor_bam_files
+assay_coverage
 
 The following filenames are required:
 
@@ -32,6 +35,7 @@ analysis_sv_filename
 analysis_segment_cna_filename
 cbio_segment_data_filename
 cbio_meta_cna_segments_filename
+microsatellites_file
 
 The following filenames have default values and are optional:
 
@@ -220,15 +224,28 @@ inputs:
     type: string
     default: data_CNA.scna.txt
     doc: "(CBIO_CNA_SCNA_DATA_FILE)"
-  mutation_maf_files:
-    type: File[]
-    doc: "analysis_mutations_filename (ANALYSIS_MUTATIONS_FILENAME) cbio_mutation_data_filename (CBIO_MUTATION_DATA_FILENAME): (MAF_DIR)/*.muts.maf"
+  # mutation_maf_files:
+  #   type: File[]
+  #   doc: "analysis_mutations_filename (ANALYSIS_MUTATIONS_FILENAME) cbio_mutation_data_filename (CBIO_MUTATION_DATA_FILENAME): (MAF_DIR)/*.muts.maf"
+
   facets_hisens_seg_files:
-    type: File[]
+    type:
+      - "null"
+      - File[]
+      - string
     doc: "cbio_segment_data_filename (CBIO_SEGMENT_DATA_FILENAME; <project_id>_data_cna_hg19.seg) analysis_segment_cna_filename (ANALYSIS_SEGMENT_CNA_FILE; <project_id>.seg.cna.txt): (FACETS_DIR)/*_hisens.seg"
+    default: [ {"path": "/work/ci/vurals/helix_manual_reruns/test_wo_facets_workflow/hisens.seg", "class": "File"} ]
+      # valueFrom: ${ return {"path": "/work/ci/vurals/helix_manual_reruns/test_wo_facets_workflow/hisens.seg", "class": "File"}; }
+
   facets_hisens_cncf_files:
-    type: File[]
+    type:
+      - "null"
+      - File[]
     doc: "cbio_cna_data_filename (CBIO_CNA_DATA_FILENAME; data_CNA.txt) analysis_gene_cna_filename (ANALYSIS_GENE_CNA_FILENAME; <project_id>.gene.cna.txt): (FACETS_DIR)/*_hisens.cncf.txt"
+    default: [ {"path": "/work/ci/vurals/helix_manual_reruns/test_wo_facets_workflow/data_CNA.txt", "class": "File"} ]
+      # valueFrom: ${ return [{"path": "/work/ci/vurals/helix_manual_reruns/test_wo_facets_workflow/data_CNA.txt", "class": "File"}]; }
+
+
   mutation_svs_txt_files:
     type: File[]
     doc: "cbio_fusion_data_filename (CBIO_FUSION_DATA_FILENAME; data_fusions.txt): (MAF_DIR)/*.svs.pass.vep.portal.txt"
@@ -255,22 +272,67 @@ inputs:
     type:
     - "null"
     - File
+  pairs:
+    type:
+      type: array
+      items:
+        - type: record
+          fields:
+            pair_maf: File
+            snp_pileup: File
+            pair_id: string
+            tumor_id: string
+            normal_id: string
   IMPACT_gene_list:
     type: File
     doc: "TSV file with gene labels and corresponding impact assays"
 
+  assay_coverage:
+    type: string
+    doc: "genome_coverage value; amount of the genome in bp covered by the assay"
+
+  microsatellites_file:
+    type: File
+    doc: "Microsatellites list file to use with MSI Sensor"
+
+  normal_bam_files:
+    type:
+        type: array
+        items: File
+    doc: "Array of normal bam files. Must match the same order of sample pairs in 'pairs' input field"
+    secondaryFiles:
+        - ^.bai
+  tumor_bam_files:
+    type:
+        type: array
+        items: File
+    doc: "Array of tumor bam files. Must match the same order of sample pairs in 'pairs' input field"
+    secondaryFiles:
+        - ^.bai
+
+
+
+
 steps:
   run_analysis_workflow:
-    run: analysis-workflow.cwl
+    run: analysis-workflow_wo_facets.cwl
     in:
       analysis_segment_cna_filename: analysis_segment_cna_filename
       analysis_sv_filename: analysis_sv_filename
       analysis_gene_cna_filename: analysis_gene_cna_filename
       analysis_mutations_filename: analysis_mutations_filename
       analysis_mutations_share_filename: analysis_mutations_share_filename
-      mutation_maf_files: mutation_maf_files
+      pair: pairs
+      mutation_maf_files:
+        valueFrom: ${ return [inputs.pair[0].pair_maf] }
+
+
       facets_hisens_seg_files: facets_hisens_seg_files
+          # valueFrom: ${ return [{"path": "/work/ci/vurals/helix_manual_reruns/test_wo_facets_workflow/hisens.seg", "class": "File"}]; }
       facets_hisens_cncf_files: facets_hisens_cncf_files
+        # valueFrom: ${ return ["/work/ci/vurals/helix_manual_reruns/test_wo_facets_workflow/data_CNA.txt"]; }
+
+
       mutation_svs_maf_files: mutation_svs_maf_files
       targets_list: targets_list
       argos_version_string: argos_version_string
@@ -281,7 +343,7 @@ steps:
       [ analysis_dir ]
 
   run_portal_workflow:
-    run: portal-workflow.cwl
+    run: portal-workflow_wo_facets.cwl
     in:
       project_id: project_id
       project_pi: project_pi
@@ -314,9 +376,18 @@ steps:
       cbio_cna_data_filename: cbio_cna_data_filename
       cbio_cna_ascna_data_filename: cbio_cna_ascna_data_filename
       cbio_cna_scna_data_filename: cbio_cna_scna_data_filename
-      mutation_maf_files: mutation_maf_files
+
+      pair: pairs
+      mutation_maf_files:
+        valueFrom: ${ return [inputs.pair[0].pair_maf] }
+
+
       facets_hisens_seg_files: facets_hisens_seg_files
+        # valueFrom: ${ return [ {"path": "/work/ci/vurals/helix_manual_reruns/test_wo_facets_workflow/hisens.seg", "class": "File"}  ]; }
       facets_hisens_cncf_files: facets_hisens_cncf_files
+        # valueFrom: ${ return ["/work/ci/vurals/helix_manual_reruns/test_wo_facets_workflow/data_CNA.txt"] }
+
+
       mutation_svs_txt_files: mutation_svs_txt_files
       targets_list: targets_list
       known_fusions_file: known_fusions_file
@@ -331,17 +402,65 @@ steps:
       portal_data_clinical_sample_file, # data_clinical_sample.txt
       portal_meta_study_file, # meta_study.txt
       portal_clinical_patient_meta_file, # meta_clinical_patient.txt
-      portal_meta_cna_file, # meta_CNA.txt
+      # portal_meta_cna_file, # meta_CNA.txt
       portal_meta_fusions_file, # meta_fusions.txt
       portal_meta_mutations_extended_file, # meta_mutations_extended.txt
-      portal_meta_cna_segments_file, # <project_id>_meta_cna_hg19_seg.txt
-      portal_cna_data_file, # data_CNA.txt
-      portal_cna_ascna_file, # data_CNA.ascna.txt
+      # portal_meta_cna_segments_file, # <project_id>_meta_cna_hg19_seg.txt
+      # portal_cna_data_file, # data_CNA.txt
+      # portal_cna_ascna_file, # data_CNA.ascna.txt
       portal_muts_file, # data_mutations_extended.txt
-      portal_hisens_segs, # <project_id>_data_cna_hg19.seg
+      # portal_hisens_segs, # <project_id>_data_cna_hg19.seg
       portal_fusions_data_file, # data_fusions.txt
-      portal_case_list_dir
+      portal_case_list_dir,
+      # merged_cna_file, # data_CNA_merged.txt -> data_CNA.txt
+      portal_report
       ]
+
+
+
+  # run the TMB workflow
+  run_tmb_workflow:
+    run: tmb_workflow.cwl
+    in:
+      data_clinical_file: run_portal_workflow/portal_data_clinical_sample_file
+      assay_coverage: assay_coverage
+      pairs: pairs
+    out:
+      [ output_file ] # updated data_clinical_sample_file with the new TMB data
+
+  # run the MSI workflow
+  run_msi_workflow:
+    run: msi_workflow.cwl
+    in:
+      data_clinical_file: run_portal_workflow/portal_data_clinical_sample_file # run_tmb_workflow/output_file # data_clinical_sample.txt
+      microsatellites_file: microsatellites_file
+      pairs: pairs
+      normal_bam_files: normal_bam_files
+      tumor_bam_files: tumor_bam_files
+    out:
+      [ output_file ] # updated data_clinical_file with MSI scores
+
+  # combine the TMB, MSI results with the data clinical file
+  merge_data_clinical:
+    run: merge-tables.cwl
+    in:
+      table1: run_tmb_workflow/output_file
+      table2: run_msi_workflow/output_file
+      key1:
+        valueFrom: ${ return "SAMPLE_ID"; } # sample column header from data clinical file
+      key2:
+        valueFrom: ${ return "SAMPLE_ID"; } # sample column header from MSI file
+      output_filename:
+        valueFrom: ${ return "data_clinical_sample.txt"; } # TODO: should this be passed in?
+      cBioPortal:
+        valueFrom: ${ return true; }
+    out:
+      [ output_file ]
+
+
+
+
+
 
   # create the "portal" directory in the output dir and put cBioPortal files in it
   make_portal_dir:
@@ -349,19 +468,20 @@ steps:
     in:
       portal_meta_clinical_sample_file: run_portal_workflow/portal_meta_clinical_sample_file # meta_clinical_sample.txt
       portal_data_clinical_patient_file: run_portal_workflow/portal_data_clinical_patient_file # data_clinical_patient.txt
-      portal_data_clinical_sample_file: run_portal_workflow/portal_data_clinical_sample_file # data_clinical_sample.txt
+      portal_data_clinical_sample_file: merge_data_clinical/output_file # data_clinical_sample.txt
       portal_meta_study_file: run_portal_workflow/portal_meta_study_file # meta_study.txt
       portal_clinical_patient_meta_file: run_portal_workflow/portal_clinical_patient_meta_file # meta_clinical_patient.txt
-      portal_meta_cna_file: run_portal_workflow/portal_meta_cna_file # meta_CNA.txt
+      # portal_meta_cna_file: run_portal_workflow/portal_meta_cna_file # meta_CNA.txt
       portal_meta_fusions_file: run_portal_workflow/portal_meta_fusions_file # meta_fusions.txt
       portal_meta_mutations_extended_file: run_portal_workflow/portal_meta_mutations_extended_file # meta_mutations_extended.txt
-      portal_meta_cna_segments_file: run_portal_workflow/portal_meta_cna_segments_file  # <project_id>_meta_cna_hg19_seg.txt
-      portal_cna_data_file: run_portal_workflow/portal_cna_data_file # data_CNA.txt
-      portal_cna_ascna_file: run_portal_workflow/portal_cna_ascna_file # data_CNA.ascna.txt
+      # portal_meta_cna_segments_file: run_portal_workflow/portal_meta_cna_segments_file  # <project_id>_meta_cna_hg19_seg.txt
+      # portal_cna_data_file: run_portal_workflow/merged_cna_file # data_CNA.txt
+      # portal_cna_ascna_file: run_portal_workflow/portal_cna_ascna_file # data_CNA.ascna.txt
       portal_muts_file: run_portal_workflow/portal_muts_file # data_mutations_extended.txt
-      portal_hisens_segs: run_portal_workflow/portal_hisens_segs # # <project_id>_data_cna_hg19.seg
+      # portal_hisens_segs: run_portal_workflow/portal_hisens_segs # # <project_id>_data_cna_hg19.seg
       portal_fusions_data_file: run_portal_workflow/portal_fusions_data_file # data_fusions.txt
       portal_case_list_dir: run_portal_workflow/portal_case_list_dir
+      portal_report: run_portal_workflow/portal_report
       output_directory_name:
         valueFrom: ${ return "portal"; }
       files:
