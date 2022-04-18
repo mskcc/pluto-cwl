@@ -6,13 +6,13 @@ baseCommand: ['bash', 'run.sh']
 requirements:
   InlineJavascriptRequirement: {}
   DockerRequirement:
-    dockerPull: mskcc/helix:21.5.0
+    dockerPull: mskcc/helix:21.5.1
   InitialWorkDirRequirement:
     listing:
       - entryname: run.sh
         entry: |-
           set -eu
-          # get a comma-delim string of the sample names
+          # get a comma-delim string of the sample names ; returns an empty string if there are no sample id's ; updateCaseList ignores empty strings
           samples_arg="${ return inputs.sample_ids.join(',') ; }"
           input_file="${ return inputs.case_list.path ; }"
           output_file="${ return inputs.output_filename }"

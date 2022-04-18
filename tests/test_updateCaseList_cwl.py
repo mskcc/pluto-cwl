@@ -17,21 +17,24 @@ sys.path.pop(0)
 class TestUpdateCaseList(PlutoTestCase):
     cwl_file = 'updateCaseList.cwl'
 
-    def test_update_caselist_1(self):
-        """
-        """
+    def setUp(self):
+        super().setUp()
         case_list_str = """case_list_category: all_cases_in_study
 stable_id: pi_123_all
 case_list_name: All Tumors
 case_list_description: All tumor samples
 cancer_study_identifier: pi_123
 case_list_ids: Sample1\tSample2"""
-        input_file = os.path.join(self.tmpdir, "cases.txt")
-        with open(input_file, "w") as fout:
+        self.input_file = os.path.join(self.tmpdir, "cases.txt")
+        with open(self.input_file, "w") as fout:
             fout.write(case_list_str)
 
+    def test_update_caselist_1(self):
+        """
+        Test simple case list update
+        """
         self.input = {
-            "case_list": {"class": "File", "path": input_file},
+            "case_list": {"class": "File", "path": self.input_file},
             "sample_ids": ["Sample3", "Sample4"],
             "output_filename": "cases_all.txt"
         }
@@ -54,6 +57,38 @@ case_list_name: All Tumors
 case_list_description: All tumor samples
 cancer_study_identifier: pi_123
 case_list_ids: Sample1\tSample2\tSample3\tSample4
+"""
+        self.assertEqual(text, expected_text)
+
+
+    def test_update_caselist_2(self):
+        """
+        Test update with no files passed
+        """
+        self.input = {
+            "case_list": {"class": "File", "path": self.input_file},
+            "sample_ids": [],
+            "output_filename": "cases_all.txt"
+        }
+        output_json, output_dir = self.run_cwl()
+
+        output_file = os.path.join(output_dir, 'cases_all.txt')
+
+        expected_output = {
+            "output_file": OFile(name = 'cases_all.txt', size = 192, hash = 'f1ad64f51beac01759ae690b2f787fe3978e8882', dir = output_dir)
+        }
+
+        self.assertCWLDictEqual(output_json, expected_output)
+
+        with open(output_file) as fin:
+            text = fin.read()
+
+        expected_text = """case_list_category: all_cases_in_study
+stable_id: pi_123_all
+case_list_name: All Tumors
+case_list_description: All tumor samples
+cancer_study_identifier: pi_123
+case_list_ids: Sample1\tSample2
 """
         self.assertEqual(text, expected_text)
 
