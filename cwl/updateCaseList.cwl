@@ -6,7 +6,7 @@ baseCommand: ['bash', 'run.sh']
 requirements:
   InlineJavascriptRequirement: {}
   DockerRequirement:
-    dockerPull: mskcc/helix:21.4.2
+    dockerPull: mskcc/helix:21.5.0
   InitialWorkDirRequirement:
     listing:
       - entryname: run.sh
