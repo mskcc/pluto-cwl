@@ -85,8 +85,6 @@ class TestPortalWorkflow(PlutoTestCase):
         output_json, output_dir = self.run_cwl()
 
         expected_output = {
-            'merged_cna_file': OFile(
-                name='data_CNA.txt', size=5355, hash='c1682f09406478fc404e40758b0c5e9c47dce5cb', dir = output_dir),
             'portal_case_list_dir': ODir(name='case_lists', items=[
                 OFile(name='cases_all.txt', size=604, hash='b8abebd686a5a4e3897af9546ee3e9e5fee8cf25'),
                 OFile(name='cases_cnaseq.txt', size=684, hash='3bc39070fa15b305c9b1f4a041b75c6a0ddbba9a'),
@@ -152,7 +150,7 @@ class TestPortalWorkflow(PlutoTestCase):
         self.assertEqual(header_parts, expected_header_parts)
 
         # Test that CNA file looks correct
-        output_file = expected_output['merged_cna_file']['path']
+        output_file = expected_output['portal_cna_data_file']['path']
         lines = self.read_table(output_file)
         self.assertEqual(lines[0], ['Hugo_Symbol', 'Sample1'])
         self.assertEqual(len(lines), 587)
@@ -239,8 +237,6 @@ class TestPortalWorkflow(PlutoTestCase):
         output_json, output_dir = self.run_cwl()
 
         expected_output = {
-            'merged_cna_file': OFile(
-                name='data_CNA.txt', size=6764, hash='dd0e1181f412ddb30b4de4738f5b737e18a552be', dir=output_dir),
             'portal_case_list_dir': ODir(name='case_lists', items=[
                 OFile(name='cases_all.txt', size=604, hash='b8abebd686a5a4e3897af9546ee3e9e5fee8cf25'),
                 OFile(name='cases_cnaseq.txt', size=684, hash='3bc39070fa15b305c9b1f4a041b75c6a0ddbba9a'),
@@ -397,8 +393,6 @@ class TestPortalWorkflow(PlutoTestCase):
         output_json, output_dir = self.run_cwl()
 
         expected_output = {
-            'merged_cna_file': OFile(
-                name='data_CNA.txt', size=6398, hash='b25e5d8ed7cf067448e96db712de542df8d564cd', dir=output_dir),
             'portal_case_list_dir':
                 ODir(name='case_lists', items=[
                 OFile(name='cases_all.txt', size=194, hash='744b6aca3004f89bdb3f437ea87d4e3991394eaa'),
@@ -585,8 +579,6 @@ class TestPortalWorkflow(PlutoTestCase):
         output_json, output_dir = self.run_cwl()
 
         expected_output = {
-            'merged_cna_file': OFile(
-                name='data_CNA.txt', size=9919, hash='ca32a20d522a1ab38816a800608a44b836ca96bf', dir=output_dir),
             'portal_case_list_dir': ODir(name='case_lists', items=[
                 OFile(name='cases_all.txt', size=194, hash='744b6aca3004f89bdb3f437ea87d4e3991394eaa'),
                 OFile(name='cases_cnaseq.txt', size=274, hash='9f7b03a5d0a9b8911c5c76ed0e6fe7712ee2a21f'),
@@ -597,7 +589,7 @@ class TestPortalWorkflow(PlutoTestCase):
             'portal_cna_ascna_file': OFile(
                 name='data_CNA.ascna.txt', size=8593, hash='b322943e957285327f68c7d6033032af07a47c65', dir=output_dir),
             'portal_cna_data_file': OFile(
-                name='data_CNA.txt', size=6398, hash='b25e5d8ed7cf067448e96db712de542df8d564cd', dir=output_dir),
+                name='data_CNA.txt', size=9919, hash='ca32a20d522a1ab38816a800608a44b836ca96bf', dir=output_dir),
             'portal_data_clinical_patient_file': OFile(
                 name='data_clinical_patient.txt', size=91, hash='e45f9904b4de2c75fd148798075af9f05848aa27', dir=output_dir),
             'portal_data_clinical_sample_file': OFile(
@@ -758,8 +750,6 @@ class TestPortalWorkflow(PlutoTestCase):
         output_json, output_dir = self.run_cwl()
 
         expected_output = {
-            'merged_cna_file': OFile(
-                name='data_CNA.txt', size=6398, hash='b25e5d8ed7cf067448e96db712de542df8d564cd', dir=output_dir),
             'portal_case_list_dir': ODir(name='case_lists', items=[
                 OFile(name='cases_all.txt', size=194, hash='744b6aca3004f89bdb3f437ea87d4e3991394eaa'),
                 OFile(name='cases_cnaseq.txt', size=274, hash='9f7b03a5d0a9b8911c5c76ed0e6fe7712ee2a21f'),

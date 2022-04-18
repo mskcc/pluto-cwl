@@ -498,7 +498,8 @@ outputs:
     outputSource: generate_meta_cna_segments/output_file  # <project_id>_meta_cna_hg19_seg.txt
   portal_cna_data_file:
     type: File
-    outputSource: clean_cna_headers/output_file # data_CNA.txt
+    # outputSource: clean_cna_headers/output_file # data_CNA.txt
+    outputSource: merge_cna/output_file # data_CNA.txt
   portal_cna_ascna_file:
     type: File
     outputSource: clean_ascna_headers/output_file # data_CNA.ascna.txt
@@ -514,9 +515,6 @@ outputs:
   portal_case_list_dir:
     type: Directory
     outputSource: make_case_list_dir/directory
-  merged_cna_file:
-    type: File
-    outputSource: merge_cna/output_file # data_CNA_merged.txt
   portal_report:
     type: File
     outputSource: compile_report/output_file
