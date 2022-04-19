@@ -154,8 +154,38 @@ inputs:
     type:
     - "null"
     - File[]
+  extra_sample_ids:
+    doc: Extra sample ids that should be included in case list files
+    type:
+    - string[]
+    - "null"
 
 steps:
+  update_extra_sample_ids:
+    doc: if no extra sample ids were passed in, convert the null value to an empty list to make downstream processes easier
+    in:
+      sample_ids: extra_sample_ids
+    out: [ extra_sample_ids ]
+    run:
+      class: ExpressionTool
+      inputs:
+        sample_ids:
+          type:
+          - "null"
+          - string[]
+      outputs:
+        extra_sample_ids:
+          type: string[]
+      expression: |
+        ${
+          var sample_ids = [];
+          if (inputs.sample_ids === null) {
+            return {'extra_sample_ids': sample_ids};
+          } else {
+            return {'extra_sample_ids': inputs.sample_ids};
+          }
+        }
+
   # meta_clinical_sample.txt (cbio_clinical_sample_meta_filename; meta_clinical_sample_file)
   generate_meta_clinical_sample:
     run: generate_cBioPortal_file.cwl
@@ -281,6 +311,13 @@ steps:
       data_clinical_file: data_clinical_file
     out:
       [output_file]
+  update_cases_all:
+    run: updateCaseList.cwl
+    in:
+      sample_ids: update_extra_sample_ids/extra_sample_ids
+      case_list: generate_cbio_cases_all/output_file
+      output_filename: cbio_cases_all_filename
+    out: [output_file]
 
   # cases_cnaseq.txt
   generate_cases_cnaseq:
@@ -293,6 +330,13 @@ steps:
       data_clinical_file: data_clinical_file
     out:
       [output_file]
+  update_cases_cnaseq:
+    run: updateCaseList.cwl
+    in:
+      sample_ids: update_extra_sample_ids/extra_sample_ids
+      case_list: generate_cases_cnaseq/output_file
+      output_filename: cbio_cases_cnaseq_filename
+    out: [output_file]
 
   # cases_cna.txt
   generate_cases_cna:
@@ -305,6 +349,13 @@ steps:
       data_clinical_file: data_clinical_file
     out:
       [output_file]
+  update_cases_cna:
+    run: updateCaseList.cwl
+    in:
+      sample_ids: update_extra_sample_ids/extra_sample_ids
+      case_list: generate_cases_cna/output_file
+      output_filename: cbio_cases_cna_filename
+    out: [output_file]
 
   # cases_sequenced.txt (cbio_cases_sequenced_filename)
   generate_cases_sequenced:
@@ -317,6 +368,14 @@ steps:
       data_clinical_file: data_clinical_file
     out:
       [output_file]
+  update_cases_sequenced:
+    run: updateCaseList.cwl
+    in:
+      sample_ids: update_extra_sample_ids/extra_sample_ids
+      case_list: generate_cases_sequenced/output_file
+      output_filename: cbio_cases_sequenced_filename
+    out: [output_file]
+
 
   # data_CNA.txt (cbio_cna_data_filename)
   # data_CNA.ascna.txt (cbio_cna_ascna_data_filename)
@@ -445,10 +504,14 @@ steps:
   make_case_list_dir:
     run: put_in_dir.cwl
     in:
-      cases_all: generate_cbio_cases_all/output_file
-      cases_cnaseq: generate_cases_cnaseq/output_file
-      cases_cna: generate_cases_cna/output_file
-      cases_sequenced: generate_cases_sequenced/output_file
+      # cases_all: generate_cbio_cases_all/output_file
+      # cases_cnaseq: generate_cases_cnaseq/output_file
+      # cases_cna: generate_cases_cna/output_file
+      # cases_sequenced: generate_cases_sequenced/output_file
+      cases_all: update_cases_all/output_file
+      cases_cnaseq: update_cases_cnaseq/output_file
+      cases_cna: update_cases_cna/output_file
+      cases_sequenced: update_cases_sequenced/output_file
       output_directory_name:
         valueFrom: ${ return "case_lists"; }
       files:

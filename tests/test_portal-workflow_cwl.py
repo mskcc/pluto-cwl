@@ -86,8 +86,8 @@ class TestPortalWorkflow(PlutoTestCase):
 
         expected_output = {
             'portal_case_list_dir': ODir(name='case_lists', items=[
-                OFile(name='cases_all.txt', size=604, hash='b8abebd686a5a4e3897af9546ee3e9e5fee8cf25'),
-                OFile(name='cases_cnaseq.txt', size=684, hash='3bc39070fa15b305c9b1f4a041b75c6a0ddbba9a'),
+                OFile(name='cases_all.txt', size=604, hash='a7bad4f55be39c46549a0cec4a1c5b73db3ae0d5'),
+                OFile(name='cases_cnaseq.txt', size=684, hash='ead904e8ab6753499f2980b09a0187ef3a55d0cc'),
                 OFile(name='cases_cna.txt', size=616, hash='8d3dc67168382830a270feec6a0efddf52cc5dd4'),
                 OFile(name='cases_sequenced.txt', size=629, hash='188bde59b913c82b9a783d19c37b81c959b4696d')], dir=output_dir),
             'portal_clinical_patient_meta_file': OFile(
@@ -154,6 +154,118 @@ class TestPortalWorkflow(PlutoTestCase):
         lines = self.read_table(output_file)
         self.assertEqual(lines[0], ['Hugo_Symbol', 'Sample1'])
         self.assertEqual(len(lines), 587)
+
+    def test_run_worflow_one_maf_extra_ids(self):
+        """
+        Test that the workflow works correctly when run with a single maf and extra sample IDs
+        """
+        data_clinical_file = os.path.join(DATA_SETS['Proj_1']['INPUTS_DIR'], "Proj_1_sample_data_clinical.txt")
+        sample_summary_file = os.path.join(DATA_SETS['Proj_1']['QC_DIR'], "Proj_1_SampleSummary.txt")
+        self.input = {
+            "project_id": "Proj_1",
+            "project_name": "Proj_1",
+            "project_short_name": "Proj_1",
+            "project_description": "project",
+            "project_pi": "Dr. Jones",
+            "request_pi": "Dr. Franklin",
+            "is_impact": True,
+            "argos_version_string": "2.x",
+            "cancer_type": "MEL",
+            "cancer_study_identifier": 'Proj_1',
+            "cbio_meta_cna_segments_filename": "Proj_1_meta_cna_hg19_seg.txt",
+            "cbio_segment_data_filename": "Proj_1_data_cna_hg19.seg",
+            "helix_filter_version": "20.06.1",
+            "extra_sample_ids": ["Sample100", "Sample101"],
+            "data_clinical_file": {
+                "path": data_clinical_file,
+                "class": "File"
+            },
+            "sample_summary_file": {
+                "path": sample_summary_file,
+                "class": "File"
+            },
+            "targets_list": {
+                "path": DATA_SETS['Proj_1']["targets_list"],
+                "class": "File"
+            },
+            "known_fusions_file": {
+                "path": KNOWN_FUSIONS_FILE,
+                "class": "File"
+            },
+            "mutation_maf_files": [
+                {
+                    "path": os.path.join(DATA_SETS['Proj_1']['MAF_DIR'], "Sample1.Sample2.muts.maf"),
+                    "class": "File"
+                }
+            ],
+            "mutation_svs_txt_files": [
+                {
+                    "path": os.path.join(DATA_SETS['Proj_1']['MAF_DIR'], "Sample1.Sample2.svs.pass.vep.portal.txt"),
+                    "class": "File"
+                }
+            ],
+            "facets_hisens_cncf_files": [
+                {
+                    "path": os.path.join(DATA_SETS['Proj_1']['FACETS_DIR'], "Sample2.rg.md.abra.printreads__Sample1.rg.md.abra.printreads_hisens.cncf.txt"),
+                    "class": "File"
+                }
+            ],
+            "facets_hisens_seg_files": [
+                {
+                    "path": os.path.join(DATA_SETS['Proj_1']['FACETS_DIR'], "Sample2.rg.md.abra.printreads__Sample1.rg.md.abra.printreads_hisens.seg"),
+                "class": "File"
+                }
+            ],
+        }
+
+        output_json, output_dir = self.run_cwl()
+
+        expected_output = {
+            'portal_case_list_dir': ODir(name='case_lists', items=[
+                OFile(name='cases_all.txt', size=604, hash='a7bad4f55be39c46549a0cec4a1c5b73db3ae0d5'),
+                OFile(name='cases_cnaseq.txt', size=684, hash='ead904e8ab6753499f2980b09a0187ef3a55d0cc'),
+                OFile(name='cases_cna.txt', size=616, hash='8d3dc67168382830a270feec6a0efddf52cc5dd4'),
+                OFile(name='cases_sequenced.txt', size=629, hash='188bde59b913c82b9a783d19c37b81c959b4696d')], dir=output_dir),
+            'portal_clinical_patient_meta_file': OFile(
+                name='meta_clinical_patient.txt', size=136, hash='bbfd617bded72d6e9f2071285ac5a7867b0ec6fb', dir=output_dir),
+            'portal_cna_ascna_file': OFile(
+                name='data_CNA.ascna.txt', size=6154, hash='e06f41b3ad538740519cec581bcbd5cd812e5f00', dir=output_dir),
+
+            # NOTE: same as the merged_cna_file file in this case
+            'portal_cna_data_file': OFile(
+                name='data_CNA.txt', size=5355, hash='c1682f09406478fc404e40758b0c5e9c47dce5cb', dir=output_dir),
+
+            'portal_data_clinical_patient_file': OFile(
+                name='data_clinical_patient.txt', size=643, hash='9417dcabddd6ab2cbe98167bccd9b9e4fa182562', dir=output_dir),
+            'portal_data_clinical_sample_file': OFile(
+                name='data_clinical_sample.txt', size=7592, hash='2a0c59593fa7726743b2fe46db9d955dbc625453', dir=output_dir),
+            'portal_fusions_data_file': OFile(
+                name='data_fusions.txt', size=99, hash='c16f763b248813fcdde76f7486f1ddc4e9856038', dir=output_dir),
+            'portal_hisens_segs': OFile(
+                name='Proj_1_data_cna_hg19.seg', size=1322, hash='cae32a187d973441dd6e554e07ae81bebecb8980', dir=output_dir),
+            'portal_meta_clinical_sample_file': OFile(
+                name='meta_clinical_sample.txt', size=134, hash='29d7eda8ae439aaaa531b2d10fa5c03f943edf11', dir=output_dir),
+            'portal_meta_cna_file': OFile(
+                name='meta_CNA.txt', size=264, hash='1123609f24529c407b04b5dbd22efd6a453b3965', dir=output_dir),
+            'portal_meta_cna_segments_file': OFile(
+                name='Proj_1_meta_cna_hg19_seg.txt', size=188, hash='c100c7c6cfb7f67f991d356725abea6204e99d6b', dir=output_dir),
+            'portal_meta_fusions_file': OFile(
+                name='meta_fusions.txt', size=221, hash='5417138de92de1c35aa123c1e8800d710bb1f7cb', dir=output_dir),
+            'portal_meta_mutations_extended_file': OFile(
+                name='meta_mutations_extended.txt', size=264, hash='c1e0524b9ee612710b1921053bdb3f32120831ec', dir=output_dir),
+            'portal_meta_study_file': OFile(
+                name='meta_study.txt', size=134, hash='182c7c39315d7ce91cbb8d96f98134d676324cf6', dir=output_dir),
+            'portal_muts_file': OFile(
+                name='data_mutations_extended.txt', size=4766, hash='5c92b50bdd1d7c45af8fd180448a68926b8248e6', dir=output_dir),
+            'portal_report': OFile(
+                name='report.html', size=1016472, hash='4be1f9395bb83330dcffaecf76def4456db99a62', dir=output_dir)
+        }
+
+        self.maxDiff = None
+        strip_related_keys = [
+        ('basename', 'report.html', ['size', 'checksum'])
+        ]
+        self.assertCWLDictEqual(output_json, expected_output, related_keys = strip_related_keys)
 
 
     def test_run_worflow_two_mafs(self):
@@ -238,8 +350,8 @@ class TestPortalWorkflow(PlutoTestCase):
 
         expected_output = {
             'portal_case_list_dir': ODir(name='case_lists', items=[
-                OFile(name='cases_all.txt', size=604, hash='b8abebd686a5a4e3897af9546ee3e9e5fee8cf25'),
-                OFile(name='cases_cnaseq.txt', size=684, hash='3bc39070fa15b305c9b1f4a041b75c6a0ddbba9a'),
+                OFile(name='cases_all.txt', size=604, hash='a7bad4f55be39c46549a0cec4a1c5b73db3ae0d5'),
+                OFile(name='cases_cnaseq.txt', size=684, hash='ead904e8ab6753499f2980b09a0187ef3a55d0cc'),
                 OFile(name='cases_cna.txt', size=616, hash='8d3dc67168382830a270feec6a0efddf52cc5dd4'),
                 OFile(name='cases_sequenced.txt', size=629, hash='188bde59b913c82b9a783d19c37b81c959b4696d')], dir=output_dir),
             'portal_clinical_patient_meta_file': OFile(
@@ -395,9 +507,9 @@ class TestPortalWorkflow(PlutoTestCase):
         expected_output = {
             'portal_case_list_dir':
                 ODir(name='case_lists', items=[
-                OFile(name='cases_all.txt', size=194, hash='744b6aca3004f89bdb3f437ea87d4e3991394eaa'),
-                OFile(name='cases_cnaseq.txt', size=274, hash='9f7b03a5d0a9b8911c5c76ed0e6fe7712ee2a21f'),
-                OFile(name='cases_cna.txt', size=206, hash='cc34a33f2103c0a8f6630799fbc72508fd40aee4'),
+                OFile(name='cases_all.txt', size=194, hash='12639bb3d01e7e4aa0f94f53a3b8d757e3e6d98f'),
+                OFile(name='cases_cnaseq.txt', size=274, hash='8f9e091b826c682d6ab3dbf5577ac8af10e52ed8'),
+                OFile(name='cases_cna.txt', size=206, hash='6a7ad5b8c570f5e0c8d38ce5ad222ea945ad0066'),
                 OFile(name='cases_sequenced.txt', size=219, hash='738b2c81d52fd202df1afda31d2750affd09b3f1')], dir=output_dir),
             'portal_clinical_patient_meta_file': OFile(
                 name='meta_clinical_patient.txt', size=136, hash='bbfd617bded72d6e9f2071285ac5a7867b0ec6fb', dir=output_dir),
@@ -580,9 +692,9 @@ class TestPortalWorkflow(PlutoTestCase):
 
         expected_output = {
             'portal_case_list_dir': ODir(name='case_lists', items=[
-                OFile(name='cases_all.txt', size=194, hash='744b6aca3004f89bdb3f437ea87d4e3991394eaa'),
-                OFile(name='cases_cnaseq.txt', size=274, hash='9f7b03a5d0a9b8911c5c76ed0e6fe7712ee2a21f'),
-                OFile(name='cases_cna.txt', size=206, hash='cc34a33f2103c0a8f6630799fbc72508fd40aee4'),
+                OFile(name='cases_all.txt', size=194, hash='12639bb3d01e7e4aa0f94f53a3b8d757e3e6d98f'),
+                OFile(name='cases_cnaseq.txt', size=274, hash='8f9e091b826c682d6ab3dbf5577ac8af10e52ed8'),
+                OFile(name='cases_cna.txt', size=206, hash='6a7ad5b8c570f5e0c8d38ce5ad222ea945ad0066'),
                 OFile(name='cases_sequenced.txt', size=219, hash='738b2c81d52fd202df1afda31d2750affd09b3f1')], dir=output_dir),
             'portal_clinical_patient_meta_file': OFile(
                 name='meta_clinical_patient.txt', size=136, hash='bbfd617bded72d6e9f2071285ac5a7867b0ec6fb', dir=output_dir),
@@ -751,9 +863,9 @@ class TestPortalWorkflow(PlutoTestCase):
 
         expected_output = {
             'portal_case_list_dir': ODir(name='case_lists', items=[
-                OFile(name='cases_all.txt', size=194, hash='744b6aca3004f89bdb3f437ea87d4e3991394eaa'),
-                OFile(name='cases_cnaseq.txt', size=274, hash='9f7b03a5d0a9b8911c5c76ed0e6fe7712ee2a21f'),
-                OFile(name='cases_cna.txt', size=206, hash='cc34a33f2103c0a8f6630799fbc72508fd40aee4'),
+                OFile(name='cases_all.txt', size=194, hash='12639bb3d01e7e4aa0f94f53a3b8d757e3e6d98f'),
+                OFile(name='cases_cnaseq.txt', size=274, hash='8f9e091b826c682d6ab3dbf5577ac8af10e52ed8'),
+                OFile(name='cases_cna.txt', size=206, hash='6a7ad5b8c570f5e0c8d38ce5ad222ea945ad0066'),
                 OFile(name='cases_sequenced.txt', size=219, hash='738b2c81d52fd202df1afda31d2750affd09b3f1')], dir=output_dir),
             'portal_clinical_patient_meta_file': OFile(
                 name='meta_clinical_patient.txt', size=136, hash='bbfd617bded72d6e9f2071285ac5a7867b0ec6fb', dir=output_dir),
