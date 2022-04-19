@@ -152,10 +152,10 @@ class TestWorkflowWithFacets(PlutoTestCase):
                     OFile(name = 'Proj_08390_G_data_cna_hg19.seg', size = 525, hash = 'e99e98d33598c423448cba44a37da712c9c933c5'),
                     OFile(name = 'data_fusions.txt', size = 99, hash = 'c16f763b248813fcdde76f7486f1ddc4e9856038'),
                     ODir(name = 'case_lists', items = [
-                        OFile(name = 'cases_all.txt', size = 188, hash = '3d3d54b5cbd98e751adf926d07884eeaed94aaef'),
-                        OFile(name = 'cases_cnaseq.txt', size = 268, hash = '2a43c8ed31f69c12cf9a14044bab1aaa1b6ec7ee'),
-                        OFile(name = 'cases_cna.txt', size = 200, hash = '117563761d7cb4690dea363f40b77ef1a0444fc1'),
-                        OFile(name = 'cases_sequenced.txt', size = 213, hash = '78d1d0acb6928349b4448a73f2cdf1ed4edcb1a3'),
+                        OFile(name = 'cases_all.txt', size = 188, hash = '8ff1cacffcaafbe3d40ec42989433f9447dff6cf'),
+                        OFile(name = 'cases_cnaseq.txt', size = 268, hash = '2be82e138057f8eb1b315b5b3c6fe4859ce951e4'),
+                        OFile(name = 'cases_cna.txt', size = 200, hash = '8f0ec24a0135bc6de006277a134efa4aaf5d2e82'),
+                        OFile(name = 'cases_sequenced.txt', size = 213, hash = 'd3c860cb681ba952bf2f9d546a5a088a04a77261'),
                     ]),
                     OFile(name = 'report.html')
                 ])
@@ -379,10 +379,10 @@ class TestWorkflowWithFacets(PlutoTestCase):
                     OFile(name = 'Proj_08390_G_data_cna_hg19.seg', size = 878, hash = 'e1c85484cd13a88cea322de84cd35143c86a8ef3'),
                     OFile(name = 'data_fusions.txt', size = 99, hash = 'c16f763b248813fcdde76f7486f1ddc4e9856038'),
                     ODir(name = 'case_lists', items = [
-                        OFile(name = 'cases_all.txt', size = 188, hash = '3d3d54b5cbd98e751adf926d07884eeaed94aaef'),
-                        OFile(name = 'cases_cnaseq.txt', size = 268, hash = '2a43c8ed31f69c12cf9a14044bab1aaa1b6ec7ee'),
-                        OFile(name = 'cases_cna.txt', size = 200, hash = '117563761d7cb4690dea363f40b77ef1a0444fc1'),
-                        OFile(name = 'cases_sequenced.txt', size = 213, hash = '78d1d0acb6928349b4448a73f2cdf1ed4edcb1a3'),
+                        OFile(name = 'cases_all.txt', size = 188, hash = '8ff1cacffcaafbe3d40ec42989433f9447dff6cf'),
+                        OFile(name = 'cases_cnaseq.txt', size = 268, hash = '2be82e138057f8eb1b315b5b3c6fe4859ce951e4'),
+                        OFile(name = 'cases_cna.txt', size = 200, hash = '8f0ec24a0135bc6de006277a134efa4aaf5d2e82'),
+                        OFile(name = 'cases_sequenced.txt', size = 213, hash = 'd3c860cb681ba952bf2f9d546a5a088a04a77261'),
                     ]),
                     OFile(name = 'report.html')
                 ])
@@ -582,10 +582,10 @@ class TestWorkflowWithFacets(PlutoTestCase):
                     OFile(name = 'Proj_08390_G_data_cna_hg19.seg', size = 1459, hash = '76e2c8a0a9c4200e26b8fc4a60701bd7b1b86560'),
                     OFile(name = 'data_fusions.txt', size = 99, hash = 'c16f763b248813fcdde76f7486f1ddc4e9856038'),
                     ODir(name = 'case_lists', items = [
-                        OFile(name = 'cases_all.txt', size = 616, hash = 'b9e43289cec5603b0886b5e8507c8d019387c125'),
-                        OFile(name = 'cases_cnaseq.txt', size = 696, hash = 'b87e2da8dce0fddbadec348efe2986519b2a794b'),
-                        OFile(name = 'cases_cna.txt', size = 628, hash = '053481a8299e9430117f8e45e081aa7ec21033a6'),
-                        OFile(name = 'cases_sequenced.txt', size = 641, hash = 'ef9f5aef03c2527bf576470168660557ca1c7cc9'),
+                        OFile(name = 'cases_all.txt', size = 616, hash = 'd186ba8540f5e382147fee313cb95b52e5d933fe'),
+                        OFile(name = 'cases_cnaseq.txt', size = 696, hash = '6d675d97c9ce8907101d894f2b0c8636b38071bd'),
+                        OFile(name = 'cases_cna.txt', size = 628, hash = 'e87e642c8313133658a20c451396954a79fb7e81'),
+                        OFile(name = 'cases_sequenced.txt', size = 641, hash = 'fd926ae050b8032f98df09330b8bdd340adc81a4'),
                     ]),
                     OFile(name = 'report.html')
                 ])
@@ -829,10 +829,10 @@ class TestWorkflowWithFacets(PlutoTestCase):
                     OFile(name = 'Proj_08390_G_data_cna_hg19.seg', size = 2703, hash = '8995133edb5b4547371b0fdea9925848eb480fbc'),
                     OFile(name = 'data_fusions.txt', size = 99, hash = 'c16f763b248813fcdde76f7486f1ddc4e9856038'),
                     ODir(name = 'case_lists', items = [
-                        OFile(name = 'cases_all.txt', size = 616, hash = 'b9e43289cec5603b0886b5e8507c8d019387c125'),
-                        OFile(name = 'cases_cnaseq.txt', size = 696, hash = 'b87e2da8dce0fddbadec348efe2986519b2a794b'),
-                        OFile(name = 'cases_cna.txt', size = 628, hash = '053481a8299e9430117f8e45e081aa7ec21033a6'),
-                        OFile(name = 'cases_sequenced.txt', size = 641, hash = 'ef9f5aef03c2527bf576470168660557ca1c7cc9'),
+                        OFile(name = 'cases_all.txt', size = 616, hash = 'd186ba8540f5e382147fee313cb95b52e5d933fe'),
+                        OFile(name = 'cases_cnaseq.txt', size = 696, hash = '6d675d97c9ce8907101d894f2b0c8636b38071bd'),
+                        OFile(name = 'cases_cna.txt', size = 628, hash = 'e87e642c8313133658a20c451396954a79fb7e81'),
+                        OFile(name = 'cases_sequenced.txt', size = 641, hash = 'fd926ae050b8032f98df09330b8bdd340adc81a4'),
                     ]),
                     OFile(name = 'report.html')
                 ])

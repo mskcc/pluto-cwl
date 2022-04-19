@@ -286,6 +286,11 @@ inputs:
     type:
     - "null"
     - File[]
+  extra_sample_ids:
+    doc: Extra sample ids that should be included in case list files
+    type:
+    - string[]
+    - "null"
 
 
 steps:
@@ -385,6 +390,7 @@ steps:
       data_clinical_file: data_clinical_file
       sample_summary_file: sample_summary_file
       facets_suite_txt_files: run_facets/facets_txt
+      extra_sample_ids: extra_sample_ids
     out:
       [
       portal_meta_clinical_sample_file, # meta_clinical_sample.txt
