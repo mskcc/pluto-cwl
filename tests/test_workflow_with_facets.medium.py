@@ -3,6 +3,8 @@
 """
 Integration tests for the workflow_with_facets.cwl using medium sized dataset
 
+Takes about  9467.131s to complete
+
 Usage:
 
     $ INTEGRATION_TESTS=True USE_LSF=True CWL_ENGINE=toil python3 tests/test_workflow_with_facets.medium.py
@@ -401,10 +403,10 @@ class TestWorkflowWithFacetsMedium(PlutoTestCase):
             OFile(name='11089_G_data_cna_hg19.seg', size=69171, hash='7d13e1422b9d7112e60f9ab748d524d7446d1dde'),
             OFile(name='data_fusions.txt', size=406, hash='4c9e29ead2ddd262dc3877dcc563c6c1d5c624ad'),
             ODir(name='case_lists', items=[
-                OFile(name='cases_all.txt', size=448, hash='eb252d9c260b13abdebc0085168dc40cbdda2171'),
-                OFile(name='cases_cnaseq.txt', size=528, hash='16d464b4f7ceb51473f9640532c1e58ec91cf6dd'),
-                OFile(name='cases_cna.txt', size=460, hash='252830e1838b6f32d07472016cf50442c997df52'),
-                OFile(name='cases_sequenced.txt', size=473, hash='4356f3c225a6bd6dbe8571420872ad57bd1e09d3')]),
+                OFile(name='cases_all.txt', size=448, hash='da1d6dce1a3d9694bfb74bb99b1cda1766531164'),
+                OFile(name='cases_cnaseq.txt', size=528, hash='0bf89afc7d8409185288c8bdee45ffb07daa4b08'),
+                OFile(name='cases_cna.txt', size=460, hash='dfc9325922ceef49a427a61362366507b6331948'),
+                OFile(name='cases_sequenced.txt', size=473, hash='6aa2ba1b519020ada95acb77b0900be172f306ff')]),
                 OFile(name='report.html', size=1026290, hash='8c70ab473d323df777c86d330d6e064eaf580cd6')],
             dir=output_dir)
         }
