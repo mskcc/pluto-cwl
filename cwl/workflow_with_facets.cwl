@@ -391,6 +391,7 @@ steps:
       sample_summary_file: sample_summary_file
       facets_suite_txt_files: run_facets/facets_txt
       extra_sample_ids: extra_sample_ids
+      extra_cna_files: extra_cna_files
     out:
       [
       portal_meta_clinical_sample_file, # meta_clinical_sample.txt
