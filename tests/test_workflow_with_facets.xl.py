@@ -1975,7 +1975,7 @@ class TestWorkflowWithFacetsMedium(PlutoTestCase):
             OFile(name='meta_clinical_patient.txt', size=135, hash='f62ecfe5791137fb867cb1c83ade1d3cd1d3cd9d'),
             OFile(name='meta_CNA.txt', size=263, hash='a1e6a0e7e5a299034c69d9f9cae2bda0dec408fb'),
             OFile(name='meta_fusions.txt', size=220, hash='e80c68b6d8af525c1d3963f3a8c6d1dd57952ffd'),
-            OFile(name='meta_mutations_extended.txt', size=246, hash='5c99b04083bd898f9bca1b1bfea1ae34d89a3ace'),
+            OFile(name='meta_mutations_extended.txt', size=263, hash='642c6dd1ece59b8ad6d30c91477a21128bc5aa9f'),
             OFile(name='12216_meta_cna_hg19_seg.txt', size=186, hash='c47070bb1c8c67d9fb3656b7201c653d6ea274fb'),
             OFile(name='data_CNA.txt', size=708733, hash='712810eb1177b95355425c879fb31bc6e0d97cc9'),
             OFile(name='data_CNA.ascna.txt', size=1165304, hash='bb7db96bfde082fab655956c0c7545f2b224c36a'),
