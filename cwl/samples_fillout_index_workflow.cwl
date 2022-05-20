@@ -188,7 +188,7 @@ steps:
               }
 
 
-
+  # convert FilloutIndexedSample to FilloutSample by removing some extraneous fields
   convert_sample_types:
     in:
       samples:
