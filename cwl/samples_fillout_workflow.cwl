@@ -679,6 +679,7 @@ steps:
             glob: $(inputs.output_filtered_filename)
 
   convert_to_portal_format:
+    doc: make a copy of the filtered maf that is updated for cBioPortal input format requirements
     run: update_cBioPortal_data.cwl
     in:
       subcommand:
@@ -687,6 +688,13 @@ steps:
       output_filename:
         valueFrom: ${ return "fillout.portal.maf"; }
     out: [ output_file ]
+
+  split_uncalled_variants:
+    doc: split the portal fillout file into a second file to hold uncalled variants
+    run: filterUncalledMutations.cwl
+    in:
+      input_file: convert_to_portal_format/output_file
+    out: [ called_file, uncalled_file ]
 
 outputs:
   output_file:
@@ -697,4 +705,7 @@ outputs:
     outputSource: concat_with_comments/filtered_file
   portal_file:
     type: File
-    outputSource: convert_to_portal_format/output_file
+    outputSource: split_uncalled_variants/called_file
+  uncalled_file:
+    type: File
+    outputSource: split_uncalled_variants/uncalled_file

@@ -31,11 +31,11 @@ class TestFilterUncalledMutations(PlutoTestCase):
 
         output_json, output_dir = self.run_cwl()
 
-        output_data_clinical_mutations = os.path.join(output_dir,'data_clinical_mutations.txt')
+        output_data_mutations_extended = os.path.join(output_dir,'data_mutations_extended.txt')
         output_data_mutations_uncalled = os.path.join(output_dir,'data_mutations_uncalled.txt')
 
         expected_output = {
-            'called_file': OFile(name = 'data_clinical_mutations.txt', dir = output_dir, hash = 'e7430656d9fcbce36fa57eb92460db57742168ae', size = 347254),
+            'called_file': OFile(name = 'data_mutations_extended.txt', dir = output_dir, hash = 'e7430656d9fcbce36fa57eb92460db57742168ae', size = 347254),
             'uncalled_file': OFile(name = 'data_mutations_uncalled.txt', dir = output_dir, hash = '58129786cc299011202eb078734b3ff513d54081', size = 287883),
         }
 
@@ -43,7 +43,7 @@ class TestFilterUncalledMutations(PlutoTestCase):
 
         self.assertCWLDictEqual(output_json, expected_output)
 
-        comments, mutations = self.load_mutations(output_data_clinical_mutations, strip = True)
+        comments, mutations = self.load_mutations(output_data_mutations_extended, strip = True)
         self.assertEqual(len(mutations), 253)
 
         comments, mutations = self.load_mutations(output_data_mutations_uncalled, strip = True)
