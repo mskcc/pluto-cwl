@@ -355,6 +355,43 @@ class TestGenerateCbioFilesCWL(unittest.TestCase):
             self.maxDiff = None
             self.assertDictEqual(output_json, expected_output)
 
+    def test_generate_meta_sv(self):
+        """
+        # meta_sv.txt
+
+        generate_cbioPortal_files.py \
+        meta_sv \
+        --cancer-study-id "$(PROJ_ID)" \
+        --sv-data-filename "$(CBIO_SV_DATA_FILENAME)" \
+        --output "$(CBIO_META_SV_FILE)"
+        """
+        input_json = {
+        "subcommand": "meta_sv",
+        "output_filename": "meta_sv.txt",
+        "cancer_study_id": "cancer_study",
+        "sv_data_filename": "data_sv.txt"
+        }
+        with TemporaryDirectory() as tmpdir:
+            output_json, output_dir = run_cwl(
+                testcase = self,
+                tmpdir = tmpdir,
+                input_json = input_json,
+                cwl_file = cwl_file
+                )
+
+            expected_output = {
+                'output_file': {
+                    'location': 'file://' + os.path.join(output_dir, 'meta_sv.txt'),
+                    'basename': 'meta_sv.txt',
+                    'class': 'File',
+                    'checksum': 'sha1$731d3681e1c7ff3207ed3a5475b599e52d0464e0',
+                    'size': 257,
+                    'path': os.path.join(output_dir,'meta_sv.txt')
+                }
+            }
+            self.maxDiff = None
+            self.assertDictEqual(output_json, expected_output)
+
     def test_generate_meta_mutations_extended(self):
         """
         # meta_mutations_extended.txt
