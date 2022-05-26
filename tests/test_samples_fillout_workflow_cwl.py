@@ -89,19 +89,22 @@ class TestSamplesFillout(PlutoTestCase):
         output_json, output_dir = self.run_cwl()
         output_path = os.path.join(output_dir,'output.maf')
         filtered_output_path = os.path.join(output_dir,'output.filtered.maf')
-        portal_output_path = os.path.join(output_dir,'fillout.portal.maf')
+        portal_output_path = os.path.join(output_dir,'data_mutations_extended.txt')
+        uncalled_output_path = os.path.join(output_dir,'data_mutations_uncalled.txt')
 
         expected_output = {
             'output_file': OFile(name = 'output.maf', dir = output_dir),
             'filtered_file': OFile(name = 'output.filtered.maf', dir = output_dir),
-            'portal_file': OFile(name = 'fillout.portal.maf', dir = output_dir),
+            'portal_file': OFile(name = 'data_mutations_extended.txt', dir = output_dir),
+            'uncalled_file': OFile(name = 'data_mutations_uncalled.txt', dir = output_dir),
         }
 
         # file contenst are inconsistent so strip some keys from the output dict
         strip_related_keys = [
         ('basename', 'output.maf', ['size', 'checksum']),
         ('basename', 'output.filtered.maf', ['size', 'checksum']),
-        ('basename', 'fillout.portal.maf', ['size', 'checksum'])
+        ('basename', 'data_mutations_extended.txt', ['size', 'checksum']),
+        ('basename', 'data_mutations_uncalled.txt', ['size', 'checksum'])
         ]
         self.assertCWLDictEqual(output_json, expected_output, related_keys = strip_related_keys)
         # all_effects field is variable and changes bytes and checksum
@@ -120,9 +123,15 @@ class TestSamplesFillout(PlutoTestCase):
         self.assertEqual(hash, expected_hash)
 
         comments, mutations = self.load_mutations(portal_output_path, strip = True)
-        self.assertEqual(len(mutations), 230)
+        self.assertEqual(len(mutations), 163)
         hash = md5_obj(mutations)
-        expected_hash = '804bf945bc35f95002708329a2974087'
+        expected_hash = '8dd6f3af030a2eca3b5fa0698896361a'
+        self.assertEqual(hash, expected_hash)
+
+        comments, mutations = self.load_mutations(uncalled_output_path, strip = True)
+        self.assertEqual(len(mutations), 67)
+        hash = md5_obj(mutations)
+        expected_hash = 'a474b61268d2a4c25fd27cc2ccbbce96'
         self.assertEqual(hash, expected_hash)
 
     def test_Nick_testcase_2(self):
@@ -195,19 +204,22 @@ class TestSamplesFillout(PlutoTestCase):
         output_json, output_dir = self.run_cwl()
         output_path = os.path.join(output_dir,'output.maf')
         filtered_output_path = os.path.join(output_dir,'output.filtered.maf')
-        portal_output_path = os.path.join(output_dir,'fillout.portal.maf')
+        portal_output_path = os.path.join(output_dir,'data_mutations_extended.txt')
+        uncalled_output_path = os.path.join(output_dir,'data_mutations_uncalled.txt')
 
         expected_output = {
             'output_file': OFile(name = 'output.maf', dir = output_dir),
             'filtered_file': OFile(name = 'output.filtered.maf', dir = output_dir),
-            'portal_file': OFile(name = 'fillout.portal.maf', dir = output_dir),
+            'portal_file': OFile(name = 'data_mutations_extended.txt', dir = output_dir),
+            'uncalled_file': OFile(name = 'data_mutations_uncalled.txt', dir = output_dir),
         }
 
         # file contenst are inconsistent so strip some keys from the output dict
         strip_related_keys = [
         ('basename', 'output.maf', ['size', 'checksum']),
         ('basename', 'output.filtered.maf', ['size', 'checksum']),
-        ('basename', 'fillout.portal.maf', ['size', 'checksum'])
+        ('basename', 'data_mutations_extended.txt', ['size', 'checksum']),
+        ('basename', 'data_mutations_uncalled.txt', ['size', 'checksum'])
         ]
         self.assertCWLDictEqual(output_json, expected_output, related_keys = strip_related_keys)
         # all_effects field is variable and changes bytes and checksum
@@ -226,9 +238,15 @@ class TestSamplesFillout(PlutoTestCase):
         self.assertEqual(hash, expected_hash)
 
         comments, mutations = self.load_mutations(portal_output_path, strip = True)
-        self.assertEqual(len(mutations), 475)
+        self.assertEqual(len(mutations), 408)
         hash = md5_obj(mutations)
-        expected_hash = '5468774d33810044a88768081a1ee510'
+        expected_hash = '63969ef90cb7a4524ab9063b4889bbde'
+        self.assertEqual(hash, expected_hash)
+
+        comments, mutations = self.load_mutations(uncalled_output_path, strip = True)
+        self.assertEqual(len(mutations), 67)
+        hash = md5_obj(mutations)
+        expected_hash = 'a474b61268d2a4c25fd27cc2ccbbce96'
         self.assertEqual(hash, expected_hash)
 
 
