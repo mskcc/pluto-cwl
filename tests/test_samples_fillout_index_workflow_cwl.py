@@ -89,19 +89,22 @@ class TestSamplesFilloutIndex(PlutoTestCase):
         output_json, output_dir = self.run_cwl()
         output_file = os.path.join(output_dir,'output.maf')
         filtered_output_path = os.path.join(output_dir,'output.filtered.maf')
-        portal_output_path = os.path.join(output_dir,'fillout.portal.maf')
+        portal_output_path = os.path.join(output_dir,'data_mutations_extended.txt')
+        uncalled_output_path = os.path.join(output_dir,'data_mutations_uncalled.txt')
 
         expected_output = {
             'output_file': OFile(name = 'output.maf', dir = output_dir),
             'filtered_file': OFile(name = 'output.filtered.maf', dir = output_dir),
-            'portal_file': OFile(name = 'fillout.portal.maf', dir = output_dir),
+            'portal_file': OFile(name = 'data_mutations_extended.txt', dir = output_dir),
+            'uncalled_file': OFile(name = 'data_mutations_uncalled.txt', dir = output_dir),
         }
 
         # file contents are inconsistent so strip some keys from the output dict
         strip_related_keys = [
         ('basename', 'output.maf', ['size', 'checksum']),
         ('basename', 'output.filtered.maf', ['size', 'checksum']),
-        ('basename', 'fillout.portal.maf', ['size', 'checksum'])
+        ('basename', 'data_mutations_extended.txt', ['size', 'checksum']),
+        ('basename', 'data_mutations_uncalled.txt', ['size', 'checksum'])
         ]
         self.assertCWLDictEqual(output_json, expected_output, related_keys = strip_related_keys)
 
@@ -112,17 +115,26 @@ class TestSamplesFilloutIndex(PlutoTestCase):
         expected_hash = '18fafe6dd335cb62f515e0323e6b74b2'
         self.assertEqual(hash, expected_hash)
 
-        comments, mutations = self.load_mutations(filtered_output_path, strip = True)
-        self.assertEqual(len(mutations), 225)
-        hash = md5_obj(mutations)
+        comments, filtered_mutations = self.load_mutations(filtered_output_path, strip = True)
+        self.assertEqual(len(filtered_mutations), 225)
+        hash = md5_obj(filtered_mutations)
         expected_hash = '450b97a2b93ed9421c141837f99240ce'
         self.assertEqual(hash, expected_hash)
 
-        comments, mutations = self.load_mutations(portal_output_path, strip = True)
-        self.assertEqual(len(mutations), 225)
-        hash = md5_obj(mutations)
-        expected_hash = 'cbe6196bc0572d2561e51e41656a89f8'
+        comments, called_mutations = self.load_mutations(portal_output_path, strip = True)
+        self.assertEqual(len(called_mutations), 159)
+        hash = md5_obj(called_mutations)
+        expected_hash = '52a95dcfaf0b767fe90f4115e11f3b0e'
         self.assertEqual(hash, expected_hash)
+
+        comments, uncalled_mutations = self.load_mutations(uncalled_output_path, strip = True)
+        self.assertEqual(len(uncalled_mutations), 66)
+        hash = md5_obj(uncalled_mutations)
+        expected_hash = '790f7faefb7b7c039fd48a8ede1cfe35'
+        self.assertEqual(hash, expected_hash)
+
+        # should be the same amount of mutations between the files
+        self.assertEqual(len(called_mutations) + len(uncalled_mutations), len(filtered_mutations))
 
 
 if __name__ == "__main__":
