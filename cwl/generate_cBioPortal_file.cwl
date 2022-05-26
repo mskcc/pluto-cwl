@@ -6,7 +6,7 @@ baseCommand: [ "generate_cbioPortal_files.py" ]
 
 requirements:
   DockerRequirement:
-    dockerPull: mskcc/helix_filters_01:21.4.1
+    dockerPull: mskcc/helix_filters_01:21.6.0
 
 inputs:
   # required for every invocation
@@ -85,33 +85,38 @@ inputs:
     inputBinding:
       prefix: '--fusion-data-filename'
       position: 16
+  sv_data_filename:
+    type: ['null', string ]
+    inputBinding:
+      prefix: '--sv-data-filename'
+      position: 17
   mutations_data_filename:
     type: ['null', string ]
     inputBinding:
       prefix: '--mutations-data-filename'
-      position: 17
+      position: 18
   segmented_data_filename:
     type: ['null', string ]
     inputBinding:
       prefix: '--segmented-data-file'
-      position: 18
+      position: 19
   description:
     type: ['null', string ]
     inputBinding:
       prefix: '--description'
-      position: 19
+      position: 20
   facets_txt_files:
     type:
       - 'null'
       - File[]
     inputBinding:
       prefix: '--facets-txt-files'
-      position: 20
+      position: 21
   input_file:
     type: [ 'null', File ]
     inputBinding:
       prefix: '--input'
-      position: 21
+      position: 22
 
 outputs:
   output_file:
