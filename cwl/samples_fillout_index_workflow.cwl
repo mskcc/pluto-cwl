@@ -3,9 +3,8 @@
 cwlVersion: v1.2
 class: Workflow
 doc: "
-Wrapper to run indexing on all bams before submitting for samples fillout
-Includes secondary input channels to allow for including .bam files that do not have indexes
-Also include other extra handling needed for files that might not meet needs for the fillout workflow
+Wrapper to run bam indexing on all bams before submitting for samples fillout
+Also includes steps to pre-filter some maf input files
 "
 requirements:
   - class: MultipleInputFeatureRequirement
@@ -49,8 +48,9 @@ inputs:
     default: "fillout.maf"
 
 steps:
-  # get .bai index for all the input bam files
+
   index_bam:
+    doc: create a .bai index file for all incoming .bam files
     scatter: sample
     in:
       sample: samples
@@ -90,12 +90,8 @@ steps:
               return ret;
               }
 
-
-
-
-  # some samples need their input maf files filtered ahead of time; apply the maf_filter cBioPortal filters
-  # need to separate the samples that require prefilter from the ones that do not
   split_sample_groups:
+    doc: separate out the samples that need to be prefiltered in downstream steps
     in:
       samples: index_bam/sample
     out: [ samples_need_filter, samples_no_filter ]
@@ -129,11 +125,8 @@ steps:
         }"
 
 
-
-  # run the maf_filter on the samples_need_filter and return the cBioPortal files for each
-  # need a subworkflow for this because maf_filter.cwl takes a single input file
-  # then need to update the samples channel with the new output files
   prefilter_workflow:
+    doc: apply the prefiltering steps to applicable samples (usually Argos sample mafs since clinical mafs are often filtered already)
     scatter: sample
     in:
       sample: split_sample_groups/samples_need_filter
@@ -157,6 +150,7 @@ steps:
           type: "types.yml#FilloutIndexedSample"
       steps:
         run_maf_filter:
+          doc: run the maf filer script on the sample maf file
           run: maf_filter.cwl
           in:
             sample: sample
@@ -165,8 +159,8 @@ steps:
             is_impact: is_impact
             argos_version_string: argos_version_string
           out: [ cbio_mutation_data_file ]
-        # update the maf file for each sample that was filtered
         update_sample_mafs:
+          doc: update the sample entry to use the new filtered maf instead of the original one
           in:
             sample: sample
             maf_file: run_maf_filter/cbio_mutation_data_file
@@ -190,6 +184,7 @@ steps:
 
 
   convert_sample_types:
+    doc: Convert the CWL sample objects from FilloutIndexedSample type to FilloutSample for downstream processes
     in:
       samples:
         source: [ split_sample_groups/samples_no_filter, prefilter_workflow/sample ]
@@ -214,19 +209,15 @@ steps:
         return { 'samples': new_samples };
         }
 
-
-
-
-
-  # run the fillout workflow
   run_samples_fillout:
+    doc: run the fillout workflow on the samples
     run: samples_fillout_workflow.cwl
     in:
       output_fname: fillout_output_fname
       exac_filter: exac_filter
       samples: convert_sample_types/samples
       ref_fasta: ref_fasta
-    out: [ output_file, filtered_file, portal_file ]
+    out: [ output_file, filtered_file, portal_file, uncalled_file ]
 
 
 outputs:
@@ -239,3 +230,6 @@ outputs:
   portal_file:
     type: File
     outputSource: run_samples_fillout/portal_file
+  uncalled_file:
+    type: File
+    outputSource: run_samples_fillout/uncalled_file
