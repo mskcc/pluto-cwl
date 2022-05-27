@@ -264,6 +264,8 @@ parallel-test:
 # EXAMPLE:
 # $ PRINT_TESTNAME=True make parallel-test T=tests/test_add_af_cwl.py
 # $ PRINT_TESTNAME=True make parallel-test T=tests/test_generate_cBioPortal_file_cwl.py
+# $ TMP_DIR=/scratch CWL_ENGINE=Toil PRINT_COMMAND=True PRINT_TESTNAME=True make parallel-test P=20
+
 
 integration_test:
 	. "$(ENVSH)" integration_test && \
