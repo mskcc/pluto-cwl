@@ -5,7 +5,7 @@ class: CommandLineTool
 baseCommand: ["fusion_to_sv_converter.py"]
 requirements:
   DockerRequirement:
-    dockerPull: mskcc/helix_filters_01:21.4.1
+    dockerPull: mskcc/helix_filters_01:21.6.0
 inputs:
   fusion_file:
     type: File
@@ -16,7 +16,7 @@ inputs:
     type: string
     inputBinding:
       prefix: --sv_file
-      position: 2 
+      position: 2
 
 outputs:
   output_file:
