@@ -61,8 +61,8 @@ class TestConcatTables(PlutoTestCase):
                 'location': 'file://' + output_path,
                 'basename': 'output.txt',
                 'class': 'File',
-                'checksum': 'sha1$d92a4e707cb5dad2ec557edfe976680dfffc5f3f',
-                'size': 53,
+                'checksum': 'sha1$1d1d9666cf862439ff6e27c3735325dab73c5830',
+                'size': 48,
                 'path': output_path
                 }
             }
@@ -104,8 +104,8 @@ class TestConcatTables(PlutoTestCase):
                 'location': 'file://' + output_path,
                 'basename': 'output.txt',
                 'class': 'File',
-                'checksum': 'sha1$2274c54c24a98e8235e34d78b700d04cb95f48dd',
-                'size': 21,
+                'checksum': 'sha1$83839e4ffe066577c770d8fd0a530530899a4751',
+                'size': 18,
                 'path': output_path
                 }
             }

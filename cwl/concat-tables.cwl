@@ -2,7 +2,7 @@
 
 cwlVersion: v1.0
 class: CommandLineTool
-baseCommand: [ "concat-tables.py" ]
+baseCommand: [ "concat-tables.py", "--no-carriage-returns" ]
 requirements:
   DockerRequirement:
     dockerPull: mskcc/helix_filters_01:21.4.1
