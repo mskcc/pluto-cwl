@@ -259,7 +259,9 @@ P:=16
 # test target; can also be an individual test_*.py file!
 T:=tests/
 parallel-test:
-	./print_tests.py "$(T)" | xargs -n 1 -P "$(P)" python3 -m unittest
+	time { ./print_tests.py "$(T)" | \
+	xargs -n 1 -P "$(P)" stdbuf -oL python3 -m unittest ; } 2>&1 | \
+	tee -a testing.log
 
 # EXAMPLE:
 # $ PRINT_TESTNAME=True make parallel-test T=tests/test_add_af_cwl.py
