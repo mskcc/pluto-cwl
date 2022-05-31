@@ -258,16 +258,24 @@ test3:$(TESTS)
 P:=16
 # test target; can also be an individual test_*.py file!
 T:=tests/
-parallel-test:
+# NOTE: the logging here can cause delay before lines are printed to file or console
+parallel-test-log:
+	echo ">>>>> ------ start parallel-test-log $$(date) -------- <<<<<" >> testing.log
 	time { ./print_tests.py "$(T)" | \
 	xargs -n 1 -P "$(P)" stdbuf -oL python3 -m unittest ; } 2>&1 | \
 	tee -a testing.log
+	echo ">>>>> ------ stop parallel-test-log $$(date) -------- <<<<<" >> testing.log
+
+# same but without logging
+parallel-test:
+	./print_tests.py "$(T)" | \
+	xargs -n 1 -P "$(P)" python3 -m unittest
 
 # EXAMPLE:
 # $ PRINT_TESTNAME=True make parallel-test T=tests/test_add_af_cwl.py
 # $ PRINT_TESTNAME=True make parallel-test T=tests/test_generate_cBioPortal_file_cwl.py
 # $ TMP_DIR=/scratch CWL_ENGINE=Toil PRINT_COMMAND=True PRINT_TESTNAME=True make parallel-test P=20
-
+# TMP_DIR=/fscratch/tmp PRINT_COMMAND=True PRINT_TESTNAME=True make parallel-test
 
 integration_test:
 	. "$(ENVSH)" integration_test && \
