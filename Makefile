@@ -230,11 +230,11 @@ update-container-tags:
 # NOTE: run with `$ LARGE_TESTS=True python3 tests/... ` to enable large test cases
 export FIXTURES_DIR:=/juno/work/ci/helix_filters_01/fixtures
 
-# TODO: figure out why this is missing some tests
-test2:
-	. "$(ENVSH)" toil && \
-	if [ ! -e "$(SINGULARITY_SIF)" ]; then $(MAKE) singularity-pull; fi && \
-	python3 test.py
+# # TODO: figure out why this is missing some tests
+# test2:
+# 	. "$(ENVSH)" toil && \
+# 	if [ ! -e "$(SINGULARITY_SIF)" ]; then $(MAKE) singularity-pull; fi && \
+# 	python3 test.py
 
 # TODO: figure out if we can run the tests in parallel or otherwise make it faster
 # for some reason the test recipe is not running all tests....
@@ -245,7 +245,7 @@ test:
 
 # run tests in parallel;
 # $ make test3 -j 4
-# the test
+# NOTE: this runs each test_*.py file in parallel; does NOT run individual test cases in parallel!!
 TEST_ENV:=toil
 TESTS:=$(shell ls tests/test_*.py)
 $(TESTS):
@@ -253,6 +253,29 @@ $(TESTS):
 .PHONY:$(TESTS)
 test3:$(TESTS)
 
+# run all individual test cases in parallel
+# number of parallel tasks;
+P:=16
+# test target; can also be an individual test_*.py file!
+T:=tests/
+# NOTE: the logging here can cause delay before lines are printed to file or console
+parallel-test-log:
+	echo ">>>>> ------ start parallel-test-log $$(date) -------- <<<<<" >> testing.log
+	time { ./print_tests.py "$(T)" | \
+	xargs -n 1 -P "$(P)" stdbuf -oL python3 -m unittest ; } 2>&1 | \
+	tee -a testing.log
+	echo ">>>>> ------ stop parallel-test-log $$(date) -------- <<<<<" >> testing.log
+
+# same but without logging
+parallel-test:
+	./print_tests.py "$(T)" | \
+	xargs -n 1 -P "$(P)" python3 -m unittest
+
+# EXAMPLE:
+# $ PRINT_TESTNAME=True make parallel-test T=tests/test_add_af_cwl.py
+# $ PRINT_TESTNAME=True make parallel-test T=tests/test_generate_cBioPortal_file_cwl.py
+# $ TMP_DIR=/scratch CWL_ENGINE=Toil PRINT_COMMAND=True PRINT_TESTNAME=True make parallel-test P=20
+# TMP_DIR=/fscratch/tmp PRINT_COMMAND=True PRINT_TESTNAME=True make parallel-test
 
 integration_test:
 	. "$(ENVSH)" integration_test && \

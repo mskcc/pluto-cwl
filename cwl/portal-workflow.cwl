@@ -79,6 +79,10 @@ inputs:
     type: string
     default: meta_fusions.txt
     doc: "(CBIO_META_FUSIONS_FILE)"
+  cbio_meta_sv_filename:
+    type: string
+    default: meta_SV.txt
+    doc: "(CBIO_META_SV_FILE)"
   cbio_meta_cna_filename:
     type: string
     default: meta_CNA.txt
@@ -107,6 +111,10 @@ inputs:
     type: string
     default: data_fusions.txt
     doc: "(CBIO_FUSION_DATA_FILENAME)"
+  cbio_sv_data_filename:
+    type: string
+    default: data_SV.txt
+    doc: "(CBIO_SV_DATA_FILENAME)"
   cbio_mutation_data_filename:
     type: string
     default: data_mutations_extended.txt
@@ -273,6 +281,18 @@ steps:
       output_filename: cbio_meta_fusions_filename
       cancer_study_id: cancer_study_identifier
       fusion_data_filename: cbio_fusion_data_filename # data_fusions.txt
+    out:
+      [output_file]
+
+  # meta_SV.txt (cbio_meta_sv_filename)
+  generate_cbio_meta_sv:
+    run: generate_cBioPortal_file.cwl
+    in:
+      subcommand:
+        valueFrom: ${ return "meta_sv" }
+      output_filename: cbio_meta_sv_filename
+      cancer_study_id: cancer_study_identifier
+      sv_data_filename: cbio_sv_data_filename # data_SV.txt
     out:
       [output_file]
 
@@ -499,7 +519,13 @@ steps:
       known_fusions_file: known_fusions_file
     out:
       [output_file]
-
+  convert_fusion_to_sv:
+    run: fusion_to_sv.cwl
+    in:
+      fusion_file: filter_cbio_fusions/output_file
+      output_filename: cbio_sv_data_filename # data_SV.txt
+    out:
+      [output_file]
   # create a case_list directory
   make_case_list_dir:
     run: put_in_dir.cwl
@@ -553,6 +579,9 @@ outputs:
   portal_meta_fusions_file:
     type: File
     outputSource: generate_cbio_meta_fusions/output_file # meta_fusions.txt
+  portal_meta_sv_file:
+    type: File
+    outputSource: generate_cbio_meta_sv/output_file # meta_SV.txt
   portal_meta_mutations_extended_file:
     type: File
     outputSource: generate_meta_mutations_extended/output_file # meta_mutations_extended.txt
@@ -575,6 +604,9 @@ outputs:
   portal_fusions_data_file:
     type: File
     outputSource: filter_cbio_fusions/output_file # data_fusions.txt
+  portal_sv_data_file:
+    type: File
+    outputSource: convert_fusion_to_sv/output_file # data_SV.txt
   portal_case_list_dir:
     type: Directory
     outputSource: make_case_list_dir/directory
