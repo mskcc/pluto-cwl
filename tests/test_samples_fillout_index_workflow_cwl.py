@@ -109,33 +109,11 @@ class TestSamplesFilloutIndex(PlutoTestCase):
         self.assertCWLDictEqual(output_json, expected_output, related_keys = strip_related_keys)
 
         # instead of checksum and size, count the number of mutations and take a checksum on the mutation contents
-        comments, mutations = self.load_mutations(output_file, strip = True)
-        self.assertEqual(len(mutations), 310)
-        hash = md5_obj(mutations)
-        expected_hash = '18fafe6dd335cb62f515e0323e6b74b2'
-        self.assertEqual(hash, expected_hash)
-
-        comments, filtered_mutations = self.load_mutations(filtered_output_path, strip = True)
-        self.assertEqual(len(filtered_mutations), 225)
-        hash = md5_obj(filtered_mutations)
-        expected_hash = '450b97a2b93ed9421c141837f99240ce'
-        self.assertEqual(hash, expected_hash)
-
-        comments, called_mutations = self.load_mutations(portal_output_path, strip = True)
-        self.assertEqual(len(called_mutations), 159)
-        hash = md5_obj(called_mutations)
-        expected_hash = '52a95dcfaf0b767fe90f4115e11f3b0e'
-        self.assertEqual(hash, expected_hash)
-
-        comments, uncalled_mutations = self.load_mutations(uncalled_output_path, strip = True)
-        self.assertEqual(len(uncalled_mutations), 66)
-        hash = md5_obj(uncalled_mutations)
-        expected_hash = '790f7faefb7b7c039fd48a8ede1cfe35'
-        self.assertEqual(hash, expected_hash)
-
-        # should be the same amount of mutations between the files
-        self.assertEqual(len(called_mutations) + len(uncalled_mutations), len(filtered_mutations))
-
+        self.assertNumMutationsHash(output_file, 310, '18fafe6dd335cb62f515e0323e6b74b2')
+        self.assertNumMutationsHash(filtered_output_path, 225, '450b97a2b93ed9421c141837f99240ce')
+        self.assertNumMutationsHash(portal_output_path, 159, '52a95dcfaf0b767fe90f4115e11f3b0e')
+        self.assertNumMutationsHash(uncalled_output_path, 66, '790f7faefb7b7c039fd48a8ede1cfe35')
+        self.assertEqualNumMutations([portal_output_path, uncalled_output_path], filtered_output_path)
 
 if __name__ == "__main__":
     unittest.main()

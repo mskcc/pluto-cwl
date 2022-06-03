@@ -109,30 +109,11 @@ class TestSamplesFillout(PlutoTestCase):
         self.assertCWLDictEqual(output_json, expected_output, related_keys = strip_related_keys)
         # all_effects field is variable and changes bytes and checksum
         # need to check number of variant outputs instead
-
-        comments, mutations = self.load_mutations(output_path, strip = True)
-        self.assertEqual(len(mutations), 475)
-        hash = md5_obj(mutations)
-        expected_hash = 'd041bc641d85761b60c6b7ef8606bab2'
-        self.assertEqual(hash, expected_hash)
-
-        comments, mutations = self.load_mutations(filtered_output_path, strip = True)
-        self.assertEqual(len(mutations), 230)
-        hash = md5_obj(mutations)
-        expected_hash = 'c9cde01507d1b2470057c5d120eaab68'
-        self.assertEqual(hash, expected_hash)
-
-        comments, mutations = self.load_mutations(portal_output_path, strip = True)
-        self.assertEqual(len(mutations), 163)
-        hash = md5_obj(mutations)
-        expected_hash = '8dd6f3af030a2eca3b5fa0698896361a'
-        self.assertEqual(hash, expected_hash)
-
-        comments, mutations = self.load_mutations(uncalled_output_path, strip = True)
-        self.assertEqual(len(mutations), 67)
-        hash = md5_obj(mutations)
-        expected_hash = 'a474b61268d2a4c25fd27cc2ccbbce96'
-        self.assertEqual(hash, expected_hash)
+        self.assertNumMutationsHash(output_path, 475, 'd041bc641d85761b60c6b7ef8606bab2')
+        self.assertNumMutationsHash(filtered_output_path, 230, 'c9cde01507d1b2470057c5d120eaab68')
+        self.assertNumMutationsHash(portal_output_path, 163, '8dd6f3af030a2eca3b5fa0698896361a')
+        self.assertNumMutationsHash(uncalled_output_path, 67, 'a474b61268d2a4c25fd27cc2ccbbce96')
+        self.assertEqualNumMutations([portal_output_path, uncalled_output_path], filtered_output_path)
 
     def test_Nick_testcase_2(self):
         """
@@ -224,31 +205,11 @@ class TestSamplesFillout(PlutoTestCase):
         self.assertCWLDictEqual(output_json, expected_output, related_keys = strip_related_keys)
         # all_effects field is variable and changes bytes and checksum
         # need to check number of variant outputs instead
-
-        comments, mutations = self.load_mutations(output_path, strip = True)
-        self.assertEqual(len(mutations), 475)
-        hash = md5_obj(mutations)
-        expected_hash = 'd041bc641d85761b60c6b7ef8606bab2'
-        self.assertEqual(hash, expected_hash)
-
-        comments, mutations = self.load_mutations(filtered_output_path, strip = True)
-        self.assertEqual(len(mutations), 475)
-        hash = md5_obj(mutations)
-        expected_hash = 'd041bc641d85761b60c6b7ef8606bab2'
-        self.assertEqual(hash, expected_hash)
-
-        comments, mutations = self.load_mutations(portal_output_path, strip = True)
-        self.assertEqual(len(mutations), 408)
-        hash = md5_obj(mutations)
-        expected_hash = '63969ef90cb7a4524ab9063b4889bbde'
-        self.assertEqual(hash, expected_hash)
-
-        comments, mutations = self.load_mutations(uncalled_output_path, strip = True)
-        self.assertEqual(len(mutations), 67)
-        hash = md5_obj(mutations)
-        expected_hash = 'a474b61268d2a4c25fd27cc2ccbbce96'
-        self.assertEqual(hash, expected_hash)
-
+        self.assertNumMutationsHash(output_path, 475, 'd041bc641d85761b60c6b7ef8606bab2')
+        self.assertNumMutationsHash(filtered_output_path, 475, 'd041bc641d85761b60c6b7ef8606bab2')
+        self.assertNumMutationsHash(portal_output_path, 408, '63969ef90cb7a4524ab9063b4889bbde')
+        self.assertNumMutationsHash(uncalled_output_path, 67, 'a474b61268d2a4c25fd27cc2ccbbce96')
+        self.assertEqualNumMutations([portal_output_path, uncalled_output_path], filtered_output_path)
 
 if __name__ == "__main__":
     unittest.main()

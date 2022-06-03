@@ -65,7 +65,7 @@ steps:
           dockerPull: mskcc/helix_filters_01:samtools-1.9
         InitialWorkDirRequirement:
           listing:
-            - $(inputs.sample['bam_file'])
+            - $(inputs.sample['bam_file']) # NOTE: I think this is causing all input bam files to get copied when using Toil??
             - entryname: run.sh
               entry: |-
                 set -eu
