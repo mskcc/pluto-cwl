@@ -182,7 +182,7 @@ steps:
                 num_singletons="\$(echo \${singleton_mafs} | wc -w )"
                 # only try to concat if theres >0 singletons
                 if [ "\${num_singletons}" -gt 0 ]; then
-                concat-tables.py -o "\${output_maf}" --no-carriage-returns --comments --progress --na-str '' \${singleton_mafs}
+                concat-tables.py -o "\${output_maf}" --no-carriage-returns --comments --progress --na-str '' \${concat_maf} \${singleton_mafs}
                 # otherwise just copy the input as the output
                 else
                 cp "\${concat_maf}" "\${output_maf}"
