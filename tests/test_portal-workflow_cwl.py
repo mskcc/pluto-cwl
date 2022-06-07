@@ -135,30 +135,10 @@ class TestPortalWorkflow(PlutoTestCase):
         ('basename', 'report.html', ['size', 'checksum'])
         ]
         self.assertCWLDictEqual(output_json, expected_output, related_keys = strip_related_keys)
-
-        comments, mutations = self.load_mutations(os.path.join(output_dir,  'data_mutations_extended.txt'))
-        self.assertEqual(len(mutations), 17)
-
-        # load the data_CNA.txt file
-        path = os.path.join(output_dir, 'data_CNA.txt') # renamed from the data_CNA.scna.txt file ...
-        with open(path) as f:
-            header = next(f)
-        header_parts = header.split()
-        expected_header_parts = ['Hugo_Symbol', 'Sample1']
-        self.assertEqual(header_parts, expected_header_parts)
-
-        path = os.path.join(output_dir, 'data_CNA.ascna.txt')
-        with open(path) as f:
-            header = next(f)
-        header_parts = header.split()
-        expected_header_parts = ['Hugo_Symbol', 'Sample1']
-        self.assertEqual(header_parts, expected_header_parts)
-
-        # Test that CNA file looks correct
-        output_file = expected_output['portal_cna_data_file']['path']
-        lines = self.read_table(output_file)
-        self.assertEqual(lines[0], ['Hugo_Symbol', 'Sample1'])
-        self.assertEqual(len(lines), 587)
+        self.assertNumMutations(os.path.join(output_dir,  'data_mutations_extended.txt'), 17)
+        self.assertHeaderEquals(os.path.join(output_dir, 'data_CNA.txt'), ['Hugo_Symbol', 'Sample1'])
+        self.assertHeaderEquals(os.path.join(output_dir, 'data_CNA.ascna.txt'), ['Hugo_Symbol', 'Sample1'])
+        self.assertNumMutations(os.path.join(output_dir,  'data_CNA.txt'), 586)
 
     def test_run_worflow_one_maf_extra_ids(self):
         """
@@ -403,24 +383,9 @@ class TestPortalWorkflow(PlutoTestCase):
         ('basename', 'report.html', ['size', 'checksum'])
         ]
         self.assertCWLDictEqual(output_json, expected_output, related_keys = strip_related_keys)
-
-        comments, mutations = self.load_mutations(os.path.join(output_dir,  'data_mutations_extended.txt'))
-        self.assertEqual(len(mutations), 27)
-
-        # load the data_CNA.txt file
-        path = os.path.join(output_dir, 'data_CNA.txt')
-        with open(path) as f:
-            header = next(f)
-        header_parts = header.split()
-        expected_header_parts = ['Hugo_Symbol', 'Sample1', 'Sample4']
-        self.assertEqual(header_parts, expected_header_parts)
-
-        path = os.path.join(output_dir, 'data_CNA.ascna.txt')
-        with open(path) as f:
-            header = next(f)
-        header_parts = header.split()
-        expected_header_parts = ['Hugo_Symbol', 'Sample1', 'Sample4']
-        self.assertEqual(header_parts, expected_header_parts)
+        self.assertNumMutations(os.path.join(output_dir,  'data_mutations_extended.txt'), 27)
+        self.assertHeaderEquals(os.path.join(output_dir, 'data_CNA.txt'), ['Hugo_Symbol', 'Sample1', 'Sample4'])
+        self.assertHeaderEquals(os.path.join(output_dir, 'data_CNA.ascna.txt'), ['Hugo_Symbol', 'Sample1', 'Sample4'])
 
     def test_with_facets_txt(self):
         """
@@ -566,10 +531,9 @@ class TestPortalWorkflow(PlutoTestCase):
         ('basename', 'report.html', ['size', 'checksum'])
         ]
         self.assertCWLDictEqual(output_json, expected_output, related_keys = strip_related_keys)
-
-
-        comments, mutations = self.load_mutations(os.path.join(output_dir,  'data_mutations_extended.txt'))
-        self.assertEqual(len(mutations), 18)
+        self.assertNumMutations(os.path.join(output_dir,  'data_mutations_extended.txt'), 18)
+        self.assertHeaderEquals(os.path.join(output_dir, 'data_CNA.txt'), ['Hugo_Symbol', 'Sample44', 'Sample46'])
+        self.assertHeaderEquals(os.path.join(output_dir, 'data_CNA.ascna.txt'), ['Hugo_Symbol', 'Sample44', 'Sample46'])
 
         with open(os.path.join(output_dir,  'data_clinical_sample.txt')) as fin:
             lines = [ line.strip().split('\t') for line in fin ]
@@ -584,21 +548,6 @@ class TestPortalWorkflow(PlutoTestCase):
         ['Sample44', '08390_G_93', 'p_C_00002', 'COLLAB-01-T', 'Primary', 'Biopsy', 'IMPACT468+08390_Hg19', 'MEL', 'FFPE', '', '08390_G', '08390', 'roslin', '2.5.7', '502', 'Dr. Jones', 'Dr. Franklin', 'FALSE', '0.51', '1.6', '0.5.14', 'no WGD']
         ]
         self.assertEqual(lines, expected_lines)
-
-        # load the data_CNA.txt file
-        path = os.path.join(output_dir, 'data_CNA.txt')
-        with open(path) as f:
-            header = next(f)
-        header_parts = header.split()
-        expected_header_parts = ['Hugo_Symbol', 'Sample44', 'Sample46']
-        self.assertEqual(header_parts, expected_header_parts)
-
-        path = os.path.join(output_dir, 'data_CNA.ascna.txt')
-        with open(path) as f:
-            header = next(f)
-        header_parts = header.split()
-        expected_header_parts = ['Hugo_Symbol', 'Sample44', 'Sample46']
-        self.assertEqual(header_parts, expected_header_parts)
 
     def test_with_facets_txt_and_facets_mafs(self):
         """
@@ -754,6 +703,9 @@ class TestPortalWorkflow(PlutoTestCase):
         ('basename', 'report.html', ['size', 'checksum'])
         ]
         self.assertCWLDictEqual(output_json, expected_output, related_keys = strip_related_keys)
+        self.assertNumMutations(os.path.join(output_dir,  'data_mutations_extended.txt'), 18)
+        self.assertHeaderEquals(os.path.join(output_dir, 'data_CNA.txt'), ['Hugo_Symbol', 'Sample44', 'Sample46', 'Sample1', 'Sample2'])
+        self.assertHeaderEquals(os.path.join(output_dir, 'data_CNA.ascna.txt'), ['Hugo_Symbol', 'Sample44', 'Sample46'])
 
         with open(os.path.join(output_dir,  'data_clinical_sample.txt')) as fin:
             lines = [ line.strip().split('\t') for line in fin ]
@@ -769,10 +721,6 @@ class TestPortalWorkflow(PlutoTestCase):
         ]
         self.assertEqual(lines, expected_lines)
 
-        comments, mutations = self.load_mutations(os.path.join(output_dir, 'data_mutations_extended.txt'))
-        self.assertEqual(len(mutations), 18)
-
-        colnames = mutations[0].keys()
         some_required_colnames = [
             "ASCN.TOTAL_COPY_NUMBER",
             "ASCN.MINOR_COPY_NUMBER",
@@ -783,23 +731,8 @@ class TestPortalWorkflow(PlutoTestCase):
             "ASCN.ASCN_METHOD",
             "ASCN.ASCN_INTEGER_COPY_NUMBER"
         ]
-        for colname in some_required_colnames:
-            self.assertTrue(colname in colnames)
+        self.assertMutHeadersContain(os.path.join(output_dir, 'data_mutations_extended.txt'), some_required_colnames)
 
-        # load the data_CNA.txt file; this one includes the merged data !!
-        path = os.path.join(output_dir, 'data_CNA.txt') # renamed from the data_CNA.scna.txt file ...
-        with open(path) as f:
-            header = next(f)
-        header_parts = header.split()
-        expected_header_parts = ['Hugo_Symbol', 'Sample44', 'Sample46', 'Sample1', 'Sample2']
-        self.assertEqual(header_parts, expected_header_parts)
-
-        path = os.path.join(output_dir, 'data_CNA.ascna.txt')
-        with open(path) as f:
-            header = next(f)
-        header_parts = header.split()
-        expected_header_parts = ['Hugo_Symbol', 'Sample44', 'Sample46']
-        self.assertEqual(header_parts, expected_header_parts)
 
     @unittest.skipIf(ENABLE_LARGE_TESTS!=True, "is a large test")
     def test_with_mixed_mafs(self):
@@ -929,11 +862,9 @@ class TestPortalWorkflow(PlutoTestCase):
         ('basename', 'report.html', ['size', 'checksum'])
         ]
         self.assertCWLDictEqual(output_json, expected_output, related_keys = strip_related_keys)
-
-        comments, mutations = self.load_mutations(os.path.join(output_dir,  'data_mutations_extended.txt'))
-        self.assertEqual(len(mutations), 18)
-
-        colnames = mutations[0].keys()
+        self.assertNumMutations(os.path.join(output_dir,  'data_mutations_extended.txt'), 18)
+        self.assertHeaderEquals(os.path.join(output_dir, 'data_CNA.txt'), ['Hugo_Symbol', 'Sample44', 'Sample46'])
+        self.assertHeaderEquals(os.path.join(output_dir, 'data_CNA.ascna.txt'), ['Hugo_Symbol', 'Sample44', 'Sample46'])
         some_required_colnames = [
             "ASCN.TOTAL_COPY_NUMBER",
             "ASCN.MINOR_COPY_NUMBER",
@@ -944,24 +875,7 @@ class TestPortalWorkflow(PlutoTestCase):
             "ASCN.ASCN_METHOD",
             "ASCN.ASCN_INTEGER_COPY_NUMBER"
         ]
-
-        for colname in some_required_colnames:
-            self.assertTrue(colname in colnames, "Column label {} not present in the mutation file. Missing columns: {}".format(colname, [ c for c in some_required_colnames if c not in colnames ]))
-
-        # load the data_CNA.txt file
-        path = os.path.join(output_dir, 'data_CNA.txt')
-        with open(path) as f:
-            header = next(f)
-        header_parts = header.split()
-        expected_header_parts = ['Hugo_Symbol', 'Sample44', 'Sample46']
-        self.assertEqual(header_parts, expected_header_parts)
-
-        path = os.path.join(output_dir, 'data_CNA.ascna.txt')
-        with open(path) as f:
-            header = next(f)
-        header_parts = header.split()
-        expected_header_parts = ['Hugo_Symbol', 'Sample44', 'Sample46']
-        self.assertEqual(header_parts, expected_header_parts)
+        self.assertMutHeadersContain(os.path.join(output_dir, 'data_mutations_extended.txt'), some_required_colnames)
 
 if __name__ == "__main__":
     unittest.main()
