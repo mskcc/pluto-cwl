@@ -122,12 +122,12 @@ class TestPortalWorkflow(PlutoTestCase):
             'portal_meta_study_file': OFile(
                 name='meta_study.txt', size=134, hash='182c7c39315d7ce91cbb8d96f98134d676324cf6', dir=output_dir),
             'portal_muts_file': OFile(
-                name='data_mutations_extended.txt', size=4766, hash='5c92b50bdd1d7c45af8fd180448a68926b8248e6', dir=output_dir),
+                name='data_mutations_extended.txt', size=4748, hash='42cf23ff6003692c0c5e00dd60b6741f3d5a4d4f', dir=output_dir),
             'portal_report': OFile(
                 name='report.html', size=1016472, hash='4be1f9395bb83330dcffaecf76def4456db99a62', dir=output_dir),
             'portal_sv_data_file': OFile(
                 name='data_SV.txt', size=170, hash='276634dab72db8e7f6a49537345311183986c5fa', dir=output_dir),
-            
+
         }
 
         self.maxDiff = None
@@ -263,7 +263,7 @@ class TestPortalWorkflow(PlutoTestCase):
             'portal_meta_sv_file': OFile(
                 name='meta_SV.txt', size=251, hash='8a27777491a88698fba0163e3439206b8cb7db8c', dir=output_dir),
             'portal_muts_file': OFile(
-                name='data_mutations_extended.txt', size=4766, hash='5c92b50bdd1d7c45af8fd180448a68926b8248e6', dir=output_dir),
+                name='data_mutations_extended.txt', size=4748, hash='42cf23ff6003692c0c5e00dd60b6741f3d5a4d4f', dir=output_dir),
             'portal_report': OFile(
                 name='report.html', size=1016472, hash='4be1f9395bb83330dcffaecf76def4456db99a62', dir=output_dir),
             'portal_sv_data_file': OFile(
@@ -392,7 +392,7 @@ class TestPortalWorkflow(PlutoTestCase):
             'portal_meta_sv_file': OFile(
                 name='meta_SV.txt', size=251, hash='8a27777491a88698fba0163e3439206b8cb7db8c', dir=output_dir),
             'portal_muts_file': OFile(
-                name='data_mutations_extended.txt', size=6999, hash='5f225a2cc3c93c7a85e5a504dd648e00e0e9970c', dir=output_dir),
+                name='data_mutations_extended.txt', size=6971, hash='3d96c94c3217272d65f40350202a2c1508d3a79b', dir=output_dir),
             'portal_report': OFile(
                 name='report.html', size=1016698, hash='b71520700964c22eec0a0700bbe95018b2bf7bec', dir=output_dir),
             'portal_sv_data_file': OFile(
@@ -553,7 +553,7 @@ class TestPortalWorkflow(PlutoTestCase):
             'portal_meta_sv_file': OFile(
                 name='meta_SV.txt', size=251, hash='8a27777491a88698fba0163e3439206b8cb7db8c', dir=output_dir),
             'portal_muts_file': OFile(
-                name='data_mutations_extended.txt', size=4981, hash='ac0df0e945cab34a5dbd514d26e9125b4af4c52a', dir=output_dir),
+                name='data_mutations_extended.txt', size=4962, hash='47a2ddc83c10782b63d20515f32dfb619a4cf8c4', dir=output_dir),
             'portal_report': OFile(
                 name='report.html', size=1012302, hash='f604e2f13c2e1ba63f5ec1611564cad103263a05', dir=output_dir),
             'portal_sv_data_file': OFile(
@@ -742,7 +742,7 @@ class TestPortalWorkflow(PlutoTestCase):
             'portal_meta_sv_file': OFile(
                 name='meta_SV.txt', size=251, hash='8a27777491a88698fba0163e3439206b8cb7db8c', dir=output_dir),
             'portal_muts_file': OFile(
-                name='data_mutations_extended.txt', size=5543, hash='5de6aee434d063fb0d544e4dcde68ca34bb4612b', dir=output_dir),
+                name='data_mutations_extended.txt', size=5524, hash='2f79d8c7a7692ef85a677035124f83a78a3f9a42', dir=output_dir),
             'portal_report': OFile(
                 name='report.html', size=1012302, hash='55da8083f3a82aac9f5fe0e90d8a7e7c9800ffe5', dir=output_dir),
             'portal_sv_data_file': OFile(
@@ -915,9 +915,9 @@ class TestPortalWorkflow(PlutoTestCase):
             'portal_meta_study_file': OFile(
                 name='meta_study.txt', size=134, hash='182c7c39315d7ce91cbb8d96f98134d676324cf6', dir=output_dir),
             'portal_meta_sv_file': OFile(
-                name='meta_study.txt', size=251, hash='8a27777491a88698fba0163e3439206b8cb7db8c', dir=output_dir),
+                name='meta_SV.txt', size=251, hash='8a27777491a88698fba0163e3439206b8cb7db8c', dir=output_dir),
             'portal_muts_file': OFile(
-                name='data_mutations_extended.txt', size=5673, hash='524e25fa067f00e856a7d48d4e9da5e90c4f157d', dir=output_dir),
+                name='data_mutations_extended.txt', size=5654, hash='618d3967a262c427a8d6250e5b026d25a4fe04ed', dir=output_dir),
             'portal_report': OFile(
                 name='report.html', size=1012222, hash='e973fac6d2763fe3d2d7eafebaf0856638015d8b', dir=output_dir),
             'portal_sv_data_file': OFile(
