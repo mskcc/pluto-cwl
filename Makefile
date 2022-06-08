@@ -261,10 +261,11 @@ T:=tests/
 # NOTE: the logging here can cause delay before lines are printed to file or console
 parallel-test-log:
 	echo ">>>>> ------ start parallel-test-log $$(date) -------- <<<<<" >> testing.log
-	time { ./print_tests.py "$(T)" | \
+	time { QUIET=True ./print_tests.py "$(T)" | \
 	xargs -n 1 -P "$(P)" stdbuf -oL python3 -m unittest ; } 2>&1 | \
 	tee -a testing.log
 	echo ">>>>> ------ stop parallel-test-log $$(date) -------- <<<<<" >> testing.log
+
 
 # same but without logging
 parallel-test:
