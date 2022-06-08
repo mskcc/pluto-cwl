@@ -16,7 +16,14 @@ from pluto.settings import ENABLE_LARGE_TESTS, DATA_SETS
 from pluto.serializer import OFile, ODir
 sys.path.pop(0)
 
-from fixtures_fillout import rows
+# handle for errors arising from python3 -m unittest ...
+try:
+    from fixtures_fillout import rows
+except ModuleNotFoundError:
+    sys.path.insert(0, THIS_DIR)
+    from fixtures_fillout import rows
+    sys.path.pop(0)
+
 
 class TestSamplesFillout(PlutoTestCase):
     cwl_file = CWLFile('samples_fillout_workflow.cwl')
