@@ -11,6 +11,7 @@ THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 PARENT_DIR = os.path.dirname(THIS_DIR)
 sys.path.insert(0, PARENT_DIR)
 from pluto.tools import CWLFile, PlutoTestCase
+from pluto.serializer import OFile
 sys.path.pop(0)
 
 class TestExampleWorkflow(PlutoTestCase):
@@ -32,27 +33,13 @@ class TestExampleWorkflow(PlutoTestCase):
         output_json, output_dir = self.run_cwl()
 
         expected_output = {
-            "output_file": {
-                "location": "file://" + os.path.join(output_dir, "output.concat.tsv"),
-                "basename": "output.concat.tsv",
-                "class": "File",
-                "checksum": "sha1$be6fb2e96f81c63a0b5fc6392a317ba3afbbca19",
-                "size": 30,
-                "path": os.path.join(output_dir, "output.concat.tsv")
-            },
-            'env': {
-                'basename': 'env.txt',
-                # 'checksum': 'sha1$e2f2bf6581461560dc9d4c4c970b5b7b1ba15852',
-                'class': 'File',
-                'location':  "file://" + os.path.join(output_dir, "env.txt"),
-                'path': os.path.join(output_dir, 'env.txt')
-                # 'size': 456
-            }
+            "output_file": OFile(name = 'output.concat.tsv', hash = 'd4297dfdad25ac92ffae2ce61c6cfe12c4089c28', size = 27, dir = output_dir),
+            'env': OFile(name = 'env.txt', dir = output_dir)
         }
-        output_json['env'].pop('checksum')
-        output_json['env'].pop('size')
-
-        self.assertCWLDictEqual(output_json, expected_output)
+        strip_related_keys = [
+        ('basename', 'env.txt', ['size', 'checksum']),
+        ]
+        self.assertCWLDictEqual(output_json, expected_output, related_keys = strip_related_keys)
 
         output_file = os.path.join(output_dir, "output.concat.tsv")
         with open(output_file) as f:

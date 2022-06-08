@@ -13,7 +13,7 @@ PARENT_DIR = os.path.dirname(THIS_DIR)
 sys.path.insert(0, PARENT_DIR)
 from pluto.tools import PlutoTestCase, CWLFile, TableReader, md5_obj
 from pluto.settings import ENABLE_LARGE_TESTS, DATA_SETS
-from pluto.serializer import OFile, ODir
+from pluto.serializer import OFile
 sys.path.pop(0)
 
 # handle for errors arising from python3 -m unittest ...
