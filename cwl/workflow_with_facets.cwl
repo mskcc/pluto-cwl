@@ -1,6 +1,6 @@
 #!/usr/bin/env cwl-runner
 
-cwlVersion: v1.0
+cwlVersion: v1.2
 class: Workflow
 doc: "
 CWL workflow for generating Roslin / Argos post pipeline analysis files and cBioPortal data and metadata files
