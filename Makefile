@@ -258,13 +258,16 @@ test3:$(TESTS)
 P:=16
 # test target; can also be an individual test_*.py file!
 T:=tests/
-# NOTE: the logging here can cause delay before lines are printed to file or console
+# NOTE: the logging here can cause delay before lines are printed to file or console ; stdbuf -oL ; this breaks some R sigularity containers
+_LOGDATE:=$(shell date +%s)
+_LOGDATE_LONG:=$(shell date)
+_LOGFILE:=testing.$(_LOGDATE).log
 parallel-test-log:
-	echo ">>>>> ------ start parallel-test-log $$(date) -------- <<<<<" >> testing.log
+	echo ">>>>> ------ start parallel-test-log $(_LOGDATE_LONG) ($(_LOGDATE)) -------- <<<<<" >> "$(_LOGFILE)"
 	time { QUIET=True ./print_tests.py "$(T)" | \
-	xargs -n 1 -P "$(P)" stdbuf -oL python3 -m unittest ; } 2>&1 | \
-	tee -a testing.log
-	echo ">>>>> ------ stop parallel-test-log $$(date) -------- <<<<<" >> testing.log
+	xargs -n 1 -P "$(P)" python3 -m unittest ; } 2>&1 | \
+	tee -a "$(_LOGFILE)"
+	echo ">>>>> ------ stop parallel-test-log $(_LOGDATE_LONG) ($(_LOGDATE)) -------- <<<<<" >> "$(_LOGFILE)"
 
 
 # same but without logging
@@ -272,11 +275,12 @@ parallel-test:
 	./print_tests.py "$(T)" | \
 	xargs -n 1 -P "$(P)" python3 -m unittest
 
-# EXAMPLE:
+# EXAMPLES:
 # $ PRINT_TESTNAME=True make parallel-test T=tests/test_add_af_cwl.py
 # $ PRINT_TESTNAME=True make parallel-test T=tests/test_generate_cBioPortal_file_cwl.py
 # $ TMP_DIR=/scratch CWL_ENGINE=Toil PRINT_COMMAND=True PRINT_TESTNAME=True make parallel-test P=20
 # TMP_DIR=/fscratch/tmp PRINT_COMMAND=True PRINT_TESTNAME=True make parallel-test
+# $ CWL_ENGINE=Toil TMP_DIR=/fscratch/tmp LARGE_TESTS=True PRINT_COMMAND=True PRINT_TESTNAME=True INTEGRATION_TESTS=True make parallel-test-log
 
 integration_test:
 	. "$(ENVSH)" integration_test && \
@@ -304,34 +308,34 @@ bash: ENV=shell
 bash:
 	. "$(ENVSH)" "$(ENV)" && bash
 
-clean:
-	rm -rf cache tmp
-
-clean-all: clean
-	rm -rf output portal analysis mutation_maf_files.txt facets_hisens_seg_files.txt facets_hisens_cncf_files.txt mutation_svs_txt_files.txt mutation_svs_maf_files.txt
-
+# clean:
+# 	rm -rf cache tmp
+#
+# clean-all: clean
+# 	rm -rf output portal analysis mutation_maf_files.txt facets_hisens_seg_files.txt facets_hisens_cncf_files.txt mutation_svs_txt_files.txt mutation_svs_maf_files.txt
+#
 
 # Example args for running with Toil
-run-toil: OUTPUTDIR=$(CURDIR)/toil_output
-run-toil: LOGFILE=$(OUTPUTDIR)/toil.log
-run-toil: JOBSTORE=$(OUTPUTDIR)/job-store
-run-toil: WORKDIR=$(OUTPUTDIR)/work
-run-toil: ENV=toil
-run-toil:
-	. $(ENVSH) $(ENV)
-	unset SINGULARITY_CACHEDIR
-	mkdir -p "$(OUTPUTDIR)"
-	mkdir -p "$(WORKDIR)"
-	[ -e "$(JOBSTORE)" ] && rm -rf "$(JOBSTORE)" || :
-	( toil-cwl-runner \
-	--logFile "$(LOGFILE)" \
-	--outdir "$(OUTPUTDIR)" \
-	--workDir "$(WORKDIR)" \
-	--jobStore "$(JOBSTORE)" \
-	--singularity \
-	--batchSystem lsf --disableCaching True \
-	--disable-user-provenance --disable-host-provenance \
-	--preserve-entire-environment \
-	cwl/example_workflow.cwl cwl/example_input.json ) > toil.stdout.txt
-# --preserve-environment PATH TMPDIR TOIL_LSF_ARGS SINGULARITY_CACHEDIR SINGULARITY_TMPDIR SINGULARITY_PULLDIR PWD \
-# --maxLocalJobs 500 \
+# run-toil: OUTPUTDIR=$(CURDIR)/toil_output
+# run-toil: LOGFILE=$(OUTPUTDIR)/toil.log
+# run-toil: JOBSTORE=$(OUTPUTDIR)/job-store
+# run-toil: WORKDIR=$(OUTPUTDIR)/work
+# run-toil: ENV=toil
+# run-toil:
+# 	. $(ENVSH) $(ENV)
+# 	unset SINGULARITY_CACHEDIR
+# 	mkdir -p "$(OUTPUTDIR)"
+# 	mkdir -p "$(WORKDIR)"
+# 	[ -e "$(JOBSTORE)" ] && rm -rf "$(JOBSTORE)" || :
+# 	( toil-cwl-runner \
+# 	--logFile "$(LOGFILE)" \
+# 	--outdir "$(OUTPUTDIR)" \
+# 	--workDir "$(WORKDIR)" \
+# 	--jobStore "$(JOBSTORE)" \
+# 	--singularity \
+# 	--batchSystem lsf --disableCaching True \
+# 	--disable-user-provenance --disable-host-provenance \
+# 	--preserve-entire-environment \
+# 	cwl/example_workflow.cwl cwl/example_input.json ) > toil.stdout.txt
+# # --preserve-environment PATH TMPDIR TOIL_LSF_ARGS SINGULARITY_CACHEDIR SINGULARITY_TMPDIR SINGULARITY_PULLDIR PWD \
+# # --maxLocalJobs 500 \

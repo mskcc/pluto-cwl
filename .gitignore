@@ -26,3 +26,5 @@ tmp*
 run-toil.sh
 old/
 cwltool_runs/
+testing.log
+testing.*.log
