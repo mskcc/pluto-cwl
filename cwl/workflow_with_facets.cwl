@@ -354,6 +354,20 @@ steps:
     out:
       [ analysis_dir ]
 
+  # run the MSI workflow
+  run_msi_add_sample_id:
+    scatter: [ pair, normal_bam, tumor_bam ]
+    scatterMethod: dotproduct
+    run: run_msi_and_add_sample_id.cwl
+    in:
+      microsatellites_file: microsatellites_file
+      pair: pairs
+      normal_bam: normal_bam_files
+      tumor_bam: tumor_bam_files
+      tumor_id:
+        valueFrom: ${ return inputs.pair['tumor_id']; }
+    out: [ output_file ]
+
   # generate the cBioPortal output files
   run_portal_workflow:
     run: portal-workflow.cwl
