@@ -354,6 +354,22 @@ steps:
     out:
       [ analysis_dir ]
 
+  # run the TMB workflow
+  run_tmb_workflow:
+    run: tmb.cwl
+    scatter: pair
+    in:
+      pair: pairs
+      mutations_file:
+        valueFrom: ${ return inputs.pair['pair_maf']; }
+      sample_id:
+        valueFrom: ${ return inputs.pair['tumor_id']; }
+      normal_id:
+        valueFrom: ${ return inputs.pair['normal_id']; }
+      assay_coverage: assay_coverage
+    out:
+      [ output_file ]
+
   # run the MSI workflow
   run_msi_add_sample_id:
     scatter: [ pair, normal_bam, tumor_bam ]
@@ -411,6 +427,8 @@ steps:
       known_fusions_file: known_fusions_file
       data_clinical_file: data_clinical_file
       sample_summary_file: sample_summary_file
+      msi_files: run_msi_add_sample_id/output_file
+      tmb_files: run_tmb_workflow/output_file
       facets_suite_txt_files: run_facets/facets_txt
       extra_sample_ids: extra_sample_ids
       extra_cna_files: extra_cna_files
@@ -448,46 +466,25 @@ steps:
     out:
       [ output_file, failed, stdout_txt, stderr_txt ]
 
-
-
-  # run the TMB workflow
-  run_tmb_workflow:
-    run: tmb_workflow.cwl
-    in:
-      data_clinical_file: run_portal_workflow/portal_data_clinical_sample_file
-      assay_coverage: assay_coverage
-      pairs: pairs
-    out:
-      [ output_file ] # updated data_clinical_sample_file with the new TMB data
-
-  # run the MSI workflow
-  run_msi_workflow:
-    run: msi_workflow.cwl
-    in:
-      data_clinical_file: run_portal_workflow/portal_data_clinical_sample_file # run_tmb_workflow/output_file # data_clinical_sample.txt
-      microsatellites_file: microsatellites_file
-      pairs: pairs
-      normal_bam_files: normal_bam_files
-      tumor_bam_files: tumor_bam_files
-    out:
-      [ output_file ] # updated data_clinical_file with MSI scores
-
+#
+# TODO: Find out if this step is needed after refactor
+#
   # combine the TMB, MSI results with the data clinical file
-  merge_data_clinical:
-    run: merge-tables.cwl
-    in:
-      table1: run_tmb_workflow/output_file
-      table2: run_msi_workflow/output_file
-      key1:
-        valueFrom: ${ return "SAMPLE_ID"; } # sample column header from data clinical file
-      key2:
-        valueFrom: ${ return "SAMPLE_ID"; } # sample column header from MSI file
-      output_filename:
-        valueFrom: ${ return "data_clinical_sample.txt"; } # TODO: should this be passed in?
-      cBioPortal:
-        valueFrom: ${ return true; }
-    out:
-      [ output_file ]
+#  merge_data_clinical:
+#    run: merge-tables.cwl
+#    in:
+#      table1: run_tmb_workflow/output_file
+#      table2: run_msi_workflow/output_file
+#      key1:
+#        valueFrom: ${ return "SAMPLE_ID"; } # sample column header from data clinical file
+#      key2:
+#        valueFrom: ${ return "SAMPLE_ID"; } # sample column header from MSI file
+#      output_filename:
+#        valueFrom: ${ return "data_clinical_sample.txt"; } # TODO: should this be passed in?
+#      cBioPortal:
+#        valueFrom: ${ return true; }
+#    out:
+#      [ output_file ]
 
 
 

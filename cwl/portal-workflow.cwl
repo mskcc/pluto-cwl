@@ -143,6 +143,12 @@ inputs:
   mutation_svs_txt_files:
     type: File[]
     doc: "*.svs.pass.vep.portal.txt"
+  msi_files:
+    type: File[]
+    doc: "msi.tsv files"
+  tmb_files:
+    type: File[]
+    doc: "*.tmb.tsv files"
   facets_suite_txt_files:
     type:
       - "null"
@@ -548,12 +554,26 @@ steps:
           inputs.cases_sequenced
           ]}
     out: [ directory ]
+  
+  merge_msi:
+    run: merge_msi.cwl
+    in:
+      msi_files: msi_files
+      data_clinical_file: generate_data_clinical_sample/output_file
+    out: [ output_file ]
+  
+  merge_tmb:
+    run: merge_tmb.cwl
+    in:
+      tmb_files: tmb_files
+      data_clinical_file: merge_msi/output_file
+    out: [ output_file ]
 
   compile_report:
     run: report.cwl
     in:
       mutation_file: concat_cbio_muts_maf/output_file
-      samples_file: generate_data_clinical_sample/output_file
+      samples_file: merge_tmb/output_file
       patients_file: generate_data_clinical_patient/output_file
     out: [ output_file ]
 
@@ -566,7 +586,7 @@ outputs:
     outputSource: generate_data_clinical_patient/output_file # data_clinical_patient.txt
   portal_data_clinical_sample_file:
     type: File
-    outputSource: generate_data_clinical_sample/output_file # data_clinical_sample.txt
+    outputSource: merge_tmb/output_file # data_clinical_sample.txt
   portal_meta_study_file:
     type: File
     outputSource: generate_cbio_meta_study/output_file # meta_study.txt
