@@ -275,11 +275,12 @@ parallel-test:
 	./print_tests.py "$(T)" | \
 	xargs -n 1 -P "$(P)" python3 -m unittest
 
-# EXAMPLE:
+# EXAMPLES:
 # $ PRINT_TESTNAME=True make parallel-test T=tests/test_add_af_cwl.py
 # $ PRINT_TESTNAME=True make parallel-test T=tests/test_generate_cBioPortal_file_cwl.py
 # $ TMP_DIR=/scratch CWL_ENGINE=Toil PRINT_COMMAND=True PRINT_TESTNAME=True make parallel-test P=20
 # TMP_DIR=/fscratch/tmp PRINT_COMMAND=True PRINT_TESTNAME=True make parallel-test
+# $ CWL_ENGINE=Toil TMP_DIR=/fscratch/tmp LARGE_TESTS=True PRINT_COMMAND=True PRINT_TESTNAME=True INTEGRATION_TESTS=True make parallel-test-log
 
 integration_test:
 	. "$(ENVSH)" integration_test && \
