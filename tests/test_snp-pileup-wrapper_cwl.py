@@ -5,24 +5,22 @@ unit tests for the snp-pileup-wrapper.cwl file
 """
 import os
 import sys
-import json
 import unittest
-from tempfile import TemporaryDirectory
 
 THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 PARENT_DIR = os.path.dirname(THIS_DIR)
 sys.path.insert(0, PARENT_DIR)
-from pluto.tools import run_command, CWLFile
-from pluto.settings import CWL_ARGS, FACETS_SNPS_VCF, DATA_SETS
+from pluto.tools import PlutoTestCase, CWLFile
+from pluto.settings import FACETS_SNPS_VCF, DATA_SETS
+from pluto.serializer import OFile
 sys.path.pop(0)
 
-cwl_file = CWLFile('snp-pileup-wrapper.cwl')
-
-class TestSnpPileupCWL(unittest.TestCase):
+class TestSnpPileupCWL(PlutoTestCase):
+    cwl_file = CWLFile('snp-pileup-wrapper.cwl')
     def test_snp_pileup1(self):
         """
         """
-        input_json = {
+        self.input = {
             "snps_vcf": {
                 "path": FACETS_SNPS_VCF,
                 "class": "File"
@@ -38,44 +36,14 @@ class TestSnpPileupCWL(unittest.TestCase):
             },
             "output_prefix": "Sample24.Sample23"
         }
-        with TemporaryDirectory() as tmpdir:
-            input_json_file = os.path.join(tmpdir, "input.json")
-            with open(input_json_file, "w") as json_out:
-                json.dump(input_json, json_out)
 
-            output_dir = os.path.join(tmpdir, "output")
-            tmp_dir = os.path.join(tmpdir, "tmp")
-            cache_dir = os.path.join(tmpdir, "cache")
+        output_json, output_dir = self.run_cwl()
 
-            command = [
-                "cwl-runner",
-                *CWL_ARGS,
-                "--outdir", output_dir,
-                "--tmpdir-prefix", tmp_dir,
-                "--cachedir", cache_dir,
-                cwl_file, input_json_file
-                ]
-            returncode, proc_stdout, proc_stderr = run_command(command)
-
-            if returncode != 0:
-                print(proc_stderr)
-
-            self.assertEqual(returncode, 0)
-
-            output_json = json.loads(proc_stdout)
-
-            expected_output = {
-                'output_file': {
-                    'location': 'file://' + os.path.join(output_dir, "Sample24.Sample23.snp_pileup.gz"),
-                    'basename': "Sample24.Sample23.snp_pileup.gz",
-                    'class': 'File',
-                    'checksum': 'sha1$755a8b64f45c819b4e2c481e64bf2fe36d1f5361',
-                    'size': 34851004,
-                    'path': os.path.join(output_dir, "Sample24.Sample23.snp_pileup.gz")
-                    }
-                }
-            self.maxDiff = None
-            self.assertDictEqual(output_json, expected_output)
+        expected_output = {
+            'output_file': OFile(name = "Sample24.Sample23.snp_pileup.gz", size = 34851004, hash = "755a8b64f45c819b4e2c481e64bf2fe36d1f5361", dir = output_dir)
+            }
+        self.maxDiff = None
+        self.assertCWLDictEqual(output_json, expected_output)
 
 if __name__ == "__main__":
     unittest.main()
