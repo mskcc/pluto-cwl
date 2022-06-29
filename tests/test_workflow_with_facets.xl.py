@@ -19,7 +19,7 @@ PARENT_DIR = os.path.dirname(THIS_DIR)
 sys.path.insert(0, PARENT_DIR)
 from pluto.tools import PlutoTestCase
 from pluto.settings import ENABLE_INTEGRATION_TESTS
-from pluto.serializer import OFile, ODir, serialize_repr
+from pluto.serializer import OFile, ODir
 sys.path.pop(0)
 
 from fixtures import WORKFLOW_WITH_FACETS_XL_JSON
