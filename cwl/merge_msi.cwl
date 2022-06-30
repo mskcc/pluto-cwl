@@ -17,7 +17,7 @@ inputs:
     type: File
     doc: "data clinical samplesheet file to merge the MSI results into"
   msi_files:
-    type: File
+    type: File[]
     doc: "msi.tsv files"
 
 

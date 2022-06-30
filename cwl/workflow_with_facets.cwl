@@ -494,7 +494,7 @@ steps:
     in:
       portal_meta_clinical_sample_file: run_portal_workflow/portal_meta_clinical_sample_file # meta_clinical_sample.txt
       portal_data_clinical_patient_file: run_portal_workflow/portal_data_clinical_patient_file # data_clinical_patient.txt
-      portal_data_clinical_sample_file: merge_data_clinical/output_file # data_clinical_sample.txt
+      portal_data_clinical_sample_file: run_portal_workflow/portal_data_clinical_sample_file # data_clinical_sample.txt
       portal_meta_study_file: run_portal_workflow/portal_meta_study_file # meta_study.txt
       portal_clinical_patient_meta_file: run_portal_workflow/portal_clinical_patient_meta_file # meta_clinical_patient.txt
       portal_meta_cna_file: run_portal_workflow/portal_meta_cna_file # meta_CNA.txt
