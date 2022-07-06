@@ -46,26 +46,14 @@ class TestCopyNumber(PlutoTestCase):
         self.assertCWLDictEqual(output_json, expected_output)
 
         # load the data_CNA.txt file
-        path = expected_output['output_cna_file']['path']
-        with open(path) as f:
-            header = next(f)
-        header_parts = header.split()
         expected_header_parts = ['Tumor_Sample_Barcode', 'Hugo_Symbol', 'tcn', 'lcn', 'cf', 'tcn.em', 'lcn.em', 'cf.em', 'chr', 'seg.start', 'seg.end', 'frac_elev_major_cn', 'Nprobes', 'WGD', 'purity', 'FACETS_CALL', 'ccs_filter', 'review', 'FACETS_CNA']
-        self.assertEqual(header_parts, expected_header_parts)
+        self.assertHeaderEquals(expected_output['output_cna_file']['path'], expected_header_parts)
 
-        path = expected_output['output_cna_ascna_file']['path']
-        with open(path) as f:
-            header = next(f)
-        header_parts = header.split()
         expected_header_parts = ['Hugo_Symbol', 's_C_VJ7F47_P001_d']
-        self.assertEqual(header_parts, expected_header_parts)
+        self.assertHeaderEquals(expected_output['output_cna_ascna_file']['path'], expected_header_parts)
 
-        path = expected_output['output_cna_scna_file']['path']
-        with open(path) as f:
-            header = next(f)
-        header_parts = header.split()
         expected_header_parts = ['Hugo_Symbol', 's_C_VJ7F47_P001_d']
-        self.assertEqual(header_parts, expected_header_parts)
+        self.assertHeaderEquals(expected_output['output_cna_scna_file']['path'], expected_header_parts)
 
     def test_run_copy_number_two_files(self):
         """
