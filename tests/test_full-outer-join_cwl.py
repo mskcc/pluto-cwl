@@ -12,7 +12,7 @@ sys.path.insert(0, PARENT_DIR)
 from pluto.tools import PlutoTestCase, CWLFile
 sys.path.pop(0)
 
-class TestMergeTables(PlutoTestCase):
+class TestFullOuterJoin(PlutoTestCase):
     cwl_file = CWLFile('full-outer-join.cwl')
 
     def test_merge_three_tables(self):
