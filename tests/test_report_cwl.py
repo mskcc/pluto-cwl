@@ -13,7 +13,7 @@ from pluto.tools import PlutoTestCase, CWLFile
 from pluto.serializer import OFile
 sys.path.pop(0)
 
-class TestMergeTables(PlutoTestCase):
+class TestReport(PlutoTestCase):
     cwl_file = CWLFile('report.cwl')
 
     def test_demo_report(self):

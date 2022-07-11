@@ -107,10 +107,9 @@ class TestMafColFilter(PlutoTestCase):
         # validate file contents
         self.assertNumMutations(os.path.join(output_dir, 'output.maf'), 12514)
 
-        self.assertMutHeadersContain(filepath = os.path.join(output_dir, 'output.maf'), expected_headers = fxt.cols_to_keep)
-        # for key in mutations[0].keys():
-        #     self.assertTrue(key in fxt.cols_to_keep)
-        #
+        # self.assertMutHeadersContain(filepath = os.path.join(output_dir, 'output.maf'), expected_headers = fxt.cols_to_keep)
+        self.assertMutHeadersAllowed(filepath = os.path.join(output_dir, 'output.maf'), allowed_headers = fxt.cols_to_keep)
+
         # # make sure there are fewer than or equal to the number of columns in new output as there are entries to keep
         # self.assertTrue( len(mutations[0].keys()) <= len(fxt.cols_to_keep) )
 

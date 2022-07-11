@@ -24,7 +24,7 @@ sys.path.insert(0, PARENT_DIR)
 sys.path.pop(0)
 
 
-class TestWorkflowWithFacetsMedium(PlutoTestCase):
+class TestWorkflowWithFacetsXL(PlutoTestCase):
     cwl_file = 'workflow_with_facets.cwl'
 
     @unittest.skipIf(ENABLE_INTEGRATION_TESTS != True, "is a large integration test")
