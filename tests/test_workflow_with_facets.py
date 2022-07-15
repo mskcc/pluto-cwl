@@ -139,7 +139,7 @@ class TestWorkflowWithFacets(PlutoTestCase):
                 'portal_dir': ODir(name = 'portal', dir = output_dir, items = [
                     OFile(name = 'meta_clinical_sample.txt', size = 132, hash = '7d2bb282e74ff6a5d41b334ded689f9336722702'),
                     OFile(name = 'data_clinical_patient.txt', size = 91, hash = 'cac1377a45dfc316266697a21df87801883127b5'),
-                    OFile(name = 'data_clinical_sample.txt', size = 1523, hash = '40caf8f2180df9f8b7e9af8b6913f27274d3aa87'),
+                    OFile(name = 'data_clinical_sample.txt', size = 1523, hash = 'ed171f6c3d5e4ce5a58bd5ac93a120930a71fc01'),
                     OFile(name = 'meta_study.txt', size = 128, hash = '998a850a03828cf4c235583dced9751ba75c9ab1'),
                     OFile(name = 'meta_clinical_patient.txt', size = 134, hash = 'e1f0b7786dd10af608df5178ff4b1a0b7a191a38'),
                     OFile(name = 'meta_CNA.txt', size = 262, hash = '93367ae36cae5e1a53b25e5bb02731e8b113251b'),
@@ -366,7 +366,7 @@ class TestWorkflowWithFacets(PlutoTestCase):
                 'portal_dir': ODir(name = 'portal', dir = output_dir, items = [
                     OFile(name = 'meta_clinical_sample.txt', size = 132, hash = '7d2bb282e74ff6a5d41b334ded689f9336722702'),
                     OFile(name = 'data_clinical_patient.txt', size = 91, hash = 'cac1377a45dfc316266697a21df87801883127b5'),
-                    OFile(name = 'data_clinical_sample.txt', size = 1546, hash = 'a975d9be1ade1185a2d78ed3be0d45ffb584be52'),
+                    OFile(name = 'data_clinical_sample.txt', size = 1546, hash = '05a7a6f7c52627c8f395c74217c16c2015cb4226'),
                     OFile(name = 'meta_study.txt', size = 128, hash = '998a850a03828cf4c235583dced9751ba75c9ab1'),
                     OFile(name = 'meta_clinical_patient.txt', size = 134, hash = 'e1f0b7786dd10af608df5178ff4b1a0b7a191a38'),
                     OFile(name = 'meta_CNA.txt', size = 262, hash = '93367ae36cae5e1a53b25e5bb02731e8b113251b'),
@@ -569,7 +569,7 @@ class TestWorkflowWithFacets(PlutoTestCase):
                 'portal_dir': ODir(name = 'portal', dir = output_dir, items = [
                     OFile(name = 'meta_clinical_sample.txt', size = 140, hash = '4c567d81c3b17a76c324fd3e2f73793a6e804f65'),
                     OFile(name = 'data_clinical_patient.txt', size = 643, hash = '9417dcabddd6ab2cbe98167bccd9b9e4fa182562'),
-                    OFile(name = 'data_clinical_sample.txt', size = 9141, hash = 'b700cf1afea9e4223fd160d49681815f69c61401'),
+                    OFile(name = 'data_clinical_sample.txt', size = 9141, hash = '01786ca95d8c908df16154734c9fc1053e9bcd98'),
                     OFile(name = 'meta_study.txt', size = 152, hash = '2b0a5fd1a97329adf7c3b1596c84cd6567059a95'),
                     OFile(name = 'meta_clinical_patient.txt', size = 142, hash = '9cdc9a7e44a230c012f48b0236bdcf0bbc7de67f'),
                     OFile(name = 'meta_CNA.txt', size = 270, hash = 'a9bf16f6a0490b19e611e8814b85f7bf1d52417a'),
@@ -816,7 +816,7 @@ class TestWorkflowWithFacets(PlutoTestCase):
                 'portal_dir': ODir(name = 'portal', dir = output_dir, items = [
                     OFile(name = 'meta_clinical_sample.txt', size = 140, hash = '4c567d81c3b17a76c324fd3e2f73793a6e804f65'),
                     OFile(name = 'data_clinical_patient.txt', size = 643, hash = '9417dcabddd6ab2cbe98167bccd9b9e4fa182562'),
-                    OFile(name = 'data_clinical_sample.txt', size = 9161, hash = '519bf38651910dd2954ba959d845962da377f1c0'),
+                    OFile(name = 'data_clinical_sample.txt', size = 9161, hash = 'eaf1bf33486b695373879f3b8c93af5571a6a1c1'),
                     OFile(name = 'meta_study.txt', size = 152, hash = '2b0a5fd1a97329adf7c3b1596c84cd6567059a95'),
                     OFile(name = 'meta_clinical_patient.txt', size = 142, hash = '9cdc9a7e44a230c012f48b0236bdcf0bbc7de67f'),
                     OFile(name = 'meta_CNA.txt', size = 270, hash = 'a9bf16f6a0490b19e611e8814b85f7bf1d52417a'),
