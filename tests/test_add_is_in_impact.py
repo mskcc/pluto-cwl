@@ -10,13 +10,13 @@ import unittest
 THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 PARENT_DIR = os.path.dirname(THIS_DIR)
 sys.path.insert(0, PARENT_DIR)
-from pluto.tools import PlutoTestCase, CWLFile 
+from pluto.tools import PlutoTestCase, CWLFile
 from pluto.settings import DATA_SETS, IMPACT_FILE
 from pluto.serializer import OFile
 sys.path.pop(0)
 
 
-class TestAddImpactCWL(PlutoTestCase):
+class TestAddIsInImpact(PlutoTestCase):
     cwl_file = CWLFile('add_is_in_impact.cwl')
 
     def test_add_impact_0(self):
