@@ -94,11 +94,13 @@ output
 "
 
 requirements:
-  MultipleInputFeatureRequirement: {}
-  ScatterFeatureRequirement: {}
-  StepInputExpressionRequirement: {}
-  InlineJavascriptRequirement: {}
-  SubworkflowFeatureRequirement: {}
+  - class: MultipleInputFeatureRequirement
+  - class: ScatterFeatureRequirement
+  - class: StepInputExpressionRequirement
+  - class: InlineJavascriptRequirement
+  - class: SubworkflowFeatureRequirement
+  - $import: types.yml
+
 
 inputs:
   project_id:
@@ -307,27 +309,51 @@ steps:
     run: facets-workflow.cwl
     in:
       pairs: pairs
-    out:
-      [
-        purity_seg, # [ Tumor1.Normal1_purity.seg, ... ]
-        hisens_seg, # [ Tumor1.Normal1_hisens.seg, ... ]
-        qc_txt, # [ Tumor1.Normal1.qc.txt, ... ]
-        gene_level_txt, # [ Tumor1.Normal1.gene_level.txt, ... ]
-        arm_level_txt, # [ Tumor2.Normal2.arm_level.txt, ... ]
-        facets_txt, # [ Tumor1.Normal1.txt, ... ]
-        purity_rds, # [ Tumor1.Normal1_purity.rds, ... ]
-        hisens_rds, # [ Tumor1.Normal1_hisens.rds, ... ]
-        annotated_maf,  # [ Tumor1.Normal1_hisens.ccf.maf, ... ]
-        hisens_cncf_txt, # [ Tumor1.Normal1_hisens.cncf.txt, ... ] ; from legacy facets output
-        output_dir,
-        failed_pairs
-      ]
+    out: [ pairs ]
+
+  gather_facets_files:
+    doc: gather some files from facets output pairs in order to pass to downstream steps as file lists
+    in:
+      pairs: run_facets/pairs
+    out: [ annotated_mafs, facets_txts, hisens_cncf_txts, hisens_segs ]
+    run:
+      class: ExpressionTool
+      inputs:
+        pairs:
+          type: "types.yml#FacetsPair[]"
+      outputs:
+        annotated_mafs: File[]
+        facets_txts: File[]
+        hisens_cncf_txts: File[]
+        hisens_segs: File[]
+      expression: |
+        ${
+          var annotated_mafs = [];
+          var facets_txts = [];
+          var hisens_cncf_txts = [];
+          var hisens_segs = [];
+
+          for ( var i in inputs.pairs ){
+            annotated_mafs.push(inputs.pairs[i].annotated_maf)
+            facets_txts.push(inputs.pairs[i].facets_txt)
+            hisens_cncf_txts.push(inputs.pairs[i].hisens_cncf_txt)
+            hisens_segs.push(inputs.pairs[i].hisens_seg)
+          };
+
+          return {
+            "annotated_mafs": annotated_mafs,
+            "facets_txts": facets_txts,
+            "hisens_cncf_txts": hisens_cncf_txts,
+            "hisens_segs": hisens_segs,
+          };
+        }
+
 
   # need to make a concatenated maf file for merging with portal maf
   concat_facets_maf:
     run: concat-tables.cwl
     in:
-      input_files: run_facets/annotated_maf
+      input_files: gather_facets_files/annotated_mafs
       output_filename:
         valueFrom: ${ return "facets.maf"; }
     out:
@@ -342,9 +368,9 @@ steps:
       analysis_gene_cna_filename: analysis_gene_cna_filename
       analysis_mutations_filename: analysis_mutations_filename
       analysis_mutations_share_filename: analysis_mutations_share_filename
-      mutation_maf_files: run_facets/annotated_maf
-      facets_hisens_seg_files: run_facets/hisens_seg
-      facets_hisens_cncf_files: run_facets/hisens_cncf_txt
+      mutation_maf_files: gather_facets_files/annotated_mafs
+      facets_hisens_seg_files: gather_facets_files/hisens_segs
+      facets_hisens_cncf_files: gather_facets_files/hisens_cncf_txts
       mutation_svs_maf_files: mutation_svs_maf_files
       targets_list: targets_list
       argos_version_string: argos_version_string
@@ -389,15 +415,15 @@ steps:
       cbio_cna_data_filename: cbio_cna_data_filename
       cbio_cna_ascna_data_filename: cbio_cna_ascna_data_filename
       cbio_cna_scna_data_filename: cbio_cna_scna_data_filename
-      mutation_maf_files: run_facets/annotated_maf
-      facets_hisens_seg_files: run_facets/hisens_seg
-      facets_hisens_cncf_files: run_facets/hisens_cncf_txt
+      mutation_maf_files: gather_facets_files/annotated_mafs
+      facets_hisens_seg_files: gather_facets_files/hisens_segs
+      facets_hisens_cncf_files: gather_facets_files/hisens_cncf_txts
       mutation_svs_txt_files: mutation_svs_txt_files
       targets_list: targets_list
       known_fusions_file: known_fusions_file
       data_clinical_file: data_clinical_file
       sample_summary_file: sample_summary_file
-      facets_suite_txt_files: run_facets/facets_txt
+      facets_suite_txt_files: gather_facets_files/facets_txts
       extra_sample_ids: extra_sample_ids
       extra_cna_files: extra_cna_files
       cbio_sv_data_filename: cbio_sv_data_filename
@@ -520,6 +546,62 @@ steps:
           ]}
     out: [ directory ]
 
+  make_facets_dir:
+    doc: make a single directory to hold the results for all Facets sample pair
+    in:
+      pairs: run_facets/pairs
+    out: [ facets_dir ]
+    run:
+      class: Workflow
+      inputs:
+        pairs:
+          type: "types.yml#FacetsPair[]"
+      outputs:
+        facets_dir:
+          type: Directory
+          outputSource: make_facets_dir/directory
+      steps:
+        make_facets_pair_dirs:
+          doc: make a subdir to hold the results for one Facets sample pair
+          run: put_in_dir.cwl
+          scatter: pair
+          in:
+            pair: pairs
+            output_directory_name:
+              valueFrom: ${ return inputs.pair.pair_id; }
+            files:
+              valueFrom: ${
+                  return [
+                    inputs.pair.annotated_maf,
+                    inputs.pair.arm_level_txt,
+                    inputs.pair.facets_txt,
+                    inputs.pair.gene_level_txt,
+                    inputs.pair.hisens_cncf_txt,
+                    inputs.pair.hisens_rds,
+                    inputs.pair.hisens_seg,
+                    inputs.pair.hisens_png,
+                    inputs.pair.purity_rds,
+                    inputs.pair.purity_seg,
+                    inputs.pair.purity_png,
+                    inputs.pair.qc_txt
+                  ];
+                }
+          out: [ directory ]
+
+        make_facets_dir:
+          run: put_in_dir.cwl
+          in:
+            sample_dirs: make_facets_pair_dirs/directory
+            output_directory_name:
+              valueFrom: ${ return "facets"; }
+            files:
+              valueFrom: ${
+                return inputs.sample_dirs;
+                }
+          out: [ directory ]
+
+
+
 outputs:
   portal_dir:
     type: Directory
@@ -531,8 +613,4 @@ outputs:
 
   facets_dir:
     type: Directory
-    outputSource: run_facets/output_dir
-
-  facets_failed_pairs:
-    type: string[]
-    outputSource: run_facets/failed_pairs
+    outputSource: make_facets_dir/facets_dir
