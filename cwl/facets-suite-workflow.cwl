@@ -35,7 +35,9 @@ steps:
     arm_level_txt,
     output_txt,
     purity_rds,
+    purity_png,
     hisens_rds,
+    hisens_png,
     failed,
     stdout_txt,
     stderr_txt
@@ -113,7 +115,7 @@ steps:
         valueFrom: $(inputs.tumor_id)
     when: $(inputs.annotate_maf_failed == false && inputs.input_file != null )
     out:
-      [ output_file, failed, stdout_txt, stderr_txt ]  
+      [ output_file, failed, stdout_txt, stderr_txt ]
 
   label_maf_normal:
     run: paste-col-wrapper.cwl
@@ -290,42 +292,54 @@ steps:
 
 
 outputs:
+  tumor_id:
+    type: string
+    outputSource: tumor_id
+  normal_id:
+    type: string
+    outputSource: normal_id
   pair_id:
     type: string
     outputSource: pair_id
   hisens_cncf_txt: # Tumor1.Normal1_hisens.cncf.txt ; from legacy facets output
     type: File?
-    outputSource: check_results/hisens_cncf_txt
+    outputSource: run_facets_legacy/hisens_cncf_txt
+  purity_png:
+    type: File
+    outputSource: run_facets/purity_png
   purity_seg: # Tumor1.Normal1_purity.seg
     type: File?
-    outputSource: check_results/purity_seg
+    outputSource: run_facets/purity_seg
   hisens_seg: # Tumor1.Normal1_hisens.seg
     type: File?
-    outputSource: check_results/hisens_seg
+    outputSource: run_facets/hisens_seg
+  hisens_png:
+    type: File
+    outputSource: run_facets/hisens_png
   qc_txt: # Tumor1.Normal1.qc.txt
     type: File?
-    outputSource: check_results/qc_txt
+    outputSource: run_facets/qc_txt
   gene_level_txt: # Tumor1.Normal1.gene_level.txt
     type: File?
-    outputSource: check_results/gene_level_txt
+    outputSource: run_facets/gene_level_txt
   arm_level_txt: # Tumor2.Normal2.arm_level.txt
     type: File?
-    outputSource: check_results/arm_level_txt
+    outputSource: run_facets/arm_level_txt
   facets_txt: # Tumor1.Normal1.txt
     type: File?
-    outputSource: check_results/facets_txt
+    outputSource: label_facets_txt_normal/output_file
   purity_rds: # Tumor1.Normal1_purity.rds
     type: File?
-    outputSource: check_results/purity_rds
+    outputSource: run_facets/purity_rds
   hisens_rds: # Tumor1.Normal1_hisens.rds
     type: File?
-    outputSource: check_results/hisens_rds
+    outputSource: run_facets/hisens_rds
   annotated_maf: # Tumor1.Normal1_hisens.ccf.maf ; _hisens.ccf.portal.maf
     type: File?
-    outputSource: check_results/annotated_maf
-  output_dir:
-    type: Directory
-    outputSource: check_results/output_dir
+    outputSource: update_maf/output_file
+  # output_dir:
+  #   type: Directory
+  #   outputSource: check_results/output_dir
   results_passed:
     type: boolean
     outputSource: check_results/results_passed

@@ -83,6 +83,56 @@ types:
           - ^.bai
           - .bai
 
+- name: FacetsPair
+  doc: a tumor normal sample pair used in Facets
+  type: record
+  fields:
+    - name: tumor_id
+      type: string
+      doc: ...
+    - name: normal_id
+      type: string
+    - name: pair_id
+      type: string
+    - name: purity_png
+      type: File
+      doc: ...
+    - name: purity_seg
+      type: File
+      doc: Tumor1.Normal1_purity.seg
+    - name: hisens_png
+      type: File
+      doc: ...
+    - name: hisens_seg
+      type: File
+      doc: Tumor1.Normal1_hisens.seg
+    - name: qc_txt
+      type: File
+      doc: Tumor1.Normal1.qc.txt
+    - name: gene_level_txt
+      type: File
+      doc: Tumor1.Normal1.gene_level.txt
+    - name: arm_level_txt
+      type: File
+      doc: Tumor2.Normal2.arm_level.txt
+    - name: facets_txt
+      type: File
+      doc: Tumor1.Normal1.txt
+    - name: purity_rds
+      type: File
+      doc: Tumor1.Normal1_purity.rds
+    - name: hisens_rds
+      type: File
+      doc: Tumor1.Normal1_hisens.rds
+    - name: annotated_maf
+      type: File
+      doc: Tumor1.Normal1_hisens.ccf.maf
+    - name: hisens_cncf_txt
+      type: File
+      doc: Tumor1.Normal1_hisens.cncf.txt (from legacy facets output)
+
+
+# TODO: get this working; right now only record types are supported here not File types
 # - name: RefFasta
 #   doc: reference genome .fasta file
 #   type: File
