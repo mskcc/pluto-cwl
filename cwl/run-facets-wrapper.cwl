@@ -105,10 +105,18 @@ outputs:
     type: File?
     outputBinding:
       glob: $(inputs.sample_id)_purity.rds
+  purity_png:
+    type: File?
+    outputBinding:
+      glob: $(inputs.sample_id)_purity.png
   hisens_rds:
     type: File?
     outputBinding:
       glob: $(inputs.sample_id)_hisens.rds
+  hisens_png:
+    type: File?
+    outputBinding:
+      glob: $(inputs.sample_id)_hisens.png
   failed:
     type: boolean
     outputBinding:
