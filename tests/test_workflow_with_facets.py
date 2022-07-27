@@ -163,56 +163,42 @@ class TestWorkflowWithFacets(PlutoTestCase):
             }
         self.maxDiff = None
         self.assertCWLDictEqual(output_json, expected_output)
-        comments, mutations = self.load_mutations(os.path.join(output_dir, 'analysis', 'demo.muts.maf'))
-        self.assertEqual(len(mutations), 22)
-        comments, mutations = self.load_mutations(os.path.join(output_dir, 'portal', 'data_mutations_extended.txt'))
-        self.assertEqual(len(mutations), 17)
 
-        # load the data_CNA.txt file
-        path = os.path.join(output_dir, 'portal/data_CNA.txt') # renamed from the data_CNA.scna.txt file ...
-        with open(path) as f:
-            header = next(f)
-        header_parts = header.split()
-        expected_header_parts = ['Hugo_Symbol', 'Sample1']
-        self.assertEqual(header_parts, expected_header_parts)
-
-        path = os.path.join(output_dir, 'portal/data_CNA.ascna.txt')
-        with open(path) as f:
-            header = next(f)
-        header_parts = header.split()
-        expected_header_parts = ['Hugo_Symbol', 'Sample1']
-        self.assertEqual(header_parts, expected_header_parts)
-
-        path = os.path.join(output_dir, 'portal/data_clinical_sample.txt')
-        table_reader = TableReader(path)
-        comments = table_reader.comment_lines
-        fieldnames = table_reader.get_fieldnames()
-        records = [ rec for rec in table_reader.read() ]
+        # check the contents of some files
+        self.assertNumMutations(os.path.join(output_dir, 'analysis', 'demo.muts.maf'), 22)
+        self.assertNumMutations(os.path.join(output_dir, 'portal', 'data_mutations_extended.txt'), 17)
+        self.assertHeaderEquals(os.path.join(output_dir, 'portal/data_CNA.txt'), ['Hugo_Symbol', 'Sample1'])
+        self.assertHeaderEquals(os.path.join(output_dir, 'portal/data_CNA.ascna.txt'), ['Hugo_Symbol', 'Sample1'])
 
         expected_comments = [
-        '#SAMPLE_ID\tIGO_ID\tPATIENT_ID\tCOLLAB_ID\tSAMPLE_TYPE\tSAMPLE_CLASS\tGENE_PANEL\tONCOTREE_CODE\tSPECIMEN_PRESERVATION_TYPE\tTISSUE_SITE\tREQUEST_ID\tPROJECT_ID\tPIPELINE\tPIPELINE_VERSION\tSAMPLE_COVERAGE\tPROJECT_PI\tREQUEST_PI\tgenome_doubled\tASCN_PURITY\tASCN_PLOIDY\tASCN_VERSION\tASCN_WGD\tCMO_TMB_SCORE\tCMO_MSI_SCORE\tCMO_MSI_STATUS\n', '#SAMPLE_ID\tIGO_ID\tPATIENT_ID\tCOLLAB_ID\tSAMPLE_TYPE\tSAMPLE_CLASS\tGENE_PANEL\tONCOTREE_CODE\tSPECIMEN_PRESERVATION_TYPE\tTISSUE_SITE\tREQUEST_ID\tPROJECT_ID\tPIPELINE\tPIPELINE_VERSION\tSAMPLE_COVERAGE\tPROJECT_PI\tREQUEST_PI\tgenome_doubled\tASCN_PURITY\tASCN_PLOIDY\tASCN_VERSION\tASCN_WGD\tCMO_TMB_SCORE\tCMO_MSI_SCORE\tCMO_MSI_STATUS\n', '#STRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tNUMBER\tSTRING\tSTRING\tSTRING\tNUMBER\tNUMBER\tSTRING\tSTRING\tNUMBER\tNUMBER\tSTRING\n', '#1\t1\t1\t0\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t0\t1\t1\t0\t1\t1\t0\t0\n'
+        ['SAMPLE_ID', 'IGO_ID', 'PATIENT_ID', 'COLLAB_ID', 'SAMPLE_TYPE', 'SAMPLE_CLASS', 'GENE_PANEL', 'ONCOTREE_CODE', 'SPECIMEN_PRESERVATION_TYPE', 'TISSUE_SITE', 'REQUEST_ID', 'PROJECT_ID', 'PIPELINE', 'PIPELINE_VERSION', 'SAMPLE_COVERAGE', 'PROJECT_PI', 'REQUEST_PI', 'genome_doubled', 'ASCN_PURITY', 'ASCN_PLOIDY', 'ASCN_VERSION', 'ASCN_WGD', 'CMO_TMB_SCORE', 'CMO_MSI_SCORE', 'CMO_MSI_STATUS'],
+        ['SAMPLE_ID', 'IGO_ID', 'PATIENT_ID', 'COLLAB_ID', 'SAMPLE_TYPE', 'SAMPLE_CLASS', 'GENE_PANEL', 'ONCOTREE_CODE', 'SPECIMEN_PRESERVATION_TYPE', 'TISSUE_SITE', 'REQUEST_ID', 'PROJECT_ID', 'PIPELINE', 'PIPELINE_VERSION', 'SAMPLE_COVERAGE', 'PROJECT_PI', 'REQUEST_PI', 'genome_doubled', 'ASCN_PURITY', 'ASCN_PLOIDY', 'ASCN_VERSION', 'ASCN_WGD', 'CMO_TMB_SCORE', 'CMO_MSI_SCORE', 'CMO_MSI_STATUS'],
+        ['STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'NUMBER', 'STRING', 'STRING', 'STRING', 'NUMBER', 'NUMBER', 'STRING', 'STRING', 'NUMBER', 'NUMBER', 'STRING'],
+        ['1', '1', '1', '0', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '0', '1', '1', '0', '1', '1', '0', '0']
         ]
-        self.assertEqual(comments, expected_comments)
+
+        # NOTE: be careful with ignoreOrder here because it is harder to ensure the file headers are exactly correct
+        self.assertPortalCommentsEquals(os.path.join(output_dir, 'portal/data_clinical_sample.txt'), expected_comments, ignoreOrder = True)
+
+        self.assertSampleValues(
+            os.path.join(output_dir, 'portal/data_clinical_sample.txt'),
+            value_fieldname = "CMO_TMB_SCORE",
+            expected_values = {'Sample1': '17000.0', 'Sample4': 'NA'})
+
+        self.assertSampleValues(
+            os.path.join(output_dir, 'portal/data_clinical_sample.txt'),
+            value_fieldname = "MSI_SCORE",
+            expected_values = {'Sample1': '28.00', 'Sample4': 'NA'})
+
+        self.assertSampleValues(
+            os.path.join(output_dir, 'portal/data_clinical_sample.txt'),
+            value_fieldname = "MSI_STATUS",
+            expected_values = {'Sample1': 'Instable', 'Sample4': 'NA'})
 
 
-        metrics = {}
-        metrics['tmb'] = {}
-        metrics['msi'] = {}
-        metrics['msi_status'] = {}
-        for record in records:
-            sample_id = record['SAMPLE_ID']
-            metrics['tmb'][sample_id] = record['CMO_TMB_SCORE']
-            metrics['msi'][sample_id] = record['MSI_SCORE']
-            metrics['msi_status'][sample_id] = record['MSI_STATUS']
 
-        expected_tmbs = {'Sample1': '17000.0', 'Sample4': 'NA'}
-        self.assertEqual(metrics['tmb'], expected_tmbs)
 
-        expected_msis = {'Sample1': '28.00', 'Sample4': 'NA'}
-        self.assertEqual(metrics['msi'], expected_msis)
 
-        expected_msi_statuses = {'Sample1': 'Instable', 'Sample4': 'NA'}
-        self.assertEqual(metrics['msi_status'], expected_msi_statuses)
 
     #################################################################
     #
@@ -393,55 +379,42 @@ class TestWorkflowWithFacets(PlutoTestCase):
             }
         self.maxDiff = None
         self.assertCWLDictEqual(output_json, expected_output)
-        comments, mutations = self.load_mutations(os.path.join(output_dir, 'analysis', 'demo.muts.maf'))
-        self.assertEqual(len(mutations), 34)
-        comments, mutations = self.load_mutations(os.path.join(output_dir, 'portal', 'data_mutations_extended.txt'))
-        self.assertEqual(len(mutations), 27)
-
-        # load the data_CNA.txt file
-        path = os.path.join(output_dir, 'portal/data_CNA.txt') # renamed from the data_CNA.scna.txt file ...
-        with open(path) as f:
-            header = next(f)
-        header_parts = header.split()
-        expected_header_parts = ['Hugo_Symbol', 'Sample1', 'Sample4']
-        self.assertEqual(header_parts, expected_header_parts)
-
-        path = os.path.join(output_dir, 'portal/data_CNA.ascna.txt')
-        with open(path) as f:
-            header = next(f)
-        header_parts = header.split()
-        expected_header_parts = ['Hugo_Symbol', 'Sample1', 'Sample4']
-        self.assertEqual(header_parts, expected_header_parts)
-
-        path = os.path.join(output_dir, 'portal/data_clinical_sample.txt')
-        table_reader = TableReader(path)
-        comments = table_reader.comment_lines
-        fieldnames = table_reader.get_fieldnames()
-        records = [ rec for rec in table_reader.read() ]
+        self.assertNumMutations(os.path.join(output_dir, 'analysis', 'demo.muts.maf'), 34)
+        self.assertNumMutations(os.path.join(output_dir, 'portal', 'data_mutations_extended.txt'), 27)
+        self.assertHeaderEquals(os.path.join(output_dir, 'portal/data_CNA.txt'), ['Hugo_Symbol', 'Sample1', 'Sample4'])
+        self.assertHeaderEquals(os.path.join(output_dir, 'portal/data_CNA.ascna.txt'), ['Hugo_Symbol', 'Sample1', 'Sample4'])
 
         expected_comments = [
-        '#SAMPLE_ID\tIGO_ID\tPATIENT_ID\tCOLLAB_ID\tSAMPLE_TYPE\tSAMPLE_CLASS\tGENE_PANEL\tONCOTREE_CODE\tSPECIMEN_PRESERVATION_TYPE\tTISSUE_SITE\tREQUEST_ID\tPROJECT_ID\tPIPELINE\tPIPELINE_VERSION\tSAMPLE_COVERAGE\tPROJECT_PI\tREQUEST_PI\tgenome_doubled\tASCN_PURITY\tASCN_PLOIDY\tASCN_VERSION\tASCN_WGD\tCMO_TMB_SCORE\tCMO_MSI_SCORE\tCMO_MSI_STATUS\n', '#SAMPLE_ID\tIGO_ID\tPATIENT_ID\tCOLLAB_ID\tSAMPLE_TYPE\tSAMPLE_CLASS\tGENE_PANEL\tONCOTREE_CODE\tSPECIMEN_PRESERVATION_TYPE\tTISSUE_SITE\tREQUEST_ID\tPROJECT_ID\tPIPELINE\tPIPELINE_VERSION\tSAMPLE_COVERAGE\tPROJECT_PI\tREQUEST_PI\tgenome_doubled\tASCN_PURITY\tASCN_PLOIDY\tASCN_VERSION\tASCN_WGD\tCMO_TMB_SCORE\tCMO_MSI_SCORE\tCMO_MSI_STATUS\n', '#STRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tNUMBER\tSTRING\tSTRING\tSTRING\tNUMBER\tNUMBER\tSTRING\tSTRING\tNUMBER\tNUMBER\tSTRING\n', '#1\t1\t1\t0\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t0\t1\t1\t0\t1\t1\t0\t0\n'
+        ['SAMPLE_ID', 'IGO_ID', 'PATIENT_ID', 'COLLAB_ID', 'SAMPLE_TYPE', 'SAMPLE_CLASS', 'GENE_PANEL', 'ONCOTREE_CODE', 'SPECIMEN_PRESERVATION_TYPE', 'TISSUE_SITE', 'REQUEST_ID', 'PROJECT_ID', 'PIPELINE', 'PIPELINE_VERSION', 'SAMPLE_COVERAGE', 'PROJECT_PI', 'REQUEST_PI', 'genome_doubled', 'ASCN_PURITY', 'ASCN_PLOIDY', 'ASCN_VERSION', 'ASCN_WGD', 'CMO_TMB_SCORE', 'CMO_MSI_SCORE', 'CMO_MSI_STATUS'],
+        ['SAMPLE_ID', 'IGO_ID', 'PATIENT_ID', 'COLLAB_ID', 'SAMPLE_TYPE', 'SAMPLE_CLASS', 'GENE_PANEL', 'ONCOTREE_CODE', 'SPECIMEN_PRESERVATION_TYPE', 'TISSUE_SITE', 'REQUEST_ID', 'PROJECT_ID', 'PIPELINE', 'PIPELINE_VERSION', 'SAMPLE_COVERAGE', 'PROJECT_PI', 'REQUEST_PI', 'genome_doubled', 'ASCN_PURITY', 'ASCN_PLOIDY', 'ASCN_VERSION', 'ASCN_WGD', 'CMO_TMB_SCORE', 'CMO_MSI_SCORE', 'CMO_MSI_STATUS'],
+        ['STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'NUMBER', 'STRING', 'STRING', 'STRING', 'NUMBER', 'NUMBER', 'STRING', 'STRING', 'NUMBER', 'NUMBER', 'STRING'],
+        ['1', '1', '1', '0', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '0', '1', '1', '0', '1', '1', '0', '0']
         ]
-        self.assertEqual(comments, expected_comments)
 
-        metrics = {}
-        metrics['tmb'] = {}
-        metrics['msi'] = {}
-        metrics['msi_status'] = {}
-        for record in records:
-            sample_id = record['SAMPLE_ID']
-            metrics['tmb'][sample_id] = record['CMO_TMB_SCORE']
-            metrics['msi'][sample_id] = record['MSI_SCORE']
-            metrics['msi_status'][sample_id] = record['MSI_STATUS']
+        # NOTE: be careful with ignoreOrder here because it is harder to ensure the file headers are exactly correct
+        self.assertPortalCommentsEquals(os.path.join(output_dir, 'portal/data_clinical_sample.txt'), expected_comments, ignoreOrder = True)
 
-        expected_tmbs = {'Sample1': '17000.0', 'Sample4': '9000.0'}
-        self.assertEqual(metrics['tmb'], expected_tmbs)
+        self.assertSampleValues(
+            os.path.join(output_dir, 'portal/data_clinical_sample.txt'),
+            value_fieldname = "CMO_TMB_SCORE",
+            expected_values = {'Sample1': '17000.0', 'Sample4': '9000.0'})
 
-        expected_msis = {'Sample1': '28.00', 'Sample4': '11.76'}
-        self.assertEqual(metrics['msi'], expected_msis)
+        self.assertSampleValues(
+            os.path.join(output_dir, 'portal/data_clinical_sample.txt'),
+            value_fieldname = "MSI_SCORE",
+            expected_values = {'Sample1': '28.00', 'Sample4': '11.76'})
 
-        expected_msi_statuses = {'Sample1': 'Instable', 'Sample4': 'Instable'}
-        self.assertEqual(metrics['msi_status'], expected_msi_statuses)
+        self.assertSampleValues(
+            os.path.join(output_dir, 'portal/data_clinical_sample.txt'),
+            value_fieldname = "MSI_STATUS",
+            expected_values = {'Sample1': 'Instable', 'Sample4': 'Instable'})
+
+
+
+
+
+
+
 
     #################################################################
     #
@@ -597,60 +570,42 @@ class TestWorkflowWithFacets(PlutoTestCase):
             }
         self.maxDiff = None
         self.assertCWLDictEqual(output_json, expected_output)
-        comments, mutations = self.load_mutations(os.path.join(output_dir, 'analysis', 'Proj_08390_G.muts.maf'))
-        self.assertEqual(len(mutations), 22)
-        comments, mutations = self.load_mutations(os.path.join(output_dir, 'portal', 'data_mutations_extended.txt'))
-        self.assertEqual(len(mutations), 17)
-
-        # load the data_CNA.txt file
-        path = os.path.join(output_dir, 'portal/data_CNA.txt') # renamed from the data_CNA.scna.txt file ...
-        with open(path) as f:
-            header = next(f)
-        header_parts = header.split()
-        expected_header_parts = ['Hugo_Symbol', 'Sample1']
-        self.assertEqual(header_parts, expected_header_parts)
-
-        path = os.path.join(output_dir, 'portal/data_CNA.ascna.txt')
-        with open(path) as f:
-            header = next(f)
-        header_parts = header.split()
-        expected_header_parts = ['Hugo_Symbol', 'Sample1']
-        self.assertEqual(header_parts, expected_header_parts)
-
-        path = os.path.join(output_dir, 'portal/data_clinical_sample.txt')
-        table_reader = TableReader(path)
-        comments = table_reader.comment_lines
-        fieldnames = table_reader.get_fieldnames()
-        records = [ rec for rec in table_reader.read() ]
+        self.assertNumMutations(os.path.join(output_dir, 'analysis', 'Proj_08390_G.muts.maf'), 22)
+        self.assertNumMutations(os.path.join(output_dir, 'portal', 'data_mutations_extended.txt'), 17)
+        self.assertHeaderEquals(os.path.join(output_dir, 'portal/data_CNA.txt'), ['Hugo_Symbol', 'Sample1'])
+        self.assertHeaderEquals(os.path.join(output_dir, 'portal/data_CNA.ascna.txt'), ['Hugo_Symbol', 'Sample1'])
 
         expected_comments = [
-        '#SAMPLE_ID\tIGO_ID\tPATIENT_ID\tCOLLAB_ID\tSAMPLE_TYPE\tSAMPLE_CLASS\tGENE_PANEL\tONCOTREE_CODE\tSPECIMEN_PRESERVATION_TYPE\tTISSUE_SITE\tREQUEST_ID\tPROJECT_ID\tPIPELINE\tPIPELINE_VERSION\tSAMPLE_COVERAGE\tPROJECT_PI\tREQUEST_PI\tASCN_PURITY\tASCN_PLOIDY\tASCN_VERSION\tgenome_doubled\tASCN_WGD\tCMO_TMB_SCORE\tCMO_MSI_SCORE\tCMO_MSI_STATUS\n',
-        '#SAMPLE_ID\tIGO_ID\tPATIENT_ID\tCOLLAB_ID\tSAMPLE_TYPE\tSAMPLE_CLASS\tGENE_PANEL\tONCOTREE_CODE\tSPECIMEN_PRESERVATION_TYPE\tTISSUE_SITE\tREQUEST_ID\tPROJECT_ID\tPIPELINE\tPIPELINE_VERSION\tSAMPLE_COVERAGE\tPROJECT_PI\tREQUEST_PI\tASCN_PURITY\tASCN_PLOIDY\tASCN_VERSION\tgenome_doubled\tASCN_WGD\tCMO_TMB_SCORE\tCMO_MSI_SCORE\tCMO_MSI_STATUS\n',
-        '#STRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tNUMBER\tSTRING\tSTRING\tNUMBER\tNUMBER\tSTRING\tSTRING\tSTRING\tNUMBER\tNUMBER\tSTRING\n',
-        '#1\t1\t1\t0\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t0\t0\t1\t1\t0\t0\n'
+        ['SAMPLE_ID', 'IGO_ID', 'PATIENT_ID', 'COLLAB_ID', 'SAMPLE_TYPE', 'SAMPLE_CLASS', 'GENE_PANEL', 'ONCOTREE_CODE', 'SPECIMEN_PRESERVATION_TYPE', 'TISSUE_SITE', 'REQUEST_ID', 'PROJECT_ID', 'PIPELINE', 'PIPELINE_VERSION', 'SAMPLE_COVERAGE', 'PROJECT_PI', 'REQUEST_PI', 'genome_doubled', 'ASCN_PURITY', 'ASCN_PLOIDY', 'ASCN_VERSION', 'ASCN_WGD', 'CMO_TMB_SCORE', 'CMO_MSI_SCORE', 'CMO_MSI_STATUS'],
+        ['SAMPLE_ID', 'IGO_ID', 'PATIENT_ID', 'COLLAB_ID', 'SAMPLE_TYPE', 'SAMPLE_CLASS', 'GENE_PANEL', 'ONCOTREE_CODE', 'SPECIMEN_PRESERVATION_TYPE', 'TISSUE_SITE', 'REQUEST_ID', 'PROJECT_ID', 'PIPELINE', 'PIPELINE_VERSION', 'SAMPLE_COVERAGE', 'PROJECT_PI', 'REQUEST_PI', 'genome_doubled', 'ASCN_PURITY', 'ASCN_PLOIDY', 'ASCN_VERSION', 'ASCN_WGD', 'CMO_TMB_SCORE', 'CMO_MSI_SCORE', 'CMO_MSI_STATUS'],
+        ['STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'NUMBER', 'STRING', 'STRING', 'STRING', 'NUMBER', 'NUMBER', 'STRING', 'STRING', 'NUMBER', 'NUMBER', 'STRING'],
+        ['1', '1', '1', '0', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '0', '1', '1', '0', '1', '1', '0', '0']
         ]
-        self.assertEqual(comments, expected_comments)
 
-        metrics = {}
-        metrics['tmb'] = {}
-        metrics['msi'] = {}
-        metrics['msi_status'] = {}
-        for record in records:
-            sample_id = record['SAMPLE_ID']
-            metrics['tmb'][sample_id] = record['CMO_TMB_SCORE']
-            metrics['msi'][sample_id] = record['MSI_SCORE']
-            metrics['msi_status'][sample_id] = record['MSI_STATUS']
+        # NOTE: be careful with ignoreOrder here because it is harder to ensure the file headers are exactly correct
+        self.assertPortalCommentsEquals(os.path.join(output_dir, 'portal/data_clinical_sample.txt'), expected_comments, ignoreOrder = True)
 
-        expected_tmbs = {
-        'Sample46': 'NA', 'Sample44': 'NA', 'Sample80': 'NA', 'Sample20': 'NA', 'Sample38': 'NA', 'Sample26': 'NA', 'Sample94': 'NA', 'Sample48': 'NA', 'Sample68': 'NA', 'Sample90': 'NA', 'Sample18': 'NA', 'Sample54': 'NA', 'Sample52': 'NA', 'Sample86': 'NA', 'Sample30': 'NA', 'Sample78': 'NA', 'Sample84': 'NA', 'Sample82': 'NA', 'Sample6': 'NA', 'Sample96': 'NA', 'Sample72': 'NA', 'Sample56': 'NA', 'Sample64': 'NA', 'Sample58': 'NA', 'Sample92': 'NA', 'Sample62': 'NA', 'Sample8': 'NA', 'Sample24': 'NA', 'Sample12': 'NA', 'Sample16': 'NA', 'Sample88': 'NA', 'Sample22': 'NA', 'Sample42': 'NA', 'Sample76': 'NA', 'Sample28': 'NA', 'Sample74': 'NA', 'Sample50': 'NA', 'Sample60': 'NA', 'Sample10': 'NA', 'Sample36': 'NA', 'Sample34': 'NA', 'Sample40': 'NA', 'Sample66': 'NA', 'Sample14': 'NA', 'Sample32': 'NA', 'Sample70': 'NA', 'Sample4': 'NA', 'Sample1': '47.5'
-        }
-        self.assertEqual(metrics['tmb'], expected_tmbs)
+        self.assertSampleValues(
+            os.path.join(output_dir, 'portal/data_clinical_sample.txt'),
+            value_fieldname = "CMO_TMB_SCORE",
+            expected_values = {
+            'Sample46': 'NA', 'Sample44': 'NA', 'Sample80': 'NA', 'Sample20': 'NA', 'Sample38': 'NA', 'Sample26': 'NA', 'Sample94': 'NA', 'Sample48': 'NA', 'Sample68': 'NA', 'Sample90': 'NA', 'Sample18': 'NA', 'Sample54': 'NA', 'Sample52': 'NA', 'Sample86': 'NA', 'Sample30': 'NA', 'Sample78': 'NA', 'Sample84': 'NA', 'Sample82': 'NA', 'Sample6': 'NA', 'Sample96': 'NA', 'Sample72': 'NA', 'Sample56': 'NA', 'Sample64': 'NA', 'Sample58': 'NA', 'Sample92': 'NA', 'Sample62': 'NA', 'Sample8': 'NA', 'Sample24': 'NA', 'Sample12': 'NA', 'Sample16': 'NA', 'Sample88': 'NA', 'Sample22': 'NA', 'Sample42': 'NA', 'Sample76': 'NA', 'Sample28': 'NA', 'Sample74': 'NA', 'Sample50': 'NA', 'Sample60': 'NA', 'Sample10': 'NA', 'Sample36': 'NA', 'Sample34': 'NA', 'Sample40': 'NA', 'Sample66': 'NA', 'Sample14': 'NA', 'Sample32': 'NA', 'Sample70': 'NA', 'Sample4': 'NA', 'Sample1': '47.5'
+            })
 
-        expected_msis = {'Sample46': 'NA', 'Sample44': 'NA', 'Sample80': 'NA', 'Sample20': 'NA', 'Sample38': 'NA', 'Sample26': 'NA', 'Sample94': 'NA', 'Sample48': 'NA', 'Sample68': 'NA', 'Sample90': 'NA', 'Sample18': 'NA', 'Sample54': 'NA', 'Sample52': 'NA', 'Sample86': 'NA', 'Sample30': 'NA', 'Sample78': 'NA', 'Sample84': 'NA', 'Sample82': 'NA', 'Sample6': 'NA', 'Sample96': 'NA', 'Sample72': 'NA', 'Sample56': 'NA', 'Sample64': 'NA', 'Sample58': 'NA', 'Sample92': 'NA', 'Sample62': 'NA', 'Sample8': 'NA', 'Sample24': 'NA', 'Sample12': 'NA', 'Sample16': 'NA', 'Sample88': 'NA', 'Sample22': 'NA', 'Sample42': 'NA', 'Sample76': 'NA', 'Sample28': 'NA', 'Sample74': 'NA', 'Sample50': 'NA', 'Sample60': 'NA', 'Sample10': 'NA', 'Sample36': 'NA', 'Sample34': 'NA', 'Sample40': 'NA', 'Sample66': 'NA', 'Sample14': 'NA', 'Sample32': 'NA', 'Sample70': 'NA', 'Sample4': 'NA', 'Sample1': '28.00'}
-        self.assertEqual(metrics['msi'], expected_msis)
+        self.assertSampleValues(
+            os.path.join(output_dir, 'portal/data_clinical_sample.txt'),
+            value_fieldname = "MSI_SCORE",
+            expected_values = {'Sample46': 'NA', 'Sample44': 'NA', 'Sample80': 'NA', 'Sample20': 'NA', 'Sample38': 'NA', 'Sample26': 'NA', 'Sample94': 'NA', 'Sample48': 'NA', 'Sample68': 'NA', 'Sample90': 'NA', 'Sample18': 'NA', 'Sample54': 'NA', 'Sample52': 'NA', 'Sample86': 'NA', 'Sample30': 'NA', 'Sample78': 'NA', 'Sample84': 'NA', 'Sample82': 'NA', 'Sample6': 'NA', 'Sample96': 'NA', 'Sample72': 'NA', 'Sample56': 'NA', 'Sample64': 'NA', 'Sample58': 'NA', 'Sample92': 'NA', 'Sample62': 'NA', 'Sample8': 'NA', 'Sample24': 'NA', 'Sample12': 'NA', 'Sample16': 'NA', 'Sample88': 'NA', 'Sample22': 'NA', 'Sample42': 'NA', 'Sample76': 'NA', 'Sample28': 'NA', 'Sample74': 'NA', 'Sample50': 'NA', 'Sample60': 'NA', 'Sample10': 'NA', 'Sample36': 'NA', 'Sample34': 'NA', 'Sample40': 'NA', 'Sample66': 'NA', 'Sample14': 'NA', 'Sample32': 'NA', 'Sample70': 'NA', 'Sample4': 'NA', 'Sample1': '28.00'})
 
-        expected_msi_statuses = {'Sample46': 'NA', 'Sample44': 'NA', 'Sample80': 'NA', 'Sample20': 'NA', 'Sample38': 'NA', 'Sample26': 'NA', 'Sample94': 'NA', 'Sample48': 'NA', 'Sample68': 'NA', 'Sample90': 'NA', 'Sample18': 'NA', 'Sample54': 'NA', 'Sample52': 'NA', 'Sample86': 'NA', 'Sample30': 'NA', 'Sample78': 'NA', 'Sample84': 'NA', 'Sample82': 'NA', 'Sample6': 'NA', 'Sample96': 'NA', 'Sample72': 'NA', 'Sample56': 'NA', 'Sample64': 'NA', 'Sample58': 'NA', 'Sample92': 'NA', 'Sample62': 'NA', 'Sample8': 'NA', 'Sample24': 'NA', 'Sample12': 'NA', 'Sample16': 'NA', 'Sample88': 'NA', 'Sample22': 'NA', 'Sample42': 'NA', 'Sample76': 'NA', 'Sample28': 'NA', 'Sample74': 'NA', 'Sample50': 'NA', 'Sample60': 'NA', 'Sample10': 'NA', 'Sample36': 'NA', 'Sample34': 'NA', 'Sample40': 'NA', 'Sample66': 'NA', 'Sample14': 'NA', 'Sample32': 'NA', 'Sample70': 'NA', 'Sample4': 'NA', 'Sample1': 'Instable'}
-        self.assertEqual(metrics['msi_status'], expected_msi_statuses)
+        self.assertSampleValues(
+            os.path.join(output_dir, 'portal/data_clinical_sample.txt'),
+            value_fieldname = "MSI_STATUS",
+            expected_values = {'Sample46': 'NA', 'Sample44': 'NA', 'Sample80': 'NA', 'Sample20': 'NA', 'Sample38': 'NA', 'Sample26': 'NA', 'Sample94': 'NA', 'Sample48': 'NA', 'Sample68': 'NA', 'Sample90': 'NA', 'Sample18': 'NA', 'Sample54': 'NA', 'Sample52': 'NA', 'Sample86': 'NA', 'Sample30': 'NA', 'Sample78': 'NA', 'Sample84': 'NA', 'Sample82': 'NA', 'Sample6': 'NA', 'Sample96': 'NA', 'Sample72': 'NA', 'Sample56': 'NA', 'Sample64': 'NA', 'Sample58': 'NA', 'Sample92': 'NA', 'Sample62': 'NA', 'Sample8': 'NA', 'Sample24': 'NA', 'Sample12': 'NA', 'Sample16': 'NA', 'Sample88': 'NA', 'Sample22': 'NA', 'Sample42': 'NA', 'Sample76': 'NA', 'Sample28': 'NA', 'Sample74': 'NA', 'Sample50': 'NA', 'Sample60': 'NA', 'Sample10': 'NA', 'Sample36': 'NA', 'Sample34': 'NA', 'Sample40': 'NA', 'Sample66': 'NA', 'Sample14': 'NA', 'Sample32': 'NA', 'Sample70': 'NA', 'Sample4': 'NA', 'Sample1': 'Instable'})
+
+
+
+
+
 
     ##################################################################
     #
@@ -848,64 +803,45 @@ class TestWorkflowWithFacets(PlutoTestCase):
 
         self.maxDiff = None
         self.assertCWLDictEqual(output_json, expected_output)
-        comments, mutations = self.load_mutations(os.path.join(output_dir, 'analysis', 'Proj_08390_G.muts.maf'))
-        self.assertEqual(len(mutations), 34)
-        comments, mutations = self.load_mutations(os.path.join(output_dir, 'portal', 'data_mutations_extended.txt'))
-        self.assertEqual(len(mutations), 27)
+
+
+
+
+        self.assertNumMutations(os.path.join(output_dir, 'analysis', 'Proj_08390_G.muts.maf'), 34)
+        self.assertNumMutations(os.path.join(output_dir, 'portal', 'data_mutations_extended.txt'), 27)
+        self.assertHeaderEquals(os.path.join(output_dir, 'portal/data_CNA.txt'), ['Hugo_Symbol', 'Sample1', 'Sample4'])
+        self.assertHeaderEquals(os.path.join(output_dir, 'portal/data_CNA.ascna.txt'), ['Hugo_Symbol', 'Sample1', 'Sample4'])
 
         # the clonality column needs to have been added in the workflow output
-        for mut in mutations:
-            self.assertTrue('ASCN.CLONAL' in mut)
-
-        # load the data_CNA.txt file
-        path = os.path.join(output_dir, 'portal/data_CNA.txt') # renamed from the data_CNA.scna.txt file ...
-        with open(path) as f:
-            header = next(f)
-        header_parts = header.split()
-        expected_header_parts = ['Hugo_Symbol', 'Sample1', 'Sample4']
-        self.assertEqual(header_parts, expected_header_parts)
-
-        path = os.path.join(output_dir, 'portal/data_CNA.ascna.txt')
-        with open(path) as f:
-            header = next(f)
-        header_parts = header.split()
-        expected_header_parts = ['Hugo_Symbol', 'Sample1', 'Sample4']
-        self.assertEqual(header_parts, expected_header_parts)
-
-        path = os.path.join(output_dir, 'portal/data_clinical_sample.txt')
-        table_reader = TableReader(path)
-        comments = table_reader.comment_lines
-        fieldnames = table_reader.get_fieldnames()
-        records = [ rec for rec in table_reader.read() ]
+        self.assertMutHeadersContain(os.path.join(output_dir, 'portal', 'data_mutations_extended.txt'), ['ASCN.CLONAL'])
 
         expected_comments = [
-        '#SAMPLE_ID\tIGO_ID\tPATIENT_ID\tCOLLAB_ID\tSAMPLE_TYPE\tSAMPLE_CLASS\tGENE_PANEL\tONCOTREE_CODE\tSPECIMEN_PRESERVATION_TYPE\tTISSUE_SITE\tREQUEST_ID\tPROJECT_ID\tPIPELINE\tPIPELINE_VERSION\tSAMPLE_COVERAGE\tPROJECT_PI\tREQUEST_PI\tASCN_PURITY\tASCN_PLOIDY\tASCN_VERSION\tgenome_doubled\tASCN_WGD\tCMO_TMB_SCORE\tCMO_MSI_SCORE\tCMO_MSI_STATUS\n',
-        '#SAMPLE_ID\tIGO_ID\tPATIENT_ID\tCOLLAB_ID\tSAMPLE_TYPE\tSAMPLE_CLASS\tGENE_PANEL\tONCOTREE_CODE\tSPECIMEN_PRESERVATION_TYPE\tTISSUE_SITE\tREQUEST_ID\tPROJECT_ID\tPIPELINE\tPIPELINE_VERSION\tSAMPLE_COVERAGE\tPROJECT_PI\tREQUEST_PI\tASCN_PURITY\tASCN_PLOIDY\tASCN_VERSION\tgenome_doubled\tASCN_WGD\tCMO_TMB_SCORE\tCMO_MSI_SCORE\tCMO_MSI_STATUS\n',
-        '#STRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tSTRING\tNUMBER\tSTRING\tSTRING\tNUMBER\tNUMBER\tSTRING\tSTRING\tSTRING\tNUMBER\tNUMBER\tSTRING\n',
-        '#1\t1\t1\t0\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t1\t0\t0\t1\t1\t0\t0\n'
+        ['SAMPLE_ID', 'IGO_ID', 'PATIENT_ID', 'COLLAB_ID', 'SAMPLE_TYPE', 'SAMPLE_CLASS', 'GENE_PANEL', 'ONCOTREE_CODE', 'SPECIMEN_PRESERVATION_TYPE', 'TISSUE_SITE', 'REQUEST_ID', 'PROJECT_ID', 'PIPELINE', 'PIPELINE_VERSION', 'SAMPLE_COVERAGE', 'PROJECT_PI', 'REQUEST_PI', 'genome_doubled', 'ASCN_PURITY', 'ASCN_PLOIDY', 'ASCN_VERSION', 'ASCN_WGD', 'CMO_TMB_SCORE', 'CMO_MSI_SCORE', 'CMO_MSI_STATUS'],
+        ['SAMPLE_ID', 'IGO_ID', 'PATIENT_ID', 'COLLAB_ID', 'SAMPLE_TYPE', 'SAMPLE_CLASS', 'GENE_PANEL', 'ONCOTREE_CODE', 'SPECIMEN_PRESERVATION_TYPE', 'TISSUE_SITE', 'REQUEST_ID', 'PROJECT_ID', 'PIPELINE', 'PIPELINE_VERSION', 'SAMPLE_COVERAGE', 'PROJECT_PI', 'REQUEST_PI', 'genome_doubled', 'ASCN_PURITY', 'ASCN_PLOIDY', 'ASCN_VERSION', 'ASCN_WGD', 'CMO_TMB_SCORE', 'CMO_MSI_SCORE', 'CMO_MSI_STATUS'],
+        ['STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'NUMBER', 'STRING', 'STRING', 'STRING', 'NUMBER', 'NUMBER', 'STRING', 'STRING', 'NUMBER', 'NUMBER', 'STRING'],
+        ['1', '1', '1', '0', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '0', '1', '1', '0', '1', '1', '0', '0']
         ]
-        self.assertEqual(comments, expected_comments)
 
-        metrics = {}
-        metrics['tmb'] = {}
-        metrics['msi'] = {}
-        metrics['msi_status'] = {}
-        for record in records:
-            sample_id = record['SAMPLE_ID']
-            metrics['tmb'][sample_id] = record['CMO_TMB_SCORE']
-            metrics['msi'][sample_id] = record['MSI_SCORE']
-            metrics['msi_status'][sample_id] = record['MSI_STATUS']
+        # NOTE: be careful with ignoreOrder here because it is harder to ensure the file headers are exactly correct
+        self.assertPortalCommentsEquals(os.path.join(output_dir, 'portal/data_clinical_sample.txt'), expected_comments, ignoreOrder = True)
 
-        expected_tmbs = {
-        'Sample46': 'NA', 'Sample44': 'NA', 'Sample80': 'NA', 'Sample20': 'NA', 'Sample38': 'NA', 'Sample26': 'NA', 'Sample94': 'NA', 'Sample48': 'NA', 'Sample68': 'NA', 'Sample90': 'NA', 'Sample18': 'NA', 'Sample54': 'NA', 'Sample52': 'NA', 'Sample86': 'NA', 'Sample30': 'NA', 'Sample78': 'NA', 'Sample84': 'NA', 'Sample82': 'NA', 'Sample6': 'NA', 'Sample96': 'NA', 'Sample72': 'NA', 'Sample56': 'NA', 'Sample64': 'NA', 'Sample58': 'NA', 'Sample92': 'NA', 'Sample62': 'NA', 'Sample8': 'NA', 'Sample24': 'NA', 'Sample12': 'NA', 'Sample16': 'NA', 'Sample88': 'NA', 'Sample22': 'NA', 'Sample42': 'NA', 'Sample76': 'NA', 'Sample28': 'NA', 'Sample74': 'NA', 'Sample50': 'NA', 'Sample60': 'NA', 'Sample10': 'NA', 'Sample36': 'NA', 'Sample34': 'NA', 'Sample40': 'NA', 'Sample66': 'NA', 'Sample14': 'NA', 'Sample32': 'NA', 'Sample70': 'NA', 'Sample4': '5.5', 'Sample1': '47.5'
-        }
-        self.assertEqual(metrics['tmb'], expected_tmbs)
+        self.assertSampleValues(
+            os.path.join(output_dir, 'portal/data_clinical_sample.txt'),
+            value_fieldname = "CMO_TMB_SCORE",
+            expected_values = {
+            'Sample46': 'NA', 'Sample44': 'NA', 'Sample80': 'NA', 'Sample20': 'NA', 'Sample38': 'NA', 'Sample26': 'NA', 'Sample94': 'NA', 'Sample48': 'NA', 'Sample68': 'NA', 'Sample90': 'NA', 'Sample18': 'NA', 'Sample54': 'NA', 'Sample52': 'NA', 'Sample86': 'NA', 'Sample30': 'NA', 'Sample78': 'NA', 'Sample84': 'NA', 'Sample82': 'NA', 'Sample6': 'NA', 'Sample96': 'NA', 'Sample72': 'NA', 'Sample56': 'NA', 'Sample64': 'NA', 'Sample58': 'NA', 'Sample92': 'NA', 'Sample62': 'NA', 'Sample8': 'NA', 'Sample24': 'NA', 'Sample12': 'NA', 'Sample16': 'NA', 'Sample88': 'NA', 'Sample22': 'NA', 'Sample42': 'NA', 'Sample76': 'NA', 'Sample28': 'NA', 'Sample74': 'NA', 'Sample50': 'NA', 'Sample60': 'NA', 'Sample10': 'NA', 'Sample36': 'NA', 'Sample34': 'NA', 'Sample40': 'NA', 'Sample66': 'NA', 'Sample14': 'NA', 'Sample32': 'NA', 'Sample70': 'NA', 'Sample4': '5.5', 'Sample1': '47.5'
+            })
 
-        expected_msis = {'Sample46': 'NA', 'Sample44': 'NA', 'Sample80': 'NA', 'Sample20': 'NA', 'Sample38': 'NA', 'Sample26': 'NA', 'Sample94': 'NA', 'Sample48': 'NA', 'Sample68': 'NA', 'Sample90': 'NA', 'Sample18': 'NA', 'Sample54': 'NA', 'Sample52': 'NA', 'Sample86': 'NA', 'Sample30': 'NA', 'Sample78': 'NA', 'Sample84': 'NA', 'Sample82': 'NA', 'Sample6': 'NA', 'Sample96': 'NA', 'Sample72': 'NA', 'Sample56': 'NA', 'Sample64': 'NA', 'Sample58': 'NA', 'Sample92': 'NA', 'Sample62': 'NA', 'Sample8': 'NA', 'Sample24': 'NA', 'Sample12': 'NA', 'Sample16': 'NA', 'Sample88': 'NA', 'Sample22': 'NA', 'Sample42': 'NA', 'Sample76': 'NA', 'Sample28': 'NA', 'Sample74': 'NA', 'Sample50': 'NA', 'Sample60': 'NA', 'Sample10': 'NA', 'Sample36': 'NA', 'Sample34': 'NA', 'Sample40': 'NA', 'Sample66': 'NA', 'Sample14': 'NA', 'Sample32': 'NA', 'Sample70': 'NA', 'Sample4': '11.76', 'Sample1': '28.00'}
-        self.assertEqual(metrics['msi'], expected_msis)
+        self.assertSampleValues(
+            os.path.join(output_dir, 'portal/data_clinical_sample.txt'),
+            value_fieldname = "MSI_SCORE",
+            expected_values = {'Sample46': 'NA', 'Sample44': 'NA', 'Sample80': 'NA', 'Sample20': 'NA', 'Sample38': 'NA', 'Sample26': 'NA', 'Sample94': 'NA', 'Sample48': 'NA', 'Sample68': 'NA', 'Sample90': 'NA', 'Sample18': 'NA', 'Sample54': 'NA', 'Sample52': 'NA', 'Sample86': 'NA', 'Sample30': 'NA', 'Sample78': 'NA', 'Sample84': 'NA', 'Sample82': 'NA', 'Sample6': 'NA', 'Sample96': 'NA', 'Sample72': 'NA', 'Sample56': 'NA', 'Sample64': 'NA', 'Sample58': 'NA', 'Sample92': 'NA', 'Sample62': 'NA', 'Sample8': 'NA', 'Sample24': 'NA', 'Sample12': 'NA', 'Sample16': 'NA', 'Sample88': 'NA', 'Sample22': 'NA', 'Sample42': 'NA', 'Sample76': 'NA', 'Sample28': 'NA', 'Sample74': 'NA', 'Sample50': 'NA', 'Sample60': 'NA', 'Sample10': 'NA', 'Sample36': 'NA', 'Sample34': 'NA', 'Sample40': 'NA', 'Sample66': 'NA', 'Sample14': 'NA', 'Sample32': 'NA', 'Sample70': 'NA', 'Sample4': '11.76', 'Sample1': '28.00'})
 
-        expected_msi_statuses = {'Sample46': 'NA', 'Sample44': 'NA', 'Sample80': 'NA', 'Sample20': 'NA', 'Sample38': 'NA', 'Sample26': 'NA', 'Sample94': 'NA', 'Sample48': 'NA', 'Sample68': 'NA', 'Sample90': 'NA', 'Sample18': 'NA', 'Sample54': 'NA', 'Sample52': 'NA', 'Sample86': 'NA', 'Sample30': 'NA', 'Sample78': 'NA', 'Sample84': 'NA', 'Sample82': 'NA', 'Sample6': 'NA', 'Sample96': 'NA', 'Sample72': 'NA', 'Sample56': 'NA', 'Sample64': 'NA', 'Sample58': 'NA', 'Sample92': 'NA', 'Sample62': 'NA', 'Sample8': 'NA', 'Sample24': 'NA', 'Sample12': 'NA', 'Sample16': 'NA', 'Sample88': 'NA', 'Sample22': 'NA', 'Sample42': 'NA', 'Sample76': 'NA', 'Sample28': 'NA', 'Sample74': 'NA', 'Sample50': 'NA', 'Sample60': 'NA', 'Sample10': 'NA', 'Sample36': 'NA', 'Sample34': 'NA', 'Sample40': 'NA', 'Sample66': 'NA', 'Sample14': 'NA', 'Sample32': 'NA', 'Sample70': 'NA', 'Sample4': 'Instable', 'Sample1': 'Instable'}
-        self.assertEqual(metrics['msi_status'], expected_msi_statuses)
+        self.assertSampleValues(
+            os.path.join(output_dir, 'portal/data_clinical_sample.txt'),
+            value_fieldname = "MSI_STATUS",
+            expected_values = {'Sample46': 'NA', 'Sample44': 'NA', 'Sample80': 'NA', 'Sample20': 'NA', 'Sample38': 'NA', 'Sample26': 'NA', 'Sample94': 'NA', 'Sample48': 'NA', 'Sample68': 'NA', 'Sample90': 'NA', 'Sample18': 'NA', 'Sample54': 'NA', 'Sample52': 'NA', 'Sample86': 'NA', 'Sample30': 'NA', 'Sample78': 'NA', 'Sample84': 'NA', 'Sample82': 'NA', 'Sample6': 'NA', 'Sample96': 'NA', 'Sample72': 'NA', 'Sample56': 'NA', 'Sample64': 'NA', 'Sample58': 'NA', 'Sample92': 'NA', 'Sample62': 'NA', 'Sample8': 'NA', 'Sample24': 'NA', 'Sample12': 'NA', 'Sample16': 'NA', 'Sample88': 'NA', 'Sample22': 'NA', 'Sample42': 'NA', 'Sample76': 'NA', 'Sample28': 'NA', 'Sample74': 'NA', 'Sample50': 'NA', 'Sample60': 'NA', 'Sample10': 'NA', 'Sample36': 'NA', 'Sample34': 'NA', 'Sample40': 'NA', 'Sample66': 'NA', 'Sample14': 'NA', 'Sample32': 'NA', 'Sample70': 'NA', 'Sample4': 'Instable', 'Sample1': 'Instable'})
+
 
 if __name__ == "__main__":
     unittest.main()
