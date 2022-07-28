@@ -15,7 +15,7 @@ sys.path.insert(0, PARENT_DIR)
 from pluto.tools import PlutoTestCase, CWLFile
 sys.path.pop(0)
 
-class TestAddImpactCWL(PlutoTestCase):
+class TestAddAFCWL(PlutoTestCase):
     cwl_file = CWLFile('add_af.cwl')
 
     def test_add_af(self):

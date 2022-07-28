@@ -13,91 +13,93 @@ sys.path.insert(0, PARENT_DIR)
 from pluto.tools import PlutoTestCase, CWLFile
 sys.path.pop(0)
 
-class TestTMBWorkflow(PlutoTestCase):
+comments = [
+['# comment 1'],
+['# comment 2']
+]
+row1 = {
+'t_af': '0.50',
+'t_depth': '550',
+'Hugo_Symbol': 'EGFR',
+'Start_Position': '1',
+'Consequence': 'synonymous_variant' # exclude due to synonymous_variant
+}
+row2 = {
+'t_af': '0.50',
+'t_depth': '550',
+'Hugo_Symbol': 'EGFR',
+'Start_Position': '1',
+'Consequence': 'splice_region_variant,synonymous_variant' # exclude due to synonymous_variant
+}
+row3 = { # this one should pass filter
+'t_af': '0.50',
+'t_depth': '550',
+'Hugo_Symbol': 'EGFR',
+'Start_Position': '1',
+'Consequence': 'missense_variant'
+}
+row4 = {
+'t_af': '0.01', # exclude due to low AF
+'t_depth': '550',
+'Hugo_Symbol': 'EGFR',
+'Start_Position': '1',
+'Consequence': 'missense_variant'
+}
+row5 = {
+'t_af': '0.51',
+'t_depth': '90', # exclude due to low coverage
+'Hugo_Symbol': 'EGFR',
+'Start_Position': '1',
+'Consequence': 'missense_variant'
+}
+row6 = { # this one should pass filter
+'t_af': '0.45',
+'t_depth': '590',
+'Hugo_Symbol': 'EGFR',
+'Start_Position': '1',
+'Consequence': 'splice_region_variant'
+}
+row7 = { # this one should pass filter
+'t_af': '0.45',
+'t_depth': '590',
+'Hugo_Symbol': 'TERT',
+'Start_Position': '1295340', # good value; is_TERT_promoter = True
+'Consequence': 'splice_region_variant'
+}
+row8 = { # this should pass filter
+'t_af': '0.45',
+'t_depth': '590',
+'Hugo_Symbol': 'TERT',
+'Start_Position': '1295339', # good value; is_TERT_promoter = True
+'Consequence': 'splice_region_variant'
+}
+row9 = { # this should pass filter
+'t_af': '0.45',
+'t_depth': '590',
+'Hugo_Symbol': 'TERT',
+'Start_Position': '1295341', # bad value; is_TERT_promoter = False
+'Consequence': 'splice_region_variant' # include anyway because its not synonymous_variant
+}
+row10 ={ # this should pass filter
+'t_af': '0.45',
+'t_depth': '590',
+'Hugo_Symbol': 'TERT',
+'Start_Position': '1295339', # good value; is_TERT_promoter = True
+'Consequence': 'synonymous_variant' # include even though its synonymous_variant
+}
+
+class TestTMBCWL(PlutoTestCase):
     cwl_file = CWLFile('tmb.cwl')
-    def test_tmb_workflow(self):
+    def test_tmb_workflow1(self):
         """
         Test case for the TMB analysis workflow
         """
         self.maxDiff = None
-        comments = [
-        ['# comment 1'],
-        ['# comment 2']
-        ]
-        row1 = {
-        't_af': '0.50',
-        't_depth': '550',
-        'Hugo_Symbol': 'EGFR',
-        'Start_Position': '1',
-        'Consequence': 'synonymous_variant' # exclude due to synonymous_variant
-        }
-        row2 = {
-        't_af': '0.50',
-        't_depth': '550',
-        'Hugo_Symbol': 'EGFR',
-        'Start_Position': '1',
-        'Consequence': 'splice_region_variant,synonymous_variant' # exclude due to synonymous_variant
-        }
-        row3 = { # this one should pass filter
-        't_af': '0.50',
-        't_depth': '550',
-        'Hugo_Symbol': 'EGFR',
-        'Start_Position': '1',
-        'Consequence': 'missense_variant'
-        }
-        row4 = {
-        't_af': '0.01', # exclude due to low AF
-        't_depth': '550',
-        'Hugo_Symbol': 'EGFR',
-        'Start_Position': '1',
-        'Consequence': 'missense_variant'
-        }
-        row5 = {
-        't_af': '0.51',
-        't_depth': '90', # exclude due to low coverage
-        'Hugo_Symbol': 'EGFR',
-        'Start_Position': '1',
-        'Consequence': 'missense_variant'
-        }
-        row6 = { # this one should pass filter
-        't_af': '0.45',
-        't_depth': '590',
-        'Hugo_Symbol': 'EGFR',
-        'Start_Position': '1',
-        'Consequence': 'splice_region_variant'
-        }
-        row7 = { # this one should pass filter
-        't_af': '0.45',
-        't_depth': '590',
-        'Hugo_Symbol': 'TERT',
-        'Start_Position': '1295340', # good value; is_TERT_promoter = True
-        'Consequence': 'splice_region_variant'
-        }
-        row8 = { # this should pass filter
-        't_af': '0.45',
-        't_depth': '590',
-        'Hugo_Symbol': 'TERT',
-        'Start_Position': '1295339', # good value; is_TERT_promoter = True
-        'Consequence': 'splice_region_variant'
-        }
-        row9 = { # this should pass filter
-        't_af': '0.45',
-        't_depth': '590',
-        'Hugo_Symbol': 'TERT',
-        'Start_Position': '1295341', # bad value; is_TERT_promoter = False
-        'Consequence': 'splice_region_variant' # include anyway because its not synonymous_variant
-        }
-        row10 ={ # this should pass filter
-        't_af': '0.45',
-        't_depth': '590',
-        'Hugo_Symbol': 'TERT',
-        'Start_Position': '1295339', # good value; is_TERT_promoter = True
-        'Consequence': 'synonymous_variant' # include even though its synonymous_variant
-        }
+
         maf_rows = [ row1, row2, row3, row4, row5, row6, row7, row8, row9, row10 ]
         maf_lines = self.dicts2lines(dict_list = maf_rows, comment_list = comments)
         input_maf = self.write_table(self.tmpdir, filename = "input.maf", lines = maf_lines)
-        output_file = os.path.join(self.tmpdir, "output.txt")
+        # output_file = os.path.join(self.tmpdir, "output.txt")
 
         self.input = {
             "mutations_file": {
@@ -131,8 +133,12 @@ class TestTMBWorkflow(PlutoTestCase):
         ]
         self.assertEqual(lines, expected_lines)
 
-
+    def test_tmb_workflow2(self):
         # A pooled Normal gives a NA result output
+        maf_rows = [ row1, row2, row3, row4, row5, row6, row7, row8, row9, row10 ]
+        maf_lines = self.dicts2lines(dict_list = maf_rows, comment_list = comments)
+        input_maf = self.write_table(self.tmpdir, filename = "input.maf", lines = maf_lines)
+
         self.input = {
             "mutations_file": {
                   "class": "File",

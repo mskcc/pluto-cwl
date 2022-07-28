@@ -13,23 +13,43 @@ from pluto.tools import PlutoTestCase, CWLFile
 from pluto.serializer import OFile
 sys.path.pop(0)
 
-class TestMergeTables(PlutoTestCase):
+class TestReport(PlutoTestCase):
     cwl_file = CWLFile('report.cwl')
 
     def test_demo_report(self):
         """
         Test case for making an HTML report
         """
-        mut1 = {
+        muts = [{
         "Hugo_Symbol" : "FGF3",
         "Amino_Acid_Change": "E116K",
         "Tumor_Sample_Barcode": "Sample1",
-        "Matched_Norm_Sample_Barcode": "Sample2",
+        "Matched_Norm_Sample_Barcode": "Sample1-N",
         "t_depth" : "0",
         "t_alt_count" : "0",
         "n_alt_count": "0",
         "n_depth": "0"
-        }
+        },
+        {
+        "Hugo_Symbol" : "BRCA",
+        "Amino_Acid_Change": "V600E",
+        "Tumor_Sample_Barcode": "Sample2",
+        "Matched_Norm_Sample_Barcode": "Sample2-N",
+        "t_depth" : "0",
+        "t_alt_count" : "0",
+        "n_alt_count": "0",
+        "n_depth": "0"
+        },
+        {
+        "Hugo_Symbol" : "SOX9",
+        "Amino_Acid_Change": "E116K",
+        "Tumor_Sample_Barcode": "Sample3",
+        "Matched_Norm_Sample_Barcode": "Sample3-N",
+        "t_depth" : "0",
+        "t_alt_count" : "0",
+        "n_alt_count": "0",
+        "n_depth": "0"
+        }]
 
         sample_lines = [
         {
@@ -48,6 +68,22 @@ class TestMergeTables(PlutoTestCase):
         'ONCOTREE_CODE': 'MEL',
         'SAMPLE_COVERAGE': '100',
         },
+        {
+        'SAMPLE_ID': 'Sample3',
+        'PATIENT_ID': 'Patient2',
+        'IGO_ID': 'IGO_3',
+        'COLLAB_ID': 'Collab3',
+        'ONCOTREE_CODE': 'MEL',
+        'SAMPLE_COVERAGE': '75',
+        },
+        {
+        'SAMPLE_ID': 'Sample4',
+        'PATIENT_ID': 'Patient2',
+        'IGO_ID': 'IGO_4',
+        'COLLAB_ID': 'Collab4',
+        'ONCOTREE_CODE': 'MEL',
+        'SAMPLE_COVERAGE': '60',
+        },
         ]
 
         patient_lines = [
@@ -56,10 +92,11 @@ class TestMergeTables(PlutoTestCase):
         ['#STRING', 'STRING'],
         ['#1', '1'],
         ['PATIENT_ID', 'SEX'],
-        ['p_C_00001', 'F']
+        ['Patient1', 'F'],
+        ['Patient2', 'F']
         ]
 
-        mut_lines = self.dicts2lines(dict_list = [mut1], comment_list = [])
+        mut_lines = self.dicts2lines(dict_list = muts, comment_list = [])
         mut_file = self.write_table(self.tmpdir, filename = "input.maf", lines = mut_lines)
 
         sample_lines = self.dicts2lines(dict_list = sample_lines, comment_list = [])

@@ -265,7 +265,7 @@ _LOGFILE:=testing.$(_LOGDATE).log
 parallel-test-log:
 	echo ">>>>> ------ start parallel-test-log $(_LOGDATE_LONG) ($(_LOGDATE)) -------- <<<<<" >> "$(_LOGFILE)"
 	time { QUIET=True ./print_tests.py "$(T)" | \
-	xargs -n 1 -P "$(P)" python3 -m unittest ; } 2>&1 | \
+	xargs -n 1 -P "$(P)" nice python3 -m unittest ; } 2>&1 | \
 	tee -a "$(_LOGFILE)"
 	echo ">>>>> ------ stop parallel-test-log $(_LOGDATE_LONG) ($(_LOGDATE)) -------- <<<<<" >> "$(_LOGFILE)"
 
@@ -273,7 +273,7 @@ parallel-test-log:
 # same but without logging
 parallel-test:
 	./print_tests.py "$(T)" | \
-	xargs -n 1 -P "$(P)" python3 -m unittest
+	xargs -n 1 -P "$(P)" nice python3 -m unittest
 
 # EXAMPLES:
 # $ PRINT_TESTNAME=True make parallel-test T=tests/test_add_af_cwl.py
