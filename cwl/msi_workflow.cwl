@@ -77,9 +77,6 @@ steps:
         pair:
           type: "types.yml#MSIOutputPair"
           outputSource: create_msi_pair_output/pair
-        # output_file:
-        #   type: File
-        #   outputSource: add_sample_id/output_file
       steps:
         # run the MSI analysis for each tumor sample in the list of pairs
         run_msi_workflow:
