@@ -16,6 +16,7 @@ inputs:
       position: 1
   output_filename:
     type: string
+    default: tmb_variants.maf
     inputBinding:
       position: 2
 
