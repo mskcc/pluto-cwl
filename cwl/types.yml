@@ -83,6 +83,52 @@ types:
           - ^.bai
           - .bai
 
+- name: TNMafPileupPair
+  doc: a tumor normal sample pair with .maf and snp pileup files
+  type: record
+  fields:
+    - name: tumor_id
+      type: string
+    - name: normal_id
+      type: string
+    - name: pair_id
+      type: string
+    - name: snp_pileup
+      type: File
+    - name: pair_maf
+      type: File
+
+- name: TMBInputPair
+  doc: a tumor normal pair for input to Tumor Mutation Burden analysis
+  type: record
+  fields:
+    - name: tumor_id
+      type: string
+    - name: normal_id
+      type: string
+    - name: pair_id
+      type: string
+    - name: pair_maf
+      type: File
+
+- name: TMBOutputPair
+  doc: a tumor normal pair for input to Tumor Mutation Burden analysis
+  type: record
+  fields:
+    - name: tumor_id
+      type: string
+    - name: normal_id
+      type: string
+    - name: pair_id
+      type: string
+    - name: tmb_maf
+      type: File
+      doc: filtered mutations used for TMB calculation
+    - name: tmb_tsv
+      type: File
+      doc: table with TMB values for the sample pair
+
+
 - name: MSIOutputPair
   doc: a tumor normal sample pair that has undergone microsatellite instability analysis
   type: record
