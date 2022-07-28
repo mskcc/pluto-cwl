@@ -83,6 +83,20 @@ types:
           - ^.bai
           - .bai
 
+- name: MSIOutputPair
+  doc: a tumor normal sample pair that has undergone microsatellite instability analysis
+  type: record
+  fields:
+    - name: tumor_id
+      type: string
+    - name: normal_id
+      type: string
+    - name: pair_id
+      type: string
+    - name: msi_tsv
+      doc: parsed output from msisensor
+      type: File
+
 - name: FacetsPair
   doc: a tumor normal sample pair used in Facets
   type: record
