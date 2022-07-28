@@ -20,15 +20,7 @@ inputs:
   microsatellites_file:
     doc: reference microsatellite list
     type: File
-  pairs:
-    type:
-      type: array
-      items:
-        type: record
-        fields:
-          pair_id: string
-          tumor_id: string
-          normal_id: string
+  pairs: "types.yml#MSIInputPair[]"
   # NOTE: these two arrays of File with secondaryFiles should eventually be merged directly into the `pairs` record array
   # after upgrading Toil to support cwlVersion 1.1
   normal_bam_files:

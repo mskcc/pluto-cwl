@@ -17,8 +17,7 @@ inputs:
   assay_coverage:
     type: string
     doc: "genome_coverage value; amount of the genome in bp covered by the assay"
-  pairs:
-    type: "types.yml#TMBInputPair[]"
+  pairs: "types.yml#TMBInputPair[]"
 
 steps:
   # run the TMB analysis for each tumor sample in the list of pairs
@@ -100,7 +99,7 @@ steps:
             output_filename: # NOTE: we plan to concat this file later so it needs to have a unique filename !!
               valueFrom: ${ return inputs.pair_id + ".tmb.tsv"; }
             header:
-              valueFrom: ${ return "SampleID"; }
+              valueFrom: ${ return "SampleID"; } # TODO: Change this to SAMPLE_ID
             value: sample_id
           out:
             [ output_file ]

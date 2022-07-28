@@ -103,6 +103,9 @@ requirements:
 
 
 inputs:
+  pairs:
+    doc: list of tumor normal sample pairs
+    type: "types.yml#TNMafPileupPair[]"
   project_id:
     type: string
     doc: "unique identifier for the project"
@@ -255,17 +258,6 @@ inputs:
     type:
     - "null"
     - File
-  pairs:
-    type:
-      type: array
-      items:
-        - type: record
-          fields:
-            pair_maf: File
-            snp_pileup: File
-            pair_id: string
-            tumor_id: string
-            normal_id: string
   IMPACT_gene_list:
     type: File
     doc: "TSV file with gene labels and corresponding impact assays"
@@ -304,8 +296,8 @@ inputs:
 
 
 steps:
-  # run the Facets Suite workflow
   run_facets:
+    doc: run the Facets Suite workflow
     run: facets-workflow.cwl
     in:
       pairs: pairs
@@ -349,8 +341,8 @@ steps:
         }
 
 
-  # need to make a concatenated maf file for merging with portal maf
   concat_facets_maf:
+    doc: make a concatenated maf file for merging with portal maf
     run: concat-tables.cwl
     in:
       input_files: gather_facets_files/annotated_mafs
@@ -359,8 +351,10 @@ steps:
     out:
       [ output_file ]
 
-  # generate the "analysis" output files
+
+
   run_analysis_workflow:
+    doc: generate the analysis output files
     run: analysis-workflow.cwl
     in:
       analysis_segment_cna_filename: analysis_segment_cna_filename
@@ -380,38 +374,94 @@ steps:
     out:
       [ analysis_dir ]
 
-  # run the TMB workflow
-  run_tmb_workflow:
-    run: tmb.cwl
-    scatter: pair
-    in:
-      pair: pairs
-      mutations_file:
-        valueFrom: ${ return inputs.pair['pair_maf']; }
-      sample_id:
-        valueFrom: ${ return inputs.pair['tumor_id']; }
-      normal_id:
-        valueFrom: ${ return inputs.pair['normal_id']; }
-      assay_coverage: assay_coverage
-    out:
-      [ output_file ]
 
-  # run the MSI workflow
-  run_msi_add_sample_id:
-    scatter: [ pair, normal_bam, tumor_bam ]
-    scatterMethod: dotproduct
-    run: run_msi_and_add_sample_id.cwl
+
+  convert_tmb_pairs:
+    doc: convert the workflow input pairs record schema to the TMB analysis pair schema
+    run: convert_TNMafPileupPair_to_TMBInputPair.cwl
+    in:
+      pairs: pairs
+    out: [ pairs ]
+
+  run_tmb_workflow:
+    doc: run the TMB workflow
+    run: tmb_workflow.cwl
+    in:
+      pairs: convert_tmb_pairs/pairs
+      assay_coverage: assay_coverage
+    out: [ pairs ]
+
+  gather_tmb_tsvs:
+    doc: create a list of just TMB tsv files for downstream processing
+    in:
+      pairs: run_tmb_workflow/pairs
+    out: [ tmb_tsvs ]
+    run:
+      class: ExpressionTool
+      inputs:
+        pairs:
+          type: "types.yml#TMBOutputPair[]"
+      outputs:
+        tmb_tsvs: File[]
+      expression: |
+        ${
+          var tmb_tsvs = [];
+          for ( var i in inputs.pairs ){
+            tmb_tsvs.push(inputs.pairs[i].tmb_tsv);
+          };
+          return {"tmb_tsvs": tmb_tsvs};
+        }
+
+
+  convert_msi_pairs:
+    run: convert_TNMafPileupPair_to_MSIInputPair.cwl
+    in:
+      pairs: pairs
+    out: [ pairs ]
+
+  run_msi:
+    doc: run the MSI workflow
+    run: msi_workflow.cwl
     in:
       microsatellites_file: microsatellites_file
-      pair: pairs
-      normal_bam: normal_bam_files
-      tumor_bam: tumor_bam_files
-      tumor_id:
-        valueFrom: ${ return inputs.pair['tumor_id']; }
-    out: [ output_file ]
+      pairs: convert_msi_pairs/pairs
+      normal_bam_files: normal_bam_files
+      tumor_bam_files: tumor_bam_files
+    out: [ pairs ]
 
-  # generate the cBioPortal output files
+  gather_msi_tsvs:
+    doc: create list of just MSI tsv files for downstream processing
+    in:
+      pairs: run_msi/pairs
+    out: [ msi_tsvs ]
+    run:
+      class: ExpressionTool
+      inputs:
+        pairs:
+          type: "types.yml#MSIOutputPair[]"
+      outputs:
+        msi_tsvs: File[]
+      expression: |
+        ${
+          var msi_tsvs = [];
+          for ( var i in inputs.pairs ){
+            msi_tsvs.push(inputs.pairs[i].msi_tsv);
+          };
+          return {"msi_tsvs": msi_tsvs};
+        }
+
+
+
+
+
+
+
+
+
+
+
   run_portal_workflow:
+    doc: generate the cBioPortal output files
     run: portal-workflow.cwl
     in:
       project_id: project_id
@@ -453,8 +503,8 @@ steps:
       known_fusions_file: known_fusions_file
       data_clinical_file: data_clinical_file
       sample_summary_file: sample_summary_file
-      msi_files: run_msi_add_sample_id/output_file
-      tmb_files: run_tmb_workflow/output_file
+      msi_files: gather_msi_tsvs/msi_tsvs
+      tmb_files: gather_tmb_tsvs/tmb_tsvs
       facets_suite_txt_files: gather_facets_files/facets_txts
       extra_sample_ids: extra_sample_ids
       extra_cna_files: extra_cna_files
@@ -480,8 +530,9 @@ steps:
       portal_report
       ]
 
-  # need to merge the portal mutations maf with the Facets maf to get some extra information in the output
+
   merge_maf:
+    doc: need to merge the portal mutations maf with the Facets maf to get some extra information in the output
     run: update_cBioPortal_data.cwl
     in:
       subcommand:
@@ -513,6 +564,18 @@ steps:
 #      [ output_file ]
 
 
+
+
+
+
+
+
+
+
+
+
+  # OUTPUT DIR CREATION STEPS
+  # TODO: NEED TO MOVE THESE OUT OF THIS WORKFLOW INTO A DEDICATED PROCESS
 
   # create the "portal" directory in the output dir and put cBioPortal files in it
   make_portal_dir:
