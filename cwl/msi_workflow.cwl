@@ -87,11 +87,9 @@ steps:
           run: msi.cwl
           in:
             threads: threads
-            d: microsatellites_file
-            n: normal_bam
-            t: tumor_bam
-            o:
-              valueFrom: ${ return 'msi.txt'; }
+            microsatellites_file: microsatellites_file
+            normal_bam: normal_bam
+            tumor_bam: tumor_bam
           out:
             [output_file]
         # output_file looks like this;
