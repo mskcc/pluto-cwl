@@ -140,7 +140,7 @@ class TestWorkflowWithFacets(PlutoTestCase):
                 'portal_dir': ODir(name = 'portal', dir = output_dir, items = [
                     OFile(name = 'meta_clinical_sample.txt', size = 132, hash = '7d2bb282e74ff6a5d41b334ded689f9336722702'),
                     OFile(name = 'data_clinical_patient.txt', size = 91, hash = 'cac1377a45dfc316266697a21df87801883127b5'),
-                    OFile(name = 'data_clinical_sample.txt', size = 1523, hash = 'ed171f6c3d5e4ce5a58bd5ac93a120930a71fc01'),
+                    OFile(name = 'data_clinical_sample.txt', size = 1172, hash = '66ccd7052144328280d12856ec8c8a9112c025e9'),
                     OFile(name = 'meta_study.txt', size = 128, hash = '998a850a03828cf4c235583dced9751ba75c9ab1'),
                     OFile(name = 'meta_clinical_patient.txt', size = 134, hash = 'e1f0b7786dd10af608df5178ff4b1a0b7a191a38'),
                     OFile(name = 'meta_CNA.txt', size = 262, hash = '93367ae36cae5e1a53b25e5bb02731e8b113251b'),
@@ -159,7 +159,13 @@ class TestWorkflowWithFacets(PlutoTestCase):
                         OFile(name = 'cases_sequenced.txt', size = 213, hash = 'd3c860cb681ba952bf2f9d546a5a088a04a77261'),
                     ]),
                     OFile(name = 'report.html')
-                ])
+                ]),
+                "tmb_dir": ODir(name = "tmb", dir = output_dir, items = [
+                    OFile(name = "Sample1.Sample2.tmb.tsv", size = 63, hash = "bcfe22f147ae3ed923fcef38ae78d582bfa14ec0")
+                ]),
+                "msi_dir": ODir(name = "msi", dir = output_dir, items = [
+                    OFile(name = "Sample1.Sample2.msi.tsv", size = 54, hash = "da75ec7441a5d537c46bebb282099d95b575531c")
+                ]),
             }
         self.maxDiff = None
         self.assertCWLDictEqual(output_json, expected_output)
@@ -170,6 +176,7 @@ class TestWorkflowWithFacets(PlutoTestCase):
         self.assertHeaderEquals(os.path.join(output_dir, 'portal/data_CNA.txt'), ['Hugo_Symbol', 'Sample1'])
         self.assertHeaderEquals(os.path.join(output_dir, 'portal/data_CNA.ascna.txt'), ['Hugo_Symbol', 'Sample1'])
 
+        # CMO_ASSAY_COVERAGE
         expected_comments = [
         ['SAMPLE_ID', 'IGO_ID', 'PATIENT_ID', 'COLLAB_ID', 'SAMPLE_TYPE', 'SAMPLE_CLASS', 'GENE_PANEL', 'ONCOTREE_CODE', 'SPECIMEN_PRESERVATION_TYPE', 'TISSUE_SITE', 'REQUEST_ID', 'PROJECT_ID', 'PIPELINE', 'PIPELINE_VERSION', 'SAMPLE_COVERAGE', 'PROJECT_PI', 'REQUEST_PI', 'genome_doubled', 'ASCN_PURITY', 'ASCN_PLOIDY', 'ASCN_VERSION', 'ASCN_WGD', 'CMO_TMB_SCORE', 'CMO_MSI_SCORE', 'CMO_MSI_STATUS'],
         ['SAMPLE_ID', 'IGO_ID', 'PATIENT_ID', 'COLLAB_ID', 'SAMPLE_TYPE', 'SAMPLE_CLASS', 'GENE_PANEL', 'ONCOTREE_CODE', 'SPECIMEN_PRESERVATION_TYPE', 'TISSUE_SITE', 'REQUEST_ID', 'PROJECT_ID', 'PIPELINE', 'PIPELINE_VERSION', 'SAMPLE_COVERAGE', 'PROJECT_PI', 'REQUEST_PI', 'genome_doubled', 'ASCN_PURITY', 'ASCN_PLOIDY', 'ASCN_VERSION', 'ASCN_WGD', 'CMO_TMB_SCORE', 'CMO_MSI_SCORE', 'CMO_MSI_STATUS'],
@@ -178,7 +185,7 @@ class TestWorkflowWithFacets(PlutoTestCase):
         ]
 
         # NOTE: be careful with ignoreOrder here because it is harder to ensure the file headers are exactly correct
-        self.assertPortalCommentsEquals(os.path.join(output_dir, 'portal/data_clinical_sample.txt'), expected_comments, ignoreOrder = True)
+        self.assertPortalCommentsEquals(os.path.join(output_dir, 'portal/data_clinical_sample.txt'), expected_comments) # , ignoreOrder = True
 
         self.assertSampleValues(
             os.path.join(output_dir, 'portal/data_clinical_sample.txt'),

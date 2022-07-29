@@ -1,6 +1,6 @@
 #!/usr/bin/env cwl-runner
 cwlVersion: v1.0
-
+doc: put all the items from a single list of Files or Directories into a new dir
 class: ExpressionTool
 id: put-in-dir
 
@@ -8,10 +8,9 @@ requirements:
   - class: InlineJavascriptRequirement
 
 inputs:
-
   output_directory_name: string
-
   files:
+    doc: a list of Files or Directories
     type:
       type: array
       items:

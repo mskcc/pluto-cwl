@@ -543,26 +543,6 @@ steps:
     out:
       [ output_file, failed, stdout_txt, stderr_txt ]
 
-#
-# TODO: Find out if this step is needed after refactor
-#
-  # combine the TMB, MSI results with the data clinical file
-#  merge_data_clinical:
-#    run: merge-tables.cwl
-#    in:
-#      table1: run_tmb_workflow/output_file
-#      table2: run_msi_workflow/output_file
-#      key1:
-#        valueFrom: ${ return "SAMPLE_ID"; } # sample column header from data clinical file
-#      key2:
-#        valueFrom: ${ return "SAMPLE_ID"; } # sample column header from MSI file
-#      output_filename:
-#        valueFrom: ${ return "data_clinical_sample.txt"; } # TODO: should this be passed in?
-#      cBioPortal:
-#        valueFrom: ${ return true; }
-#    out:
-#      [ output_file ]
-
 
 
 
@@ -617,6 +597,33 @@ steps:
           inputs.portal_fusions_data_file,
           inputs.portal_case_list_dir,
           inputs.portal_report
+          ]}
+    out: [ directory ]
+
+  make_msi_dir:
+    doc:
+    run: put_DirFileList_in_dir.cwl
+    in:
+      msi_tsvs: gather_msi_tsvs/msi_tsvs
+      output_directory_name:
+        valueFrom: ${ return "msi"; }
+      files:
+        valueFrom: ${return [
+          inputs.msi_tsvs
+          ]}
+    out: [ directory ]
+
+  make_tmb_dir:
+    doc:
+    run: put_DirFileList_in_dir.cwl
+    in:
+      tmb_tsvs: gather_tmb_tsvs/tmb_tsvs
+      # tmb_mafs:
+      output_directory_name:
+        valueFrom: ${ return "tmb"; }
+      files:
+        valueFrom: ${return [
+          inputs.tmb_tsvs
           ]}
     out: [ directory ]
 
@@ -688,3 +695,11 @@ outputs:
   facets_dir:
     type: Directory
     outputSource: make_facets_dir/facets_dir
+
+  msi_dir:
+    type: Directory
+    outputSource: make_msi_dir/directory
+
+  tmb_dir:
+    type: Directory
+    outputSource: make_tmb_dir/directory
