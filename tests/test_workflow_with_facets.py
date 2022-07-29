@@ -140,7 +140,7 @@ class TestWorkflowWithFacets(PlutoTestCase):
                 'portal_dir': ODir(name = 'portal', dir = output_dir, items = [
                     OFile(name = 'meta_clinical_sample.txt', size = 132, hash = '7d2bb282e74ff6a5d41b334ded689f9336722702'),
                     OFile(name = 'data_clinical_patient.txt', size = 91, hash = 'cac1377a45dfc316266697a21df87801883127b5'),
-                    OFile(name = 'data_clinical_sample.txt', size = 1172, hash = '66ccd7052144328280d12856ec8c8a9112c025e9'),
+                    OFile(name = 'data_clinical_sample.txt', size = 1609, hash = '6e2aa49cfce4682660d247d59d85f4370df68bac'),
                     OFile(name = 'meta_study.txt', size = 128, hash = '998a850a03828cf4c235583dced9751ba75c9ab1'),
                     OFile(name = 'meta_clinical_patient.txt', size = 134, hash = 'e1f0b7786dd10af608df5178ff4b1a0b7a191a38'),
                     OFile(name = 'meta_CNA.txt', size = 262, hash = '93367ae36cae5e1a53b25e5bb02731e8b113251b'),

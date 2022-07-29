@@ -584,7 +584,7 @@ steps:
   merge_msi_data_clinical:
     run: merge-tables.cwl
     in:
-      table1: data_clinical_file
+      table1: generate_data_clinical_sample/output_file
       table2: concat_msi_tables/output_file
       key1:
         valueFrom: ${ return "SAMPLE_ID"; } # sample column header from data clinical file
@@ -605,7 +605,7 @@ steps:
       key1:
         valueFrom: ${ return "SAMPLE_ID"; } # sample column header from data clinical file
       key2:
-        valueFrom: ${ return "SampleID"; } # sample column header from TMB file # TODO: This should be changed to SAMPLE_ID ? 
+        valueFrom: ${ return "SampleID"; } # sample column header from TMB file # TODO: This should be changed to SAMPLE_ID ?
       output_filename:
         valueFrom: ${ return "data_clinical_sample.txt"; } # TODO: should this be passed in?
       cBioPortal:
