@@ -29,6 +29,14 @@ from pluto.settings import ENABLE_LARGE_TESTS
 from pluto.serializer import OFile, ODir
 sys.path.pop(0)
 
+# # handle for errors arising from python3 -m unittest ...
+try:
+    import fixtures_cBioPortal as fxt
+except ModuleNotFoundError:
+    sys.path.insert(0, THIS_DIR)
+    import fixtures_cBioPortal as fxt
+    sys.path.pop(0)
+
 
 class TestWorkflowWithFacets(PlutoTestCase):
     cwl_file = 'workflow_with_facets.cwl'
@@ -140,7 +148,7 @@ class TestWorkflowWithFacets(PlutoTestCase):
                 'portal_dir': ODir(name = 'portal', dir = output_dir, items = [
                     OFile(name = 'meta_clinical_sample.txt', size = 132, hash = '7d2bb282e74ff6a5d41b334ded689f9336722702'),
                     OFile(name = 'data_clinical_patient.txt', size = 91, hash = 'cac1377a45dfc316266697a21df87801883127b5'),
-                    OFile(name = 'data_clinical_sample.txt', size = 1609, hash = '6e2aa49cfce4682660d247d59d85f4370df68bac'),
+                    OFile(name = 'data_clinical_sample.txt', size = 1523, hash = 'ed171f6c3d5e4ce5a58bd5ac93a120930a71fc01'),
                     OFile(name = 'meta_study.txt', size = 128, hash = '998a850a03828cf4c235583dced9751ba75c9ab1'),
                     OFile(name = 'meta_clinical_patient.txt', size = 134, hash = 'e1f0b7786dd10af608df5178ff4b1a0b7a191a38'),
                     OFile(name = 'meta_CNA.txt', size = 262, hash = '93367ae36cae5e1a53b25e5bb02731e8b113251b'),
@@ -161,7 +169,7 @@ class TestWorkflowWithFacets(PlutoTestCase):
                     OFile(name = 'report.html')
                 ]),
                 "tmb_dir": ODir(name = "tmb", dir = output_dir, items = [
-                    OFile(name = "Sample1.Sample2.tmb.tsv", size = 63, hash = "bcfe22f147ae3ed923fcef38ae78d582bfa14ec0")
+                    OFile(name = "Sample1.Sample2.tmb.tsv", size = 39, hash = "87023f9592251d3b2e9a22bf359daba7bcb1e589")
                 ]),
                 "msi_dir": ODir(name = "msi", dir = output_dir, items = [
                     OFile(name = "Sample1.Sample2.msi.tsv", size = 54, hash = "da75ec7441a5d537c46bebb282099d95b575531c")
@@ -176,16 +184,10 @@ class TestWorkflowWithFacets(PlutoTestCase):
         self.assertHeaderEquals(os.path.join(output_dir, 'portal/data_CNA.txt'), ['Hugo_Symbol', 'Sample1'])
         self.assertHeaderEquals(os.path.join(output_dir, 'portal/data_CNA.ascna.txt'), ['Hugo_Symbol', 'Sample1'])
 
-        # CMO_ASSAY_COVERAGE
-        expected_comments = [
-        ['SAMPLE_ID', 'IGO_ID', 'PATIENT_ID', 'COLLAB_ID', 'SAMPLE_TYPE', 'SAMPLE_CLASS', 'GENE_PANEL', 'ONCOTREE_CODE', 'SPECIMEN_PRESERVATION_TYPE', 'TISSUE_SITE', 'REQUEST_ID', 'PROJECT_ID', 'PIPELINE', 'PIPELINE_VERSION', 'SAMPLE_COVERAGE', 'PROJECT_PI', 'REQUEST_PI', 'genome_doubled', 'ASCN_PURITY', 'ASCN_PLOIDY', 'ASCN_VERSION', 'ASCN_WGD', 'CMO_TMB_SCORE', 'CMO_MSI_SCORE', 'CMO_MSI_STATUS'],
-        ['SAMPLE_ID', 'IGO_ID', 'PATIENT_ID', 'COLLAB_ID', 'SAMPLE_TYPE', 'SAMPLE_CLASS', 'GENE_PANEL', 'ONCOTREE_CODE', 'SPECIMEN_PRESERVATION_TYPE', 'TISSUE_SITE', 'REQUEST_ID', 'PROJECT_ID', 'PIPELINE', 'PIPELINE_VERSION', 'SAMPLE_COVERAGE', 'PROJECT_PI', 'REQUEST_PI', 'genome_doubled', 'ASCN_PURITY', 'ASCN_PLOIDY', 'ASCN_VERSION', 'ASCN_WGD', 'CMO_TMB_SCORE', 'CMO_MSI_SCORE', 'CMO_MSI_STATUS'],
-        ['STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'NUMBER', 'STRING', 'STRING', 'STRING', 'NUMBER', 'NUMBER', 'STRING', 'STRING', 'NUMBER', 'NUMBER', 'STRING'],
-        ['1', '1', '1', '0', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '0', '1', '1', '0', '1', '1', '0', '0']
-        ]
-
         # NOTE: be careful with ignoreOrder here because it is harder to ensure the file headers are exactly correct
-        self.assertPortalCommentsEquals(os.path.join(output_dir, 'portal/data_clinical_sample.txt'), expected_comments) # , ignoreOrder = True
+        self.assertPortalCommentsEquals(
+            os.path.join(output_dir, 'portal/data_clinical_sample.txt'),
+            fxt.expected_data_clinical_sample_columns, transpose = True) # , ignoreOrder = True # expected_data_clinical_sample_comments
 
         self.assertSampleValues(
             os.path.join(output_dir, 'portal/data_clinical_sample.txt'),
@@ -382,7 +384,15 @@ class TestWorkflowWithFacets(PlutoTestCase):
                         OFile(name = 'cases_sequenced.txt', size = 213, hash = 'd3c860cb681ba952bf2f9d546a5a088a04a77261'),
                     ]),
                     OFile(name = 'report.html')
-                ])
+                ]),
+            "tmb_dir": ODir(name = "tmb", dir = output_dir, items = [
+                OFile(name = "Sample1.Sample2.tmb.tsv", size = 39, hash = "87023f9592251d3b2e9a22bf359daba7bcb1e589"),
+                OFile(name = "Sample4.Sample3.tmb.tsv", size = 38, hash = "48b0797bd07514f46298d2d52d41a3e0a4543196")
+            ]),
+            "msi_dir": ODir(name = "msi", dir = output_dir, items = [
+                OFile(name = "Sample1.Sample2.msi.tsv", size = 54, hash = "da75ec7441a5d537c46bebb282099d95b575531c"),
+                OFile(name = "Sample4.Sample3.msi.tsv", size = 54, hash = "a727848bd3817a4cdba2d2902e315dd0a199dfb2")
+            ]),
             }
         self.maxDiff = None
         self.assertCWLDictEqual(output_json, expected_output)
@@ -391,15 +401,10 @@ class TestWorkflowWithFacets(PlutoTestCase):
         self.assertHeaderEquals(os.path.join(output_dir, 'portal/data_CNA.txt'), ['Hugo_Symbol', 'Sample1', 'Sample4'])
         self.assertHeaderEquals(os.path.join(output_dir, 'portal/data_CNA.ascna.txt'), ['Hugo_Symbol', 'Sample1', 'Sample4'])
 
-        expected_comments = [
-        ['SAMPLE_ID', 'IGO_ID', 'PATIENT_ID', 'COLLAB_ID', 'SAMPLE_TYPE', 'SAMPLE_CLASS', 'GENE_PANEL', 'ONCOTREE_CODE', 'SPECIMEN_PRESERVATION_TYPE', 'TISSUE_SITE', 'REQUEST_ID', 'PROJECT_ID', 'PIPELINE', 'PIPELINE_VERSION', 'SAMPLE_COVERAGE', 'PROJECT_PI', 'REQUEST_PI', 'genome_doubled', 'ASCN_PURITY', 'ASCN_PLOIDY', 'ASCN_VERSION', 'ASCN_WGD', 'CMO_TMB_SCORE', 'CMO_MSI_SCORE', 'CMO_MSI_STATUS'],
-        ['SAMPLE_ID', 'IGO_ID', 'PATIENT_ID', 'COLLAB_ID', 'SAMPLE_TYPE', 'SAMPLE_CLASS', 'GENE_PANEL', 'ONCOTREE_CODE', 'SPECIMEN_PRESERVATION_TYPE', 'TISSUE_SITE', 'REQUEST_ID', 'PROJECT_ID', 'PIPELINE', 'PIPELINE_VERSION', 'SAMPLE_COVERAGE', 'PROJECT_PI', 'REQUEST_PI', 'genome_doubled', 'ASCN_PURITY', 'ASCN_PLOIDY', 'ASCN_VERSION', 'ASCN_WGD', 'CMO_TMB_SCORE', 'CMO_MSI_SCORE', 'CMO_MSI_STATUS'],
-        ['STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'NUMBER', 'STRING', 'STRING', 'STRING', 'NUMBER', 'NUMBER', 'STRING', 'STRING', 'NUMBER', 'NUMBER', 'STRING'],
-        ['1', '1', '1', '0', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '0', '1', '1', '0', '1', '1', '0', '0']
-        ]
-
         # NOTE: be careful with ignoreOrder here because it is harder to ensure the file headers are exactly correct
-        self.assertPortalCommentsEquals(os.path.join(output_dir, 'portal/data_clinical_sample.txt'), expected_comments, ignoreOrder = True)
+        self.assertPortalCommentsEquals(
+            os.path.join(output_dir, 'portal/data_clinical_sample.txt'),
+            fxt.expected_data_clinical_sample_columns, transpose = True)
 
         self.assertSampleValues(
             os.path.join(output_dir, 'portal/data_clinical_sample.txt'),
@@ -434,7 +439,7 @@ class TestWorkflowWithFacets(PlutoTestCase):
     #  ##        #######  ######## ########     ######
     #
     #################################################################
-    @unittest.skipIf(ENABLE_LARGE_TESTS!=True, "is a large test")
+    # @unittest.skipIf(ENABLE_LARGE_TESTS!=True, "is a large test")
     def test_run_worflow_one_maf(self):
         """
         Test that the workflow works correctly when run with a single maf
@@ -573,7 +578,13 @@ class TestWorkflowWithFacets(PlutoTestCase):
                         OFile(name = 'cases_sequenced.txt', size = 641, hash = 'fd926ae050b8032f98df09330b8bdd340adc81a4'),
                     ]),
                     OFile(name = 'report.html')
-                ])
+                ]),
+                "tmb_dir": ODir(name = "tmb", dir = output_dir, items = [
+                    OFile(name = "Sample1.Sample2.tmb.tsv", size = 36, hash = "ac8c900fac72d308dcee587ba5868be2f1c6f111"),
+                ]),
+                "msi_dir": ODir(name = "msi", dir = output_dir, items = [
+                    OFile(name = "Sample1.Sample2.msi.tsv", size = 54, hash = "da75ec7441a5d537c46bebb282099d95b575531c"),
+                    ]),
             }
         self.maxDiff = None
         self.assertCWLDictEqual(output_json, expected_output)
@@ -582,15 +593,36 @@ class TestWorkflowWithFacets(PlutoTestCase):
         self.assertHeaderEquals(os.path.join(output_dir, 'portal/data_CNA.txt'), ['Hugo_Symbol', 'Sample1'])
         self.assertHeaderEquals(os.path.join(output_dir, 'portal/data_CNA.ascna.txt'), ['Hugo_Symbol', 'Sample1'])
 
-        expected_comments = [
-        ['SAMPLE_ID', 'IGO_ID', 'PATIENT_ID', 'COLLAB_ID', 'SAMPLE_TYPE', 'SAMPLE_CLASS', 'GENE_PANEL', 'ONCOTREE_CODE', 'SPECIMEN_PRESERVATION_TYPE', 'TISSUE_SITE', 'REQUEST_ID', 'PROJECT_ID', 'PIPELINE', 'PIPELINE_VERSION', 'SAMPLE_COVERAGE', 'PROJECT_PI', 'REQUEST_PI', 'genome_doubled', 'ASCN_PURITY', 'ASCN_PLOIDY', 'ASCN_VERSION', 'ASCN_WGD', 'CMO_TMB_SCORE', 'CMO_MSI_SCORE', 'CMO_MSI_STATUS'],
-        ['SAMPLE_ID', 'IGO_ID', 'PATIENT_ID', 'COLLAB_ID', 'SAMPLE_TYPE', 'SAMPLE_CLASS', 'GENE_PANEL', 'ONCOTREE_CODE', 'SPECIMEN_PRESERVATION_TYPE', 'TISSUE_SITE', 'REQUEST_ID', 'PROJECT_ID', 'PIPELINE', 'PIPELINE_VERSION', 'SAMPLE_COVERAGE', 'PROJECT_PI', 'REQUEST_PI', 'genome_doubled', 'ASCN_PURITY', 'ASCN_PLOIDY', 'ASCN_VERSION', 'ASCN_WGD', 'CMO_TMB_SCORE', 'CMO_MSI_SCORE', 'CMO_MSI_STATUS'],
-        ['STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'NUMBER', 'STRING', 'STRING', 'STRING', 'NUMBER', 'NUMBER', 'STRING', 'STRING', 'NUMBER', 'NUMBER', 'STRING'],
-        ['1', '1', '1', '0', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '0', '1', '1', '0', '1', '1', '0', '0']
-        ]
-
         # NOTE: be careful with ignoreOrder here because it is harder to ensure the file headers are exactly correct
-        self.assertPortalCommentsEquals(os.path.join(output_dir, 'portal/data_clinical_sample.txt'), expected_comments, ignoreOrder = True)
+        self.assertPortalCommentsEquals(
+            os.path.join(output_dir, 'portal/data_clinical_sample.txt'),
+            [
+            ['SAMPLE_ID', 'SAMPLE_ID', 'STRING', '1'],
+            ['IGO_ID', 'IGO_ID', 'STRING', '1'],
+            ['PATIENT_ID', 'PATIENT_ID', 'STRING', '1'],
+            ['COLLAB_ID', 'COLLAB_ID', 'STRING', '0'],
+            ['SAMPLE_TYPE', 'SAMPLE_TYPE', 'STRING', '1'],
+            ['SAMPLE_CLASS', 'SAMPLE_CLASS', 'STRING', '1'],
+            ['GENE_PANEL', 'GENE_PANEL', 'STRING', '1'],
+            ['ONCOTREE_CODE', 'ONCOTREE_CODE', 'STRING', '1'],
+            ['SPECIMEN_PRESERVATION_TYPE', 'SPECIMEN_PRESERVATION_TYPE', 'STRING', '1'],
+            ['TISSUE_SITE', 'TISSUE_SITE', 'STRING', '1'],
+            ['REQUEST_ID', 'REQUEST_ID', 'STRING', '1'],
+            ['PROJECT_ID', 'PROJECT_ID', 'STRING', '1'],
+            ['PIPELINE', 'PIPELINE', 'STRING', '1'],
+            ['PIPELINE_VERSION', 'PIPELINE_VERSION', 'STRING', '1'],
+            ['SAMPLE_COVERAGE', 'SAMPLE_COVERAGE', 'NUMBER', '1'],
+            ['PROJECT_PI', 'PROJECT_PI', 'STRING', '1'],
+            ['REQUEST_PI', 'REQUEST_PI', 'STRING', '1'],
+            ['ASCN_PURITY', 'ASCN_PURITY', 'NUMBER', '1'],
+            ['ASCN_PLOIDY', 'ASCN_PLOIDY', 'NUMBER', '1'],
+            ['ASCN_VERSION', 'ASCN_VERSION', 'STRING', '0'],
+            ['genome_doubled', 'genome_doubled', 'STRING', '0'],
+            ['ASCN_WGD', 'ASCN_WGD', 'STRING', '1'],
+            ['CMO_MSI_SCORE', 'CMO_MSI_SCORE', 'NUMBER', '0'],
+            ['CMO_MSI_STATUS', 'CMO_MSI_STATUS', 'STRING', '0'],
+            ['CMO_TMB_SCORE', 'CMO_TMB_SCORE', 'NUMBER', '1']
+            ], transpose = True)
 
         self.assertSampleValues(
             os.path.join(output_dir, 'portal/data_clinical_sample.txt'),
@@ -625,7 +657,7 @@ class TestWorkflowWithFacets(PlutoTestCase):
     #  ##        #######  ######## ########    #########
     #
     #################################################################
-    @unittest.skipIf(ENABLE_LARGE_TESTS!=True, "is a large test")
+    # @unittest.skipIf(ENABLE_LARGE_TESTS!=True, "is a large test")
     def test_run_worflow_two_mafs(self):
         """
         Test that the workflow works correctly when run with two maf files
@@ -805,15 +837,19 @@ class TestWorkflowWithFacets(PlutoTestCase):
                         OFile(name = 'cases_sequenced.txt', size = 641, hash = 'fd926ae050b8032f98df09330b8bdd340adc81a4'),
                     ]),
                     OFile(name = 'report.html')
-                ])
+                ]),
+                "tmb_dir": ODir(name = "tmb", dir = output_dir, items = [
+                    OFile(name = "Sample1.Sample2.tmb.tsv", size = 36, hash = "ac8c900fac72d308dcee587ba5868be2f1c6f111"),
+                    OFile(name = "Sample4.Sample3.tmb.tsv", size = 35, hash = "4e8ffba2d426d5ee93dd8b6d4a1e7b61280e4681")
+                ]),
+                "msi_dir": ODir(name = "msi", dir = output_dir, items = [
+                    OFile(name = "Sample1.Sample2.msi.tsv", size = 54, hash = "da75ec7441a5d537c46bebb282099d95b575531c"),
+                    OFile(name = "Sample4.Sample3.msi.tsv", size = 54, hash = "a727848bd3817a4cdba2d2902e315dd0a199dfb2")
+                ]),
             }
 
         self.maxDiff = None
         self.assertCWLDictEqual(output_json, expected_output)
-
-
-
-
         self.assertNumMutations(os.path.join(output_dir, 'analysis', 'Proj_08390_G.muts.maf'), 34)
         self.assertNumMutations(os.path.join(output_dir, 'portal', 'data_mutations_extended.txt'), 27)
         self.assertHeaderEquals(os.path.join(output_dir, 'portal/data_CNA.txt'), ['Hugo_Symbol', 'Sample1', 'Sample4'])
@@ -822,15 +858,36 @@ class TestWorkflowWithFacets(PlutoTestCase):
         # the clonality column needs to have been added in the workflow output
         self.assertMutHeadersContain(os.path.join(output_dir, 'portal', 'data_mutations_extended.txt'), ['ASCN.CLONAL'])
 
-        expected_comments = [
-        ['SAMPLE_ID', 'IGO_ID', 'PATIENT_ID', 'COLLAB_ID', 'SAMPLE_TYPE', 'SAMPLE_CLASS', 'GENE_PANEL', 'ONCOTREE_CODE', 'SPECIMEN_PRESERVATION_TYPE', 'TISSUE_SITE', 'REQUEST_ID', 'PROJECT_ID', 'PIPELINE', 'PIPELINE_VERSION', 'SAMPLE_COVERAGE', 'PROJECT_PI', 'REQUEST_PI', 'genome_doubled', 'ASCN_PURITY', 'ASCN_PLOIDY', 'ASCN_VERSION', 'ASCN_WGD', 'CMO_TMB_SCORE', 'CMO_MSI_SCORE', 'CMO_MSI_STATUS'],
-        ['SAMPLE_ID', 'IGO_ID', 'PATIENT_ID', 'COLLAB_ID', 'SAMPLE_TYPE', 'SAMPLE_CLASS', 'GENE_PANEL', 'ONCOTREE_CODE', 'SPECIMEN_PRESERVATION_TYPE', 'TISSUE_SITE', 'REQUEST_ID', 'PROJECT_ID', 'PIPELINE', 'PIPELINE_VERSION', 'SAMPLE_COVERAGE', 'PROJECT_PI', 'REQUEST_PI', 'genome_doubled', 'ASCN_PURITY', 'ASCN_PLOIDY', 'ASCN_VERSION', 'ASCN_WGD', 'CMO_TMB_SCORE', 'CMO_MSI_SCORE', 'CMO_MSI_STATUS'],
-        ['STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'NUMBER', 'STRING', 'STRING', 'STRING', 'NUMBER', 'NUMBER', 'STRING', 'STRING', 'NUMBER', 'NUMBER', 'STRING'],
-        ['1', '1', '1', '0', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '0', '1', '1', '0', '1', '1', '0', '0']
-        ]
-
         # NOTE: be careful with ignoreOrder here because it is harder to ensure the file headers are exactly correct
-        self.assertPortalCommentsEquals(os.path.join(output_dir, 'portal/data_clinical_sample.txt'), expected_comments, ignoreOrder = True)
+        self.assertPortalCommentsEquals(
+            os.path.join(output_dir, 'portal/data_clinical_sample.txt'),
+            [
+            ['SAMPLE_ID', 'SAMPLE_ID', 'STRING', '1'],
+            ['IGO_ID', 'IGO_ID', 'STRING', '1'],
+            ['PATIENT_ID', 'PATIENT_ID', 'STRING', '1'],
+            ['COLLAB_ID', 'COLLAB_ID', 'STRING', '0'],
+            ['SAMPLE_TYPE', 'SAMPLE_TYPE', 'STRING', '1'],
+            ['SAMPLE_CLASS', 'SAMPLE_CLASS', 'STRING', '1'],
+            ['GENE_PANEL', 'GENE_PANEL', 'STRING', '1'],
+            ['ONCOTREE_CODE', 'ONCOTREE_CODE', 'STRING', '1'],
+            ['SPECIMEN_PRESERVATION_TYPE', 'SPECIMEN_PRESERVATION_TYPE', 'STRING', '1'],
+            ['TISSUE_SITE', 'TISSUE_SITE', 'STRING', '1'],
+            ['REQUEST_ID', 'REQUEST_ID', 'STRING', '1'],
+            ['PROJECT_ID', 'PROJECT_ID', 'STRING', '1'],
+            ['PIPELINE', 'PIPELINE', 'STRING', '1'],
+            ['PIPELINE_VERSION', 'PIPELINE_VERSION', 'STRING', '1'],
+            ['SAMPLE_COVERAGE', 'SAMPLE_COVERAGE', 'NUMBER', '1'],
+            ['PROJECT_PI', 'PROJECT_PI', 'STRING', '1'],
+            ['REQUEST_PI', 'REQUEST_PI', 'STRING', '1'],
+            ['ASCN_PURITY', 'ASCN_PURITY', 'NUMBER', '1'],
+            ['ASCN_PLOIDY', 'ASCN_PLOIDY', 'NUMBER', '1'],
+            ['ASCN_VERSION', 'ASCN_VERSION', 'STRING', '0'],
+            ['genome_doubled', 'genome_doubled', 'STRING', '0'],
+            ['ASCN_WGD', 'ASCN_WGD', 'STRING', '1'],
+            ['CMO_MSI_SCORE', 'CMO_MSI_SCORE', 'NUMBER', '0'],
+            ['CMO_MSI_STATUS', 'CMO_MSI_STATUS', 'STRING', '0'],
+            ['CMO_TMB_SCORE', 'CMO_TMB_SCORE', 'NUMBER', '1']
+            ], transpose = True)
 
         self.assertSampleValues(
             os.path.join(output_dir, 'portal/data_clinical_sample.txt'),

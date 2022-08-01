@@ -1,3 +1,54 @@
+#!/usr/bin/env python3
+
+# these are the expected headers on the cBioPortal formatted data_clinical_sample.txt file
+# values shown here are transposed for clarity
+expected_data_clinical_sample_columns = [
+['SAMPLE_ID', 'SAMPLE_ID', 'STRING', '1'],
+['IGO_ID', 'IGO_ID', 'STRING', '1'],
+['PATIENT_ID', 'PATIENT_ID', 'STRING', '1'],
+['COLLAB_ID', 'COLLAB_ID', 'STRING', '0'],
+['SAMPLE_TYPE', 'SAMPLE_TYPE', 'STRING', '1'],
+['SAMPLE_CLASS', 'SAMPLE_CLASS', 'STRING', '1'],
+['GENE_PANEL', 'GENE_PANEL', 'STRING', '1'],
+['ONCOTREE_CODE', 'ONCOTREE_CODE', 'STRING', '1'],
+['SPECIMEN_PRESERVATION_TYPE', 'SPECIMEN_PRESERVATION_TYPE', 'STRING', '1'],
+['TISSUE_SITE', 'TISSUE_SITE', 'STRING', '1'],
+['REQUEST_ID', 'REQUEST_ID', 'STRING', '1'],
+['PROJECT_ID', 'PROJECT_ID', 'STRING', '1'],
+['PIPELINE', 'PIPELINE', 'STRING', '1'],
+['PIPELINE_VERSION', 'PIPELINE_VERSION', 'STRING', '1'],
+['SAMPLE_COVERAGE', 'SAMPLE_COVERAGE', 'NUMBER', '1'],
+['PROJECT_PI', 'PROJECT_PI', 'STRING', '1'],
+['REQUEST_PI', 'REQUEST_PI', 'STRING', '1'],
+['genome_doubled', 'genome_doubled', 'STRING', '0'],
+['ASCN_PURITY', 'ASCN_PURITY', 'NUMBER', '1'],
+['ASCN_PLOIDY', 'ASCN_PLOIDY', 'NUMBER', '1'],
+['ASCN_VERSION', 'ASCN_VERSION', 'STRING', '0'],
+['ASCN_WGD', 'ASCN_WGD', 'STRING', '1'],
+['CMO_MSI_SCORE', 'CMO_MSI_SCORE', 'NUMBER', '0'],
+['CMO_MSI_STATUS', 'CMO_MSI_STATUS', 'STRING', '0'],
+['CMO_TMB_SCORE', 'CMO_TMB_SCORE', 'NUMBER', '1'],
+]
+# TODO: add CMO_ASSAY_COVERAGE
+
+
+# transpose the values again so they match what is read in the file
+expected_data_clinical_sample_comments = list(map(list, zip(*expected_data_clinical_sample_columns)))
+
+# looks like this;
+# expected_comments = [
+# ['SAMPLE_ID', 'IGO_ID', 'PATIENT_ID', 'COLLAB_ID', 'SAMPLE_TYPE', 'SAMPLE_CLASS', 'GENE_PANEL', 'ONCOTREE_CODE', 'SPECIMEN_PRESERVATION_TYPE', 'TISSUE_SITE', 'REQUEST_ID', 'PROJECT_ID', 'PIPELINE', 'PIPELINE_VERSION', 'SAMPLE_COVERAGE', 'PROJECT_PI', 'REQUEST_PI', 'genome_doubled', 'ASCN_PURITY', 'ASCN_PLOIDY', 'ASCN_VERSION', 'ASCN_WGD', 'CMO_TMB_SCORE', 'CMO_MSI_SCORE', 'CMO_MSI_STATUS'],
+# ['SAMPLE_ID', 'IGO_ID', 'PATIENT_ID', 'COLLAB_ID', 'SAMPLE_TYPE', 'SAMPLE_CLASS', 'GENE_PANEL', 'ONCOTREE_CODE', 'SPECIMEN_PRESERVATION_TYPE', 'TISSUE_SITE', 'REQUEST_ID', 'PROJECT_ID', 'PIPELINE', 'PIPELINE_VERSION', 'SAMPLE_COVERAGE', 'PROJECT_PI', 'REQUEST_PI', 'genome_doubled', 'ASCN_PURITY', 'ASCN_PLOIDY', 'ASCN_VERSION', 'ASCN_WGD', 'CMO_TMB_SCORE', 'CMO_MSI_SCORE', 'CMO_MSI_STATUS'],
+# ['STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'STRING', 'NUMBER', 'STRING', 'STRING', 'STRING', 'NUMBER', 'NUMBER', 'STRING', 'STRING', 'NUMBER', 'NUMBER', 'STRING'],
+# ['1', '1', '1', '0', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '0', '1', '1', '0', '1', '1', '0', '0']
+# ]
+
+
+
+
+
+
+# some example maf rows for test cases
 maf_row1 = {
 "Hugo_Symbol" : "FGF3",
 "Entrez_Gene_Id" : "2248",
