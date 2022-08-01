@@ -104,19 +104,21 @@ steps:
           out:
             [ output_file ]
 
-        add_assay_coverage:
-          doc: add the assay coverage to the table
-          run: paste-col.cwl
-          in:
-            pair_id: pair_id
-            input_file: add_sampleID/output_file
-            output_filename: # NOTE: we plan to concat this file later so it needs to have a unique filename !!
-              valueFrom: ${ return inputs.pair_id + ".tmb.tsv"; }
-            header:
-              valueFrom: ${ return "CMO_ASSAY_COVERAGE"; }
-            value: assay_coverage
-          out:
-            [ output_file ]
+        # TODO: add this !! otherwise its difficult to know what values were used later!
+        # NOTE: requires updating the cBioPortal file header schema to include new column
+        # add_assay_coverage:
+        #   doc: add the assay coverage to the table
+        #   run: paste-col.cwl
+        #   in:
+        #     pair_id: pair_id
+        #     input_file: add_sampleID/output_file
+        #     output_filename: # NOTE: we plan to concat this file later so it needs to have a unique filename !!
+        #       valueFrom: ${ return inputs.pair_id + ".tmb.tsv"; }
+        #     header:
+        #       valueFrom: ${ return "CMO_ASSAY_COVERAGE"; }
+        #     value: assay_coverage
+        #   out:
+        #     [ output_file ]
 
         create_tmb_pair_output:
           doc: gather the TMB analysis outputs into a pair entry
@@ -125,7 +127,7 @@ steps:
             tumor_id: sample_id
             normal_id: normal_id
             tmb_maf: filter_variants/output_file
-            tmb_tsv: add_assay_coverage/output_file
+            tmb_tsv: add_sampleID/output_file
           out: [ pair ]
           run:
             class: ExpressionTool
