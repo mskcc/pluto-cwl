@@ -12,27 +12,15 @@ PARENT_DIR = os.path.dirname(THIS_DIR)
 sys.path.insert(0, PARENT_DIR)
 from pluto.tools import PlutoTestCase, CWLFile, TableReader
 from pluto.settings import ENABLE_LARGE_TESTS, MICROSATELLITES_LIST
+from pluto.serializer import OFile
 sys.path.pop(0)
 
 class TestMsiWorkflow(PlutoTestCase):
     cwl_file = CWLFile('msi_workflow.cwl')
 
-    def setUp(self):
-        # initialize the tmpdir
-        super().setUp()
-        self.data_clinical_lines = [
-        ['#SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE'],
-        ['#SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE'],
-        ['#STRING', 'STRING', 'NUMBER',],
-        ['#1', '1', '1'],
-        ['SAMPLE_ID', 'PATIENT_ID', 'SAMPLE_COVERAGE'],
-        ['Sample1-T', 'Patient1', '108'],
-        ['Sample1-N', 'Patient2', '58'],
-        ['Sample2-T', 'Patient3', '502'],
-        ['Sample2-N', 'Patient4', '56'],
-        ['Sample6-T', 'Patient4', '57'],
-        ['Sample7-N', 'Patient4', '58'],
-        ]
+    # def setUp(self):
+    #     # initialize the tmpdir
+    #     super().setUp()
 
     def test_msi_workflow_demo1(self):
         """
@@ -72,14 +60,7 @@ class TestMsiWorkflow(PlutoTestCase):
                 "pair_id": "Sample1.Sample2",
                 "tumor_id": "Sample1",
                 "normal_id": "Sample2",
-                "msi_tsv":{
-                    'location': 'file://' + os.path.join(output_dir,'Sample1.Sample2.msi.tsv'),
-                    'basename': 'Sample1.Sample2.msi.tsv',
-                    'class': 'File',
-                    'checksum': 'sha1$92576a9be4d6a36c67b26d16fdc4134b0d1b9cd9',
-                    'size': 54,
-                    'path':  os.path.join(output_dir,'Sample1.Sample2.msi.tsv')
-                    }
+                "msi_tsv": OFile(name = 'Sample1.Sample2.msi.tsv', hash = "92576a9be4d6a36c67b26d16fdc4134b0d1b9cd9", size = 54, dir = output_dir)
                 }]
             }
         self.assertCWLDictEqual(output_json, expected_output)
@@ -143,27 +124,13 @@ class TestMsiWorkflow(PlutoTestCase):
                 "pair_id": "Sample1-T.Sample1-N",
                 "tumor_id": "Sample1-T",
                 "normal_id": "Sample1-N",
-                "msi_tsv":{
-                    'location': 'file://' + os.path.join(output_dir,'Sample1-T.Sample1-N.msi.tsv'),
-                    'basename': 'Sample1-T.Sample1-N.msi.tsv',
-                    'class': 'File',
-                    'checksum': 'sha1$bc132f6ab9b779d7cba51e7ddfa82af724134f03',
-                    'size': 56,
-                    'path':  os.path.join(output_dir,'Sample1-T.Sample1-N.msi.tsv')
-                    }
+                "msi_tsv": OFile(name = 'Sample1-T.Sample1-N.msi.tsv', hash = "bc132f6ab9b779d7cba51e7ddfa82af724134f03", size = 56, dir = output_dir)
             },
             {
                 "pair_id": "Sample2-T.Sample2-N",
                 "tumor_id": "Sample2-T",
                 "normal_id": "Sample2-N",
-                "msi_tsv": {
-                    'location': 'file://' + os.path.join(output_dir,'Sample2-T.Sample2-N.msi.tsv'),
-                    'basename': 'Sample2-T.Sample2-N.msi.tsv',
-                    'class': 'File',
-                    'checksum': 'sha1$11fcf9459010aa5ea06e62e72155807c9723d45a',
-                    'size': 56,
-                    'path':  os.path.join(output_dir,'Sample2-T.Sample2-N.msi.tsv')
-                    }
+                "msi_tsv": OFile(name = 'Sample2-T.Sample2-N.msi.tsv', hash = "11fcf9459010aa5ea06e62e72155807c9723d45a", size = 56, dir = output_dir)
                 }
             ]
             }
@@ -226,14 +193,7 @@ class TestMsiWorkflow(PlutoTestCase):
             "pair_id": "Sample1-T.Sample1-N",
             "tumor_id": "Sample1-T",
             "normal_id": "Sample1-N",
-            "msi_tsv": {
-                'location': 'file://' + os.path.join(output_dir,'Sample1-T.Sample1-N.msi.tsv'),
-                'basename': 'Sample1-T.Sample1-N.msi.tsv',
-                'class': 'File',
-                'checksum': 'sha1$bc132f6ab9b779d7cba51e7ddfa82af724134f03',
-                'size': 56,
-                'path':  os.path.join(output_dir,'Sample1-T.Sample1-N.msi.tsv')
-                }
+            "msi_tsv": OFile(name = 'Sample1-T.Sample1-N.msi.tsv', hash = "bc132f6ab9b779d7cba51e7ddfa82af724134f03", size = 56, dir = output_dir)
             }]
             }
         self.assertCWLDictEqual(output_json, expected_output)
