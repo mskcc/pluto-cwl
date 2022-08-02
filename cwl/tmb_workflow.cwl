@@ -64,23 +64,38 @@ steps:
           type: "types.yml#TMBOutputPair"
           outputSource: create_tmb_pair_output/pair
       steps:
-        filter_variants:
-          doc: filter the variant maf file for only the variants desired for use in TMB calculation
-          run: tmb_variant_filter.cwl
+        muts_maf_filter:
+          doc: run the cBioPortal maf filter on the input mutations
+          run: maf_filter.cwl
           in:
             pair_id: pair_id
-            input_file: mutations_file
-            output_filename:
+            maf_file: mutations_file
+            argos_version_string:
+              valueFrom: ${return ""; }
+            is_impact:
+              valueFrom: ${return true; }
+            cbio_mutation_data_filename:
               valueFrom: ${ return inputs.pair_id + ".tmb.maf"; }
-          out:
-            [ output_file ]
+          out: [ cbio_mutation_data_file ]
+
+        # filter_variants:
+        #   doc: filter the variant maf file for only the variants desired for use in TMB calculation
+        #   run: tmb_variant_filter.cwl
+        #   in:
+        #     pair_id: pair_id
+        #     input_file: muts_maf_filter/cbio_mutation_data_file # mutations_file
+        #     output_filename:
+        #       valueFrom: ${ return inputs.pair_id + ".tmb.maf"; }
+        #   out:
+        #     [ output_file ]
 
         calc_tmb_value:
           doc: calculate the TMB for the variants present based on assay coverage
           run: calc-tmb.cwl
           in:
             pair_id: pair_id
-            input_file: filter_variants/output_file
+            input_file: muts_maf_filter/cbio_mutation_data_file
+            # input_file: filter_variants/output_file
             output_filename:
               valueFrom: ${ return inputs.pair_id + ".tmb.txt"; }
             genome_coverage: assay_coverage
@@ -134,7 +149,7 @@ steps:
             pair_id: pair_id
             tumor_id: sample_id
             normal_id: normal_id
-            tmb_maf: filter_variants/output_file
+            tmb_maf: muts_maf_filter/cbio_mutation_data_file # filter_variants/output_file
             tmb_tsv: add_sampleID/output_file
           out: [ pair ]
           run:

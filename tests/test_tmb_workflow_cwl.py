@@ -352,147 +352,147 @@ class TestTmbWorkflow(PlutoTestCase):
             'pairs': [
             {
                 "pair_id": "Sample10.Sample9", "tumor_id": "Sample10", "normal_id": "Sample9",
-                "tmb_maf": OFile(name = "Sample10.Sample9.tmb.maf", size = 435695, hash = "bf956cd3c611a398e4773061074e34ba7a19de0e", dir = output_dir),
-                "tmb_tsv": OFile(name = "Sample10.Sample9.tmb.tsv", size = 41, hash = "88c366b5c6fb06f042d7ed93dbb11c1b660f8a09", dir = output_dir)
+                "tmb_maf": OFile(name = "Sample10.Sample9.tmb.maf", size = 1083, hash = "1e5f7f3a6b972c5cd7163d404ecaf99c62311680", dir = output_dir),
+                "tmb_tsv": OFile(name = "Sample10.Sample9.tmb.tsv", size = 39, hash = "8d5391d268fb80abaadcfcd158c1d5a206118476", dir = output_dir)
             },
             {
                 "pair_id": "Sample12.Sample11", "tumor_id": "Sample12", "normal_id": "Sample11",
-                "tmb_maf": OFile(name = "Sample12.Sample11.tmb.maf", size = 349189, hash = "e0ffdde8c70d3b2f9d9b25dee279524d056d7f11", dir = output_dir),
-                "tmb_tsv": OFile(name = "Sample12.Sample11.tmb.tsv", size = 41, hash = "b2722238425a666c5251b526719b9f18a802b870", dir = output_dir)
+                "tmb_maf": OFile(name = "Sample12.Sample11.tmb.maf", size = 3162, hash = "b9764245546db40d1c4138b0a8fd64849b26dbb2", dir = output_dir),
+                "tmb_tsv": OFile(name = "Sample12.Sample11.tmb.tsv", size = 39, hash = "0ba713f227e506e35d5af2928fffd15a325d6271", dir = output_dir)
             },
             {
                 "pair_id": "Sample14.Sample13", "tumor_id": "Sample14", "normal_id": "Sample13",
-                "tmb_maf": OFile(name = "Sample14.Sample13.tmb.maf", size = 175012, hash = "ba440532988647cb861876b55e8f7c7818932924", dir = output_dir),
-                "tmb_tsv": OFile(name = "Sample14.Sample13.tmb.tsv", size = 41, hash = "24268f13b478d05fdc42aab378619ac8166a85be", dir = output_dir)
+                "tmb_maf": OFile(name = "Sample14.Sample13.tmb.maf", size = 1089, hash = "27bced89b50101637da14fec6e204cec0b4bd7f6", dir = output_dir),
+                "tmb_tsv": OFile(name = "Sample14.Sample13.tmb.tsv", size = 39, hash = "aa9748f5aa16e01817de2b39b500ac429cc5ca47", dir = output_dir)
             },
             {
                 "pair_id": "Sample16.Sample15", "tumor_id": "Sample16", "normal_id": "Sample15",
-                "tmb_maf": OFile(name = "Sample16.Sample15.tmb.maf", size = 132771, hash = "8567df193d795fd228bd4c03f168fda7c3cc61a6", dir = output_dir),
-                "tmb_tsv": OFile(name = "Sample16.Sample15.tmb.tsv", size = 41, hash = "7a10e353bd4b85197a51b1a01d97b4d5fde4a0d6", dir = output_dir)
+                "tmb_maf": OFile(name = "Sample16.Sample15.tmb.maf", size = 1473, hash = "4a0487d64c305473e3e00ab475e1f8d403d68caa", dir = output_dir),
+                "tmb_tsv": OFile(name = "Sample16.Sample15.tmb.tsv", size = 39, hash = "097d731c93099078d120a1f30cb0e5970a6b003d", dir = output_dir)
             },
             {
                 "pair_id": "Sample18.Sample17", "tumor_id": "Sample18", "normal_id": "Sample17",
-                "tmb_maf": OFile(name = "Sample18.Sample17.tmb.maf", size = 1198414, hash = "f23cba80210c7053de7d7c5419366125e83643a5", dir = output_dir),
-                "tmb_tsv": OFile(name = "Sample18.Sample17.tmb.tsv", size = 41, hash = "df324eb65e39e98ba7dfbe708311f6483f2b7a89", dir = output_dir)
+                "tmb_maf": OFile(name = "Sample18.Sample17.tmb.maf", size = 31897, hash = "d076cb53fae50c6fca195a9999eefc9880192008", dir = output_dir),
+                "tmb_tsv": OFile(name = "Sample18.Sample17.tmb.tsv", size = 41, hash = "f3e057e64ac751e8bb314ba5d9d1d5a83a883053", dir = output_dir)
             },
             {
                 "pair_id": "Sample20.Sample19", "tumor_id": "Sample20", "normal_id": "Sample19",
-                "tmb_maf": OFile(name = "Sample20.Sample19.tmb.maf", size = 452313, hash = "6715dfc2887a5315dd74405fe416c77cbdda7589", dir = output_dir),
-                "tmb_tsv": OFile(name = "Sample20.Sample19.tmb.tsv", size = 41, hash = "65285f51785040f8b25be89602611466619b8ca6", dir = output_dir)
+                "tmb_maf": OFile(name = "Sample20.Sample19.tmb.maf", size = 1304, hash = "8064bb5f27b6666692b5cecbc4ee36b12fcac9a3", dir = output_dir),
+                "tmb_tsv": OFile(name = "Sample20.Sample19.tmb.tsv", size = 39, hash = "87073dc756ead52fff1b5356c8b5cad6f56926d5", dir = output_dir)
             },
             {
                 "pair_id": "Sample22.Sample21", "tumor_id": "Sample22", "normal_id": "Sample21",
-                "tmb_maf": OFile(name = "Sample22.Sample21.tmb.maf", size = 657290, hash = "c5a47f421bdb260e00ff5ec4224a4854cf083f8f", dir = output_dir),
-                "tmb_tsv": OFile(name = "Sample22.Sample21.tmb.tsv", size = 41, hash = "ea02f25e8803d6797a07032c6ba506326bc5259a", dir = output_dir)
+                "tmb_maf": OFile(name = "Sample22.Sample21.tmb.maf", size = 13946, hash = "8877725be00bc639e8117a462e4f8d1427426778", dir = output_dir),
+                "tmb_tsv": OFile(name = "Sample22.Sample21.tmb.tsv", size = 40, hash = "4b3b7bb031164a2a8c5c90bb6ef7378091f1c943", dir = output_dir)
             },
             {
                 "pair_id": "Sample24.Sample23", "tumor_id": "Sample24", "normal_id": "Sample23",
-                "tmb_maf": OFile(name = "Sample24.Sample23.tmb.maf", size = 106895, hash = "92c59891e947f241ad1dad88b47b3da2e243c3a6", dir = output_dir),
-                "tmb_tsv": OFile(name = "Sample24.Sample23.tmb.tsv", size = 40, hash = "7bf9f34e1b52d03e702708cda81c5236033421a0", dir = output_dir)
+                "tmb_maf": OFile(name = "Sample24.Sample23.tmb.maf", size = 3383, hash = "50535e40b1c0c238f17ef2b7759d31a1ed139b77", dir = output_dir),
+                "tmb_tsv": OFile(name = "Sample24.Sample23.tmb.tsv", size = 39, hash = "92250bac529328be0d99a14bc43943ddb9da0989", dir = output_dir)
             },
             {
                 "pair_id": "Sample26.Sample25", "tumor_id": "Sample26", "normal_id": "Sample25",
-                "tmb_maf": OFile(name = "Sample26.Sample25.tmb.maf", size = 378363, hash = "af84468dfc91a50fc2fafb84b060128d022fc2a6", dir = output_dir),
-                "tmb_tsv": OFile(name = "Sample26.Sample25.tmb.tsv", size = 41, hash = "05ea960219516542703d2a7254306be241ab8fc3", dir = output_dir)
+                "tmb_maf": OFile(name = "Sample26.Sample25.tmb.maf", size = 6390, hash = "a18318054c6f1121de0e6d7a8895b0c11d9978d4", dir = output_dir),
+                "tmb_tsv": OFile(name = "Sample26.Sample25.tmb.tsv", size = 40, hash = "47c5db8fea83bded42ba5b5025a23586189897bf", dir = output_dir)
             },
             {
                 "pair_id": "Sample28.Sample27", "tumor_id": "Sample28", "normal_id": "Sample27",
-                "tmb_maf": OFile(name = "Sample28.Sample27.tmb.maf", size = 704143, hash = "7ef7cdff11c12191d1948ac19cfd015b6a258ebb", dir = output_dir),
-                "tmb_tsv": OFile(name = "Sample28.Sample27.tmb.tsv", size = 41, hash = "41b7b9b7af35791e4ba1ba922c28319ff166dd9c", dir = output_dir)
+                "tmb_maf": OFile(name = "Sample28.Sample27.tmb.maf", size = 7448, hash = "5b96aaef5d815b4713128123ec6e2b9d51495ea8", dir = output_dir),
+                "tmb_tsv": OFile(name = "Sample28.Sample27.tmb.tsv", size = 40, hash = "fbe3ad09f2b9ff72bfcf411a0cf30460219859a6", dir = output_dir)
             },
             {
                 "pair_id": "Sample30.Sample29", "tumor_id": "Sample30", "normal_id": "Sample29",
-                "tmb_maf": OFile(name = "Sample30.Sample29.tmb.maf", size = 144459, hash = "f9a783df443cfc67dca7f9b110c373b787029128", dir = output_dir),
-                "tmb_tsv": OFile(name = "Sample30.Sample29.tmb.tsv", size = 40, hash = "02094abb69f268710fdd0b3a413db89824c8c584", dir = output_dir)
+                "tmb_maf": OFile(name = "Sample30.Sample29.tmb.maf", size = 2789, hash = "d1c68680b9118ef234d9692fd5f2def6aa89d763", dir = output_dir),
+                "tmb_tsv": OFile(name = "Sample30.Sample29.tmb.tsv", size = 39, hash = "31a3f86b06e206fcdc78aac0d846bf5f7d38d84e", dir = output_dir)
             },
             {
                 "pair_id": "Sample32.Sample31", "tumor_id": "Sample32", "normal_id": "Sample31",
-                "tmb_maf": OFile(name = "Sample32.Sample31.tmb.maf", size = 325388, hash = "bf9107db224d12f3e033da6c52ed8f42384abcc3", dir = output_dir),
-                "tmb_tsv": OFile(name = "Sample32.Sample31.tmb.tsv", size = 41, hash = "6f53a8095503affa1ea4acee2ddade5184cd96c9", dir = output_dir)
+                "tmb_maf": OFile(name = "Sample32.Sample31.tmb.maf", size = 1932, hash = "a090868ecdcd90a44563141ff11e60ee3f4c1823", dir = output_dir),
+                "tmb_tsv": OFile(name = "Sample32.Sample31.tmb.tsv", size = 39, hash = "887fe7fa431acd1eb5fd8f160fb4d002ed1c1c10", dir = output_dir)
             },
             {
                 "pair_id": "Sample34.Sample33", "tumor_id": "Sample34", "normal_id": "Sample33",
-                "tmb_maf": OFile(name = "Sample34.Sample33.tmb.maf", size = 169118, hash = "d4d8704fe1273a2f3973168334531e62760a038a", dir = output_dir),
-                "tmb_tsv": OFile(name = "Sample34.Sample33.tmb.tsv", size = 41, hash = "a1251999d4c785af60cd2696a450f64508c8d47c", dir = output_dir)
+                "tmb_maf": OFile(name = "Sample34.Sample33.tmb.maf", size = 2991, hash = "abe7941bc9051d1946c1ae3a60f4b0e72b7e68cf", dir = output_dir),
+                "tmb_tsv": OFile(name = "Sample34.Sample33.tmb.tsv", size = 39, hash = "1758446148033024c059a0d288ebe03e0d7a797e", dir = output_dir)
             },
             {
                 "pair_id": "Sample50.Sample49", "tumor_id": "Sample50", "normal_id": "Sample49",
-                "tmb_maf": OFile(name = "Sample50.Sample49.tmb.maf", size = 948931, hash = "e9cc623e4838891bf6b6dd477a1544bc2963f6e4", dir = output_dir),
-                "tmb_tsv": OFile(name = "Sample50.Sample49.tmb.tsv", size = 41, hash = "24c941afe6749191910a7f03c590edd4c5d1804a", dir = output_dir)
+                "tmb_maf": OFile(name = "Sample50.Sample49.tmb.maf", size = 18917, hash = "d43ff02fdfbcdad57a140866bf95c0c76dacdeeb", dir = output_dir),
+                "tmb_tsv": OFile(name = "Sample50.Sample49.tmb.tsv", size = 40, hash = "429ac67f26f759fd85d930bf18a201d7ad7760af", dir = output_dir)
             },
             {
                 "pair_id": "Sample52.Sample51", "tumor_id": "Sample52", "normal_id": "Sample51",
-                "tmb_maf": OFile(name = "Sample52.Sample51.tmb.maf", size = 1373542, hash = "e42bd19f856662e9b8f613ce32e8b08c59a21da7", dir = output_dir),
-                "tmb_tsv": OFile(name = "Sample52.Sample51.tmb.tsv", size = 41, hash = "02ec3d615c357e0e42697d6bbd2ef8f845af7778", dir = output_dir)
+                "tmb_maf": OFile(name = "Sample52.Sample51.tmb.maf", size = 1718, hash = "880020370fa72dbc5bf1ac63ec5fc039b4d28fc7", dir = output_dir),
+                "tmb_tsv": OFile(name = "Sample52.Sample51.tmb.tsv", size = 39, hash = "8a2b8e106762ad27669572881a7084aa60fd5323", dir = output_dir)
             },
             {
                 "pair_id": "Sample54.Sample53", "tumor_id": "Sample54", "normal_id": "Sample53",
-                "tmb_maf": OFile(name = "Sample54.Sample53.tmb.maf", size = 203312, hash = "4e013c35588c4373bcea2772f5720d341c8f5617", dir = output_dir),
-                "tmb_tsv": OFile(name = "Sample54.Sample53.tmb.tsv", size = 41, hash = "9c86431a33c224b75ea31345056e4fd09b9e6c39", dir = output_dir)
+                "tmb_maf": OFile(name = "Sample54.Sample53.tmb.maf", size = 879, hash = "00f0edebec8317ed9f379e518f59590af083ba82", dir = output_dir),
+                "tmb_tsv": OFile(name = "Sample54.Sample53.tmb.tsv", size = 36, hash = "76a00ed0315504c795eade8e326d21d06b50b67c", dir = output_dir)
             },
             {
                 "pair_id": "Sample62.Sample61", "tumor_id": "Sample62", "normal_id": "Sample61",
-                "tmb_maf": OFile(name = "Sample62.Sample61.tmb.maf", size = 280385, hash = "2bcb5509921551fc3e403e666343450038a2acf5", dir = output_dir),
-                "tmb_tsv": OFile(name = "Sample62.Sample61.tmb.tsv", size = 41, hash = "cde91a97789f4248edd428eb7aa4f0519b1483d0", dir = output_dir)
+                "tmb_maf": OFile(name = "Sample62.Sample61.tmb.maf", size = 1045, hash = "4a41ff19ec6c867df1bbebd0a44babc737c51ba2", dir = output_dir),
+                "tmb_tsv": OFile(name = "Sample62.Sample61.tmb.tsv", size = 39, hash = "139810642faa47f70e6d5a357d8fbfc5520cab36", dir = output_dir)
             },
             {
                 "pair_id": "Sample70.Sample69", "tumor_id": "Sample70", "normal_id": "Sample69",
-                "tmb_maf": OFile(name = "Sample70.Sample69.tmb.maf", size = 1591529, hash = "24e7b6c07a6da7e6bc31e1f77f7514050a6c34c0", dir = output_dir),
-                "tmb_tsv": OFile(name = "Sample70.Sample69.tmb.tsv", size = 42, hash = "23c1715e2d10d358262b2fb8a7949bfd3a6b8984", dir = output_dir)
+                "tmb_maf": OFile(name = "Sample70.Sample69.tmb.maf", size = 17120, hash = "5837551fdd9e95ba8cba85d4150f966e4175aceb", dir = output_dir),
+                "tmb_tsv": OFile(name = "Sample70.Sample69.tmb.tsv", size = 40, hash = "c21656cce24af8a10ae3d534e406e705abba2c86", dir = output_dir)
             },
             {
                 "pair_id": "Sample74.Sample73", "tumor_id": "Sample74", "normal_id": "Sample73",
-                "tmb_maf": OFile(name = "Sample74.Sample73.tmb.maf", size = 634232, hash = "8ea2c386032a01a1e0a11631cd002ac88037caa0", dir = output_dir),
-                "tmb_tsv": OFile(name = "Sample74.Sample73.tmb.tsv", size = 40, hash = "b7b7fb3b96b5bd02dadc9998f896320379ea19db", dir = output_dir)
+                "tmb_maf": OFile(name = "Sample74.Sample73.tmb.maf", size = 8630, hash = "320066d54a202e8abf840dcfe66ebc07774b9b0d", dir = output_dir),
+                "tmb_tsv": OFile(name = "Sample74.Sample73.tmb.tsv", size = 40, hash = "c2d30f9498709d2d3c0f5733af1eaaf308d622be", dir = output_dir)
             },
             {
                 "pair_id": "Sample80.Sample79", "tumor_id": "Sample80", "normal_id": "Sample79",
-                "tmb_maf": OFile(name = "Sample80.Sample79.tmb.maf", size = 242884, hash = "6b12f3ec77d76d3d15ec2d837e6842cff9ca83f6", dir = output_dir),
-                "tmb_tsv": OFile(name = "Sample80.Sample79.tmb.tsv", size = 41, hash = "5ccc6c6a1c658e1b712fa612540239aed77058c6", dir = output_dir)
+                "tmb_maf": OFile(name = "Sample80.Sample79.tmb.maf", size = 3593, hash = "c455da921b4da3e91e8bbe0c8bd06bb0f414debc", dir = output_dir),
+                "tmb_tsv": OFile(name = "Sample80.Sample79.tmb.tsv", size = 40, hash = "db19e00007f3fb805373d7dbf5e10539b373fa33", dir = output_dir)
             },
             {
                 "pair_id": "Sample84.Sample83", "tumor_id": "Sample84", "normal_id": "Sample83",
-                "tmb_maf": OFile(name = "Sample84.Sample83.tmb.maf", size = 428091, hash = "da7c20bb6ec5a57640d5c506243d2a867769a3d1", dir = output_dir),
-                "tmb_tsv": OFile(name = "Sample84.Sample83.tmb.tsv", size = 41, hash = "15e4d7786a0387ddee263459a6621b9075a8c35a", dir = output_dir)
+                "tmb_maf": OFile(name = "Sample84.Sample83.tmb.maf", size = 4456, hash = "aac9da438d6b909000b36ab44ded93da5818aeec", dir = output_dir),
+                "tmb_tsv": OFile(name = "Sample84.Sample83.tmb.tsv", size = 40, hash = "2159332cb06a280cde57f0aa07b011da9e0b3e65", dir = output_dir)
             },
             {
                 "pair_id": "Sample90.Sample89", "tumor_id": "Sample90", "normal_id": "Sample89",
-                "tmb_maf": OFile(name = "Sample90.Sample89.tmb.maf", size = 923130, hash = "172f4903c381e511f4d2008b309837308dbcbb14", dir = output_dir),
-                "tmb_tsv": OFile(name = "Sample90.Sample89.tmb.tsv", size = 41, hash = "47fb8577a6b01aee6f486c1c1cc1ad4761c2b700", dir = output_dir)
+                "tmb_maf": OFile(name = "Sample90.Sample89.tmb.maf", size = 1098, hash = "4a8cfb06d53fed560f1e9f05936069f11d57a8e8", dir = output_dir),
+                "tmb_tsv": OFile(name = "Sample90.Sample89.tmb.tsv", size = 39, hash = "e4a9595806740ee2224bbcc6c9a34cf398a87e33", dir = output_dir)
             },
             {
                 "pair_id": "Sample92.Sample91", "tumor_id": "Sample92", "normal_id": "Sample91",
-                "tmb_maf": OFile(name = "Sample92.Sample91.tmb.maf", size = 242115, hash = "26262d0012d3bed3ba13f9618931aca70030752c", dir = output_dir),
-                "tmb_tsv": OFile(name = "Sample92.Sample91.tmb.tsv", size = 41, hash = "c6e022e3fa5335f352be6840da5c40cc91aef0b7", dir = output_dir)
+                "tmb_maf": OFile(name = "Sample92.Sample91.tmb.maf", size = 1088, hash = "7ad7be1538f618ef3462e7f9f8cc7173b462199e", dir = output_dir),
+                "tmb_tsv": OFile(name = "Sample92.Sample91.tmb.tsv", size = 39, hash = "0427bbe4c82ddd013d6c2bd489484dd6a6541fce", dir = output_dir)
             },
             ]
             }
         self.assertCWLDictEqual(output_json, expected_output)
 
         expected_values = {
-            'Sample10': '312.2503',
-            'Sample12': '247.9877',
-            'Sample14': '125.2297',
-            'Sample16': '101.3372',
-            'Sample18': '893.0852',
-            'Sample20': '325.4323',
-            'Sample22': '506.6858',
-            'Sample24': '69.2059',
-            'Sample26': '270.2324',
-            'Sample28': '519.8678',
-            'Sample30': '94.7461',
-            'Sample32': '248.8116',
-            'Sample34': '106.2804',
-            'Sample50': '702.7691',
-            'Sample52': '954.8761',
-            'Sample54': '141.7072',
-            'Sample62': '217.5041',
-            'Sample70': '1108.1177',
-            'Sample74': '457.253',
-            'Sample80': '168.0714',
-            'Sample84': '302.3637',
-            'Sample90': '688.7631',
-            'Sample92': '163.1281'}
+            'Sample10': '0.8239',
+            'Sample12': '9.0627',
+            'Sample14': '0.8239',
+            'Sample16': '2.4716',
+            'Sample18': '120.2864',
+            'Sample20': '1.6478',
+            'Sample22': '51.0805',
+            'Sample24': '9.8866',
+            'Sample26': '21.4209',
+            'Sample28': '25.5403',
+            'Sample30': '7.4149',
+            'Sample32': '4.1194',
+            'Sample34': '8.2388',
+            'Sample50': '70.0297',
+            'Sample52': '3.2955',
+            'Sample54': '0.0',
+            'Sample62': '0.8239',
+            'Sample70': '63.4387',
+            'Sample74': '30.4835',
+            'Sample80': '10.7104',
+            'Sample84': '14.0059',
+            'Sample90': '0.8239',
+            'Sample92': '0.8239'}
 
         values = self.getAllSampleFileValues(
             filepaths = [ pair["tmb_tsv"]["path"] for pair in expected_output["pairs"] ],
