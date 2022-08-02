@@ -33,8 +33,8 @@ The primary entry point for the workflow is [`cwl/workflow_with_facets.cwl`](htt
 
 You can run a CWL included in this repo by using the wrapper scripts bundled in the `pluto` submodule; 
 
-- [`run-cwltool.sh`](https://github.com/mskcc/pluto/blob/master/run-cwltool.sh) for simple use cases
-- [`run-toil.sh`](https://github.com/mskcc/pluto/blob/master/run-toil.sh) if parallel processing and HPC (LSF) useage is required
+- [`pluto/run-cwltool.sh`](https://github.com/mskcc/pluto/blob/master/run-cwltool.sh) for simple use cases
+- [`pluto/run-toil.sh`](https://github.com/mskcc/pluto/blob/master/run-toil.sh) if parallel processing and HPC (LSF) useage is required
 
 ## Test Suite
 
@@ -63,7 +63,7 @@ Available environment variable settings are derived from the [`pluto.settings`](
 An extra recipe is included which can run the tests in parallel, for example to run 8 tests at once you can use this command:
 
 ```
-make test3 -j 8
+make parallel-test
 ```
 
 ### Single Test
