@@ -76,14 +76,14 @@ class TestTmbWorkflow(PlutoTestCase):
                 "tumor_id": "Sample1-T",
                 "normal_id": "Sample1-N",
                 "tmb_maf": OFile(name = "Sample1-T.Sample1-N.tmb.maf", size = 352, hash = "b019b5b3c6aba861371c135fe47520c969fab5ae", dir = output_dir),
-                "tmb_tsv": OFile(name = "Sample1-T.Sample1-N.tmb.tsv", size = 64, hash = "85e1a993e2e2bf60985336e20a3d63410da80658", dir = output_dir)
+                "tmb_tsv": OFile(name = "Sample1-T.Sample1-N.tmb.tsv", size = 40, hash = "d6a57cfb5e3001697875e5b5bfae206e0f7f2310", dir = output_dir)
             },
             {
                 "pair_id": "Sample2-T.Sample2-N",
                 "tumor_id": "Sample2-T",
                 "normal_id": "Sample2-N",
                 "tmb_maf": OFile(name = "Sample2-T.Sample2-N.tmb.maf", size = 308, hash = "e6cb790e887d606e2762dd73e73fec28ecfff22b", dir = output_dir),
-                "tmb_tsv": OFile(name = "Sample2-T.Sample2-N.tmb.tsv", size = 64, hash = "d6c97e3380dc9ae7a9214cf3bde79936a1a5f650", dir = output_dir)
+                "tmb_tsv": OFile(name = "Sample2-T.Sample2-N.tmb.tsv", size = 40, hash = "851b303d4237654de54fdfdc60d41ab996f4380d", dir = output_dir)
             }
             ]
             }
@@ -91,15 +91,15 @@ class TestTmbWorkflow(PlutoTestCase):
 
         lines = self.read_table(expected_output["pairs"][0]["tmb_tsv"]["path"])
         expected_lines = [
-            ['CMO_TMB_SCORE', 'SampleID', 'CMO_ASSAY_COVERAGE'],
-            ['7000.0', 'Sample1-T', '1000']
+            ['CMO_TMB_SCORE', 'SampleID'],
+            ['7000.0', 'Sample1-T']
         ]
         self.assertEqual(lines, expected_lines)
 
         lines = self.read_table(expected_output["pairs"][1]["tmb_tsv"]["path"])
         expected_lines = [
-            ['CMO_TMB_SCORE', 'SampleID', 'CMO_ASSAY_COVERAGE'],
-            ['6000.0', 'Sample2-T', '1000']
+            ['CMO_TMB_SCORE', 'SampleID'],
+            ['6000.0', 'Sample2-T']
         ]
         self.assertEqual(lines, expected_lines)
 
@@ -139,14 +139,14 @@ class TestTmbWorkflow(PlutoTestCase):
                     "tumor_id": "Sample1-T",
                     "normal_id": "Sample1-PooledNormal",
                     "tmb_maf": OFile(name = "Sample1-T.Sample1-PooledNormal.tmb.maf", size = 352, hash = "b019b5b3c6aba861371c135fe47520c969fab5ae", dir = output_dir),
-                    "tmb_tsv": OFile(name = "Sample1-T.Sample1-PooledNormal.tmb.tsv", size = 60, hash = "c6cfb8b76782596083a81b3196684832124e4de5", dir = output_dir)
+                    "tmb_tsv": OFile(name = "Sample1-T.Sample1-PooledNormal.tmb.tsv", size = 36, hash = "84ba7be1f81eba42d9845ccb18cae9d4b3d6a21f", dir = output_dir)
                 },
                 {
                     "pair_id": "Sample2-T.Sample2-N",
                     "tumor_id": "Sample2-T",
                     "normal_id": "Sample2-N",
                     "tmb_maf": OFile(name = "Sample2-T.Sample2-N.tmb.maf", size = 308, hash = "e6cb790e887d606e2762dd73e73fec28ecfff22b", dir = output_dir),
-                    "tmb_tsv": OFile(name = "Sample2-T.Sample2-N.tmb.tsv", size = 64, hash = "d6c97e3380dc9ae7a9214cf3bde79936a1a5f650", dir = output_dir)
+                    "tmb_tsv": OFile(name = "Sample2-T.Sample2-N.tmb.tsv", size = 40, hash = "851b303d4237654de54fdfdc60d41ab996f4380d", dir = output_dir)
                 }
                 ]
             }
@@ -156,16 +156,16 @@ class TestTmbWorkflow(PlutoTestCase):
         # Sample1 gets value NA because its paired with a pooled normal !!
         lines = self.read_table(expected_output["pairs"][0]["tmb_tsv"]["path"])
         expected_lines = [
-            ['CMO_TMB_SCORE', 'SampleID', 'CMO_ASSAY_COVERAGE'],
-            ['NA', 'Sample1-T', '1000']
+            ['CMO_TMB_SCORE', 'SampleID'],
+            ['NA', 'Sample1-T']
         ]
         self.assertEqual(lines, expected_lines)
         # !!!!!!!!
 
         lines = self.read_table(expected_output["pairs"][1]["tmb_tsv"]["path"])
         expected_lines = [
-            ['CMO_TMB_SCORE', 'SampleID', 'CMO_ASSAY_COVERAGE'],
-            ['6000.0', 'Sample2-T', '1000']
+            ['CMO_TMB_SCORE', 'SampleID'],
+            ['6000.0', 'Sample2-T']
         ]
         self.assertEqual(lines, expected_lines)
 
@@ -193,15 +193,15 @@ class TestTmbWorkflow(PlutoTestCase):
                 "tumor_id": "Sample1-T",
                 "normal_id": "Sample1-N",
                 "tmb_maf": OFile(name = "Sample1-T.Sample1-N.tmb.maf", size = 352, hash = "b019b5b3c6aba861371c135fe47520c969fab5ae", dir = output_dir),
-                "tmb_tsv": OFile(name = "Sample1-T.Sample1-N.tmb.tsv", size = 64, hash = "85e1a993e2e2bf60985336e20a3d63410da80658", dir = output_dir)
+                "tmb_tsv": OFile(name = "Sample1-T.Sample1-N.tmb.tsv", size = 40, hash = "d6a57cfb5e3001697875e5b5bfae206e0f7f2310", dir = output_dir)
             }]
             }
         self.assertCWLDictEqual(output_json, expected_output)
 
         lines = self.read_table(expected_output["pairs"][0]["tmb_tsv"]["path"])
         expected_lines = [
-            ['CMO_TMB_SCORE', 'SampleID', 'CMO_ASSAY_COVERAGE'],
-            ['7000.0', 'Sample1-T', '1000']
+            ['CMO_TMB_SCORE', 'SampleID'],
+            ['7000.0', 'Sample1-T']
         ]
         self.assertEqual(lines, expected_lines)
 
@@ -233,15 +233,15 @@ class TestTmbWorkflow(PlutoTestCase):
                 "tumor_id": "Sample1-T",
                 "normal_id": "Sample1-N",
                 "tmb_maf": OFile(name = "Sample1-T.Sample1-N.tmb.maf", size = 519440, hash = "809c3c1ac3bb750aebf22ee2f95a5ebafd41e98f", dir = output_dir),
-                "tmb_tsv": OFile(name = "Sample1-T.Sample1-N.tmb.tsv", size = 66, hash = "0640456b34816d24d4f0e2fb2f727510283aac80", dir = output_dir)
+                "tmb_tsv": OFile(name = "Sample1-T.Sample1-N.tmb.tsv", size = 42, hash = "8156b9e7a0602ddd7710f002ef9385237a82c5d0", dir = output_dir)
             }]
             }
         self.assertCWLDictEqual(output_json, expected_output)
 
         lines = self.read_table(expected_output["pairs"][0]["tmb_tsv"]["path"])
         expected_lines = [
-            ['CMO_TMB_SCORE', 'SampleID', 'CMO_ASSAY_COVERAGE'],
-            ['475000.0', 'Sample1-T', '1000']
+            ['CMO_TMB_SCORE', 'SampleID'],
+            ['475000.0', 'Sample1-T']
         ]
         self.assertEqual(lines, expected_lines)
 
