@@ -412,6 +412,14 @@ class TestWorkflowWithFacetsMedium(PlutoTestCase):
         }
         self.maxDiff = None
         self.assertCWLDictEqual(output_json, expected_output)
+        self.assertNumMutations(os.path.join(output_dir, 'analysis', '11089_G.muts.maf'), 34)
+        self.assertNumMutations(os.path.join(output_dir, 'portal', 'data_mutations_extended.txt'), 27)
+        self.assertSampleValues(
+            os.path.join(output_dir, 'portal/data_clinical_sample.txt'),
+            value_fieldname = "CMO_TMB_SCORE",
+            expected_values = {
+            'Sample46': 'NA', 'Sample44': 'NA', 'Sample80': 'NA', 'Sample20': 'NA', 'Sample38': 'NA', 'Sample26': 'NA', 'Sample94': 'NA', 'Sample48': 'NA', 'Sample68': 'NA', 'Sample90': 'NA', 'Sample18': 'NA', 'Sample54': 'NA', 'Sample52': 'NA', 'Sample86': 'NA', 'Sample30': 'NA', 'Sample78': 'NA', 'Sample84': 'NA', 'Sample82': 'NA', 'Sample6': 'NA', 'Sample96': 'NA', 'Sample72': 'NA', 'Sample56': 'NA', 'Sample64': 'NA', 'Sample58': 'NA', 'Sample92': 'NA', 'Sample62': 'NA', 'Sample8': 'NA', 'Sample24': 'NA', 'Sample12': 'NA', 'Sample16': 'NA', 'Sample88': 'NA', 'Sample22': 'NA', 'Sample42': 'NA', 'Sample76': 'NA', 'Sample28': 'NA', 'Sample74': 'NA', 'Sample50': 'NA', 'Sample60': 'NA', 'Sample10': 'NA', 'Sample36': 'NA', 'Sample34': 'NA', 'Sample40': 'NA', 'Sample66': 'NA', 'Sample14': 'NA', 'Sample32': 'NA', 'Sample70': 'NA', 'Sample4': '5.5', 'Sample1': '47.5'
+            })
 
 if __name__ == "__main__":
     unittest.main()

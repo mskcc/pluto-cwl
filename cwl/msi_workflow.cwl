@@ -1,32 +1,26 @@
 #!/usr/bin/env cwl-runner
 
-cwlVersion: v1.0
+cwlVersion: v1.2
 class: Workflow
 doc: "
-Workflow to run the MSI analysis on a batch of samples and merge the results back into a single data clinical file
+Workflow to run the MSI analysis on a batch of samples
 "
 requirements:
-  MultipleInputFeatureRequirement: {}
-  ScatterFeatureRequirement: {}
-  StepInputExpressionRequirement: {}
-  InlineJavascriptRequirement: {}
-  SubworkflowFeatureRequirement: {}
+  - class: MultipleInputFeatureRequirement
+  - class: ScatterFeatureRequirement
+  - class: StepInputExpressionRequirement
+  - class: InlineJavascriptRequirement
+  - class: SubworkflowFeatureRequirement
+  - $import: types.yml
 
 inputs:
-  data_clinical_file:
-    type: File
-    doc: "data clinical samplesheet file to merge the MSI results into"
+  threads:
+    type: string
+    default: "8"
   microsatellites_file:
+    doc: reference microsatellite list
     type: File
-  pairs:
-    type:
-      type: array
-      items:
-        type: record
-        fields:
-          pair_id: string
-          tumor_id: string
-          normal_id: string
+  pairs: "types.yml#MSIInputPair[]"
   # NOTE: these two arrays of File with secondaryFiles should eventually be merged directly into the `pairs` record array
   # after upgrading Toil to support cwlVersion 1.1
   normal_bam_files:
@@ -49,124 +43,133 @@ steps:
     scatter: [ pair, normal_bam, tumor_bam ]
     scatterMethod: dotproduct
     in:
+      threads: threads
       microsatellites_file: microsatellites_file
       pair: pairs
       normal_bam: normal_bam_files
       tumor_bam: tumor_bam_files
-      col_header:
-        valueFrom: ${ return 'SAMPLE_ID'; }
+      pair_id:
+        valueFrom: ${ return inputs.pair['pair_id']; }
       tumor_id:
         valueFrom: ${ return inputs.pair['tumor_id']; }
-    out: [ output_file ]
-
-
+      normal_id:
+        valueFrom: ${ return inputs.pair['normal_id']; }
+    out: [ pair ]
     run:
       class: Workflow
-      id: run_msi_and_add_sample_id
       inputs:
+        threads: string
         microsatellites_file: File
         normal_bam: File
         tumor_bam: File
+        pair_id: string
         tumor_id: string
-
+        normal_id: string
       outputs:
-        output_file:
-          type: File
-          outputSource: add_sample_id/output_file
-
+        pair:
+          type: "types.yml#MSIOutputPair"
+          outputSource: create_msi_pair_output/pair
       steps:
         # run the MSI analysis for each tumor sample in the list of pairs
         run_msi_workflow:
+          doc: run msisensor for microsatellite instability analysis
           run: msi.cwl
           in:
-            d: microsatellites_file
-            n: normal_bam
-            t: tumor_bam
-            o:
-              valueFrom: ${ return 'msi.txt'; }
+            threads: threads
+            microsatellites_file: microsatellites_file
+            normal_bam: normal_bam
+            tumor_bam: tumor_bam
           out:
             [output_file]
+        # output_file looks like this;
+        # Total_Number_of_Sites   Number_of_Somatic_Sites %
+        # 628     138     21.97
 
-        add_sample_id:
-          run: paste-col.cwl
+        replace_col_name:
+          doc: replace colname with MSI_SCORE
+          run: replace_colname.cwl
           in:
+            old_name:
+              valueFrom: ${ return "%"; }
+            new_name:
+              valueFrom: ${ return "MSI_SCORE"; }
             input_file: run_msi_workflow/output_file
             output_filename:
-              valueFrom: ${ return 'msi.tsv'; }
+              valueFrom: ${ return "msi-replaced.tsv"; }
+          out:
+            [ output_file ]
+
+        add_msi_status_col:
+          doc: add msi status based on the msi score
+          run: add_msi_status.cwl
+          in:
+            input_filename: replace_col_name/output_file
+            output_filename:
+              valueFrom: ${ return "msi_status_added.tsv"; }
+            header:
+              valueFrom: ${ return "MSI_STATUS"; }
+          out:
+            [ output_file ]
+
+        cut_msi_table:
+          doc: cut msi.tsv to get only msi scores
+          run: cut.cwl
+          in:
+            field_indexes:
+              valueFrom: ${ return "3,4,5"; }
+            input_file: add_msi_status_col/output_file
+          out:
+            [ output_file ]
+
+        add_sample_id:
+          doc: add a column for sample ID to the file
+          run: paste-col.cwl
+          in:
+            pair_id: pair_id
+            input_file: cut_msi_table/output_file
+            output_filename:
+              valueFrom: ${ return inputs.pair_id + '.msi.tsv'; }
             header:
               valueFrom: ${ return 'SAMPLE_ID'; }
             value: tumor_id
           out:
-            [output_file]
+            [ output_file ]
+          # output_file looks like this;
+          # MSI_SCORE       MSI_STATUS      SAMPLE_ID
+          # 21.97   Instable        Sample1-T
 
-  # concatenate all the individual MSI tables into a single table
-  concat_msi_tables:
-    run: concat-tables.cwl
-    in:
-      input_files: run_msi_add_sample_id/output_file
-      output_filename:
-        valueFrom: ${ return "msi.tsv"; }
-      comments:
-        valueFrom: ${ return true; }
-    out:
-      [ output_file ]
+        create_msi_pair_output:
+          doc:
+          in:
+            msi_tsv: add_sample_id/output_file
+            pair_id: pair_id
+            tumor_id: tumor_id
+            normal_id: normal_id
+          out: [ pair ]
+          run:
+            class: ExpressionTool
+            inputs:
+              msi_tsv: File
+              pair_id: string
+              tumor_id: string
+              normal_id: string
+            outputs:
+              pair: "types.yml#MSIOutputPair"
+            expression: |
+              ${
+                var pair = {
+                  "msi_tsv": inputs.msi_tsv,
+                  "pair_id": inputs.pair_id,
+                  "tumor_id": inputs.tumor_id,
+                  "normal_id": inputs.normal_id,
+                };
+                return {
+                  "pair": pair
+                };
+              }
 
-  #replace % colname with MSI_SCORE
-  replace_col_name:
-    run: replace_colname.cwl
-    in:
-      old_name:
-        valueFrom: ${ return "%"; }
-      new_name:
-        valueFrom: ${ return "MSI_SCORE"; }
-      input_file: concat_msi_tables/output_file
-      output_filename:
-        valueFrom: ${ return "msi-replaced.tsv"; }
-    out:
-      [ output_file ]
-
-  # add msi status based on the msi score
-  add_msi_status_col:
-    run: add_msi_status.cwl
-    in:
-      input_filename: replace_col_name/output_file
-      output_filename:
-        valueFrom: ${ return "msi_status_added.tsv"; }
-      header:
-        valueFrom: ${ return "MSI_STATUS"; }
-    out:
-      [ output_file ]
-
-
-  # cut msi.tsv to get only msi scores
-  cut_msi_table:
-    run: cut.cwl
-    in:
-      field_indexes:
-        valueFrom: ${ return "3,4,5"; }
-      input_file: add_msi_status_col/output_file
-    out:
-      [ output_file ]
-
-
-  # combine the MSI results with the data clinical file
-  merge_data_clinical:
-    run: merge-tables.cwl
-    in:
-      table1: data_clinical_file
-      table2: cut_msi_table/output_file
-      key1:
-        valueFrom: ${ return "SAMPLE_ID"; } # sample column header from data clinical file
-      key2:
-        valueFrom: ${ return "SAMPLE_ID"; } # sample column header from MSI file
-      output_filename:
-        valueFrom: ${ return "data_clinical_sample.txt"; } # TODO: should this be passed in?
-      cBioPortal:
-        valueFrom: ${ return true; }
-    out:
-      [ output_file ]
 
 outputs:
-  output_file:
-    type: File
-    outputSource: merge_data_clinical/output_file
+  pairs:
+    type: "types.yml#MSIOutputPair[]"
+    outputSource: run_msi_add_sample_id/pair

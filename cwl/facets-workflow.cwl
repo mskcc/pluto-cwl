@@ -84,17 +84,7 @@ requirements:
   - $import: types.yml
 
 inputs:
-  pairs:
-    type:
-      type: array
-      items:
-        type: record
-        fields:
-          pair_maf: File
-          snp_pileup: File
-          pair_id: string
-          tumor_id: string
-          normal_id: string
+  pairs: "types.yml#TNMafPileupPair[]"
 
 steps:
   # run the facets suite wrapper set on each tumor normal pair
