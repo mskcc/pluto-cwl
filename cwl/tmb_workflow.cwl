@@ -1,39 +1,27 @@
 #!/usr/bin/env cwl-runner
 
-cwlVersion: v1.0
+cwlVersion: v1.2
 class: Workflow
 doc: "
 Workflow to run the TMB analysis on a batch of samples and merge the results back into a single data clinical file
 "
 requirements:
-  MultipleInputFeatureRequirement: {}
-  ScatterFeatureRequirement: {}
-  StepInputExpressionRequirement: {}
-  InlineJavascriptRequirement: {}
-  SubworkflowFeatureRequirement: {}
+  - class: MultipleInputFeatureRequirement
+  - class: ScatterFeatureRequirement
+  - class: StepInputExpressionRequirement
+  - class: InlineJavascriptRequirement
+  - class: SubworkflowFeatureRequirement
+  - $import: types.yml
 
 inputs:
-  data_clinical_file:
-    type: File
-    doc: "data clinical samplesheet file to merge the TMB results into"
   assay_coverage:
     type: string
     doc: "genome_coverage value; amount of the genome in bp covered by the assay"
-  pairs:
-    type:
-      type: array
-      items:
-        type: record
-        fields:
-          pair_maf: File
-          pair_id: string
-          tumor_id: string
-          normal_id: string
+  pairs: "types.yml#TMBInputPair[]"
 
 steps:
   # run the TMB analysis for each tumor sample in the list of pairs
   run_tmb_workflow:
-    run: tmb.cwl
     scatter: pair
     in:
       pair: pairs
@@ -43,40 +31,129 @@ steps:
         valueFrom: ${ return inputs.pair['tumor_id']; }
       normal_id:
         valueFrom: ${ return inputs.pair['normal_id']; }
+      pair_id:
+        valueFrom: ${ return inputs.pair['pair_id']; }
       assay_coverage: assay_coverage
     out:
-      [ output_file ] # [ tmb.tsv 1, tmb.tsv 2, ... ] array of tmb table files for each input pair
+      [ pair ]
+    run:
+      class: Workflow
+      inputs:
+        mutations_file:
+          type: File
+          doc: "File with mutations for the sample"
+        assay_coverage:
+          type: string
+          doc: "genome_coverage value; amount of the genome in bp covered by the assay"
+        sample_id:
+          type: string
+        normal_id:
+          type: string
+        pair_id:
+          type: string
+      outputs:
+        pair:
+          type: "types.yml#TMBOutputPair"
+          outputSource: create_tmb_pair_output/pair
+      steps:
+        filter_variants:
+          doc: filter the variant maf file for only the variants desired for use in TMB calculation
+          run: tmb_variant_filter.cwl
+          in:
+            pair_id: pair_id
+            input_file: mutations_file
+            output_filename:
+              valueFrom: ${ return inputs.pair_id + ".tmb.maf"; }
+          out:
+            [ output_file ]
 
-  # concatenate all the individual TMB tables into a single table
-  concat_tmb_tables:
-    run: concat-tables_dir.cwl # NOTE: Important!! use this CWL in case a huge amount of files are passed!!
-    in:
-      input_files: run_tmb_workflow/output_file
-      output_filename:
-        valueFrom: ${ return "tmb.concat.tsv"; }
-      comments:
-        valueFrom: ${ return true; }
-    out:
-      [ output_file ]
+        calc_tmb_value:
+          doc: calculate the TMB for the variants present based on assay coverage
+          run: calc-tmb.cwl
+          in:
+            pair_id: pair_id
+            input_file: filter_variants/output_file
+            output_filename:
+              valueFrom: ${ return inputs.pair_id + ".tmb.txt"; }
+            genome_coverage: assay_coverage
+            normal_id: normal_id
+          out:
+            [ output_file ]
 
-  # combine the TMB results with the data clinical file
-  merge_data_clinical:
-    run: merge-tables.cwl
-    in:
-      table1: data_clinical_file
-      table2: concat_tmb_tables/output_file
-      key1:
-        valueFrom: ${ return "SAMPLE_ID"; } # sample column header from data clinical file
-      key2:
-        valueFrom: ${ return "SampleID"; } # sample column header from TMB file
-      output_filename:
-        valueFrom: ${ return "data_clinical_sample.txt"; } # TODO: should this be passed in?
-      cBioPortal:
-        valueFrom: ${ return true; }
-    out:
-      [ output_file ]
+        fix_tmb_header:
+          doc: turn the TMB value into a table format with header
+          run: add_header.cwl
+          in:
+            input_file: calc_tmb_value/output_file
+            header_str:
+              valueFrom: ${ return "CMO_TMB_SCORE"; }
+          out:
+            [ output_file ]
+
+        add_sampleID:
+          doc: add the sample ID back to the TMB table file
+          run: paste-col.cwl
+          in:
+            pair_id: pair_id
+            input_file: fix_tmb_header/output_file
+            output_filename: # NOTE: we plan to concat this file later so it needs to have a unique filename !!
+              valueFrom: ${ return inputs.pair_id + ".tmb.tsv"; }
+            header:
+              valueFrom: ${ return "SampleID"; } # TODO: Change this to SAMPLE_ID
+            value: sample_id
+          out:
+            [ output_file ]
+
+        # TODO: add this !! otherwise its difficult to know what values were used later!
+        # NOTE: requires updating the cBioPortal file header schema to include new column
+        # add_assay_coverage:
+        #   doc: add the assay coverage to the table
+        #   run: paste-col.cwl
+        #   in:
+        #     pair_id: pair_id
+        #     input_file: add_sampleID/output_file
+        #     output_filename: # NOTE: we plan to concat this file later so it needs to have a unique filename !!
+        #       valueFrom: ${ return inputs.pair_id + ".tmb.tsv"; }
+        #     header:
+        #       valueFrom: ${ return "CMO_ASSAY_COVERAGE"; }
+        #     value: assay_coverage
+        #   out:
+        #     [ output_file ]
+
+        create_tmb_pair_output:
+          doc: gather the TMB analysis outputs into a pair entry
+          in:
+            pair_id: pair_id
+            tumor_id: sample_id
+            normal_id: normal_id
+            tmb_maf: filter_variants/output_file
+            tmb_tsv: add_sampleID/output_file
+          out: [ pair ]
+          run:
+            class: ExpressionTool
+            inputs:
+              pair_id: string
+              tumor_id: string
+              normal_id: string
+              tmb_maf: File
+              tmb_tsv: File
+            outputs:
+              pair: "types.yml#TMBOutputPair"
+            expression: |
+              ${
+                var pair = {
+                  "pair_id": inputs.pair_id,
+                  "tumor_id": inputs.tumor_id,
+                  "normal_id": inputs.normal_id,
+                  "tmb_maf": inputs.tmb_maf,
+                  "tmb_tsv": inputs.tmb_tsv,
+                };
+
+                return {"pair": pair};
+              }
+
 
 outputs:
-  output_file:
-    type: File
-    outputSource: merge_data_clinical/output_file
+  pairs:
+    type: "types.yml#TMBOutputPair[]"
+    outputSource: run_tmb_workflow/pair

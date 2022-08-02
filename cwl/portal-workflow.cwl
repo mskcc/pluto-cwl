@@ -143,6 +143,12 @@ inputs:
   mutation_svs_txt_files:
     type: File[]
     doc: "*.svs.pass.vep.portal.txt"
+  msi_files:
+    type: File[]
+    doc: "msi.tsv files"
+  tmb_files:
+    type: File[]
+    doc: "*.tmb.tsv files"
   facets_suite_txt_files:
     type:
       - "null"
@@ -549,13 +555,77 @@ steps:
           ]}
     out: [ directory ]
 
+
+#  HANDLING FOR MSI AND TMB FILES
+  concat_tmb_tables:
+    run: concat-tables.cwl
+    in:
+      input_files: tmb_files
+      output_filename:
+        valueFrom: ${ return "tmb.tsv"; }
+      comments:
+        valueFrom: ${ return true; }
+    out: [ output_file ]
+
+
+  concat_msi_tables:
+    run: concat-tables.cwl
+    in:
+      input_files: msi_files
+      output_filename:
+        valueFrom: ${ return "msi.tsv"; }
+      comments:
+        valueFrom: ${ return true; }
+    out:
+      [ output_file ]
+
+
+  # combine the MSI results with the data clinical file
+  merge_msi_data_clinical:
+    run: merge-tables.cwl
+    in:
+      table1: generate_data_clinical_sample/output_file
+      table2: concat_msi_tables/output_file
+      key1:
+        valueFrom: ${ return "SAMPLE_ID"; } # sample column header from data clinical file
+      key2:
+        valueFrom: ${ return "SAMPLE_ID"; } # sample column header from MSI file
+      output_filename:
+        valueFrom: ${ return "data_clinical_sample.txt"; } # TODO: should this be passed in?
+      cBioPortal:
+        valueFrom: ${ return true; }
+    out: [ output_file ]
+
+  # # combine the TMB, MSI results with the data clinical file
+  merge_tmb_data_clinical:
+    run: merge-tables.cwl
+    in:
+      table1: merge_msi_data_clinical/output_file
+      table2: concat_tmb_tables/output_file
+      key1:
+        valueFrom: ${ return "SAMPLE_ID"; } # sample column header from data clinical file
+      key2:
+        valueFrom: ${ return "SampleID"; } # sample column header from TMB file # TODO: This should be changed to SAMPLE_ID ?
+      output_filename:
+        valueFrom: ${ return "data_clinical_sample.txt"; } # TODO: should this be passed in?
+      cBioPortal:
+        valueFrom: ${ return true; }
+    out: [ output_file ]
+
+
+
+
+  # TODO: move this to workflow_with_facets.cwl
   compile_report:
     run: report.cwl
     in:
       mutation_file: concat_cbio_muts_maf/output_file
-      samples_file: generate_data_clinical_sample/output_file
+      samples_file: merge_tmb_data_clinical/output_file
       patients_file: generate_data_clinical_patient/output_file
     out: [ output_file ]
+
+
+
 
 outputs:
   portal_meta_clinical_sample_file:
@@ -566,7 +636,7 @@ outputs:
     outputSource: generate_data_clinical_patient/output_file # data_clinical_patient.txt
   portal_data_clinical_sample_file:
     type: File
-    outputSource: generate_data_clinical_sample/output_file # data_clinical_sample.txt
+    outputSource: merge_tmb_data_clinical/output_file # data_clinical_sample.txt
   portal_meta_study_file:
     type: File
     outputSource: generate_cbio_meta_study/output_file # meta_study.txt

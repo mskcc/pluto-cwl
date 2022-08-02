@@ -7,7 +7,6 @@ baseCommand: ["tmb_variant_filter.py"]
 requirements:
   DockerRequirement:
     dockerPull: mskcc/helix_filters_01:21.4.1
-    # TODO: change this version back to a release version
 
 inputs:
   input_file:
@@ -16,6 +15,7 @@ inputs:
       position: 1
   output_filename:
     type: string
+    default: tmb_variants.maf
     inputBinding:
       position: 2
 
