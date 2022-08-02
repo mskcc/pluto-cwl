@@ -19,6 +19,14 @@ inputs:
     doc: "genome_coverage value; amount of the genome in bp covered by the assay"
   pairs: "types.yml#TMBInputPair[]"
 
+# NOTE: breadth of coverage for different target exome assays, used in TMB analysis
+# assay_coverages = {
+#     "IMPACT341": 896637,
+#     "IMPACT468": 1139294,
+#     "IMPACT410": 1016335,
+#     "IMPACT505": 1213770
+# }
+
 steps:
   # run the TMB analysis for each tumor sample in the list of pairs
   run_tmb_workflow:
