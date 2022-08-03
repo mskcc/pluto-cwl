@@ -83,6 +83,8 @@ help:
 	@printf "$$help"
 .PHONY : help
 
+
+
 # ~~~~~ Install Dependencies ~~~~~~ #
 # This is only needed if you are not running on Juno/Silo server, or want to use Toil
 # NOTE: see env.sh for PATH and PYTHONHOME, PYTHONPATH modifications for this to work correctly
@@ -114,6 +116,11 @@ init: SHELLOPTS=$(OLDSHELLOPTS)
 init:
 	git submodule init
 	git submodule update
+
+
+
+
+
 
 # ~~~~~ Container ~~~~~ #
 # pull the Docker container and convert it to Singularity container image file
@@ -225,35 +232,38 @@ update-container-tags:
 	done
 
 
+
+
+
+
+
 # ~~~~~ Debug & Development ~~~~~ #
-# Run the test suite
-# NOTE: run with `$ LARGE_TESTS=True python3 tests/... ` to enable large test cases
-export FIXTURES_DIR:=/juno/work/ci/helix_filters_01/fixtures
-
-# # TODO: figure out why this is missing some tests
-# test2:
-# 	. "$(ENVSH)" toil && \
-# 	if [ ! -e "$(SINGULARITY_SIF)" ]; then $(MAKE) singularity-pull; fi && \
-# 	python3 test.py
-
-# TODO: figure out if we can run the tests in parallel or otherwise make it faster
-# for some reason the test recipe is not running all tests....
-test:
-	. "$(ENVSH)" toil && \
-	if [ ! -e "$(SINGULARITY_SIF)" ]; then $(MAKE) singularity-pull; fi && \
-	for i in tests/test_*.py; do echo $$i; python3 $$i; done
-
-# run tests in parallel;
-# $ make test3 -j 4
-# NOTE: this runs each test_*.py file in parallel; does NOT run individual test cases in parallel!!
-TEST_ENV:=toil
-TESTS:=$(shell ls tests/test_*.py)
-$(TESTS):
-	. "$(ENVSH)" "$(TEST_ENV)" && echo $@; python3 $@
-.PHONY:$(TESTS)
-test3:$(TESTS)
-
 # run all individual test cases in parallel
+
+# RECIPES:
+# parallel-test; run all tests in parallel
+# parallel-test-log; run all tests in parallel but save stdout to log file (stdout might not appear in console right away but its running! check htop if you arent sure if its running)
+
+
+# EXAMPLES:
+# run all tests with default settings
+# $ make parallel-test
+
+# run with logging
+# $make parallel-test-log
+
+# run only test from one .py file, run only 4 tests in parallel
+# $make parallel-test-log T=tests/test_add_af_cwl.py P=4
+
+# pass env vars to control test execution
+# $ PRINT_TESTNAME=T make parallel-test T=tests/test_generate_cBioPortal_file_cwl.py
+# $ CWL_ENGINE=Toil TMP_DIR=/scratch PRINT_COMMAND=T PRINT_TESTNAME=True make parallel-test P=20
+# $ CWL_ENGINE=Toil TMP_DIR=/fscratch/tmp PRINT_COMMAND=T PRINT_TESTNAME=T make parallel-test
+# $ CWL_ENGINE=Toil TMP_DIR=/fscratch/tmp LARGE_TESTS=True PRINT_COMMAND=True PRINT_TESTNAME=True INTEGRATION_TESTS=True make parallel-test-log
+# $ CWL_ENGINE=Toil USE_LSF=T PRINT_COMMAND=T PRINT_TESTNAME=T make parallel-test-log
+
+# NOTE: ^^^ env vars must come BEFORE `make ....`, and Makefile vars must come AFTER
+
 # number of parallel tasks;
 P:=16
 # test target; can also be an individual test_*.py file!
@@ -275,13 +285,37 @@ parallel-test:
 	./print_tests.py "$(T)" | \
 	xargs -n 1 -P "$(P)" nice python3 -m unittest
 
-# EXAMPLES:
-# $ PRINT_TESTNAME=True make parallel-test T=tests/test_add_af_cwl.py
-# $ PRINT_TESTNAME=True make parallel-test T=tests/test_generate_cBioPortal_file_cwl.py
-# $ TMP_DIR=/scratch CWL_ENGINE=Toil PRINT_COMMAND=True PRINT_TESTNAME=True make parallel-test P=20
-# TMP_DIR=/fscratch/tmp PRINT_COMMAND=True PRINT_TESTNAME=True make parallel-test
-# $ CWL_ENGINE=Toil TMP_DIR=/fscratch/tmp LARGE_TESTS=True PRINT_COMMAND=True PRINT_TESTNAME=True INTEGRATION_TESTS=True make parallel-test-log
 
+#
+# OLD TEST RUNNING RECIPES:
+#
+
+# Run the test suite
+# NOTE: run with `$ LARGE_TESTS=True python3 tests/... ` to enable large test cases
+
+# TODO: why is this here and do we need it?? might be used in pluto settings.py??
+export FIXTURES_DIR:=/juno/work/ci/helix_filters_01/fixtures
+
+# TODO: figure out if we can run the tests in parallel or otherwise make it faster
+# for some reason the test recipe is not running all tests....
+test:
+	. "$(ENVSH)" toil && \
+	if [ ! -e "$(SINGULARITY_SIF)" ]; then $(MAKE) singularity-pull; fi && \
+	for i in tests/test_*.py; do echo $$i; python3 $$i; done
+
+# run tests in parallel;
+# $ make test3 -j 4
+# NOTE: this runs each test_*.py file in parallel; does NOT run individual test cases in parallel!!
+TEST_ENV:=toil
+TESTS:=$(shell ls tests/test_*.py)
+$(TESTS):
+	. "$(ENVSH)" "$(TEST_ENV)" && echo $@; python3 $@
+.PHONY:$(TESTS)
+test3:$(TESTS)
+
+
+# test recipe for Jenkins
+# TODO: review this, it has problems with the pwd during Jenkins execution; consider only running medium or XL test
 integration_test:
 	. "$(ENVSH)" integration_test && \
 	cd pluto && \
@@ -291,51 +325,9 @@ integration_test:
 	#for i in tests/test_*workflow*.py; do echo $$i; python3 $$i; rm -rf $TMP_DIR/tmp* /scratch/jenkins/tmp*; done
 	python tests/test_workflow_with_facets.xl.py && \
 	python tests/test_workflow_with_facets.medium.py
-# run the integration tests with Jenkins
-# integration_test:
-# 	. "$(ENVSH)" integration_test
-# 	python tests/test_workflow_with_facets.xl.py
-# 	python tests/test_workflow_with_facets.medium.py
-# 	python tests/test_samples_fillout_index_workflow_cwl.py
-# 	( cd pluto && python test_tools.py && python test_serializer.py )
 
+# alternative Jenkins test recipe
+# TODO: do we still need this?
 integration_test_1:
 	. "$(ENVSH)" integration_test && \
 	for i in tests/test_*cwl*.py; do echo $$i; python3 $$i; done
-
-# interactive session with environment populated
-bash: ENV=shell
-bash:
-	. "$(ENVSH)" "$(ENV)" && bash
-
-# clean:
-# 	rm -rf cache tmp
-#
-# clean-all: clean
-# 	rm -rf output portal analysis mutation_maf_files.txt facets_hisens_seg_files.txt facets_hisens_cncf_files.txt mutation_svs_txt_files.txt mutation_svs_maf_files.txt
-#
-
-# Example args for running with Toil
-# run-toil: OUTPUTDIR=$(CURDIR)/toil_output
-# run-toil: LOGFILE=$(OUTPUTDIR)/toil.log
-# run-toil: JOBSTORE=$(OUTPUTDIR)/job-store
-# run-toil: WORKDIR=$(OUTPUTDIR)/work
-# run-toil: ENV=toil
-# run-toil:
-# 	. $(ENVSH) $(ENV)
-# 	unset SINGULARITY_CACHEDIR
-# 	mkdir -p "$(OUTPUTDIR)"
-# 	mkdir -p "$(WORKDIR)"
-# 	[ -e "$(JOBSTORE)" ] && rm -rf "$(JOBSTORE)" || :
-# 	( toil-cwl-runner \
-# 	--logFile "$(LOGFILE)" \
-# 	--outdir "$(OUTPUTDIR)" \
-# 	--workDir "$(WORKDIR)" \
-# 	--jobStore "$(JOBSTORE)" \
-# 	--singularity \
-# 	--batchSystem lsf --disableCaching True \
-# 	--disable-user-provenance --disable-host-provenance \
-# 	--preserve-entire-environment \
-# 	cwl/example_workflow.cwl cwl/example_input.json ) > toil.stdout.txt
-# # --preserve-environment PATH TMPDIR TOIL_LSF_ARGS SINGULARITY_CACHEDIR SINGULARITY_TMPDIR SINGULARITY_PULLDIR PWD \
-# # --maxLocalJobs 500 \
