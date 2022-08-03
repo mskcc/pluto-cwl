@@ -246,6 +246,8 @@ update-container-tags:
 
 
 # EXAMPLES:
+# initialize the "toil" environment (assuming you have installed dependencies)
+# $ . env.juno.sh toil
 # run all tests with default settings
 # $ make parallel-test
 
