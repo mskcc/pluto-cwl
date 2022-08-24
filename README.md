@@ -6,6 +6,13 @@ CWL files and workflows to accompany the [helix_filters_01](https://github.com/m
 
 # Installation & Setup
 
+Clone this repo with 
+
+```
+git clone --recursive https://github.com/mskcc/pluto-cwl.git
+cd pluto-cwl
+```
+
 Install dependencies for the repo with the command:
 
 ```
