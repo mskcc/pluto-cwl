@@ -10,7 +10,7 @@ baseCommand: ["update_cBioPortal_data.py"]
 requirements:
   InlineJavascriptRequirement: {}
   DockerRequirement:
-    dockerPull: mskcc/helix_filters_01:21.4.1
+    dockerPull: mskcc/helix_filters_01:21.7.0
   ResourceRequirement:
     ramMax: 16000
 
