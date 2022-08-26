@@ -1,6 +1,8 @@
 #!/usr/bin/env cwl-runner
 cwlVersion: v1.2
 class: Workflow
+id: samples_fillout_workflow
+label: samples_fillout_workflow
 doc: "
 Workflow to run GetBaseCountsMultiSample fillout on a number of samples, each with their own bam and maf files
 "
@@ -45,12 +47,15 @@ inputs:
 steps:
 
   create_samples_list:
+    id: create_samples_list
     doc: creates a list of sample_ids out of the samples record array for downstream use
     in:
       samples: samples
     out: [ sample_ids ]
     run:
       class: ExpressionTool
+      id: create_samples_list
+      label: create_samples_list
       inputs:
         samples: "types.yml#FilloutSample[]"
       outputs:
@@ -72,6 +77,8 @@ steps:
     out: [ clinical_sample_ids ]
     run:
       class: ExpressionTool
+      id: create_clinical_samples_list
+      label: create_clinical_samples_list
       inputs:
         samples: "types.yml#FilloutSample[]"
       outputs:
@@ -95,6 +102,8 @@ steps:
       [ bam_files ]
     run:
       class: ExpressionTool
+      id: create_bam_list
+      label: create_bam_list
       inputs:
         samples: "types.yml#FilloutSample[]"
       outputs:
@@ -128,6 +137,8 @@ steps:
       [ output_file ]
     run:
       class: CommandLineTool
+      id: maf2vcf
+      label: maf2vcf
       baseCommand: ['bash', 'run.sh']
       requirements:
         DockerRequirement:
@@ -182,6 +193,8 @@ steps:
       [ merged_vcf, merged_vcf_gz ]
     run:
       class: CommandLineTool
+      id: create_fillout_targets_list
+      label: create_fillout_targets_list
       baseCommand: ['bash', 'run.sh']
       requirements:
         DockerRequirement:
@@ -234,6 +247,8 @@ steps:
     out: [ output_file ]
     run:
       class: CommandLineTool
+      id: gbcms
+      label: gbcms
       baseCommand: [ "sh", "run.sh" ]
       requirements:
         InlineJavascriptRequirement: {}
@@ -293,6 +308,8 @@ steps:
     out: [ fillout_sources_vcf ]
     run:
       class: CommandLineTool
+      id: fix_labels_and_merge_vcfs
+      label: fix_labels_and_merge_vcfs
       baseCommand: [ "bash", "run.sh" ]
       requirements:
         DockerRequirement:
@@ -384,6 +401,8 @@ steps:
     out: [ sample ]
     run:
       class: CommandLineTool
+      id: split_filter_vcf
+      label: split_filter_vcf
       baseCommand: [ "bash", "run.sh" ]
       requirements:
         DockerRequirement:
@@ -495,6 +514,8 @@ steps:
     out: [ unfiltered_maf, filtered_maf, sample ]
     run:
       class: CommandLineTool
+      id: vcf_to_maf
+      label: vcf_to_maf
       baseCommand: [ "sh", "run.sh" ]
       requirements:
         ResourceRequirement:
@@ -603,6 +624,8 @@ steps:
     out: [ output_file, filtered_file ]
     run:
       class: CommandLineTool
+      id: concat_with_comments
+      label: concat_with_comments
       baseCommand: [ "bash", "run.sh" ]
       requirements:
         DockerRequirement:

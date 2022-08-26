@@ -199,8 +199,12 @@ class TestSamplesFilloutIndexBatch(PlutoTestCase):
         self.assertEqualNumMutations([portal_output_path, uncalled_output_path], filtered_output_path)
         self.assertMutFieldContains(output_file, "Tumor_Sample_Barcode", ["Sample1", "Sample2", "Sample3", "Sample4", "Sample5"], containsAll = True)
 
+
+
+
     def test_three_groups(self):
         """
+        NOTE: This one includes Singleton case! most important
         Three groups, one of which contains a single sample (singleton)
         """
         sample_group1 = [
@@ -287,6 +291,11 @@ class TestSamplesFilloutIndexBatch(PlutoTestCase):
         self.assertNumMutationsHash(uncalled_output_path, 18, 'cb601fb73ecf937db024351d69a441f1')
         self.assertEqualNumMutations([portal_output_path, uncalled_output_path], filtered_output_path)
         self.assertMutFieldContains(output_file, "Tumor_Sample_Barcode", ["Sample1", "Sample2", "Sample3", "Sample4", "Sample5"], containsAll = True)
+
+
+
+
+
 
     def test_four_groups(self):
         """
