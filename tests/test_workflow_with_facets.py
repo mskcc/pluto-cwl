@@ -365,7 +365,7 @@ class TestWorkflowWithFacets(PlutoTestCase):
                 'portal_dir': ODir(name = 'portal', dir = output_dir, items = [
                     OFile(name = 'meta_clinical_sample.txt', size = 132, hash = '7d2bb282e74ff6a5d41b334ded689f9336722702'),
                     OFile(name = 'data_clinical_patient.txt', size = 91, hash = 'cac1377a45dfc316266697a21df87801883127b5'),
-                    OFile(name = 'data_clinical_sample.txt', size = 1546, hash = '05a7a6f7c52627c8f395c74217c16c2015cb4226'),
+                    OFile(name = 'data_clinical_sample.txt', size = 1547, hash = '9443653139fdbe4b8d0641e6447612c4358c89f7'),
                     OFile(name = 'meta_study.txt', size = 128, hash = '998a850a03828cf4c235583dced9751ba75c9ab1'),
                     OFile(name = 'meta_clinical_patient.txt', size = 134, hash = 'e1f0b7786dd10af608df5178ff4b1a0b7a191a38'),
                     OFile(name = 'meta_CNA.txt', size = 262, hash = '93367ae36cae5e1a53b25e5bb02731e8b113251b'),
@@ -387,7 +387,7 @@ class TestWorkflowWithFacets(PlutoTestCase):
                 ]),
             "tmb_dir": ODir(name = "tmb", dir = output_dir, items = [
                 OFile(name = "Sample1.Sample2.tmb.tsv", size = 39, hash = "87023f9592251d3b2e9a22bf359daba7bcb1e589"),
-                OFile(name = "Sample4.Sample3.tmb.tsv", size = 38, hash = "48b0797bd07514f46298d2d52d41a3e0a4543196")
+                OFile(name = "Sample4.Sample3.tmb.tsv", size = 39, hash = "bc8b938cdba1c5390db1e398911d96bced0d0fc6")
             ]),
             "msi_dir": ODir(name = "msi", dir = output_dir, items = [
                 OFile(name = "Sample1.Sample2.msi.tsv", size = 54, hash = "da75ec7441a5d537c46bebb282099d95b575531c"),
@@ -409,7 +409,7 @@ class TestWorkflowWithFacets(PlutoTestCase):
         self.assertSampleValues(
             os.path.join(output_dir, 'portal/data_clinical_sample.txt'),
             value_fieldname = "CMO_TMB_SCORE",
-            expected_values = {'Sample1': '17000.0', 'Sample4': '9000.0'})
+            expected_values = {'Sample1': '17000.0', 'Sample4': '10000.0'})
 
         self.assertSampleValues(
             os.path.join(output_dir, 'portal/data_clinical_sample.txt'),
@@ -559,7 +559,7 @@ class TestWorkflowWithFacets(PlutoTestCase):
                 'portal_dir': ODir(name = 'portal', dir = output_dir, items = [
                     OFile(name = 'meta_clinical_sample.txt', size = 140, hash = '4c567d81c3b17a76c324fd3e2f73793a6e804f65'),
                     OFile(name = 'data_clinical_patient.txt', size = 643, hash = '9417dcabddd6ab2cbe98167bccd9b9e4fa182562'),
-                    OFile(name = 'data_clinical_sample.txt', size = 9141, hash = '01786ca95d8c908df16154734c9fc1053e9bcd98'),
+                    OFile(name = 'data_clinical_sample.txt', size = 9140, hash = '68d8ce2251572afd7cbd8c064381bd27e4b9e71d'),
                     OFile(name = 'meta_study.txt', size = 152, hash = '2b0a5fd1a97329adf7c3b1596c84cd6567059a95'),
                     OFile(name = 'meta_clinical_patient.txt', size = 142, hash = '9cdc9a7e44a230c012f48b0236bdcf0bbc7de67f'),
                     OFile(name = 'meta_CNA.txt', size = 270, hash = 'a9bf16f6a0490b19e611e8814b85f7bf1d52417a'),
@@ -580,7 +580,7 @@ class TestWorkflowWithFacets(PlutoTestCase):
                     OFile(name = 'report.html')
                 ]),
                 "tmb_dir": ODir(name = "tmb", dir = output_dir, items = [
-                    OFile(name = "Sample1.Sample2.tmb.tsv", size = 36, hash = "ac8c900fac72d308dcee587ba5868be2f1c6f111"),
+                    OFile(name = "Sample1.Sample2.tmb.tsv", size = 35, hash = "294ba1592070c757cd7fc5c172512328801cc621"),
                 ]),
                 "msi_dir": ODir(name = "msi", dir = output_dir, items = [
                     OFile(name = "Sample1.Sample2.msi.tsv", size = 54, hash = "da75ec7441a5d537c46bebb282099d95b575531c"),
@@ -628,7 +628,22 @@ class TestWorkflowWithFacets(PlutoTestCase):
             os.path.join(output_dir, 'portal/data_clinical_sample.txt'),
             value_fieldname = "CMO_TMB_SCORE",
             expected_values = {
-            'Sample46': 'NA', 'Sample44': 'NA', 'Sample80': 'NA', 'Sample20': 'NA', 'Sample38': 'NA', 'Sample26': 'NA', 'Sample94': 'NA', 'Sample48': 'NA', 'Sample68': 'NA', 'Sample90': 'NA', 'Sample18': 'NA', 'Sample54': 'NA', 'Sample52': 'NA', 'Sample86': 'NA', 'Sample30': 'NA', 'Sample78': 'NA', 'Sample84': 'NA', 'Sample82': 'NA', 'Sample6': 'NA', 'Sample96': 'NA', 'Sample72': 'NA', 'Sample56': 'NA', 'Sample64': 'NA', 'Sample58': 'NA', 'Sample92': 'NA', 'Sample62': 'NA', 'Sample8': 'NA', 'Sample24': 'NA', 'Sample12': 'NA', 'Sample16': 'NA', 'Sample88': 'NA', 'Sample22': 'NA', 'Sample42': 'NA', 'Sample76': 'NA', 'Sample28': 'NA', 'Sample74': 'NA', 'Sample50': 'NA', 'Sample60': 'NA', 'Sample10': 'NA', 'Sample36': 'NA', 'Sample34': 'NA', 'Sample40': 'NA', 'Sample66': 'NA', 'Sample14': 'NA', 'Sample32': 'NA', 'Sample70': 'NA', 'Sample4': 'NA', 'Sample1': '47.5'
+            'Sample46': 'NA', 'Sample44': 'NA', 'Sample80': 'NA', 
+            'Sample20': 'NA', 'Sample38': 'NA', 'Sample26': 'NA', 
+            'Sample94': 'NA', 'Sample48': 'NA', 'Sample68': 'NA', 
+            'Sample90': 'NA', 'Sample18': 'NA', 'Sample54': 'NA', 
+            'Sample52': 'NA', 'Sample86': 'NA', 'Sample30': 'NA', 
+            'Sample78': 'NA', 'Sample84': 'NA', 'Sample82': 'NA', 
+            'Sample6': 'NA', 'Sample96': 'NA', 'Sample72': 'NA', 
+            'Sample56': 'NA', 'Sample64': 'NA', 'Sample58': 'NA', 
+            'Sample92': 'NA', 'Sample62': 'NA', 'Sample8': 'NA', 
+            'Sample24': 'NA', 'Sample12': 'NA', 'Sample16': 'NA', 
+            'Sample88': 'NA', 'Sample22': 'NA', 'Sample42': 'NA', 
+            'Sample76': 'NA', 'Sample28': 'NA', 'Sample74': 'NA', 
+            'Sample50': 'NA', 'Sample60': 'NA', 'Sample10': 'NA', 
+            'Sample36': 'NA', 'Sample34': 'NA', 'Sample40': 'NA', 
+            'Sample66': 'NA', 'Sample14': 'NA', 'Sample32': 'NA', 
+            'Sample70': 'NA', 'Sample4': 'NA', 'Sample1': '1.7'
             })
 
         self.assertSampleValues(
@@ -818,7 +833,7 @@ class TestWorkflowWithFacets(PlutoTestCase):
                 'portal_dir': ODir(name = 'portal', dir = output_dir, items = [
                     OFile(name = 'meta_clinical_sample.txt', size = 140, hash = '4c567d81c3b17a76c324fd3e2f73793a6e804f65'),
                     OFile(name = 'data_clinical_patient.txt', size = 643, hash = '9417dcabddd6ab2cbe98167bccd9b9e4fa182562'),
-                    OFile(name = 'data_clinical_sample.txt', size = 9161, hash = 'eaf1bf33486b695373879f3b8c93af5571a6a1c1'),
+                    OFile(name = 'data_clinical_sample.txt', size = 9160, hash = '2a089ae3955597768d8510066873dfad96eed6b9'),
                     OFile(name = 'meta_study.txt', size = 152, hash = '2b0a5fd1a97329adf7c3b1596c84cd6567059a95'),
                     OFile(name = 'meta_clinical_patient.txt', size = 142, hash = '9cdc9a7e44a230c012f48b0236bdcf0bbc7de67f'),
                     OFile(name = 'meta_CNA.txt', size = 270, hash = 'a9bf16f6a0490b19e611e8814b85f7bf1d52417a'),
@@ -839,8 +854,8 @@ class TestWorkflowWithFacets(PlutoTestCase):
                     OFile(name = 'report.html')
                 ]),
                 "tmb_dir": ODir(name = "tmb", dir = output_dir, items = [
-                    OFile(name = "Sample1.Sample2.tmb.tsv", size = 36, hash = "ac8c900fac72d308dcee587ba5868be2f1c6f111"),
-                    OFile(name = "Sample4.Sample3.tmb.tsv", size = 35, hash = "4e8ffba2d426d5ee93dd8b6d4a1e7b61280e4681")
+                    OFile(name = "Sample1.Sample2.tmb.tsv", size = 35, hash = "294ba1592070c757cd7fc5c172512328801cc621"),
+                    OFile(name = "Sample4.Sample3.tmb.tsv", size = 35, hash = "700c7acb015e88fd4f086034e0016d97c4efcb37")
                 ]),
                 "msi_dir": ODir(name = "msi", dir = output_dir, items = [
                     OFile(name = "Sample1.Sample2.msi.tsv", size = 54, hash = "da75ec7441a5d537c46bebb282099d95b575531c"),
@@ -893,18 +908,81 @@ class TestWorkflowWithFacets(PlutoTestCase):
             os.path.join(output_dir, 'portal/data_clinical_sample.txt'),
             value_fieldname = "CMO_TMB_SCORE",
             expected_values = {
-            'Sample46': 'NA', 'Sample44': 'NA', 'Sample80': 'NA', 'Sample20': 'NA', 'Sample38': 'NA', 'Sample26': 'NA', 'Sample94': 'NA', 'Sample48': 'NA', 'Sample68': 'NA', 'Sample90': 'NA', 'Sample18': 'NA', 'Sample54': 'NA', 'Sample52': 'NA', 'Sample86': 'NA', 'Sample30': 'NA', 'Sample78': 'NA', 'Sample84': 'NA', 'Sample82': 'NA', 'Sample6': 'NA', 'Sample96': 'NA', 'Sample72': 'NA', 'Sample56': 'NA', 'Sample64': 'NA', 'Sample58': 'NA', 'Sample92': 'NA', 'Sample62': 'NA', 'Sample8': 'NA', 'Sample24': 'NA', 'Sample12': 'NA', 'Sample16': 'NA', 'Sample88': 'NA', 'Sample22': 'NA', 'Sample42': 'NA', 'Sample76': 'NA', 'Sample28': 'NA', 'Sample74': 'NA', 'Sample50': 'NA', 'Sample60': 'NA', 'Sample10': 'NA', 'Sample36': 'NA', 'Sample34': 'NA', 'Sample40': 'NA', 'Sample66': 'NA', 'Sample14': 'NA', 'Sample32': 'NA', 'Sample70': 'NA', 'Sample4': '5.5', 'Sample1': '47.5'
+            'Sample46': 'NA', 
+            'Sample44': 'NA', 
+            'Sample80': 'NA', 
+            'Sample20': 'NA', 
+            'Sample38': 'NA', 
+            'Sample26': 'NA', 
+            'Sample94': 'NA', 
+            'Sample48': 'NA', 
+            'Sample68': 'NA', 
+            'Sample90': 'NA', 
+            'Sample18': 'NA', 
+            'Sample54': 'NA', 
+            'Sample52': 'NA', 
+            'Sample86': 'NA', 
+            'Sample30': 'NA', 
+            'Sample78': 'NA', 
+            'Sample84': 'NA', 
+            'Sample82': 'NA', 
+            'Sample6': 'NA', 
+            'Sample96': 'NA', 
+            'Sample72': 'NA', 
+            'Sample56': 'NA', 
+            'Sample64': 'NA', 
+            'Sample58': 'NA', 
+            'Sample92': 'NA', 'Sample62': 'NA', 'Sample8': 'NA', 
+            'Sample24': 'NA', 'Sample12': 'NA', 'Sample16': 'NA', 
+            'Sample88': 'NA', 'Sample22': 'NA', 'Sample42': 'NA', 
+            'Sample76': 'NA', 'Sample28': 'NA', 'Sample74': 'NA', 
+            'Sample50': 'NA', 'Sample60': 'NA', 'Sample10': 'NA', 
+            'Sample36': 'NA', 'Sample34': 'NA', 'Sample40': 'NA', 
+            'Sample66': 'NA', 'Sample14': 'NA', 'Sample32': 'NA', 
+            'Sample70': 'NA', 'Sample4': '1.0', 'Sample1': '1.7'
             })
 
         self.assertSampleValues(
             os.path.join(output_dir, 'portal/data_clinical_sample.txt'),
             value_fieldname = "MSI_SCORE",
-            expected_values = {'Sample46': 'NA', 'Sample44': 'NA', 'Sample80': 'NA', 'Sample20': 'NA', 'Sample38': 'NA', 'Sample26': 'NA', 'Sample94': 'NA', 'Sample48': 'NA', 'Sample68': 'NA', 'Sample90': 'NA', 'Sample18': 'NA', 'Sample54': 'NA', 'Sample52': 'NA', 'Sample86': 'NA', 'Sample30': 'NA', 'Sample78': 'NA', 'Sample84': 'NA', 'Sample82': 'NA', 'Sample6': 'NA', 'Sample96': 'NA', 'Sample72': 'NA', 'Sample56': 'NA', 'Sample64': 'NA', 'Sample58': 'NA', 'Sample92': 'NA', 'Sample62': 'NA', 'Sample8': 'NA', 'Sample24': 'NA', 'Sample12': 'NA', 'Sample16': 'NA', 'Sample88': 'NA', 'Sample22': 'NA', 'Sample42': 'NA', 'Sample76': 'NA', 'Sample28': 'NA', 'Sample74': 'NA', 'Sample50': 'NA', 'Sample60': 'NA', 'Sample10': 'NA', 'Sample36': 'NA', 'Sample34': 'NA', 'Sample40': 'NA', 'Sample66': 'NA', 'Sample14': 'NA', 'Sample32': 'NA', 'Sample70': 'NA', 'Sample4': '11.76', 'Sample1': '28.00'})
+            expected_values = {
+                'Sample46': 'NA', 'Sample44': 'NA', 'Sample80': 'NA', 
+                'Sample20': 'NA', 'Sample38': 'NA', 'Sample26': 'NA', 
+                'Sample94': 'NA', 'Sample48': 'NA', 'Sample68': 'NA', 
+                'Sample90': 'NA', 'Sample18': 'NA', 'Sample54': 'NA', 
+                'Sample52': 'NA', 'Sample86': 'NA', 'Sample30': 'NA', 
+                'Sample78': 'NA', 'Sample84': 'NA', 'Sample82': 'NA', 
+                'Sample6': 'NA', 'Sample96': 'NA', 'Sample72': 'NA', 
+                'Sample56': 'NA', 'Sample64': 'NA', 'Sample58': 'NA', 
+                'Sample92': 'NA', 'Sample62': 'NA', 'Sample8': 'NA', 
+                'Sample24': 'NA', 'Sample12': 'NA', 'Sample16': 'NA', 
+                'Sample88': 'NA', 'Sample22': 'NA', 'Sample42': 'NA', 
+                'Sample76': 'NA', 'Sample28': 'NA', 'Sample74': 'NA', 
+                'Sample50': 'NA', 'Sample60': 'NA', 'Sample10': 'NA', 
+                'Sample36': 'NA', 'Sample34': 'NA', 'Sample40': 'NA', 
+                'Sample66': 'NA', 'Sample14': 'NA', 'Sample32': 'NA', 
+                'Sample70': 'NA', 'Sample4': '11.76', 'Sample1': '28.00'})
 
         self.assertSampleValues(
             os.path.join(output_dir, 'portal/data_clinical_sample.txt'),
             value_fieldname = "MSI_STATUS",
-            expected_values = {'Sample46': 'NA', 'Sample44': 'NA', 'Sample80': 'NA', 'Sample20': 'NA', 'Sample38': 'NA', 'Sample26': 'NA', 'Sample94': 'NA', 'Sample48': 'NA', 'Sample68': 'NA', 'Sample90': 'NA', 'Sample18': 'NA', 'Sample54': 'NA', 'Sample52': 'NA', 'Sample86': 'NA', 'Sample30': 'NA', 'Sample78': 'NA', 'Sample84': 'NA', 'Sample82': 'NA', 'Sample6': 'NA', 'Sample96': 'NA', 'Sample72': 'NA', 'Sample56': 'NA', 'Sample64': 'NA', 'Sample58': 'NA', 'Sample92': 'NA', 'Sample62': 'NA', 'Sample8': 'NA', 'Sample24': 'NA', 'Sample12': 'NA', 'Sample16': 'NA', 'Sample88': 'NA', 'Sample22': 'NA', 'Sample42': 'NA', 'Sample76': 'NA', 'Sample28': 'NA', 'Sample74': 'NA', 'Sample50': 'NA', 'Sample60': 'NA', 'Sample10': 'NA', 'Sample36': 'NA', 'Sample34': 'NA', 'Sample40': 'NA', 'Sample66': 'NA', 'Sample14': 'NA', 'Sample32': 'NA', 'Sample70': 'NA', 'Sample4': 'Instable', 'Sample1': 'Instable'})
+            expected_values = {
+                'Sample46': 'NA', 'Sample44': 'NA', 'Sample80': 'NA', 
+                'Sample20': 'NA', 'Sample38': 'NA', 'Sample26': 'NA', 
+                'Sample94': 'NA', 'Sample48': 'NA', 'Sample68': 'NA', 
+                'Sample90': 'NA', 'Sample18': 'NA', 'Sample54': 'NA', 
+                'Sample52': 'NA', 'Sample86': 'NA', 'Sample30': 'NA', 
+                'Sample78': 'NA', 'Sample84': 'NA', 'Sample82': 'NA', 
+                'Sample6': 'NA', 'Sample96': 'NA', 'Sample72': 'NA', 
+                'Sample56': 'NA', 'Sample64': 'NA', 'Sample58': 'NA', 
+                'Sample92': 'NA', 'Sample62': 'NA', 'Sample8': 'NA', 
+                'Sample24': 'NA', 'Sample12': 'NA', 'Sample16': 'NA', 
+                'Sample88': 'NA', 'Sample22': 'NA', 'Sample42': 'NA', 
+                'Sample76': 'NA', 'Sample28': 'NA', 'Sample74': 'NA', 
+                'Sample50': 'NA', 'Sample60': 'NA', 'Sample10': 'NA', 
+                'Sample36': 'NA', 'Sample34': 'NA', 'Sample40': 'NA', 
+                'Sample66': 'NA', 'Sample14': 'NA', 'Sample32': 'NA', 
+                'Sample70': 'NA', 'Sample4': 'Instable', 'Sample1': 'Instable'})
 
 
 if __name__ == "__main__":
