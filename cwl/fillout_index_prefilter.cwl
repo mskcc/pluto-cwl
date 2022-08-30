@@ -1,11 +1,14 @@
 #!/usr/bin/env cwl-runner
-
 cwlVersion: v1.2
 class: Workflow
+id: fillout_index_prefilter
+label: fillout_index_prefilter
 doc: "
-Wrapper to run bam indexing on all bams before submitting for samples fillout
-Also includes steps to pre-filter some maf input files
+Apply .bam indexing
+and optional .maf pre-filtering
+for fillout samples
 "
+
 requirements:
   - class: MultipleInputFeatureRequirement
   - class: ScatterFeatureRequirement
@@ -17,23 +20,6 @@ requirements:
 inputs:
   samples:
     type: "types.yml#FilloutIndexSample[]"
-  ref_fasta:
-    type: File
-    secondaryFiles:
-      - .amb
-      - .ann
-      - .bwt
-      - .pac
-      - .sa
-      - .fai
-      - ^.dict
-  exac_filter: # need this to resolve error in subworkflow: Anonymous file object must have 'contents' and 'basename' fields.
-  # TODO: this needs the .tbi/.csi index file added!!
-    type: File
-    default:
-      class: File
-      path: /juno/work/ci/resources/vep/cache/ExAC_nonTCGA.r0.3.1.sites.vep.vcf.gz
-
   # these are needed for the filter script
   is_impact:
     type: boolean
@@ -43,12 +29,7 @@ inputs:
     type: [ "null", string ]
     default: "Unspecified"
 
-  fillout_output_fname:
-    type: string
-    default: "fillout.maf"
-
 steps:
-
   index_bam:
     doc: create a .bai index file for all incoming .bam files
     scatter: sample
@@ -209,27 +190,7 @@ steps:
         return { 'samples': new_samples };
         }
 
-  run_samples_fillout:
-    doc: run the fillout workflow on the samples
-    run: samples_fillout_workflow.cwl
-    in:
-      output_fname: fillout_output_fname
-      exac_filter: exac_filter
-      samples: convert_sample_types/samples
-      ref_fasta: ref_fasta
-    out: [ output_file, filtered_file, portal_file, uncalled_file ]
-
-
 outputs:
-  output_file:
-    type: File
-    outputSource: run_samples_fillout/output_file
-  filtered_file:
-    type: File
-    outputSource: run_samples_fillout/filtered_file
-  portal_file:
-    type: File
-    outputSource: run_samples_fillout/portal_file
-  uncalled_file:
-    type: File
-    outputSource: run_samples_fillout/uncalled_file
+  samples:
+    type: "types.yml#FilloutSample[]"
+    outputSource: convert_sample_types/samples

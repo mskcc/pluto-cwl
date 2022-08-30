@@ -53,6 +53,7 @@ inputs:
     default: "fillout.maf"
 
 steps:
+  # PREPROCESSING STEPS
   split_singleton_groups:
     doc: separate out any sample groups that had only 1 sample so they can be handled separately downstream
     in:
@@ -95,10 +96,11 @@ steps:
         return { 'sample_groups': sample_groups, "singleton_mafs": singleton_mafs };
         }
 
+  # PRIMARY PROCESSING
   run_samples_fillout_index_workflow:
     doc: run the fillout workflow on each sample group with >1 sample
     scatter: samples
-    run: samples_fillout_index_workflow.cwl
+    # run: samples_fillout_index_workflow.cwl
     in:
       samples: split_singleton_groups/sample_groups
       ref_fasta: ref_fasta
@@ -107,8 +109,74 @@ steps:
       argos_version_string: argos_version_string
       fillout_output_fname: fillout_output_fname
     out: [ output_file, filtered_file, portal_file, uncalled_file ]
+    run:
+      class: Workflow
+      id: run_samples_fillout_index_workflow
+      label: run_samples_fillout_index_workflow
+      inputs:
+        samples:
+          type: "types.yml#FilloutIndexSample[]"
+        ref_fasta:
+          type: File
+          secondaryFiles:
+            - .amb
+            - .ann
+            - .bwt
+            - .pac
+            - .sa
+            - .fai
+            - ^.dict
+        exac_filter: # need this to resolve error in subworkflow: Anonymous file object must have 'contents' and 'basename' fields.
+          # TODO: this needs the .tbi/.csi index file added!!
+          type: File
+          default:
+            class: File
+            path: /juno/work/ci/resources/vep/cache/ExAC_nonTCGA.r0.3.1.sites.vep.vcf.gz
+        is_impact:
+          type: boolean
+          default: True
+        argos_version_string:
+          type: [ "null", string ]
+          default: "Unspecified"
+        fillout_output_fname:
+          type: string
+          default: "fillout.maf"
+      outputs:
+        output_file:
+          type: File
+          outputSource: run_samples_fillout/output_file
+        filtered_file:
+          type: File
+          outputSource: run_samples_fillout/filtered_file
+        portal_file:
+          type: File
+          outputSource: run_samples_fillout/portal_file
+        uncalled_file:
+          type: File
+          outputSource: run_samples_fillout/uncalled_file
+      steps:
+        fillout_index_prefilter:
+          run: fillout_index_prefilter.cwl
+          in:
+            samples: samples
+            is_impact: is_impact
+            argos_version_string: argos_version_string
+          out: [ samples ]
+        run_samples_fillout:
+          doc: run the fillout workflow on the samples
+          run: samples_fillout_workflow.cwl
+          in:
+            output_fname: fillout_output_fname
+            exac_filter: exac_filter
+            samples: fillout_index_prefilter/samples
+            ref_fasta: ref_fasta
+          out: [ output_file, filtered_file, portal_file, uncalled_file ]
 
 
+
+
+
+  # POST-PROCESSING - MERGE SAMPLE GROUPS FILES
   concat_output_files:
     run: concat-tables.cwl
     in:
@@ -156,7 +224,7 @@ steps:
         valueFrom: ${ return true; }
     out: [ output_file ]
 
-
+  # POST-PROCESSING - MERGE SINGLETON FILES
   concat_singletons:
     doc: merge the input maf files from each singleton sample
     in:

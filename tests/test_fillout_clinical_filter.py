@@ -17,62 +17,23 @@ sys.path.pop(0)
 class TestFilloutClinicalFilter(PlutoTestCase):
     cwl_file = CWLFile('fillout_clinical_filter.cwl')
 
-    def test_fillout_clinical_filter(self):
+    def test_fillout_clinical_filter1(self):
         """
         """
-        sample1_maf = os.path.join(DATA_SETS['Fillout01']['MAF_DIR'], 'Sample1.FillOutUnitTest01.muts.maf')
-        sample2_maf = os.path.join(DATA_SETS['Fillout01']['MAF_DIR'], 'Sample2.FillOutUnitTest01.muts.maf')
-        sample3_maf = os.path.join(DATA_SETS['Fillout01']['MAF_DIR'], 'Sample3.FillOutUnitTest01.muts.maf')
-        sample4_maf = os.path.join(DATA_SETS['Fillout01']['MAF_DIR'], 'Sample4.FillOutUnitTest01.muts.maf')
-        sample5_maf = os.path.join(DATA_SETS['Fillout01']['MAF_DIR'], 'Sample5.FillOutUnitTest01.muts.maf')
-
-        sample1_bam = os.path.join(DATA_SETS['Fillout01']['BAM_DIR'], 'Sample1.UnitTest01.bam')
-        sample2_bam =os.path.join(DATA_SETS['Fillout01']['BAM_DIR'], 'Sample2.UnitTest01.bam')
-        sample3_bam =os.path.join(DATA_SETS['Fillout01']['BAM_DIR'], 'Sample3.UnitTest01.bam')
-        sample4_bam =os.path.join(DATA_SETS['Fillout01']['BAM_DIR'], 'Sample4.UnitTest01.bam')
-        sample5_bam =os.path.join(DATA_SETS['Fillout01']['BAM_DIR'], 'Sample5.UnitTest01.bam')
-
         # NOTE: maf_file and bam_file do not actually get used for anything but are required by the type schema
-        samples = [
-                {
-                    "sample_id": "Sample1",
-                    "normal_id": "FROZENPOOLEDNORMAL_IMPACT505_V2",
-                    "sample_type": "research",
-                    "maf_file": { "class": "File", "path": sample1_maf },
-                    "bam_file": { "class": "File", "path": sample1_bam }
-                },
-                # {
-                #     "sample_id": "Sample2",
-                #     "normal_id": "FROZENPOOLEDNORMAL_IMPACT505_V2",
-                #     "sample_type": "research",
-                #     "maf_file": { "class": "File", "path": sample2_maf },
-                #     "bam_file": { "class": "File", "path": sample2_bam }
-                # },
-                # {
-                #     "sample_id": "Sample3",
-                #     "normal_id": "FROZENPOOLEDNORMAL_IMPACT505_V2",
-                #     "sample_type": "clinical",
-                #     "maf_file": { "class": "File", "path": sample3_maf },
-                #     "bam_file": { "class": "File", "path": sample3_bam }
-                # },
-                # {
-                #     "sample_id": "Sample4",
-                #     "normal_id": "FROZENPOOLEDNORMAL_IMPACT505_V2",
-                #     "sample_type": "clinical",
-                #     "maf_file": { "class": "File", "path": sample4_maf },
-                #     "bam_file": { "class": "File", "path": sample4_bam }
-                # },
-                # {
-                #     "sample_id": "Sample5",
-                #     "normal_id": "FROZENPOOLEDNORMAL_IMPACT505_V2",
-                #     "sample_type": "research",
-                #     "maf_file": { "class": "File", "path": sample5_maf },
-                #     "bam_file": { "class": "File", "path": sample5_bam }
-                # },
-            ]
+        sample1_maf = os.path.join(DATA_SETS['Fillout01']['MAF_DIR'], 'Sample1.FillOutUnitTest01.muts.maf')
+        sample1_bam = os.path.join(DATA_SETS['Fillout01']['BAM_DIR'], 'Sample1.UnitTest01.bam')
+        sample_ids = ["Sample1", "Sample2", "Sample3", "Sample4", "Sample5"]
+        sample = {
+                "sample_id": sample_ids[0],
+                "normal_id": "FROZENPOOLEDNORMAL_IMPACT505_V2",
+                "sample_type": "research", # NOTE: does not actually get used here, CWL uses clinical_sample_ids instead !!
+                "maf_file": { "class": "File", "path": sample1_maf },
+                "bam_file": { "class": "File", "path": sample1_bam }
+            }
 
         self.input = {
-            "sample": samples[0],
+            "sample": sample,
             "clinical_sample_ids": ["Sample3", "Sample4"],
             "fillout_vcf": {"class": "File", "path": os.path.join(self.DATA_SETS['Fillout01']['VCF_DIR'], "fillout.merged.sources.vcf")}
         }
