@@ -99,8 +99,6 @@ class TestFilloutClinicalFilter(PlutoTestCase):
         ('basename', 'Sample1.filtered.vcf', ['size', 'checksum']),
         ]
         self.assertCWLDictEqual(output_json, expected_output, related_keys = strip_related_keys)
-
-        comments, mutations = self.load_mutations(expected_output["filtered_vcf"]["path"])
         self.assertNumMutationsHash(expected_output["filtered_vcf"]["path"], 45, "b60a9eb9127ee95f16ce2c566ae1d0df")
 
 if __name__ == "__main__":

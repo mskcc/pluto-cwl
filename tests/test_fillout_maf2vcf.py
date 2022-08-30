@@ -39,9 +39,15 @@ class TestFilloutMaf2Vcf(PlutoTestCase):
         # fields inside the vcf are not static due to timestamps, etc..
         strip_related_keys = [
         ('basename', 'Sample1.sorted.vcf.gz', ['size', 'checksum']),
+        ('basename', 'Sample1.sorted.vcf.gz.tbi', ['size', 'checksum']),
         ]
         self.assertCWLDictEqual(output_json, expected_output, related_keys = strip_related_keys)
+        self.assertNumMutationsHash(expected_output["output_file"]["path"], 65, "5a45a60bee13b211dd8c2b6082d7e83f")
     
+
+
+
+
     # def test_convert_all(self):
     #     """
     #     Not a real test case... 
