@@ -95,10 +95,10 @@ class TestFilloutClinicalFilter(PlutoTestCase):
             "unfiltered_vcf": OFile(name="Sample1.vcf", size = 20365, hash = "e1f905c248f253cefbee559781def5ad3979b0f2", dir = output_dir),
         }
         # fields inside the vcf are not static due to timestamps, etc..
-        # strip_related_keys = [
-        # ('basename', 'Sample1.sorted.vcf.gz', ['size', 'checksum']),
-        # ]
-        self.assertCWLDictEqual(output_json, expected_output) # , related_keys = strip_related_keys
+        strip_related_keys = [
+        ('basename', 'Sample1.filtered.vcf', ['size', 'checksum']),
+        ]
+        self.assertCWLDictEqual(output_json, expected_output, related_keys = strip_related_keys)
 
 if __name__ == "__main__":
     unittest.main()
