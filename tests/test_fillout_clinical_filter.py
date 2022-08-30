@@ -41,34 +41,34 @@ class TestFilloutClinicalFilter(PlutoTestCase):
                     "maf_file": { "class": "File", "path": sample1_maf },
                     "bam_file": { "class": "File", "path": sample1_bam }
                 },
-                {
-                    "sample_id": "Sample2",
-                    "normal_id": "FROZENPOOLEDNORMAL_IMPACT505_V2",
-                    "sample_type": "research",
-                    "maf_file": { "class": "File", "path": sample2_maf },
-                    "bam_file": { "class": "File", "path": sample2_bam }
-                },
-                {
-                    "sample_id": "Sample3",
-                    "normal_id": "FROZENPOOLEDNORMAL_IMPACT505_V2",
-                    "sample_type": "clinical",
-                    "maf_file": { "class": "File", "path": sample3_maf },
-                    "bam_file": { "class": "File", "path": sample3_bam }
-                },
-                {
-                    "sample_id": "Sample4",
-                    "normal_id": "FROZENPOOLEDNORMAL_IMPACT505_V2",
-                    "sample_type": "clinical",
-                    "maf_file": { "class": "File", "path": sample4_maf },
-                    "bam_file": { "class": "File", "path": sample4_bam }
-                },
-                {
-                    "sample_id": "Sample5",
-                    "normal_id": "FROZENPOOLEDNORMAL_IMPACT505_V2",
-                    "sample_type": "research",
-                    "maf_file": { "class": "File", "path": sample5_maf },
-                    "bam_file": { "class": "File", "path": sample5_bam }
-                },
+                # {
+                #     "sample_id": "Sample2",
+                #     "normal_id": "FROZENPOOLEDNORMAL_IMPACT505_V2",
+                #     "sample_type": "research",
+                #     "maf_file": { "class": "File", "path": sample2_maf },
+                #     "bam_file": { "class": "File", "path": sample2_bam }
+                # },
+                # {
+                #     "sample_id": "Sample3",
+                #     "normal_id": "FROZENPOOLEDNORMAL_IMPACT505_V2",
+                #     "sample_type": "clinical",
+                #     "maf_file": { "class": "File", "path": sample3_maf },
+                #     "bam_file": { "class": "File", "path": sample3_bam }
+                # },
+                # {
+                #     "sample_id": "Sample4",
+                #     "normal_id": "FROZENPOOLEDNORMAL_IMPACT505_V2",
+                #     "sample_type": "clinical",
+                #     "maf_file": { "class": "File", "path": sample4_maf },
+                #     "bam_file": { "class": "File", "path": sample4_bam }
+                # },
+                # {
+                #     "sample_id": "Sample5",
+                #     "normal_id": "FROZENPOOLEDNORMAL_IMPACT505_V2",
+                #     "sample_type": "research",
+                #     "maf_file": { "class": "File", "path": sample5_maf },
+                #     "bam_file": { "class": "File", "path": sample5_bam }
+                # },
             ]
 
         self.input = {
@@ -99,6 +99,9 @@ class TestFilloutClinicalFilter(PlutoTestCase):
         ('basename', 'Sample1.filtered.vcf', ['size', 'checksum']),
         ]
         self.assertCWLDictEqual(output_json, expected_output, related_keys = strip_related_keys)
+
+        comments, mutations = self.load_mutations(expected_output["filtered_vcf"]["path"])
+        self.assertNumMutationsHash(expected_output["filtered_vcf"]["path"], 45, "b60a9eb9127ee95f16ce2c566ae1d0df")
 
 if __name__ == "__main__":
     unittest.main()
