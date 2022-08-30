@@ -1,0 +1,73 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+"""
+import os
+import sys
+import unittest
+
+THIS_DIR = os.path.dirname(os.path.realpath(__file__))
+PARENT_DIR = os.path.dirname(THIS_DIR)
+sys.path.insert(0, PARENT_DIR)
+from pluto.tools import PlutoTestCase, CWLFile
+from pluto.settings import DATA_SETS
+from pluto.serializer import OFile
+sys.path.pop(0)
+
+class TestFilloutMaf2Vcf(PlutoTestCase):
+    cwl_file = CWLFile('fillout_maf2vcf.cwl')
+
+    def test_maf2vcf(self):
+        """
+        """
+        sample1_maf = os.path.join(DATA_SETS['Fillout01']['MAF_DIR'], 'Sample1.FillOutUnitTest01.muts.maf')
+        sample2_maf = os.path.join(DATA_SETS['Fillout01']['MAF_DIR'], 'Sample2.FillOutUnitTest01.muts.maf')
+        sample3_maf = os.path.join(DATA_SETS['Fillout01']['MAF_DIR'], 'Sample3.FillOutUnitTest01.muts.maf')
+        sample4_maf = os.path.join(DATA_SETS['Fillout01']['MAF_DIR'], 'Sample4.FillOutUnitTest01.muts.maf')
+        sample5_maf = os.path.join(DATA_SETS['Fillout01']['MAF_DIR'], 'Sample5.FillOutUnitTest01.muts.maf')
+
+        self.input = {
+            "sample_id": "Sample1",
+            "maf_file": {"class": "File", "path": sample1_maf},
+            "ref_fasta": {"class": "File", "path": self.DATA_SETS['Proj_08390_G']['REF_FASTA']}
+        }
+        output_json, output_dir = self.run_cwl()
+        expected_output = {
+            "output_file": OFile(name="Sample1.sorted.vcf.gz", size = 2923, hash = "73a623dd614467e9069ca5ba74b9da16cd881af0", dir = output_dir, 
+            secondaryFiles = [OFile(name = "Sample1.sorted.vcf.gz.tbi", hash = "f176cd2d3572eb0502637db147f82ca55a23c1fd", size = 3842, dir = output_dir)])
+        }
+        # fields inside the vcf are not static due to timestamps, etc..
+        strip_related_keys = [
+        ('basename', 'Sample1.sorted.vcf.gz', ['size', 'checksum']),
+        ]
+        self.assertCWLDictEqual(output_json, expected_output, related_keys = strip_related_keys)
+    
+    # def test_convert_all(self):
+    #     """
+    #     Not a real test case... 
+    #     """
+    #     from pprint import pprint
+    #     sample1_maf = os.path.join(DATA_SETS['Fillout01']['MAF_DIR'], 'Sample1.FillOutUnitTest01.muts.maf')
+    #     sample2_maf = os.path.join(DATA_SETS['Fillout01']['MAF_DIR'], 'Sample2.FillOutUnitTest01.muts.maf')
+    #     sample3_maf = os.path.join(DATA_SETS['Fillout01']['MAF_DIR'], 'Sample3.FillOutUnitTest01.muts.maf')
+    #     sample4_maf = os.path.join(DATA_SETS['Fillout01']['MAF_DIR'], 'Sample4.FillOutUnitTest01.muts.maf')
+    #     sample5_maf = os.path.join(DATA_SETS['Fillout01']['MAF_DIR'], 'Sample5.FillOutUnitTest01.muts.maf')
+    #     samples = [
+    #         ("Sample1", sample1_maf),
+    #         ("Sample2", sample2_maf),
+    #         ("Sample3", sample3_maf),
+    #         ("Sample4", sample4_maf),
+    #         ("Sample5", sample5_maf),
+    #         ]
+    #     for sample in samples:
+    #         self.input = {
+    #             "sample_id": sample[0],
+    #             "maf_file": {"class": "File", "path": sample[1]},
+    #             "ref_fasta": {"class": "File", "path": self.DATA_SETS['Proj_08390_G']['REF_FASTA']}
+    #         }
+    #         output_json, output_dir = self.run_cwl()
+    #         pprint(output_json)
+            
+
+if __name__ == "__main__":
+    unittest.main()

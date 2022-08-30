@@ -6,7 +6,6 @@ Test case for the samples_fillout_workflow cwl
 import os
 import sys
 import unittest
-from collections import OrderedDict
 
 THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 PARENT_DIR = os.path.dirname(THIS_DIR)
