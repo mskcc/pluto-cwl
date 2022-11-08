@@ -2,7 +2,7 @@
 cwlVersion: v1.0
 class: Workflow
 doc: "
-Workflow to run GetBaseCountsMultiSample fillout on a number of samples, each with their own bam and maf files
+Workflow to run generate fingerprint search on entire dmp normals and optionally on project normals
 "
 
 requirements:
@@ -83,7 +83,7 @@ steps:
   put-in-dir:
     run: put_in_dir.cwl
     in:
-      output_directory_name: 
+      output_directory_name:
         valueFrom: ${ return "additional_normals"; }
       files: run-pileup-additional_normals/out_file
     out: [ directory ]
