@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-unit tests for the paste-col.cwl
+unit tests for the fingerprint.cwl
 """
 import os
 import sys
