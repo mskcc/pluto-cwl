@@ -118,9 +118,14 @@ class TestSamplesFillout(PlutoTestCase):
         # need to check number of variant outputs instead
         self.assertNumMutationsHash(output_path, 475, 'd041bc641d85761b60c6b7ef8606bab2')
         self.assertNumMutationsHash(filtered_output_path, 230, 'c9cde01507d1b2470057c5d120eaab68')
-        self.assertNumMutationsHash(portal_output_path, 163, '8dd6f3af030a2eca3b5fa0698896361a')
-        self.assertNumMutationsHash(uncalled_output_path, 67, 'a474b61268d2a4c25fd27cc2ccbbce96')
+        self.assertNumMutationsHash(portal_output_path, 163, '2bdb5afc25d0f4af2fb53cb9edfdc03f')
+        self.assertNumMutationsHash(uncalled_output_path, 67, '42f32ce8b3c4ffff4a8d26bd9e3bb900')
         self.assertEqualNumMutations([portal_output_path, uncalled_output_path], filtered_output_path)
+        # should be no empty values in column
+        self.assertMutFieldDoesntContain(portal_output_path, "Amino_Acid_Change", [""])
+        self.assertMutFieldDoesntContain(uncalled_output_path, "Amino_Acid_Change", [""])
+        
+
 
     def test_Nick_testcase_2(self):
         """
@@ -214,9 +219,11 @@ class TestSamplesFillout(PlutoTestCase):
         # need to check number of variant outputs instead
         self.assertNumMutationsHash(output_path, 475, 'd041bc641d85761b60c6b7ef8606bab2')
         self.assertNumMutationsHash(filtered_output_path, 475, 'd041bc641d85761b60c6b7ef8606bab2')
-        self.assertNumMutationsHash(portal_output_path, 408, '63969ef90cb7a4524ab9063b4889bbde')
-        self.assertNumMutationsHash(uncalled_output_path, 67, 'a474b61268d2a4c25fd27cc2ccbbce96')
+        self.assertNumMutationsHash(portal_output_path, 408, '0bcea8598de4d5816aa44aa63c6790ca')
+        self.assertNumMutationsHash(uncalled_output_path, 67, '42f32ce8b3c4ffff4a8d26bd9e3bb900')
         self.assertEqualNumMutations([portal_output_path, uncalled_output_path], filtered_output_path)
+        self.assertMutFieldDoesntContain(portal_output_path, "Amino_Acid_Change", [""])
+        self.assertMutFieldDoesntContain(uncalled_output_path, "Amino_Acid_Change", [""])
 
 if __name__ == "__main__":
     unittest.main()
