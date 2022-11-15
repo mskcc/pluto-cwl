@@ -111,8 +111,8 @@ class TestSamplesFilloutIndex(PlutoTestCase):
         # instead of checksum and size, count the number of mutations and take a checksum on the mutation contents
         self.assertNumMutationsHash(output_file, 310, '18fafe6dd335cb62f515e0323e6b74b2')
         self.assertNumMutationsHash(filtered_output_path, 225, '450b97a2b93ed9421c141837f99240ce')
-        self.assertNumMutationsHash(portal_output_path, 159, '52a95dcfaf0b767fe90f4115e11f3b0e')
-        self.assertNumMutationsHash(uncalled_output_path, 66, '790f7faefb7b7c039fd48a8ede1cfe35')
+        self.assertNumMutationsHash(portal_output_path, 159, '82c2ab2962f782494ddd87886f1ff03b')
+        self.assertNumMutationsHash(uncalled_output_path, 66, 'e866fffc38c7d0b2602617973e496039')
         self.assertEqualNumMutations([portal_output_path, uncalled_output_path], filtered_output_path)
 
 if __name__ == "__main__":
