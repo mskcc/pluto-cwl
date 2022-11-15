@@ -112,10 +112,12 @@ class TestSamplesFilloutIndexBatch(PlutoTestCase):
 
         self.assertNumMutationsHash(output_file, 310, '18fafe6dd335cb62f515e0323e6b74b2')
         self.assertNumMutationsHash(filtered_output_path, 225, '450b97a2b93ed9421c141837f99240ce')
-        self.assertNumMutationsHash(portal_output_path, 159, '52a95dcfaf0b767fe90f4115e11f3b0e')
-        self.assertNumMutationsHash(uncalled_output_path, 66, '790f7faefb7b7c039fd48a8ede1cfe35')
+        self.assertNumMutationsHash(portal_output_path, 159, '82c2ab2962f782494ddd87886f1ff03b')
+        self.assertNumMutationsHash(uncalled_output_path, 66, 'e866fffc38c7d0b2602617973e496039')
         self.assertEqualNumMutations([portal_output_path, uncalled_output_path], filtered_output_path)
         self.assertMutFieldContains(output_file, "Tumor_Sample_Barcode", ["Sample1", "Sample2", "Sample3", "Sample4", "Sample5"], containsAll = True)
+        self.assertMutFieldDoesntContain(portal_output_path, "Amino_Acid_Change", [""])
+        self.assertMutFieldDoesntContain(uncalled_output_path, "Amino_Acid_Change", [""])
 
     def test_two_groups(self):
         sample_group1 = [
@@ -194,8 +196,8 @@ class TestSamplesFilloutIndexBatch(PlutoTestCase):
 
         self.assertNumMutationsHash(output_file, 235, '4e4c91ef129a853a35b86f7fa6f1268a')
         self.assertNumMutationsHash(filtered_output_path, 150, '8397a12302977db14e798a1b2e3ba151')
-        self.assertNumMutationsHash(portal_output_path, 120, '9d171233ecd91f3518fee98b5948978d')
-        self.assertNumMutationsHash(uncalled_output_path, 30, 'ae90ff0cc0d0d0ab08029553fdccf381')
+        self.assertNumMutationsHash(portal_output_path, 120, 'dc0941e362f97df67508cd70d2d8a76e')
+        self.assertNumMutationsHash(uncalled_output_path, 30, '3b78a67aaa0429cc577578910faf5c10')
         self.assertEqualNumMutations([portal_output_path, uncalled_output_path], filtered_output_path)
         self.assertMutFieldContains(output_file, "Tumor_Sample_Barcode", ["Sample1", "Sample2", "Sample3", "Sample4", "Sample5"], containsAll = True)
 
@@ -287,8 +289,8 @@ class TestSamplesFilloutIndexBatch(PlutoTestCase):
 
         self.assertNumMutationsHash(output_file, 188, '2f4c5e5cb13430f456bbc41a0a93dc41')
         self.assertNumMutationsHash(filtered_output_path, 126, '3dda4952d2ae396079155b4bc8cc276f')
-        self.assertNumMutationsHash(portal_output_path, 108, '37b87cea1d161efda602bef860eabdba')
-        self.assertNumMutationsHash(uncalled_output_path, 18, 'cb601fb73ecf937db024351d69a441f1')
+        self.assertNumMutationsHash(portal_output_path, 108, 'f4b365c0e6be4b975a1443905860ffb6')
+        self.assertNumMutationsHash(uncalled_output_path, 18, '7405745e675ea524d8e16e09b9bb749d')
         self.assertEqualNumMutations([portal_output_path, uncalled_output_path], filtered_output_path)
         self.assertMutFieldContains(output_file, "Tumor_Sample_Barcode", ["Sample1", "Sample2", "Sample3", "Sample4", "Sample5"], containsAll = True)
 
@@ -383,7 +385,7 @@ class TestSamplesFilloutIndexBatch(PlutoTestCase):
 
         self.assertNumMutationsHash(output_file, 157, 'ed7dcce977a13f360463e45f5a07154b') # , _print = True
         self.assertNumMutationsHash(filtered_output_path, 36, '5ea9c4b66287a100fc90e05619d52364')
-        self.assertNumMutationsHash(portal_output_path, 36, 'ed7be9c6b425b526e167bdcf8c954637')
+        self.assertNumMutationsHash(portal_output_path, 36, '2a9b7ca9c0942c4daf3273c63858db3c')
         self.assertNumMutationsHash(uncalled_output_path, 0, 'd751713988987e9331980363e24189ce')
         self.assertEqualNumMutations([portal_output_path, uncalled_output_path], filtered_output_path)
         self.assertMutFieldContains(output_file, "Tumor_Sample_Barcode", ["Sample1", "Sample2", "Sample3", "Sample4", "Sample5"], containsAll = True)
