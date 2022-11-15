@@ -12,6 +12,7 @@ PARENT_DIR = os.path.dirname(THIS_DIR)
 sys.path.insert(0, PARENT_DIR)
 from pluto.tools import PlutoTestCase, CWLFile
 from pluto.serializer import OFile
+from pluto.settings import CONPAIR_MARKERS_BED, CONPAIR_MARKERS_TXT
 sys.path.pop(0)
 
 
@@ -23,19 +24,19 @@ class TestFingerprint(PlutoTestCase):
         """
         self.input = {
             "conpair_markers_txt": {
-                "path": "/juno/work/ci/concordance-workflow/markers/IMPACT468/FP_tiling_genotypes_for_Conpair.txt",
+                "path": CONPAIR_MARKERS_TXT,
                 "class": "File"
                 },
             "conpair_markers_bed": {
-                "path": "/juno/work/ci/concordance-workflow/markers/IMPACT468/FP_tiling_genotypes_for_Conpair.bed",
+                "path": CONPAIR_MARKERS_BED,
                 "class": "File"
                 },
             "ref_fasta": {
-                "path": "/juno/work/ci/resources/genomes/GRCh37/fasta/b37.fasta",
+                "path": self.DATA_SETS['Proj_08390_G']['REF_FASTA'],
                 "class": "File"
                 },
             "tumor_bam": {
-                "path": "/work/ci/dmp_finderprint_matching/dummy_bam/dummy.bam",
+                "path": os.path.join(self.DATA_SETS["demo"]["BAM_DIR"], "Sample23.bam"), #"/work/ci/dmp_finderprint_matching/dummy_bam/dummy.bam",
                 "class": "File"
                 },
             "dmp_dir": { ##"/work/ci/dmp/likelihoods"
@@ -47,17 +48,18 @@ class TestFingerprint(PlutoTestCase):
         output_json, output_dir = self.run_cwl()
 
         expected_output = {
-            'output_file': OFile(name = 'dummy.concordance.tsv', dir = output_dir)
+            'output_file': OFile(name = 'Sample23.concordance.tsv', dir = output_dir)
             }
 
         # file contenst are inconsistent so strip some keys from the output dict
         strip_related_keys = [
-            ('basename', 'dummy.concordance.tsv', ['size', 'checksum']),
+            ('basename', 'Sample23.concordance.tsv', ['size', 'checksum']),
         ]
         self.assertCWLDictEqual(output_json, expected_output, related_keys = strip_related_keys)
-        self.assertNumMutations(os.path.join(output_dir, 'dummy.concordance.tsv'), 2)
-        self.assertHeaderEquals(os.path.join(output_dir, 'dummy.concordance.tsv'),
+        self.assertNumMutations(os.path.join(output_dir, 'Sample23.concordance.tsv'), 2)
+        self.assertHeaderEquals(os.path.join(output_dir, 'Sample23.concordance.tsv'),
             ['concordance', 'num_markers_used', 'num_total_markers', "tumor", "normal", "tumor_pileup", "normal_pileup"])
+        # TODO: add check for the contents of the file; there are multiple rows with the same 'sample' value so the included self.assertSampleValues will not work
 
 
 
