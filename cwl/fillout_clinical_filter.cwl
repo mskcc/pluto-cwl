@@ -5,7 +5,9 @@ id: fillout_clinical_filter
 label: fillout_clinical_filter
 doc: "
 TODO: deprecate the need for bcftools +split by making GetBaseCountsMultiSample run individually per-sample
-NOTE: maybe dont do that for ... reasons
+NOTE: maybe dont do that for ... reasons <- having single multi-sample vcf is actually easier in some ways I think
+
+NOTE: requires AD and FL_VF FORMAT fields in the vcf!!
 "
 
 baseCommand: [ "bash", "run.sh" ]

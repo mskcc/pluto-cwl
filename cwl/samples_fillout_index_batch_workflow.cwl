@@ -58,7 +58,7 @@ steps:
     doc: separate out any sample groups that had only 1 sample so they can be handled separately downstream
     in:
       sample_groups: sample_groups
-    out: [ sample_groups, singleton_mafs ]
+    out: [ sample_groups, singleton_mafs, singleton_samples ]
     run:
       class: ExpressionTool
       inputs:
@@ -69,7 +69,7 @@ steps:
               type: array
               items: "types.yml#FilloutIndexSample"
       outputs:
-        # singleton_samples: "types.yml#FilloutIndexSample[]"
+        singleton_samples: "types.yml#FilloutIndexSample[]"
         singleton_mafs: File[]
         sample_groups:
           type:
@@ -81,6 +81,7 @@ steps:
         ${
           var sample_groups = [];
           var singleton_mafs = [];
+          var singleton_samples = [];
 
           for ( var i in inputs.sample_groups ){
             var group = inputs.sample_groups[i];
@@ -88,12 +89,12 @@ steps:
             if (group.length > 1) {
               sample_groups.push(group);
             } else if (group.length == 1){
-              singleton_mafs.push(group[0].maf_file)
-            }
+              singleton_samples.push(group[0]);
+              singleton_mafs.push(group[0].maf_file);
+            };
+          };
 
-          }
-
-        return { 'sample_groups': sample_groups, "singleton_mafs": singleton_mafs };
+        return { 'sample_groups': sample_groups, "singleton_mafs": singleton_mafs, "singleton_samples": singleton_samples };
         }
 
   # PRIMARY PROCESSING
@@ -224,59 +225,131 @@ steps:
         valueFrom: ${ return true; }
     out: [ output_file ]
 
+
+
+
   # POST-PROCESSING - MERGE SINGLETON FILES
-  concat_singletons:
-    doc: merge the input maf files from each singleton sample
+  # NOTE: need to get FL_VF into the singleton .vcf !!!
+  singleton_processing:
+    run: fillout_singleton_processing.cwl
     in:
-      singleton_mafs: split_singleton_groups/singleton_mafs
-      concat_maf: concat_output_files/output_file
-    out: [output_file]
+      samples: split_singleton_groups/singleton_samples
+      ref_fasta: ref_fasta
+      exac_filter: exac_filter
+      is_impact: is_impact
+      argos_version_string: argos_version_string
+    out: [ output_file, filtered_file, portal_file, uncalled_file ]
+  
+  concat_singleton_files:
+    in:
+      output_maf: concat_output_files/output_file
+      filtered_maf: concat_filtered_file/output_file
+      portal_maf: concat_portal_file/output_file
+      uncalled_maf: concat_uncalled_file/output_file
+      singleton_output_maf: singleton_processing/output_file
+      singleton_filtered_maf: singleton_processing/filtered_file
+      singleton_portal_maf: singleton_processing/portal_file
+      singleton_uncalled_maf: singleton_processing/uncalled_file
+    out: [ output_maf, filtered_maf, portal_maf, uncalled_maf ]
     run:
       class: CommandLineTool
-      baseCommand: [ "bash", "run.sh" ]
-      requirements:
-        DockerRequirement:
+      id: concat_singleton_files
+      label: concat_singleton_files
+      baseCommand: ["bash", "run.sh"]
+      requirements: 
+        - class: DockerRequirement
           dockerPull: mskcc/helix_filters_01:21.4.1
-        InitialWorkDirRequirement:
+        - class: InitialWorkDirRequirement
           listing:
             - entryname: run.sh
               entry: |-
                 set -eu
-                # get a space-delim string of file paths
-                singleton_mafs="${ return inputs.singleton_mafs.map((a) => a.path).join(' ') }"
-                concat_maf="$(inputs.concat_maf.path)"
-                output_maf="output.maf"
-                # check how many singleton files were present
-                num_singletons="\$(echo \${singleton_mafs} | wc -w )"
-                # only try to concat if theres >0 singletons
-                if [ "\${num_singletons}" -gt 0 ]; then
-                concat-tables.py -o "\${output_maf}" --no-carriage-returns --comments --progress --na-str '' \${concat_maf} \${singleton_mafs}
-                # otherwise just copy the input as the output
-                else
-                cp "\${concat_maf}" "\${output_maf}"
-                fi
-
+                concat-tables.py -o "output.maf" --no-carriage-returns --comments --na-str '' "$(inputs.output_maf.path)" "$(inputs.singleton_output_maf.path)"
+                concat-tables.py -o "output.filtered.maf" --no-carriage-returns --comments --na-str '' "$(inputs.filtered_maf.path)" "$(inputs.singleton_filtered_maf.path)"
+                concat-tables.py -o "data_mutations_extended.txt" --no-carriage-returns --comments --na-str '' "$(inputs.portal_maf.path)" "$(inputs.singleton_portal_maf.path)"
+                concat-tables.py -o "data_mutations_uncalled.txt" --no-carriage-returns --comments --na-str '' "$(inputs.uncalled_maf.path)" "$(inputs.singleton_uncalled_maf.path)"
       inputs:
-        singleton_mafs: File[]
-        concat_maf: File
+        output_maf: File
+        filtered_maf: File
+        portal_maf: File
+        uncalled_maf: File
+        singleton_output_maf: File
+        singleton_filtered_maf: File
+        singleton_portal_maf: File
+        singleton_uncalled_maf: File
       outputs:
-        output_file:
+        output_maf:
           type: File
           outputBinding:
             glob: output.maf
+        filtered_maf:
+          type: File
+          outputBinding:
+            glob: output.filtered.maf
+        portal_maf:
+          type: File
+          outputBinding:
+            glob: data_mutations_extended.txt
+        uncalled_maf:
+          type: File
+          outputBinding:
+            glob: data_mutations_uncalled.txt
+
+
+
+
+  # concat_singletons:
+  #   doc: merge the input maf files from each singleton sample
+  #   in:
+  #     singleton_mafs: split_singleton_groups/singleton_mafs
+  #     concat_maf: concat_output_files/output_file
+  #   out: [output_file]
+  #   run:
+  #     class: CommandLineTool
+  #     baseCommand: [ "bash", "run.sh" ]
+  #     requirements:
+  #       DockerRequirement:
+  #         dockerPull: mskcc/helix_filters_01:21.4.1
+  #       InitialWorkDirRequirement:
+  #         listing:
+  #           - entryname: run.sh
+  #             entry: |-
+  #               set -eu
+  #               # get a space-delim string of file paths
+  #               singleton_mafs="${ return inputs.singleton_mafs.map((a) => a.path).join(' ') }"
+  #               concat_maf="$(inputs.concat_maf.path)"
+  #               output_maf="output.maf"
+  #               # check how many singleton files were present
+  #               num_singletons="\$(echo \${singleton_mafs} | wc -w )"
+  #               # only try to concat if theres >0 singletons
+  #               if [ "\${num_singletons}" -gt 0 ]; then
+  #               concat-tables.py -o "\${output_maf}" --no-carriage-returns --comments --progress --na-str '' \${concat_maf} \${singleton_mafs}
+  #               # otherwise just copy the input as the output
+  #               else
+  #               cp "\${concat_maf}" "\${output_maf}"
+  #               fi
+
+  #     inputs:
+  #       singleton_mafs: File[]
+  #       concat_maf: File
+  #     outputs:
+  #       output_file:
+  #         type: File
+  #         outputBinding:
+  #           glob: output.maf
 
 
 
 outputs:
   output_file:
     type: File
-    outputSource: concat_singletons/output_file
+    outputSource: concat_singleton_files/output_maf
   filtered_file:
     type: File
-    outputSource: concat_filtered_file/output_file
+    outputSource: concat_singleton_files/filtered_maf
   portal_file:
     type: File
-    outputSource: concat_portal_file/output_file
+    outputSource: concat_singleton_files/portal_maf
   uncalled_file:
     type: File
-    outputSource: concat_uncalled_file/output_file
+    outputSource: concat_singleton_files/uncalled_maf

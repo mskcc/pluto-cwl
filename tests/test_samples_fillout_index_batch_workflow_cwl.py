@@ -2,6 +2,9 @@
 # -*- coding: utf-8 -*-
 """
 Test case for the samples_fillout_index_batch_workflow cwl
+
+
+$ CWL_ENGINE=Toil PRINT_TESTNAME=T python3 tests/test_samples_fillout_index_batch_workflow_cwl.py TestSamplesFilloutIndexBatch.test_three_groups
 """
 import os
 import sys

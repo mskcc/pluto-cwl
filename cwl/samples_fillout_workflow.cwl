@@ -53,7 +53,7 @@ steps:
       ref_fasta: ref_fasta
     out:
       [ sample_ids, clinical_sample_ids, bam_files, vcf_gz_files, merged_vcf, merged_vcf_gz ]
-  
+
 
   # PRIMARY FILLOUT PROCESSING STARTS HERE
   # TODO: convert this to a `scatter` step that runs per-sample in parallel, then merge the outputs otherwise we will hit the command line arg length issues eventually
@@ -121,6 +121,7 @@ steps:
 
   fix_labels_and_merge_vcfs:
     doc: clean up, re-annotate, and re-header the fillout vcf, also merge against the fillout targets vcf in order to add a SRC sample source tag to tell which samples each variant originated in, and pull back in each variants original quality metrics
+    # NOTE: IMPORTANT: Need to apply FL_VF, and SRC fields !! Those are the most imporant fields for downstream uses
     in:
       fillout_vcf: gbcms/output_file
       merged_vcf: fillout_pre_processing/merged_vcf
@@ -184,6 +185,7 @@ steps:
                 # add a new line
                 echo '##INFO=<ID=SRC,Type=String,Number=.,Description="Source samples for the variant">' >> "\${fillout_merged_vcf_header}"
                 # start the annotation file header
+                # NOTE: 'ALT' column is misspelled here!! Need to fix this!!
                 echo '#CHROM\tPOS\tREF\tAL\tINFO' > "\${fillout_merged_annotation}"
                 # get all the variant sample labels for variants with AD>0;
                 # this means they were from the sample originally and not from fillout
@@ -221,8 +223,8 @@ steps:
       ref_fasta: ref_fasta
       exac_filter: exac_filter
     out: [ output_file, filtered_file, portal_file, uncalled_file ]
-  
-outputs: 
+
+outputs:
   output_file:
     type: File
     outputSource: fillout_post_processing/output_file

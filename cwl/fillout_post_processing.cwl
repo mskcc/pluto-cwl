@@ -4,7 +4,7 @@ class: Workflow
 id: fillout_post_processing
 label: fillout_post_processing
 doc: "
-Workflow to apply post-processing to fillout files after GetBaseCountsMultiSample has been applied. 
+Workflow to apply post-processing to fillout files after GetBaseCountsMultiSample has been applied.
 This workflow can also be used on files that did not have GetBaseCountsMultiSample (fillout) applied e.g. singleton's
 "
 
@@ -16,12 +16,12 @@ requirements:
   - class: SubworkflowFeatureRequirement
   - $import: types.yml
 
-inputs: 
-  samples: "types.yml#FilloutSample[]" # type: array
-  fillout_vcf: 
+inputs:
+  samples: "types.yml#FilloutSample[]"
+  fillout_vcf:
     type: File
     doc: the merged multi-sample .vcf file with all the mutations to be processed in the workflow, MUST contain all of the sample_ids from samples entry!
-  clinical_sample_ids: 
+  clinical_sample_ids:
     type: string[]
     doc: a list of the sample ID's inside the fillout_vcf that are for clinical samples
   output_fname:
@@ -181,12 +181,12 @@ steps:
       baseCommand: [ "bash", "run.sh" ]
       requirements:
         DockerRequirement:
-          dockerPull: mskcc/helix_filters_01:21.4.1
+          dockerPull: mskcc/helix_filters_01:21.7.1
         InitialWorkDirRequirement:
           listing:
             - entryname: run.sh
               entry: |-
-                set -eu
+                set -eux
                 # get a space-delim string of file paths
                 input_unfiltered_files="${ return inputs.unfiltered_mafs.map((a) => a.path).join(' ') }"
                 input_filtered_files="${ return inputs.filtered_mafs.map((a) => a.path).join(' ') }"
