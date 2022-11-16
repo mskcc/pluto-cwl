@@ -12,24 +12,29 @@ requirements:
   InlineJavascriptRequirement: {}
   SubworkflowFeatureRequirement: {}
 
+# NOTE: the following section is needed because the input dmp_dir has 10's of thousands of files and that makes the CWL blow up unless you turn off this setting
 hints:
   cwltool:LoadListingRequirement:
     loadListing: no_listing
+$namespaces:
+  cwltool: "http://commonwl.org/cwltool#"
 
 inputs:
   dmp_dir:
+    doc: directory of reference samples to run concordance against
     type: Directory
     default:
       class: Directory
       path: /work/ci/dmp_finderprint_matching/dummy_pileup
-  conpair_markers_bed:  # conpair_markers_txt
+  conpair_markers_bed:
     type: File
-  conpair_markers_txt:  # conpair_markers_txt
+  conpair_markers_txt:
     type: File
   tumor_bam: # GATK .pileup or likelihoods .pickle
     type: File
     secondaryFiles: ["^.bai"]
   additional_normal_bams:
+    doc: list of individual extra sample files to include with concordance
     type: File[]
     secondaryFiles: ["^.bai"]
     default: [{class: File, path: /work/ci/dmp_finderprint_matching/dummy_bam/dummy.bam}]
@@ -51,7 +56,7 @@ outputs:
     outputSource: run_conpair_concordance/output_file
 
 steps:
-  run-pileup-tumor:
+  run_pileup_tumor:
     run: conpair-pileup.cwl
     in:
       bam: tumor_bam
@@ -64,8 +69,10 @@ steps:
       outfile:
         valueFrom: ${ return inputs.bam.basename.replace(".bam", ".pileup"); }
     out: [out_file]
-######
-  run-pileup-additional_normals:
+
+
+
+  run_pileup_additional_normals:
     run: conpair-pileup.cwl
     scatter: bam
     in:
@@ -80,20 +87,22 @@ steps:
           valueFrom: ${ return inputs.bam.basename.replace(".bam", ".pileup"); }
     out: [out_file]
 
-  put-in-dir:
+
+  put_in_dir:
     run: put_in_dir.cwl
     in:
       output_directory_name:
         valueFrom: ${ return "additional_normals"; }
-      files: run-pileup-additional_normals/out_file
+      files: run_pileup_additional_normals/out_file
     out: [ directory ]
-#######
+
+
   run_conpair_concordance:
     in:
       dmp_dir: dmp_dir
       markers: conpair_markers_txt
-      tumor_file: run-pileup-tumor/out_file
-      additional_normal_pickles: put-in-dir/directory
+      tumor_file: run_pileup_tumor/out_file
+      additional_normal_pickles: put_in_dir/directory
 
     out: [output_file]
 
@@ -105,8 +114,6 @@ steps:
           dockerPull: mskcc/conpair:1.0.1
         InitialWorkDirRequirement:
           listing:
-            # NOTE: might need dos2unix for some that give errors ERROR: Your MAF uses CR line breaks, which we can't support. Please use LF or CRLF.
-            # NOTE: might also need sanity check that maf has >1 line
             - entryname: run.sh
               entry: |-
                 set -eu
@@ -139,5 +146,3 @@ steps:
 
 
 
-$namespaces:
-  cwltool: "http://commonwl.org/cwltool#"
