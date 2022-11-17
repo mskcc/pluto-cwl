@@ -48,17 +48,17 @@ class TestFingerprint(PlutoTestCase):
         output_json, output_dir = self.run_cwl()
 
         expected_output = {
-            'output_file': OFile(name = 'Sample23.concordance.tsv', dir = output_dir)
+            'output_file': OFile(name = 'Sample23.concordance.tsv', dir = output_dir, hash = "3fb716971063a3ccd749a75153072953378f6c47", size = 235)
             }
 
         # file contenst are inconsistent so strip some keys from the output dict
-        strip_related_keys = [
-            ('basename', 'Sample23.concordance.tsv', ['size', 'checksum']),
-        ]
-        self.assertCWLDictEqual(output_json, expected_output, related_keys = strip_related_keys)
+        # strip_related_keys = [
+        #     ('basename', 'Sample23.concordance.tsv', ['size', 'checksum']),
+        # ]
+        self.assertCWLDictEqual(output_json, expected_output) # , related_keys = strip_related_keys
         self.assertNumMutations(os.path.join(output_dir, 'Sample23.concordance.tsv'), 2)
         self.assertHeaderEquals(os.path.join(output_dir, 'Sample23.concordance.tsv'),
-            ['concordance', 'num_markers_used', 'num_total_markers', "tumor", "normal", "tumor_pileup", "normal_pileup"])
+            ['concordance', 'num_markers_used', 'num_total_markers', "tumor", "normal", "tumor_filename", "normal_filename"])
 
         lines = self.read_table(os.path.join(output_dir, 'Sample23.concordance.tsv'))
         expected_lines = [
