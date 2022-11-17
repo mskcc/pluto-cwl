@@ -59,7 +59,14 @@ class TestFingerprint(PlutoTestCase):
         self.assertNumMutations(os.path.join(output_dir, 'Sample23.concordance.tsv'), 2)
         self.assertHeaderEquals(os.path.join(output_dir, 'Sample23.concordance.tsv'),
             ['concordance', 'num_markers_used', 'num_total_markers', "tumor", "normal", "tumor_pileup", "normal_pileup"])
-        # TODO: add check for the contents of the file; there are multiple rows with the same 'sample' value so the included self.assertSampleValues will not work
+
+        lines = self.read_table(os.path.join(output_dir, 'Sample23.concordance.tsv'))
+        expected_lines = [
+            ['concordance', 'num_markers_used', 'num_total_markers', 'tumor', 'normal'],
+            ['0.4258517034068136', '998', '1024', 'Sample23', 'dummy'],
+            ['0.4470468431771894', '982', '1024', 'Sample23', 'dummy']
+            ]
+        self.assertEqual([ l[0:5] for l in lines ], expected_lines)
 
 
 
