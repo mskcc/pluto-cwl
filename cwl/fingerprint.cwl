@@ -117,7 +117,7 @@ steps:
           # ramMin: 16000
           coresMin: 8 # NOTE: make sure this matches what is used in the command
         DockerRequirement:
-          dockerPull: mskcc/conpair:1.0.2
+          dockerPull: mskcc/conpair:1.0.3
         InitialWorkDirRequirement:
           listing:
             - entryname: run.sh
