@@ -39,34 +39,42 @@ class TestFingerprint(PlutoTestCase):
                 "path": os.path.join(self.DATA_SETS["demo"]["BAM_DIR"], "Sample23.bam"), #"/work/ci/dmp_finderprint_matching/dummy_bam/dummy.bam",
                 "class": "File"
                 },
-            "dmp_dir": { ##"/work/ci/dmp/likelihoods"
+            "dmp_dir": {
                 "class": "Directory",
-                "path": "/work/ci/dmp_finderprint_matching/dummy_pickle"
-                }
+                "path": self.DATA_SETS["Conpair_1"]["LIKELIHOODS"]
+                },
+            "additional_normal_bams": [
+                {"class": "File", "path": os.path.join(self.DATA_SETS["Conpair_1"]["BAM_DIR"], "Sample1.UnitTest01.bam")},
+                {"class": "File", "path": os.path.join(self.DATA_SETS["demo"]["BAM_DIR"], "Sample23.bam")}, # test against itself
+            ]
             }
 
         output_json, output_dir = self.run_cwl()
 
         expected_output = {
-            'output_file': OFile(name = 'Sample23.concordance.tsv', dir = output_dir, hash = "3fb716971063a3ccd749a75153072953378f6c47", size = 235)
+            'output_file': OFile(name = 'Sample23.concordance.tsv', dir = output_dir, hash = "dd689be28d551b19033db5e120286d1e1e8d83f2", size = 692)
             }
-
-        # file contenst are inconsistent so strip some keys from the output dict
-        # strip_related_keys = [
-        #     ('basename', 'Sample23.concordance.tsv', ['size', 'checksum']),
-        # ]
-        self.assertCWLDictEqual(output_json, expected_output) # , related_keys = strip_related_keys
-        self.assertNumMutations(os.path.join(output_dir, 'Sample23.concordance.tsv'), 2)
-        self.assertHeaderEquals(os.path.join(output_dir, 'Sample23.concordance.tsv'),
-            ['concordance', 'num_markers_used', 'num_total_markers', "tumor", "normal", "tumor_filename", "normal_filename"])
 
         lines = self.read_table(os.path.join(output_dir, 'Sample23.concordance.tsv'))
         expected_lines = [
-            ['concordance', 'num_markers_used', 'num_total_markers', 'tumor', 'normal'],
-            ['0.4258517034068136', '998', '1024', 'Sample23', 'dummy'],
-            ['0.4470468431771894', '982', '1024', 'Sample23', 'dummy']
+            ['concordance', 'num_markers_used', 'num_total_markers', 'tumor', 'normal', 'tumor_filename', 'normal_filename'],
+            ['0.35070140280561124', '998', '1024', 'Sample23', 'Sample5', 'Sample23.pileup', 'Sample5.UnitTest01.pickle'],
+            ['0.34468937875751504', '998', '1024', 'Sample23', 'Sample1-foo', 'Sample23.pileup', 'Sample1.UnitTest01.pickle'],
+            ['0.3486973947895792', '998', '1024', 'Sample23', 'Sample2-bar', 'Sample23.pileup', 'Sample2.UnitTest01.pickle'],
+            ['0.3408856848609681', '971', '1024', 'Sample23', 'Sample3-baz', 'Sample23.pileup', 'Sample3.UnitTest01.pickle'],
+            ['0.35015447991761073', '971', '1024', 'Sample23', 'Sample4', 'Sample23.pileup', 'Sample4.UnitTest01.pickle'],
+            ['1.0', '999', '1024', 'Sample23', 'Sample23', 'Sample23.pileup', 'Sample23.pileup'],
+            ['0.34468937875751504', '998', '1024', 'Sample23', 'Sample1', 'Sample23.pileup', 'Sample1.UnitTest01.pileup']
             ]
-        self.assertEqual([ l[0:5] for l in lines ], expected_lines)
+
+        self.assertEqual(lines, expected_lines)
+
+        self.assertCWLDictEqual(output_json, expected_output)
+        self.assertNumMutations(os.path.join(output_dir, 'Sample23.concordance.tsv'), 7)
+        self.assertHeaderEquals(os.path.join(output_dir, 'Sample23.concordance.tsv'),
+            ['concordance', 'num_markers_used', 'num_total_markers', "tumor", "normal", "tumor_filename", "normal_filename"])
+
+
 
 
 
