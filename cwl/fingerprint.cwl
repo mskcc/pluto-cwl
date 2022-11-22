@@ -23,9 +23,9 @@ inputs:
   dmp_dir: # TODO: rename this to something more generic since we might not always be using DMP files
     doc: directory of reference samples to run concordance against
     type: Directory
-    default: # TODO: don't put a default here, instead make this an optional "none"
-      class: Directory
-      path: /work/ci/dmp_finderprint_matching/dummy_pileup
+    # default: # TODO: don't put a default here, instead make this an optional "none"
+    #   class: Directory
+    #   path: /work/ci/dmp_finderprint_matching/dummy_pileup
   conpair_markers_bed:
     type: File
   conpair_markers_txt:
@@ -38,7 +38,7 @@ inputs:
     doc: list of individual extra sample files to include with concordance
     type: File[]
     secondaryFiles: ["^.bai"]
-    default: [{class: File, path: /work/ci/dmp_finderprint_matching/dummy_bam/dummy.bam}]
+    # default: [{class: File, path: /work/ci/dmp_finderprint_matching/dummy_bam/dummy.bam}]
     # TODO: remove this default
   ref_fasta:
     type: File
@@ -126,10 +126,10 @@ steps:
                 # need to make a list for all the input files
                 # NOTE: this needs to be done here because the files get staged in a container with tmp paths
                 path="${ return inputs.dmp_dir.path; }"
-                find "\$path"/ -type f > normal_dmp_pickles_file_list.txt
+                find "\$path"/ -type f ! -name "*.json" > normal_dmp_pickles_file_list.txt
 
                 path="${ return inputs.additional_normal_pickles.path; }"
-                find "\$path"/ -type f >> normal_dmp_pickles_file_list.txt
+                find "\$path"/ -type f ! -name "*.json" >> normal_dmp_pickles_file_list.txt
 
                 tumor_pickle="${ return inputs.tumor_file.path; }"
                 markers="${ return inputs.markers.path; }"
@@ -139,6 +139,7 @@ steps:
                   --normals-list normal_dmp_pickles_file_list.txt \\
                   --markers \$markers \\
                   --threads 8 \\
+                  --manifests \\
                   --output-file "${ return inputs.tumor_file.nameroot + '.concordance.tsv' }"
       inputs:
         dmp_dir: Directory
