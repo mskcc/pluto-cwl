@@ -22,7 +22,12 @@ from pluto.settings import ENABLE_INTEGRATION_TESTS
 from pluto.serializer import OFile, ODir
 sys.path.pop(0)
 
-from fixtures import WORKFLOW_MEDIUM_JSON
+try:
+    from fixtures import WORKFLOW_MEDIUM_JSON
+except ModuleNotFoundError:
+    sys.path.insert(0, THIS_DIR)
+    from fixtures import WORKFLOW_MEDIUM_JSON
+    sys.path.pop(0)
 
 class TestWorkflowWithFacetsMedium(PlutoTestCase):
     cwl_file = 'workflow_with_facets.cwl'
