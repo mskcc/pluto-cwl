@@ -297,7 +297,7 @@ parallel-test:
 pytest:
 	. "$(ENVSH)" toil && \
 	source conda/bin/activate && \
-	nice pytest -n auto --maxprocesses 24 tests
+	nice pytest -n auto --maxprocesses 24 --ignore tests/test_workflow_with_facets.xl.py --ignore tests/test_workflow_with_facets.medium.py tests
 
 
 
