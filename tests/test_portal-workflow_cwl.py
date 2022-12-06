@@ -20,7 +20,7 @@ sys.path.pop(0)
 class TestPortalWorkflow(PlutoTestCase):
     cwl_file = CWLFile('portal-workflow.cwl')
 
-    def test_run_worflow_one_maf(self):
+    def test_run_worflow_one_maf_alone(self):
         """
         Test that the workflow works correctly when run with a single maf
         """
@@ -80,6 +80,18 @@ class TestPortalWorkflow(PlutoTestCase):
                 "class": "File"
                 }
             ],
+            "msi_files": [
+                {
+                    "path": os.path.join(DATA_SETS['Proj_1']['MSI_DIR'], "Sample1.Sample2.msi.tsv"),
+                "class": "File"
+                }
+            ],
+            "tmb_files": [
+                {
+                    "path": os.path.join(DATA_SETS['Proj_1']['TMB_DIR'], "Sample1.Sample2.tmb.tsv"),
+                "class": "File"
+                }
+            ],
         }
 
         output_json, output_dir = self.run_cwl()
@@ -102,7 +114,7 @@ class TestPortalWorkflow(PlutoTestCase):
             'portal_data_clinical_patient_file': OFile(
                 name='data_clinical_patient.txt', size=643, hash='9417dcabddd6ab2cbe98167bccd9b9e4fa182562', dir=output_dir),
             'portal_data_clinical_sample_file': OFile(
-                name='data_clinical_sample.txt', size=7592, hash='2a0c59593fa7726743b2fe46db9d955dbc625453', dir=output_dir),
+                name='data_clinical_sample.txt', size=8182, hash='e2298a7465948e61cea484e931d27263031de883', dir=output_dir),
             'portal_fusions_data_file': OFile(
                 name='data_fusions.txt', size=99, hash='c16f763b248813fcdde76f7486f1ddc4e9856038', dir=output_dir),
             'portal_hisens_segs': OFile(
@@ -139,6 +151,87 @@ class TestPortalWorkflow(PlutoTestCase):
         self.assertHeaderEquals(os.path.join(output_dir, 'data_CNA.txt'), ['Hugo_Symbol', 'Sample1'])
         self.assertHeaderEquals(os.path.join(output_dir, 'data_CNA.ascna.txt'), ['Hugo_Symbol', 'Sample1'])
         self.assertNumMutations(os.path.join(output_dir,  'data_CNA.txt'), 586)
+        self.assertSampleValues(
+            os.path.join(output_dir, 'data_clinical_sample.txt'),
+            value_fieldname = "CMO_TMB_SCORE",
+            expected_values = {
+            'Sample46': 'NA', 
+            'Sample44': 'NA', 
+            'Sample80': 'NA', 
+            'Sample20': 'NA', 
+            'Sample38': 'NA', 
+            'Sample26': 'NA', 
+            'Sample94': 'NA', 
+            'Sample48': 'NA', 
+            'Sample68': 'NA', 
+            'Sample90': 'NA', 
+            'Sample18': 'NA', 
+            'Sample54': 'NA', 
+            'Sample52': 'NA', 
+            'Sample86': 'NA', 
+            'Sample30': 'NA', 
+            'Sample78': 'NA', 
+            'Sample84': 'NA', 
+            'Sample82': 'NA', 
+            'Sample6': 'NA', 
+            'Sample96': 'NA', 
+            'Sample72': 'NA', 
+            'Sample56': 'NA', 
+            'Sample64': 'NA', 
+            'Sample58': 'NA', 
+            'Sample92': 'NA', 'Sample62': 'NA', 'Sample8': 'NA', 
+            'Sample24': 'NA', 'Sample12': 'NA', 'Sample16': 'NA', 
+            'Sample88': 'NA', 'Sample22': 'NA', 'Sample42': 'NA', 
+            'Sample76': 'NA', 'Sample28': 'NA', 'Sample74': 'NA', 
+            'Sample50': 'NA', 'Sample60': 'NA', 'Sample10': 'NA', 
+            'Sample36': 'NA', 'Sample34': 'NA', 'Sample40': 'NA', 
+            'Sample66': 'NA', 'Sample14': 'NA', 'Sample32': 'NA', 
+            'Sample70': 'NA', 'Sample4': 'NA', 'Sample1': '1.7'
+            })
+        
+        self.assertSampleValues(
+            os.path.join(output_dir, 'data_clinical_sample.txt'),
+            value_fieldname = "MSI_SCORE",
+            expected_values = {
+                'Sample46': 'NA', 'Sample44': 'NA', 'Sample80': 'NA', 
+                'Sample20': 'NA', 'Sample38': 'NA', 'Sample26': 'NA', 
+                'Sample94': 'NA', 'Sample48': 'NA', 'Sample68': 'NA', 
+                'Sample90': 'NA', 'Sample18': 'NA', 'Sample54': 'NA', 
+                'Sample52': 'NA', 'Sample86': 'NA', 'Sample30': 'NA', 
+                'Sample78': 'NA', 'Sample84': 'NA', 'Sample82': 'NA', 
+                'Sample6': 'NA', 'Sample96': 'NA', 'Sample72': 'NA', 
+                'Sample56': 'NA', 'Sample64': 'NA', 'Sample58': 'NA', 
+                'Sample92': 'NA', 'Sample62': 'NA', 'Sample8': 'NA', 
+                'Sample24': 'NA', 'Sample12': 'NA', 'Sample16': 'NA', 
+                'Sample88': 'NA', 'Sample22': 'NA', 'Sample42': 'NA', 
+                'Sample76': 'NA', 'Sample28': 'NA', 'Sample74': 'NA', 
+                'Sample50': 'NA', 'Sample60': 'NA', 'Sample10': 'NA', 
+                'Sample36': 'NA', 'Sample34': 'NA', 'Sample40': 'NA', 
+                'Sample66': 'NA', 'Sample14': 'NA', 'Sample32': 'NA', 
+                'Sample70': 'NA', 'Sample4': 'NA', 'Sample1': '28.00'})
+
+        self.assertSampleValues(
+            os.path.join(output_dir, 'data_clinical_sample.txt'),
+            value_fieldname = "MSI_STATUS",
+            expected_values = {
+                'Sample46': 'NA', 'Sample44': 'NA', 'Sample80': 'NA', 
+                'Sample20': 'NA', 'Sample38': 'NA', 'Sample26': 'NA', 
+                'Sample94': 'NA', 'Sample48': 'NA', 'Sample68': 'NA', 
+                'Sample90': 'NA', 'Sample18': 'NA', 'Sample54': 'NA', 
+                'Sample52': 'NA', 'Sample86': 'NA', 'Sample30': 'NA', 
+                'Sample78': 'NA', 'Sample84': 'NA', 'Sample82': 'NA', 
+                'Sample6': 'NA', 'Sample96': 'NA', 'Sample72': 'NA', 
+                'Sample56': 'NA', 'Sample64': 'NA', 'Sample58': 'NA', 
+                'Sample92': 'NA', 'Sample62': 'NA', 'Sample8': 'NA', 
+                'Sample24': 'NA', 'Sample12': 'NA', 'Sample16': 'NA', 
+                'Sample88': 'NA', 'Sample22': 'NA', 'Sample42': 'NA', 
+                'Sample76': 'NA', 'Sample28': 'NA', 'Sample74': 'NA', 
+                'Sample50': 'NA', 'Sample60': 'NA', 'Sample10': 'NA', 
+                'Sample36': 'NA', 'Sample34': 'NA', 'Sample40': 'NA', 
+                'Sample66': 'NA', 'Sample14': 'NA', 'Sample32': 'NA', 
+                'Sample70': 'NA', 'Sample4': 'NA', 'Sample1': 'Instable'})
+
+
 
     def test_run_worflow_one_maf_extra_ids(self):
         """
@@ -198,6 +291,18 @@ class TestPortalWorkflow(PlutoTestCase):
             "facets_hisens_seg_files": [
                 {
                     "path": os.path.join(DATA_SETS['Proj_1']['FACETS_DIR'], "Sample2.rg.md.abra.printreads__Sample1.rg.md.abra.printreads_hisens.seg"),
+                "class": "File"
+                }
+            ],
+            "msi_files": [
+                {
+                    "path": os.path.join(DATA_SETS['Proj_1']['MSI_DIR'], "Sample1.Sample2.msi.tsv"),
+                "class": "File"
+                }
+            ],
+            "tmb_files": [
+                {
+                    "path": os.path.join(DATA_SETS['Proj_1']['TMB_DIR'], "Sample1.Sample2.tmb.tsv"),
                 "class": "File"
                 }
             ],
