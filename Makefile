@@ -293,6 +293,7 @@ parallel-test:
 	xargs -n 1 -P "$(P)" nice python3 -m unittest
 
 
+# $ KEEP_TMP=1 pytest tests/test_workflow_with_facets.py -k test_demo_dataset1 -s
 pytest:
 	. "$(ENVSH)" toil && \
 	source conda/bin/activate && \
