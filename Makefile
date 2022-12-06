@@ -105,12 +105,17 @@ conda:
 	bash "$(CONDASH)" -b -p conda && \
 	rm -f "$(CONDASH)"
 
+# source conda/bin/activate
+# conda deactivate
 install: SHELLOPTS=$(OLDSHELLOPTS)
 install: conda
-	. "$(ENVSH)" conda
-	conda install -y conda-forge::jq=1.5
-	pip install -r requirements.txt
-	$(MAKE) init
+	. "$(ENVSH)" conda && \
+	. conda/bin/activate && \
+	conda env update --file environment.yml
+
+# conda install -y conda-forge::jq=1.5
+# pip install -r requirements.txt
+# $(MAKE) init
 
 init: SHELLOPTS=$(OLDSHELLOPTS)
 init:
@@ -286,6 +291,14 @@ parallel-test-log:
 parallel-test:
 	./print_tests.py "$(T)" | \
 	xargs -n 1 -P "$(P)" nice python3 -m unittest
+
+
+# $ KEEP_TMP=1 pytest tests/test_workflow_with_facets.py -k test_demo_dataset1 -s
+pytest:
+	. "$(ENVSH)" toil && \
+	source conda/bin/activate && \
+	nice pytest -n auto --maxprocesses 24 tests
+
 
 
 #
