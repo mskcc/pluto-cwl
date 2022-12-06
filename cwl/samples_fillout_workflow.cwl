@@ -717,7 +717,7 @@ steps:
     run: filterUncalledMutations.cwl
     in:
       input_file: convert_to_portal_format/output_file
-    out: [ called_file, uncalled_file ]
+    out: [ called_file, uncalled_file ] # [ data_mutations_extended.txt , data_mutations_uncalled.txt]
 
 outputs:
   output_file:
@@ -726,9 +726,9 @@ outputs:
   filtered_file:
     type: File
     outputSource: concat_with_comments/filtered_file
-  portal_file:
+  portal_file: # data_mutations_extended.txt
     type: File
     outputSource: split_uncalled_variants/called_file
-  uncalled_file:
+  uncalled_file: # data_mutations_uncalled.txt
     type: File
     outputSource: split_uncalled_variants/uncalled_file
