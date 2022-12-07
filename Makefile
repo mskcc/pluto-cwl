@@ -271,33 +271,42 @@ update-container-tags:
 
 # NOTE: ^^^ env vars must come BEFORE `make ....`, and Makefile vars must come AFTER
 
-# number of parallel tasks;
-P:=16
-# test target; can also be an individual test_*.py file!
-T:=tests/
-# NOTE: the logging here can cause delay before lines are printed to file or console ; stdbuf -oL ; this breaks some R sigularity containers
-_LOGDATE:=$(shell date +%s)
-_LOGDATE_LONG:=$(shell date)
-_LOGFILE:=testing.$(_LOGDATE).log
-parallel-test-log:
-	echo ">>>>> ------ start parallel-test-log $(_LOGDATE_LONG) ($(_LOGDATE)) -------- <<<<<" >> "$(_LOGFILE)"
-	time { QUIET=True ./print_tests.py "$(T)" | \
-	xargs -n 1 -P "$(P)" nice python3 -m unittest ; } 2>&1 | \
-	tee -a "$(_LOGFILE)"
-	echo ">>>>> ------ stop parallel-test-log $(_LOGDATE_LONG) ($(_LOGDATE)) -------- <<<<<" >> "$(_LOGFILE)"
+
+# NOTE: use pytest instead of this one
+# # number of parallel tasks;
+# P:=16
+# # test target; can also be an individual test_*.py file!
+# T:=tests/
+# # NOTE: the logging here can cause delay before lines are printed to file or console ; stdbuf -oL ; this breaks some R sigularity containers
+# _LOGDATE:=$(shell date +%s)
+# _LOGDATE_LONG:=$(shell date)
+# _LOGFILE:=testing.$(_LOGDATE).log
+# parallel-test-log:
+# 	echo ">>>>> ------ start parallel-test-log $(_LOGDATE_LONG) ($(_LOGDATE)) -------- <<<<<" >> "$(_LOGFILE)"
+# 	time { QUIET=True ./print_tests.py "$(T)" | \
+# 	xargs -n 1 -P "$(P)" nice python3 -m unittest ; } 2>&1 | \
+# 	tee -a "$(_LOGFILE)"
+# 	echo ">>>>> ------ stop parallel-test-log $(_LOGDATE_LONG) ($(_LOGDATE)) -------- <<<<<" >> "$(_LOGFILE)"
 
 
-# same but without logging
-parallel-test:
-	./print_tests.py "$(T)" | \
-	xargs -n 1 -P "$(P)" nice python3 -m unittest
+# # same but without logging
+# parallel-test:
+# 	./print_tests.py "$(T)" | \
+# 	xargs -n 1 -P "$(P)" nice python3 -m unittest
 
 
+
+# NOTE: use this one;
 # $ KEEP_TMP=1 pytest tests/test_workflow_with_facets.py -k test_demo_dataset1 -s
+# 106 passed, 5 skipped in 1613.98s (0:26:53)
 pytest:
 	. "$(ENVSH)" toil && \
 	source conda/bin/activate && \
-	nice pytest -n auto --maxprocesses 24 --ignore tests/test_workflow_with_facets.xl.py --ignore tests/test_workflow_with_facets.medium.py tests
+	nice pytest \
+	-n auto --maxprocesses 24 \
+	--ignore tests/test_workflow_with_facets.xl.py \
+	--ignore tests/test_workflow_with_facets.medium.py \
+	--ignore tests/test_workflow_with_facets_medium.py tests
 
 
 
