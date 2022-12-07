@@ -328,7 +328,7 @@ class TestPortalWorkflow(PlutoTestCase):
             'portal_data_clinical_patient_file': OFile(
                 name='data_clinical_patient.txt', size=643, hash='9417dcabddd6ab2cbe98167bccd9b9e4fa182562', dir=output_dir),
             'portal_data_clinical_sample_file': OFile(
-                name='data_clinical_sample.txt', size=7592, hash='2a0c59593fa7726743b2fe46db9d955dbc625453', dir=output_dir),
+                name='data_clinical_sample.txt', size=8182, hash='e2298a7465948e61cea484e931d27263031de883', dir=output_dir),
             'portal_fusions_data_file': OFile(
                 name='data_fusions.txt', size=99, hash='c16f763b248813fcdde76f7486f1ddc4e9856038', dir=output_dir),
             'portal_hisens_segs': OFile(
@@ -437,7 +437,11 @@ class TestPortalWorkflow(PlutoTestCase):
                     "path": os.path.join(DATA_SETS['Proj_1']['FACETS_DIR'], "Sample3.rg.md.abra.printreads__Sample4.rg.md.abra.printreads_hisens.seg"),
                     "class": "File"
                 }
-            ]
+            ],
+            "msi_files": [
+            ],
+            "tmb_files": [
+            ],
         }
 
         output_json, output_dir = self.run_cwl()
@@ -582,6 +586,10 @@ class TestPortalWorkflow(PlutoTestCase):
                     "path": os.path.join(DATA_SETS['Proj_1']['FACETS_SUITE_DIR'], "Sample44.txt"),
                     "class": "File"
                 },
+            ],
+            "msi_files": [
+            ],
+            "tmb_files": [
             ],
         }
 
@@ -756,7 +764,11 @@ class TestPortalWorkflow(PlutoTestCase):
                     "class": "File"
                 },
             ],
-            "extra_cna_files": [{"class": "File", "path": cna_file1}]
+            "extra_cna_files": [{"class": "File", "path": cna_file1}],
+            "msi_files": [
+            ],
+            "tmb_files": [
+            ],
         }
 
         output_json, output_dir = self.run_cwl()
@@ -839,7 +851,7 @@ class TestPortalWorkflow(PlutoTestCase):
         self.assertMutHeadersContain(os.path.join(output_dir, 'data_mutations_extended.txt'), some_required_colnames)
 
 
-    @unittest.skipIf(ENABLE_LARGE_TESTS!=True, "is a large test")
+    # @unittest.skipIf(ENABLE_LARGE_TESTS!=True, "is a large test")
     def test_with_mixed_mafs(self):
         """
         Test that the workflow produces expected output when both Argos maf files and Facets Suite maf files are used in the workflow
@@ -915,7 +927,11 @@ class TestPortalWorkflow(PlutoTestCase):
                     "path": os.path.join(DATA_SETS['Proj_1']['FACETS_DIR'], "Sample43.rg.md.abra.printreads__Sample44.rg.md.abra.printreads_hisens.seg"),
                 "class": "File"
                 }
-            ]
+            ],
+            "msi_files": [
+            ],
+            "tmb_files": [
+            ],
         }
 
         output_json, output_dir = self.run_cwl()
