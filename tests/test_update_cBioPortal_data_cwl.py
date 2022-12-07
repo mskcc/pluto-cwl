@@ -23,7 +23,7 @@ except ModuleNotFoundError:
     import fixtures_cBioPortal as fxt
     sys.path.pop(0)
 
-class TestUpdate_cBioPortal_dataCWL(PlutoTestCase):
+class TestUpdatecBioPortalDataCWL(PlutoTestCase):
     cwl_file = CWLFile('update_cBioPortal_data.cwl')
 
     def setUp(self):
