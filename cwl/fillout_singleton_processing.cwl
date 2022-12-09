@@ -5,6 +5,7 @@ id: fillout_singleton_processing
 label: fillout_singleton_processing
 doc: "
 Handling for unmatched singleton sample files in the fillout workflow
+Its pretty much the same steps as the other fillout workflows except there is not GBCMS step in the middle
 "
 requirements:
   - class: MultipleInputFeatureRequirement

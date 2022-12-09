@@ -70,7 +70,7 @@ steps:
       class: CommandLineTool
       id: gbcms
       label: gbcms
-      baseCommand: [ "sh", "run.sh" ]
+      baseCommand: [ "sh", "run.gbcms.sh" ]
       requirements:
         InlineJavascriptRequirement: {}
         ResourceRequirement:
@@ -79,7 +79,7 @@ steps:
           dockerPull: cmopipeline/getbasecountsmultisample:1.2.2
         InitialWorkDirRequirement:
           listing:
-            - entryname: run.sh
+            - entryname: run.gbcms.sh
               entry: |-
                 set -eu
                 # make the bam arg string; looks like this:
@@ -132,13 +132,13 @@ steps:
       class: CommandLineTool
       id: fix_labels_and_merge_vcfs
       label: fix_labels_and_merge_vcfs
-      baseCommand: [ "bash", "run.sh" ]
+      baseCommand: [ "bash", "run.fix_labels_and_merge_vcfs.sh" ]
       requirements:
         DockerRequirement:
           dockerPull: mskcc/helix_filters_01:21.4.1
         InitialWorkDirRequirement:
           listing:
-            - entryname: run.sh
+            - entryname: run.fix_labels_and_merge_vcfs.sh
               entry: |-
                 set -eu
                 # need to rename some conflicting sample INFO tags; prepend FL for "fillout"

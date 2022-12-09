@@ -45,13 +45,16 @@ steps:
         sample_ids: string[]
       # NOTE: in the line below `var i in inputs.samples`, `i` is an int representing the index position in the array `inputs.samples`
       # in Python it would look like ` x = ['a', 'b']; for i in range(len(x)): print(i, x[i]) `
-      expression: "${
+      expression: |
+        ${
         var sample_ids = [];
         for ( var i in inputs.samples ){
             sample_ids.push(inputs.samples[i]['sample_id']);
           };
+        console.log("sample_ids")
+        console.log(sample_ids);
         return {'sample_ids': sample_ids};
-        }"
+        }
 
   create_clinical_samples_list:
     doc: creates a list of clinical sample_ids out of the samples record array for downstream use
@@ -130,13 +133,13 @@ steps:
       class: CommandLineTool
       id: merge_vcfs
       label: merge_vcfs
-      baseCommand: ['bash', 'run.sh']
+      baseCommand: ['bash', 'run.merge_vcfs.sh']
       requirements:
         DockerRequirement:
           dockerPull: mskcc/helix_filters_01:21.4.1
         InitialWorkDirRequirement:
           listing:
-            - entryname: run.sh
+            - entryname: run.merge_vcfs.sh
               entry: |-
                 set -eu
                 # get a comma-delim string of the sample names

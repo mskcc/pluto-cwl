@@ -38,7 +38,7 @@ steps:
     out: [ sample ]
     run:
       class: CommandLineTool
-      baseCommand: [ "bash", "run.sh" ]
+      baseCommand: [ "bash", "run.index_bam.sh" ]
       requirements:
         ResourceRequirement:
           coresMin: 4
@@ -47,7 +47,7 @@ steps:
         InitialWorkDirRequirement:
           listing:
             - $(inputs.sample['bam_file']) # NOTE: I think this is causing all input bam files to get copied when using Toil??
-            - entryname: run.sh
+            - entryname: run.index_bam.sh
               entry: |-
                 set -eu
                 # sample.bam
