@@ -47,8 +47,13 @@ inputs:
       - ^.dict
 outputs:
   output_file:
+    doc: .vcf.gz file with .tbi index
     type: File
     outputBinding:
       glob: ${ return inputs.sample_id + '.sorted.vcf.gz' }
     secondaryFiles:
       - .tbi
+  output_vcf:
+    type: File
+    outputBinding:
+      glob: ${ return inputs.sample_id + '.sorted.vcf' }
