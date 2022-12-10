@@ -16,7 +16,7 @@ requirements:
   - $import: types.yml
 
 inputs:
-  samples: "types.yml#FilloutSample[]"
+  samples: "types.yml#FilloutSample[]" # must be a list of samples; list must have at  least one entry 
   ref_fasta:
     type: File
     secondaryFiles:
@@ -34,7 +34,7 @@ steps:
     doc: creates a list of sample_ids out of the samples record array for downstream use
     in:
       samples: samples
-    out: [ sample_ids ]
+    out: [ sample_ids, num_samples ]
     run:
       class: ExpressionTool
       id: create_samples_list
@@ -43,17 +43,17 @@ steps:
         samples: "types.yml#FilloutSample[]"
       outputs:
         sample_ids: string[]
+        num_samples: int
       # NOTE: in the line below `var i in inputs.samples`, `i` is an int representing the index position in the array `inputs.samples`
       # in Python it would look like ` x = ['a', 'b']; for i in range(len(x)): print(i, x[i]) `
       expression: |
         ${
         var sample_ids = [];
+        var num_samples = 0; // need to output the number of samples because I dont know how to check the list length in the CWL when statement
         for ( var i in inputs.samples ){
             sample_ids.push(inputs.samples[i]['sample_id']);
           };
-        console.log("sample_ids")
-        console.log(sample_ids);
-        return {'sample_ids': sample_ids};
+        return {'sample_ids': sample_ids, 'num_samples': sample_ids.length};
         }
 
   create_clinical_samples_list:
@@ -120,15 +120,17 @@ steps:
         valueFrom: ${ return inputs.sample['maf_file']; }
       ref_fasta: ref_fasta
     out:
-      [ output_file ]
+      [ output_file, output_vcf ] # .sorted.vcf.gz + .tbi, .sorted.vcf
 
   merge_vcfs:
     doc: merge all the vcf files together to create the list of target regions for GetBaseCountsMultiSample for fillout
     in:
+      num_samples: create_samples_list/num_samples
       sample_ids: create_samples_list/sample_ids
       vcf_gz_files: maf2vcf/output_file
     out:
       [ merged_vcf, merged_vcf_gz ]
+    when: $( inputs.num_samples > 1 )
     run:
       class: CommandLineTool
       id: merge_vcfs
@@ -174,6 +176,39 @@ steps:
             glob: merged.vcf.gz
           secondaryFiles:
             - .tbi
+
+  pass_singleton_vcf:
+    doc: this passes along the original sample .vcf if only one sample was provided and no merge_vcf would have been produced
+    in:
+      num_samples: create_samples_list/num_samples
+      vcf_gz_files: maf2vcf/output_file
+      vcf_files: maf2vcf/output_vcf
+    when: $( inputs.num_samples == 1 )
+    out: [ output_vcf_gz, output_vcf ]
+    run:
+      class: ExpressionTool
+      id: pass_singleton_vcf
+      label: pass_singleton_vcf
+      inputs:
+        vcf_gz_files: File[]
+        vcf_files: File[]
+      outputs:
+        output_vcf_gz:
+          type: File
+          secondaryFiles:
+            - .tbi
+        output_vcf: File
+      expression: |
+        ${
+          return {
+            'output_vcf_gz': inputs.vcf_gz_files[0],
+            'output_vcf': inputs.vcf_files[0]
+            };
+        }
+
+
+
+
 outputs: 
   sample_ids:
     type: string[]
@@ -189,7 +224,9 @@ outputs:
     outputSource: maf2vcf/output_file
   merged_vcf:
     type: File
-    outputSource: merge_vcfs/merged_vcf
+    outputSource: [ merge_vcfs/merged_vcf, pass_singleton_vcf/output_vcf ]
+    pickValue: first_non_null
   merged_vcf_gz:
     type: File
-    outputSource: merge_vcfs/merged_vcf_gz
+    outputSource: [ merge_vcfs/merged_vcf_gz, pass_singleton_vcf/output_vcf_gz ]
+    pickValue: first_non_null
