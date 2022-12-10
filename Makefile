@@ -243,34 +243,55 @@ update-container-tags:
 
 
 # ~~~~~ Debug & Development ~~~~~ #
-# run all individual test cases in parallel
-
-# RECIPES:
-# parallel-test; run all tests in parallel
-# parallel-test-log; run all tests in parallel but save stdout to log file (stdout might not appear in console right away but its running! check htop if you arent sure if its running)
+# Run the test suite
 
 
 # EXAMPLES:
 # initialize the "toil" environment (assuming you have installed dependencies)
 # $ . env.juno.sh toil
 # run all tests with default settings
-# $ make parallel-test
-
-# run with logging
-# $make parallel-test-log
-
-# run only test from one .py file, run only 4 tests in parallel
-# $make parallel-test-log T=tests/test_add_af_cwl.py P=4
+# $ make test
 
 # pass env vars to control test execution
-# $ PRINT_TESTNAME=T make parallel-test T=tests/test_generate_cBioPortal_file_cwl.py
-# $ CWL_ENGINE=Toil TMP_DIR=/scratch PRINT_COMMAND=T PRINT_TESTNAME=True make parallel-test P=20
-# $ CWL_ENGINE=Toil TMP_DIR=/fscratch/tmp PRINT_COMMAND=T PRINT_TESTNAME=T make parallel-test
-# $ CWL_ENGINE=Toil TMP_DIR=/fscratch/tmp LARGE_TESTS=True PRINT_COMMAND=True PRINT_TESTNAME=True INTEGRATION_TESTS=True make parallel-test-log
-# $ CWL_ENGINE=Toil USE_LSF=T PRINT_COMMAND=T PRINT_TESTNAME=T make parallel-test-log
+# $ PRINT_TESTNAME=T make test T=tests/test_generate_cBioPortal_file_cwl.py
+# $ CWL_ENGINE=Toil TMP_DIR=/scratch PRINT_COMMAND=T PRINT_TESTNAME=True make test P=20
+# $ CWL_ENGINE=Toil TMP_DIR=/fscratch/tmp PRINT_COMMAND=T PRINT_TESTNAME=T make test
+# $ CWL_ENGINE=Toil TMP_DIR=/fscratch/tmp LARGE_TESTS=True PRINT_COMMAND=True PRINT_TESTNAME=True INTEGRATION_TESTS=True make test
+# $ CWL_ENGINE=Toil USE_LSF=T PRINT_COMMAND=T PRINT_TESTNAME=T make test
 
 # NOTE: ^^^ env vars must come BEFORE `make ....`, and Makefile vars must come AFTER
 
+# $ KEEP_TMP=1 pytest tests/test_workflow_with_facets.py -k test_demo_dataset1 -s
+# 106 passed, 5 skipped in 1613.98s (0:26:53)
+# NOTE: run with `$ LARGE_TESTS=True ... ` to enable large test cases
+test:
+	. "$(ENVSH)" toil && \
+	source conda/bin/activate && \
+	nice pytest \
+	-n auto --maxprocesses 24 \
+	--ignore tests/test_workflow_with_facets.xl.py \
+	--ignore tests/test_workflow_with_facets.medium.py \
+	--ignore tests/test_workflow_with_facets_medium.py tests
+
+
+
+
+
+# test recipe for Jenkins
+# TODO: review this, it has problems with the pwd during Jenkins execution; consider only running medium or XL test
+integration_test:
+	. "$(ENVSH)" integration_test && \
+	cd pluto && \
+	python test_tools.py && \
+	python test_serializer.py && \
+	cd .. && \
+	python tests/test_workflow_with_facets.xl.py && \
+	python tests/test_workflow_with_facets.medium.py
+
+
+#
+# OLD TEST RUNNING RECIPES:
+#
 
 # NOTE: use pytest instead of this one
 # # number of parallel tasks;
@@ -289,69 +310,8 @@ update-container-tags:
 # 	echo ">>>>> ------ stop parallel-test-log $(_LOGDATE_LONG) ($(_LOGDATE)) -------- <<<<<" >> "$(_LOGFILE)"
 
 
-# # same but without logging
-# parallel-test:
-# 	./print_tests.py "$(T)" | \
-# 	xargs -n 1 -P "$(P)" nice python3 -m unittest
 
-
-
-# NOTE: use this one;
-# $ KEEP_TMP=1 pytest tests/test_workflow_with_facets.py -k test_demo_dataset1 -s
-# 106 passed, 5 skipped in 1613.98s (0:26:53)
-pytest:
-	. "$(ENVSH)" toil && \
-	source conda/bin/activate && \
-	nice pytest \
-	-n auto --maxprocesses 24 \
-	--ignore tests/test_workflow_with_facets.xl.py \
-	--ignore tests/test_workflow_with_facets.medium.py \
-	--ignore tests/test_workflow_with_facets_medium.py tests
-
-
-
-#
-# OLD TEST RUNNING RECIPES:
-#
-
-# Run the test suite
-# NOTE: run with `$ LARGE_TESTS=True python3 tests/... ` to enable large test cases
 
 # TODO: why is this here and do we need it?? might be used in pluto settings.py??
 export FIXTURES_DIR:=/juno/work/ci/helix_filters_01/fixtures
 
-# TODO: figure out if we can run the tests in parallel or otherwise make it faster
-# for some reason the test recipe is not running all tests....
-test:
-	. "$(ENVSH)" toil && \
-	if [ ! -e "$(SINGULARITY_SIF)" ]; then $(MAKE) singularity-pull; fi && \
-	for i in tests/test_*.py; do echo $$i; python3 $$i; done
-
-# run tests in parallel;
-# $ make test3 -j 4
-# NOTE: this runs each test_*.py file in parallel; does NOT run individual test cases in parallel!!
-TEST_ENV:=toil
-TESTS:=$(shell ls tests/test_*.py)
-$(TESTS):
-	. "$(ENVSH)" "$(TEST_ENV)" && echo $@; python3 $@
-.PHONY:$(TESTS)
-test3:$(TESTS)
-
-
-# test recipe for Jenkins
-# TODO: review this, it has problems with the pwd during Jenkins execution; consider only running medium or XL test
-integration_test:
-	. "$(ENVSH)" integration_test && \
-	cd pluto && \
-	python test_tools.py && \
-	python test_serializer.py && \
-	cd .. && \
-	#for i in tests/test_*workflow*.py; do echo $$i; python3 $$i; rm -rf $TMP_DIR/tmp* /scratch/jenkins/tmp*; done
-	python tests/test_workflow_with_facets.xl.py && \
-	python tests/test_workflow_with_facets.medium.py
-
-# alternative Jenkins test recipe
-# TODO: do we still need this?
-integration_test_1:
-	. "$(ENVSH)" integration_test && \
-	for i in tests/test_*cwl*.py; do echo $$i; python3 $$i; done
