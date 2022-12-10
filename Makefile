@@ -268,7 +268,7 @@ test:
 	. "$(ENVSH)" toil && \
 	source conda/bin/activate && \
 	nice pytest \
-	-n auto --maxprocesses 24 \
+	-n auto \
 	--ignore tests/test_workflow_with_facets.xl.py \
 	--ignore tests/test_workflow_with_facets.medium.py \
 	--ignore tests/test_workflow_with_facets_medium.py tests
