@@ -101,9 +101,6 @@ steps:
           "singleton_samples": singleton_samples,
           "num_singletons": singleton_samples.length };
 
-        // console.log(">>> res");
-        // console.log(res);
-
         return res;
         }
 
