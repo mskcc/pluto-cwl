@@ -8,14 +8,14 @@ import sys
 import unittest
 from collections import OrderedDict
 
-PARENT_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-sys.path.insert(0, PARENT_DIR)
+
+
 from pluto import (
     PlutoTestCase, 
     CWLFile, 
     TableReader,
 )
-sys.path.pop(0)
+
 
 class TestConcatMafs(PlutoTestCase):
     cwl_file = CWLFile('concat-mafs.cwl')

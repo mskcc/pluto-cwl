@@ -5,16 +5,11 @@ Test case for the deduplicate-maf cwl
 """
 import os
 import sys
-import unittest
 from collections import OrderedDict
-
-PARENT_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-sys.path.insert(0, PARENT_DIR)
 from pluto import (
-    PlutoTestCase, 
+    PlutoTestCase,
     CWLFile,
 )
-sys.path.pop(0)
 
 class TestDedupMaf(PlutoTestCase):
     cwl_file = CWLFile('deduplicate-maf.cwl')
@@ -143,7 +138,3 @@ class TestDedupMaf(PlutoTestCase):
             'RTEL1\t51750\tmskcc.org\tGRCh37\t20\t62321135\t62321135\tSilent\tG\tG\tA\t1\t.\t142\t511\t212\t.\n'
         ]
         self.assertEqual(lines, expected_lines)
-
-
-
-

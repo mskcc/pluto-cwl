@@ -9,14 +9,14 @@ import unittest
 import csv
 from collections import OrderedDict
 
-PARENT_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-sys.path.insert(0, PARENT_DIR)
+
+
 from pluto import (
     CWLFile, 
     PlutoTestCase,
     OFile
 )
-sys.path.pop(0)
+
 
 class TestReduceSigFigs(PlutoTestCase):
     cwl_file = CWLFile('reduce_sig_figs.cwl')

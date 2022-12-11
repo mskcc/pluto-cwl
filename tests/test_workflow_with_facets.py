@@ -21,8 +21,8 @@ import os
 import sys
 import unittest
 
-PARENT_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-sys.path.insert(0, PARENT_DIR)
+
+
 from pluto import (
     TableReader, 
     PlutoTestCase,
@@ -30,7 +30,7 @@ from pluto import (
     OFile,
     ODir
 )
-sys.path.pop(0)
+
 
 # # handle for errors arising from python3 -m unittest ...
 try:
@@ -38,7 +38,7 @@ try:
 except ModuleNotFoundError:
     sys.path.insert(0, THIS_DIR)
     import fixtures_cBioPortal as fxt
-    sys.path.pop(0)
+    
 
 
 class TestWorkflowWithFacets(PlutoTestCase):

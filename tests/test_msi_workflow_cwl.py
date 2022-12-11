@@ -7,8 +7,8 @@ import os
 import sys
 import unittest
 
-PARENT_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-sys.path.insert(0, PARENT_DIR)
+
+
 from pluto import (
     PlutoTestCase, 
     CWLFile, 
@@ -17,7 +17,7 @@ from pluto import (
     MICROSATELLITES_LIST,
     OFile,
 )
-sys.path.pop(0)
+
 
 class TestMsiWorkflow(PlutoTestCase):
     cwl_file = CWLFile('msi_workflow.cwl')

@@ -6,14 +6,10 @@ Test case for merging tables
 import os
 import sys
 import unittest
-
-PARENT_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-sys.path.insert(0, PARENT_DIR)
 from pluto import (
-    PlutoTestCase, 
+    PlutoTestCase,
     CWLFile
 )
-sys.path.pop(0)
 
 class TestAddMSIStatus(PlutoTestCase):
     cwl_file = CWLFile('add_msi_status.cwl')
@@ -64,8 +60,3 @@ class TestAddMSIStatus(PlutoTestCase):
             ['789',                     '321',                     '5',               'Sample3-T',       'Indeterminate']
             ]
         self.assertEqual(lines, expected_lines)
-
-
-
-
-

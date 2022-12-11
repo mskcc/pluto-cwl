@@ -7,8 +7,8 @@ import os
 import sys
 import unittest
 
-PARENT_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-sys.path.insert(0, PARENT_DIR)
+
+
 from pluto import (
     run_cwl, 
     write_table, 
@@ -16,7 +16,7 @@ from pluto import (
     PlutoTestCase,
     DATA_SETS
 )
-sys.path.pop(0)
+
 
 class TestGenerateCbioFilesCWL(PlutoTestCase):
     cwl_file = CWLFile('generate_cBioPortal_file.cwl')

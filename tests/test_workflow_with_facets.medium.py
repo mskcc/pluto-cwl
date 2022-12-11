@@ -14,22 +14,22 @@ import os
 import sys
 import unittest
 
-PARENT_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-sys.path.insert(0, PARENT_DIR)
+
+
 from pluto import (
     PlutoTestCase,
     ENABLE_INTEGRATION_TESTS,
     OFile,
     ODir
 )
-sys.path.pop(0)
+
 
 try:
     from fixtures import WORKFLOW_MEDIUM_JSON
 except ModuleNotFoundError:
     sys.path.insert(0, THIS_DIR)
     from fixtures import WORKFLOW_MEDIUM_JSON
-    sys.path.pop(0)
+    
 
 class TestWorkflowWithFacetsMedium(PlutoTestCase):
     cwl_file = 'workflow_with_facets.cwl'

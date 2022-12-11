@@ -7,8 +7,8 @@ import os
 import sys
 import unittest
 
-PARENT_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-sys.path.insert(0, PARENT_DIR)
+
+
 from pluto import (
     PlutoTestCase,
     OFile,
@@ -21,7 +21,7 @@ from pluto import (
     KNOWN_FUSIONS_FILE,
     IMPACT_FILE
 )
-sys.path.pop(0)
+
 
 
 class TestWorkflow(PlutoTestCase):

@@ -11,8 +11,8 @@ import sys
 import unittest
 from typing import Dict, Tuple
 
-PARENT_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-sys.path.insert(0, PARENT_DIR)
+
+
 from pluto import (
     CWLFile,
     PlutoTestCase,
@@ -20,7 +20,7 @@ from pluto import (
     DATA_SETS,
     OFile
 )
-sys.path.pop(0)
+
 
 
 sample1_maf = os.path.join(DATA_SETS['Fillout01']['MAF_DIR'], 'Sample1.FillOutUnitTest01.muts.maf')

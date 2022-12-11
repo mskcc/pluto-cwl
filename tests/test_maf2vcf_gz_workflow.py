@@ -8,14 +8,14 @@ import sys
 import unittest
 from collections import OrderedDict
 
-PARENT_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-sys.path.insert(0, PARENT_DIR)
+
+
 from pluto import (
     PlutoTestCase, 
     CWLFile, 
     TableReader
 )
-sys.path.pop(0)
+
 
 class TestMaf2VcfGz(PlutoTestCase):
     cwl_file = CWLFile('maf2vcf_gz_workflow.cwl')
