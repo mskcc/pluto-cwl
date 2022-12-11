@@ -10,18 +10,22 @@ Usage:
     $ INTEGRATION_TESTS=True USE_LSF=True CWL_ENGINE=toil python3 tests/test_workflow_with_facets.xl.py
 
 """
-from fixtures import WORKFLOW_WITH_FACETS_XL_JSON
-from pluto.serializer import OFile, ODir
-from pluto.settings import ENABLE_INTEGRATION_TESTS
-from pluto.tools import PlutoTestCase
 import os
 import sys
 import unittest
 
-THIS_DIR = os.path.dirname(os.path.realpath(__file__))
-PARENT_DIR = os.path.dirname(THIS_DIR)
-sys.path.insert(0, PARENT_DIR)
-sys.path.pop(0)
+from fixtures import WORKFLOW_WITH_FACETS_XL_JSON
+from pluto import (
+      OFile, 
+      ODir,
+      PlutoTestCase,
+      ENABLE_INTEGRATION_TESTS
+)
+
+# THIS_DIR = os.path.dirname(os.path.realpath(__file__))
+# PARENT_DIR = os.path.dirname(THIS_DIR)
+# sys.path.insert(0, PARENT_DIR)
+# sys.path.pop(0)
 
 
 class TestWorkflowWithFacetsXL(PlutoTestCase):

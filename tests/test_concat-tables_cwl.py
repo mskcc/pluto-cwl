@@ -7,10 +7,12 @@ import os
 import sys
 import unittest
 
-THIS_DIR = os.path.dirname(os.path.realpath(__file__))
-PARENT_DIR = os.path.dirname(THIS_DIR)
+PARENT_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.insert(0, PARENT_DIR)
-from pluto.tools import CWLFile, PlutoTestCase
+from pluto import (
+    CWLFile, 
+    PlutoTestCase,
+)
 sys.path.pop(0)
 
 class TestConcatTables(PlutoTestCase):

@@ -21,12 +21,15 @@ import os
 import sys
 import unittest
 
-THIS_DIR = os.path.dirname(os.path.realpath(__file__))
-PARENT_DIR = os.path.dirname(THIS_DIR)
+PARENT_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.insert(0, PARENT_DIR)
-from pluto.tools import TableReader, PlutoTestCase
-from pluto.settings import ENABLE_LARGE_TESTS
-from pluto.serializer import OFile, ODir
+from pluto import (
+    TableReader, 
+    PlutoTestCase,
+    ENABLE_LARGE_TESTS,
+    OFile,
+    ODir
+)
 sys.path.pop(0)
 
 # # handle for errors arising from python3 -m unittest ...

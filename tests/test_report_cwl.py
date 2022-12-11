@@ -9,8 +9,11 @@ import unittest
 
 PARENT_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.insert(0, PARENT_DIR)
-from pluto.tools import PlutoTestCase, CWLFile
-from pluto.serializer import OFile
+from pluto import (
+    PlutoTestCase, 
+    CWLFile,
+    OFile
+)
 sys.path.pop(0)
 
 class TestReport(PlutoTestCase):

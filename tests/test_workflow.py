@@ -6,15 +6,21 @@ unit tests for the workflow.cwl
 import os
 import sys
 import unittest
-from tempfile import TemporaryDirectory
 
-THIS_DIR = os.path.dirname(os.path.realpath(__file__))
-PARENT_DIR = os.path.dirname(THIS_DIR)
+PARENT_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.insert(0, PARENT_DIR)
-from pluto.tools import PlutoTestCase
-from pluto.serializer import OFile, ODir, serialize_repr
-from pluto.tools import load_mutations, run_cwl, CWLFile
-from pluto.settings import DATA_SETS, KNOWN_FUSIONS_FILE, IMPACT_FILE
+from pluto import (
+    PlutoTestCase,
+    OFile,
+    ODir,
+    serialize_repr,
+    load_mutations,
+    run_cwl,
+    CWLFile,
+    DATA_SETS,
+    KNOWN_FUSIONS_FILE,
+    IMPACT_FILE
+)
 sys.path.pop(0)
 
 

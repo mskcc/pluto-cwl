@@ -8,10 +8,13 @@ import sys
 import unittest
 from collections import OrderedDict
 
-THIS_DIR = os.path.dirname(os.path.realpath(__file__))
-PARENT_DIR = os.path.dirname(THIS_DIR)
+PARENT_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.insert(0, PARENT_DIR)
-from pluto.tools import PlutoTestCase, CWLFile, TableReader
+from pluto import (
+    PlutoTestCase, 
+    CWLFile, 
+    TableReader
+)
 sys.path.pop(0)
 
 class TestMaf2VcfGz(PlutoTestCase):

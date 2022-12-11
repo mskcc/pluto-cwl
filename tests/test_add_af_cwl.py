@@ -7,12 +7,13 @@ import os
 import sys
 import json
 import unittest
-from tempfile import TemporaryDirectory
 
-THIS_DIR = os.path.dirname(os.path.realpath(__file__))
-PARENT_DIR = os.path.dirname(THIS_DIR)
+PARENT_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.insert(0, PARENT_DIR)
-from pluto.tools import PlutoTestCase, CWLFile
+from pluto import (
+    PlutoTestCase, 
+    CWLFile
+)
 sys.path.pop(0)
 
 class TestAddAFCWL(PlutoTestCase):

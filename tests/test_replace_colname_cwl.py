@@ -7,11 +7,14 @@ import os
 import sys
 import unittest
 
-THIS_DIR = os.path.dirname(os.path.realpath(__file__))
-PARENT_DIR = os.path.dirname(THIS_DIR)
+PARENT_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.insert(0, PARENT_DIR)
-from pluto.tools import PlutoTestCase, CWLFile, TableReader
-from pluto.settings import DATA_SETS
+from pluto import (
+    PlutoTestCase, 
+    CWLFile, 
+    TableReader,
+    DATA_SETS
+)
 sys.path.pop(0)
 
 class TestReplaceColname(PlutoTestCase):

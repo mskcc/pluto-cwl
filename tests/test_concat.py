@@ -5,16 +5,18 @@ unit tests for the concat.cwl
 """
 import os
 import sys
-import json
 import unittest
-from tempfile import TemporaryDirectory
 
-THIS_DIR = os.path.dirname(os.path.realpath(__file__))
-PARENT_DIR = os.path.dirname(THIS_DIR)
+PARENT_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.insert(0, PARENT_DIR)
-from pluto.tools import run_command, CWLFile, PlutoTestCase
-from pluto.settings import CWL_ARGS
-from pluto.serializer import OFile, ODir
+from pluto import (
+    run_command, 
+    CWLFile, 
+    PlutoTestCase,
+    CWL_ARGS,
+    OFile,
+    ODir
+)
 sys.path.pop(0)
 
 

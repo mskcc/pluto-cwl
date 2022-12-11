@@ -11,14 +11,15 @@ import sys
 import unittest
 from typing import Dict, Tuple
 
-THIS_DIR = os.path.dirname(os.path.realpath(__file__))
-PARENT_DIR = os.path.dirname(THIS_DIR)
+PARENT_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.insert(0, PARENT_DIR)
-from pluto.cwlFile import CWLFile
-from pluto.plutoTestCase import PlutoTestCase
-from pluto.plutoPreRunTestCase import PlutoPreRunTestCase
-from pluto.settings import DATA_SETS
-from pluto.serializer import OFile
+from pluto import (
+    CWLFile,
+    PlutoTestCase,
+    PlutoPreRunTestCase,
+    DATA_SETS,
+    OFile
+)
 sys.path.pop(0)
 
 

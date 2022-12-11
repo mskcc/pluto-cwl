@@ -6,16 +6,17 @@ unit tests for the generate_cbioPortal_file.cwl file
 import os
 import sys
 import unittest
-from tempfile import TemporaryDirectory
 
-THIS_DIR = os.path.dirname(os.path.realpath(__file__))
-PARENT_DIR = os.path.dirname(THIS_DIR)
+PARENT_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.insert(0, PARENT_DIR)
-from pluto.tools import run_cwl, write_table, CWLFile, PlutoTestCase
-from pluto.settings import DATA_SETS
+from pluto import (
+    run_cwl, 
+    write_table, 
+    CWLFile, 
+    PlutoTestCase,
+    DATA_SETS
+)
 sys.path.pop(0)
-
-cwl_file = CWLFile('generate_cBioPortal_file.cwl')
 
 class TestGenerateCbioFilesCWL(PlutoTestCase):
     cwl_file = CWLFile('generate_cBioPortal_file.cwl')
