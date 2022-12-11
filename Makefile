@@ -273,7 +273,15 @@ test:
 	--ignore tests/test_workflow_with_facets.medium.py \
 	--ignore tests/test_workflow_with_facets_medium.py tests
 
-
+integration-pytest:
+	export USE_LSF=True ; \
+	export CWL_ENGINE=Toil ; \
+	. "$(ENVSH)" toil && \
+	source conda/bin/activate && \
+	nice pytest \
+	-n auto \
+	tests/test_workflow_with_facets_xl.py \
+	tests/test_workflow_with_facets_medium.py
 
 
 
