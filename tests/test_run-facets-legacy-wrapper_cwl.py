@@ -57,5 +57,5 @@ class TestRunFacetsLegacyWrapperCWL(PlutoTestCase):
         with open(os.path.join(output_dir, 'Sample24_hisens.cncf.txt')) as fin:
             self.assertEqual(len(fin.readlines()), 37)
 
-if __name__ == "__main__":
-    unittest.main()
+
+

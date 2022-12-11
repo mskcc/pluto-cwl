@@ -95,5 +95,5 @@ class TestAnnotateMafWrapperCWL(PlutoTestCase):
         ]
         self.assertCWLDictEqual(output_json, expected_output, related_keys = strip_related_keys)
 
-if __name__ == "__main__":
-    unittest.main()
+
+

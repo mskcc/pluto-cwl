@@ -127,5 +127,5 @@ class TestReport(PlutoTestCase):
 
         self.assertCWLDictEqual(output_json, expected_output)
 
-if __name__ == "__main__":
-    unittest.main()
+
+

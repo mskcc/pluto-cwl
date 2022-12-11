@@ -96,5 +96,5 @@ case_list_ids: Sample1\tSample2
 
 
 
-if __name__ == "__main__":
-    unittest.main()
+
+

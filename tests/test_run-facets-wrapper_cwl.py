@@ -59,5 +59,5 @@ class TestRunFacetsWrapperCWL(PlutoTestCase):
         with open(os.path.join(output_dir, 'Sample24_purity.seg')) as fin:
             self.assertEqual(len(fin.readlines()), 25)
 
-if __name__ == "__main__":
-    unittest.main()
+
+

@@ -55,5 +55,5 @@ class TestPasteCol(PlutoTestCase):
         self.assertEqual(output_lines, expected_lines)
 
 
-if __name__ == "__main__":
-    unittest.main()
+
+

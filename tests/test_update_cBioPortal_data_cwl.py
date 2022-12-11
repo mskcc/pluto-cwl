@@ -259,5 +259,5 @@ class TestUpdatecBioPortalDataCWL(PlutoTestCase):
         self.assertMutFileContains(mut_filepath, expected_comments, expected_mutations, identical = True)
 
 
-if __name__ == "__main__":
-    unittest.main()
+
+

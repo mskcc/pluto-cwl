@@ -706,5 +706,5 @@ class TestSamplesFilloutIndexBatch4Group(PlutoPreRunTestCase):
 
 
 
-if __name__ == "__main__":
-    unittest.main()
+
+

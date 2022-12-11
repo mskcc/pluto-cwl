@@ -86,5 +86,5 @@ class TestFilloutMaf2Vcf(PlutoTestCase):
     #         pprint(output_json)
             
 
-if __name__ == "__main__":
-    unittest.main()
+
+

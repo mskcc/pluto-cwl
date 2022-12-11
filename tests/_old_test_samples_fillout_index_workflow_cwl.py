@@ -115,5 +115,5 @@ class TestSamplesFilloutIndex(PlutoTestCase):
         self.assertNumMutationsHash(uncalled_output_path, 66, 'e866fffc38c7d0b2602617973e496039')
         self.assertEqualNumMutations([portal_output_path, uncalled_output_path], filtered_output_path)
 
-if __name__ == "__main__":
-    unittest.main()
+
+

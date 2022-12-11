@@ -53,5 +53,5 @@ class TestFilterUncalledMutations(PlutoTestCase):
         self.assertEqual(len(mutations), 222)
 
 
-if __name__ == "__main__":
-    unittest.main()
+
+

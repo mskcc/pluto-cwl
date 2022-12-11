@@ -229,5 +229,5 @@ class TestSamplesFillout(PlutoTestCase):
         self.assertMutFieldDoesntContain(portal_output_path, "Amino_Acid_Change", [""])
         self.assertMutFieldDoesntContain(uncalled_output_path, "Amino_Acid_Change", [""])
 
-if __name__ == "__main__":
-    unittest.main()
+
+

@@ -106,5 +106,5 @@ class TestCalcTMB(PlutoTestCase):
         expected_result = 'NA'
         self.assertEqual(result, expected_result)
 
-if __name__ == "__main__":
-    unittest.main()
+
+

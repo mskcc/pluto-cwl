@@ -311,5 +311,5 @@ class TestWorkflow(PlutoTestCase):
         expected_header_parts = ['Hugo_Symbol', 's_C_VJ7F47_P001_d', 's_C_X50T9Y_P001_d']
         self.assertEqual(header_parts, expected_header_parts)
 
-if __name__ == "__main__":
-    unittest.main()
+
+

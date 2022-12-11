@@ -5,16 +5,12 @@
 import os
 import sys
 import unittest
-
-PARENT_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-sys.path.insert(0, PARENT_DIR)
+from datasets import DATA_SETS
 from pluto import (
     PlutoTestCase, 
     CWLFile,
-    DATA_SETS,
     OFile
 )
-sys.path.pop(0)
 
 class TestFilloutClinicalFilter(PlutoTestCase):
     cwl_file = CWLFile('fillout_clinical_filter.cwl')
@@ -64,5 +60,3 @@ class TestFilloutClinicalFilter(PlutoTestCase):
         self.assertCWLDictEqual(output_json, expected_output, related_keys = strip_related_keys)
         self.assertNumMutationsHash(expected_output["filtered_vcf"]["path"], 45, "b60a9eb9127ee95f16ce2c566ae1d0df")
 
-if __name__ == "__main__":
-    unittest.main()

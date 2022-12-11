@@ -988,5 +988,5 @@ class TestWorkflowWithFacets(PlutoTestCase):
                 'Sample70': 'NA', 'Sample4': 'Instable', 'Sample1': 'Instable'})
 
 
-if __name__ == "__main__":
-    unittest.main()
+
+

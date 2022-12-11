@@ -13,7 +13,6 @@ from pluto import (
     PlutoTestCase, 
     CWLFile, 
     TableReader,
-    DATA_SETS
 )
 sys.path.pop(0)
 
@@ -63,5 +62,5 @@ class TestReplaceColname(PlutoTestCase):
         ]
         self.assertEqual(lines, expected_lines)
 
-if __name__ == "__main__":
-    unittest.main()
+
+

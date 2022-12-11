@@ -57,5 +57,5 @@ class TestReduceSigFigs(PlutoTestCase):
         self.assertDictEqual(rows[1], OrderedDict([('seg.mean', '2.7183')]))
 
 
-if __name__ == "__main__":
-    unittest.main()
+
+

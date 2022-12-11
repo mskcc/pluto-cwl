@@ -196,5 +196,5 @@ class TestConsensusMafs(PlutoTestCase):
         self.assertEqual(comments, expected_comments)
         self.assertEqual(records, expected_records)
 
-if __name__ == "__main__":
-    unittest.main()
+
+

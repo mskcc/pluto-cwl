@@ -1002,5 +1002,5 @@ class TestPortalWorkflow(PlutoTestCase):
         ]
         self.assertMutHeadersContain(os.path.join(output_dir, 'data_mutations_extended.txt'), some_required_colnames)
 
-if __name__ == "__main__":
-    unittest.main()
+
+

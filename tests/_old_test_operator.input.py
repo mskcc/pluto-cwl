@@ -150,5 +150,5 @@ class TestInputGenerateInput(PlutoTestCase):
         }
         self.assertEqual(input_data, expected_input_data)
 
-if __name__ == "__main__":
-    unittest.main()
+
+

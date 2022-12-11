@@ -71,5 +71,5 @@ class TestTMBVariantFilter(PlutoTestCase):
         self.assertEqual(comments, expected_comments)
         self.assertEqual(mutations, expected_mutations)
 
-if __name__ == "__main__":
-    unittest.main()
+
+

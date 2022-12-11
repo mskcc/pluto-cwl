@@ -257,5 +257,5 @@ class TestAnalysisWorkflow(PlutoTestCase):
         # self.assertEqual(mutations[0]['impact_assays'], 'IMPACT341,IMPACT410,IMPACT468,IMPACT505')
 
 
-if __name__ == "__main__":
-    unittest.main()
+
+

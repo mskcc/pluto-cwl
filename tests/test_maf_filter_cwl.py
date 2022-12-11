@@ -184,5 +184,5 @@ class TestMafFilter(PlutoTestCase):
             compare_len = True
         )
 
-if __name__ == "__main__":
-    unittest.main()
+
+

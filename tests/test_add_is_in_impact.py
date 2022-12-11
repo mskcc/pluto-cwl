@@ -6,17 +6,16 @@ unit tests for the add_is_in_impact.cwl
 import os
 import sys
 import unittest
-
-PARENT_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-sys.path.insert(0, PARENT_DIR)
+from datasets import (
+    DATA_SETS
+)
 from pluto import (
     PlutoTestCase, 
     CWLFile,
-    DATA_SETS,
     IMPACT_FILE,
     OFile
 )
-sys.path.pop(0)
+
 
 
 class TestAddIsInImpact(PlutoTestCase):
@@ -116,5 +115,3 @@ class TestAddIsInImpact(PlutoTestCase):
         # check that its got two extra columns in the output
         self.assertTrue(len(input_mutations[1]) + 2 ==len(output_mutations[1]))
 
-if __name__ == "__main__":
-    unittest.main()

@@ -66,5 +66,5 @@ class TestAddAFCWL(PlutoTestCase):
             ]
         self.assertEqual(mutations, expected_mutations)
 
-if __name__ == "__main__":
-    unittest.main()
+
+

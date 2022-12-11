@@ -277,5 +277,5 @@ class TestTmbWorkflow(PlutoTestCase):
 
         self.assertDictEqual(values, expected_values)
 
-if __name__ == "__main__":
-    unittest.main()
+
+

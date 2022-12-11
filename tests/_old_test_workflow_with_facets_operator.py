@@ -546,5 +546,5 @@ class TestWorkflowWithFacetsOperator(PlutoTestCase):
         self.assertEqual(tmbs, expected_tmbs)
 
 
-if __name__ == "__main__":
-    unittest.main()
+
+

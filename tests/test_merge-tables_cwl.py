@@ -139,5 +139,5 @@ class TestMergeTables(PlutoTestCase):
             ]
         self.assertEqual(lines, expected_lines)
 
-if __name__ == "__main__":
-    unittest.main()
+
+

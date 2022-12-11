@@ -598,5 +598,5 @@ class TestGenerateCbioFilesCWL(PlutoTestCase):
         expected_lines = ['Hugo_Symbol\tsample1\tsample2\n', 'ABL1\t3;1\t3;NA\n']
         self.assertEqual(lines, expected_lines)
 
-if __name__ == "__main__":
-    unittest.main()
+
+
