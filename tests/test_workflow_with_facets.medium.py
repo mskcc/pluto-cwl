@@ -27,7 +27,7 @@ sys.path.pop(0)
 try:
     from fixtures import WORKFLOW_MEDIUM_JSON
 except ModuleNotFoundError:
-    sys.path.insert(0, THIS_DIR)
+    sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
     from fixtures import WORKFLOW_MEDIUM_JSON
     sys.path.pop(0)
 

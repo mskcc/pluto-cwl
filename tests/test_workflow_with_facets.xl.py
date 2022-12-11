@@ -22,12 +22,6 @@ from pluto import (
       ENABLE_INTEGRATION_TESTS
 )
 
-# THIS_DIR = os.path.dirname(os.path.realpath(__file__))
-# PARENT_DIR = os.path.dirname(THIS_DIR)
-# sys.path.insert(0, PARENT_DIR)
-# sys.path.pop(0)
-
-
 class TestWorkflowWithFacetsXL(PlutoTestCase):
     cwl_file = 'workflow_with_facets.cwl'
 

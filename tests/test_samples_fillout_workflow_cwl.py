@@ -24,7 +24,7 @@ sys.path.pop(0)
 try:
     from fixtures_fillout import rows
 except ModuleNotFoundError:
-    sys.path.insert(0, THIS_DIR)
+    sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
     from fixtures_fillout import rows
     sys.path.pop(0)
 

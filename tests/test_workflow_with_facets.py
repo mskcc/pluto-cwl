@@ -36,7 +36,7 @@ sys.path.pop(0)
 try:
     import fixtures_cBioPortal as fxt
 except ModuleNotFoundError:
-    sys.path.insert(0, THIS_DIR)
+    sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
     import fixtures_cBioPortal as fxt
     sys.path.pop(0)
 
