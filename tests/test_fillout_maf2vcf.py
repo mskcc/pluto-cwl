@@ -33,16 +33,25 @@ class TestFilloutMaf2Vcf(PlutoTestCase):
         }
         output_json, output_dir = self.run_cwl()
         expected_output = {
-            "output_file": OFile(name="Sample1.sorted.vcf.gz", size = 2923, hash = "73a623dd614467e9069ca5ba74b9da16cd881af0", dir = output_dir, 
-            secondaryFiles = [OFile(name = "Sample1.sorted.vcf.gz.tbi", hash = "f176cd2d3572eb0502637db147f82ca55a23c1fd", size = 3842, dir = output_dir)])
+            "output_file": OFile(name="Sample1.sorted.vcf.gz", 
+                size = 2923, 
+                hash = "73a623dd614467e9069ca5ba74b9da16cd881af0", 
+                dir = output_dir, 
+                secondaryFiles = [OFile(name = "Sample1.sorted.vcf.gz.tbi", 
+                    hash = "f176cd2d3572eb0502637db147f82ca55a23c1fd", 
+                    size = 3842, 
+                    dir = output_dir)]),
+            "output_vcf": OFile(name = "Sample1.sorted.vcf", hash = "26a3d2b3bda116805fdf1e4b820981b830497a82", size = 9956, dir = output_dir)
         }
         # fields inside the vcf are not static due to timestamps, etc..
         strip_related_keys = [
         ('basename', 'Sample1.sorted.vcf.gz', ['size', 'checksum']),
         ('basename', 'Sample1.sorted.vcf.gz.tbi', ['size', 'checksum']),
+        ('basename', 'Sample1.sorted.vcf', ['size', 'checksum']),
         ]
         self.assertCWLDictEqual(output_json, expected_output, related_keys = strip_related_keys)
-        self.assertNumMutationsHash(expected_output["output_file"]["path"], 65, "5a45a60bee13b211dd8c2b6082d7e83f")
+        self.assertNumMutationsHash(expected_output["output_file"].path, 65, "5a45a60bee13b211dd8c2b6082d7e83f")
+        self.assertNumMutationsHash(expected_output["output_vcf"].path, 65, "5a45a60bee13b211dd8c2b6082d7e83f")
     
 
 
