@@ -6,25 +6,13 @@ unit tests for the maf_col_filter.cwl
 import os
 import sys
 import unittest
-
-PARENT_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-sys.path.insert(0, PARENT_DIR)
+import fixtures_maf_col_filter_cwl as fxt
+from datasets import DATA_SETS
 from pluto import (
     PlutoTestCase, 
     CWLFile,
-    DATA_SETS,
     OFile
 )
-sys.path.pop(0)
-
-# handle for errors arising from python3 -m unittest ...
-try:
-    import fixtures_maf_col_filter_cwl as fxt
-except ModuleNotFoundError:
-    sys.path.insert(0, THIS_DIR)
-    import fixtures_maf_col_filter_cwl as fxt
-    sys.path.pop(0)
-
 
 class TestMafColFilter(PlutoTestCase):
     cwl_file = CWLFile('maf_col_filter.cwl')
@@ -115,6 +103,3 @@ class TestMafColFilter(PlutoTestCase):
         # # make sure there are fewer than or equal to the number of columns in new output as there are entries to keep
         # self.assertTrue( len(mutations[0].keys()) <= len(fxt.cols_to_keep) )
 
-
-if __name__ == "__main__":
-    unittest.main()
