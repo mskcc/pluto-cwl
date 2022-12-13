@@ -3,8 +3,8 @@
 """
 Test case for the samples_fillout_index_batch_workflow cwl
 
-
-$ CWL_ENGINE=Toil PRINT_TESTNAME=T python3 tests/test_samples_fillout_index_batch_workflow_cwl.py TestSamplesFilloutIndexBatch.test_three_groups
+example command:
+$ CWL_ENGINE=Toil PRINT_COMMAND=T KEEP_TMP=T pytest -n 8 -s tests/test_samples_fillout_index_batch_workflow_cwl.py
 """
 import os
 import sys
@@ -35,6 +35,9 @@ sample5_bam = os.path.join(DATA_SETS['Fillout01']['BAM_DIR'], 'Sample5.UnitTest0
 
 
 class TestSamplesFilloutIndexBatch1Group(PlutoPreRunTestCase):
+    # # # # # # # # # # #
+    # # # # # # # # # # #
+    #  Test setup
 
     cwl_file = CWLFile('samples_fillout_index_batch_workflow.cwl')
 
@@ -43,6 +46,9 @@ class TestSamplesFilloutIndexBatch1Group(PlutoPreRunTestCase):
         self.runner_args['use_cache'] = False # do not use cache for samples fillout workflow it breaks on split_vcf_to_mafs
 
     def setUpRun(self):
+        """
+        Run the workflow and return the results; output accessible under self.res.output in downstream 'test_' methods
+        """
         sample_group1 = [
             {
                 "sample_id": "Sample1",
@@ -81,6 +87,10 @@ class TestSamplesFilloutIndexBatch1Group(PlutoPreRunTestCase):
         return(output_json, output_dir)
 
     def getExpected(self, output_dir):
+        """
+        Return the expected CWL workflow output with the tmpdir output dir path included
+        Accessible in downstream 'test_' methods under self.res.expected
+        """
         return({
             'output_file': OFile(name = 'output.maf', dir = output_dir),
             'filtered_file': OFile(name = 'output.filtered.maf', dir = output_dir),
