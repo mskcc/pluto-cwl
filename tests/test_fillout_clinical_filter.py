@@ -4,10 +4,11 @@
 """
 import os
 import sys
-import unittest
-from datasets import DATA_SETS
+from datasets import (
+    DATA_SETS,
+)
 from pluto import (
-    PlutoTestCase, 
+    PlutoTestCase,
     CWLFile,
     OFile
 )
@@ -33,7 +34,7 @@ class TestFilloutClinicalFilter(PlutoTestCase):
         self.input = {
             "sample": sample,
             "clinical_sample_ids": ["Sample3", "Sample4"],
-            "fillout_vcf": {"class": "File", "path": os.path.join(self.DATA_SETS['Fillout01']['VCF_DIR'], "fillout.merged.sources.vcf")}
+            "fillout_vcf": {"class": "File", "path": os.path.join(DATA_SETS['Fillout01']['VCF_DIR'], "fillout.merged.sources.vcf")}
         }
 
         output_json, output_dir = self.run_cwl()
@@ -41,7 +42,7 @@ class TestFilloutClinicalFilter(PlutoTestCase):
             "filtered_vcf": OFile(name = "Sample1.filtered.vcf", size = 11307, hash = "4787bef66c23be6fccdd75ebb03028960dbf5aca", dir = output_dir),
             "sample": {
                 "bam_file": OFile(name = "Sample1.UnitTest01.bam", size = 4454012599, hash = "c77293b997de1f12e6ba155cde37eb06210af711", dir = output_dir,
-                    secondaryFiles = [OFile(name = "Sample1.UnitTest01.bam.bai", size = 4182280, hash = "fc2d6cc4ebeac0fca2b6c5f19ab2a9930cb8f349", dir = output_dir)]),
+                    secondaryFiles = [OFile(name = "Sample1.UnitTest01.bai", size = 4182280, hash = "fc2d6cc4ebeac0fca2b6c5f19ab2a9930cb8f349", dir = output_dir)]),
                 "filtered_maf": None,
                 "filtered_vcf": OFile(name = "Sample1.filtered.vcf", hash = "c4866e67fc8f399212fc2bd9c774dd6118bf7b53", size = 11307, dir = output_dir),
                 "maf_file": OFile(name = "Sample1.FillOutUnitTest01.muts.maf", size = 101253, hash = "c49c5ea6e0f755d5229ff761e0cb10bc7df72a25", dir = output_dir),

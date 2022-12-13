@@ -5,15 +5,13 @@ unit tests for the workflow.cwl
 """
 import os
 import sys
-import unittest
-
-
-
-from pluto import (
-    CWLFile, 
-    PlutoTestCase,
+from datasets import (
     DATA_SETS,
     IMPACT_FILE,
+)
+from pluto import (
+    CWLFile,
+    PlutoTestCase,
     OFile,
     ODir
 )

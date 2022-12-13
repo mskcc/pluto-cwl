@@ -4,23 +4,14 @@
 """
 import os
 import sys
-import unittest
-
-
-
+from datasets import (
+    DATA_SETS,
+)
+import fixtures_tmb as fxt
 from pluto import (
-    PlutoTestCase, 
+    PlutoTestCase,
     CWLFile
 )
-
-
-# handle for errors arising from python3 -m unittest ...
-try:
-    import fixtures_tmb as fxt
-except ModuleNotFoundError:
-    sys.path.insert(0, THIS_DIR)
-    import fixtures_tmb as fxt
-    
 
 
 class TestTMBVariantFilter(PlutoTestCase):
@@ -70,6 +61,3 @@ class TestTMBVariantFilter(PlutoTestCase):
 
         self.assertEqual(comments, expected_comments)
         self.assertEqual(mutations, expected_mutations)
-
-
-

@@ -5,16 +5,14 @@ unit tests for the snp-pileup-wrapper.cwl file
 """
 import os
 import sys
-import unittest
-
-
-
-from pluto import (
-    PlutoTestCase, 
-    CWLFile,
-    FACETS_SNPS_VCF,
+from datasets import (
     DATA_SETS,
-    OFile
+    FACETS_SNPS_VCF
+)
+from pluto import (
+    PlutoTestCase,
+    CWLFile,
+    OFile,
 )
 
 
@@ -47,6 +45,3 @@ class TestSnpPileupCWL(PlutoTestCase):
             }
         self.maxDiff = None
         self.assertCWLDictEqual(output_json, expected_output)
-
-
-

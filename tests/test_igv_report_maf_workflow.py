@@ -5,14 +5,13 @@ Test case for the igv-report_maf_workflow cwl
 """
 import os
 import sys
-import unittest
 from collections import OrderedDict
-
-
-
+from datasets import (
+    DATA_SETS,
+)
 from pluto import (
-    PlutoTestCase, 
-    CWLFile, 
+    PlutoTestCase,
+    CWLFile,
     TableReader
 )
 
@@ -128,10 +127,10 @@ class TestIGVReportMaf(PlutoTestCase):
                 {"class": "File", "path": self.maf2}
             ],
             "bam_files":[
-                { "class": "File", "path": os.path.join(self.DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample24.rg.md.abra.printreads.bam") },
-                { "class": "File", "path": os.path.join(self.DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample23.rg.md.abra.printreads.bam") }
+                { "class": "File", "path": os.path.join(DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample24.rg.md.abra.printreads.bam") },
+                { "class": "File", "path": os.path.join(DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample23.rg.md.abra.printreads.bam") }
             ],
-            "ref_fasta": {"class": "File", "path": self.DATA_SETS['Proj_08390_G']['REF_FASTA']},
+            "ref_fasta": {"class": "File", "path": DATA_SETS['Proj_08390_G']['REF_FASTA']},
         }
 
         output_json, output_dir = self.run_cwl()
@@ -149,6 +148,3 @@ class TestIGVReportMaf(PlutoTestCase):
                 'path': os.path.join(output_dir,'igv.html') }}
 
         self.assertCWLDictEqual(output_json, expected_output)
-
-
-

@@ -5,13 +5,12 @@ Test case for the fillout_workflow cwl
 """
 import os
 import sys
-import unittest
 from collections import OrderedDict
-
-
-
+from datasets import (
+    DATA_SETS,
+)
 from pluto import (
-    PlutoTestCase, 
+    PlutoTestCase,
     CWLFile
 )
 
@@ -114,16 +113,16 @@ class TestFilloutWorkflow(PlutoTestCase):
         # self.maxDiff = None
         self.input = {
             "maf_file": {"class": "File", "path": self.maf},
-            "ref_fasta": {"class": "File", "path": self.DATA_SETS['Proj_08390_G']['REF_FASTA']},
+            "ref_fasta": {"class": "File", "path": DATA_SETS['Proj_08390_G']['REF_FASTA']},
             # NOTE: Must be in the same order as the sample bam files!
             "sample_ids":["Sample24", "Sample23"],
             # NOTE: Each must have a .bai file as well
             "bam_files": [
                 {
-                    "class": "File", "path": os.path.join(self.DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample24.rg.md.abra.printreads.bam")
+                    "class": "File", "path": os.path.join(DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample24.rg.md.abra.printreads.bam")
                 },
                 {
-                    "class": "File", "path": os.path.join(self.DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample23.rg.md.abra.printreads.bam")
+                    "class": "File", "path": os.path.join(DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample23.rg.md.abra.printreads.bam")
                 }
             ]
         }

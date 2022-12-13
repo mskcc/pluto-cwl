@@ -5,13 +5,12 @@ Test case for the getbasecountsmultisample cwl
 """
 import os
 import sys
-import unittest
 from collections import OrderedDict
-
-
-
+from datasets import (
+    DATA_SETS,
+)
 from pluto import (
-    PlutoTestCase, 
+    PlutoTestCase,
     CWLFile,
 )
 
@@ -109,9 +108,9 @@ class TestGetBaseCounts(PlutoTestCase):
     def test_get_base_counts(self):
         self.maxDiff = None
         self.input = {
-            "bam": {"class": "File", "path": os.path.join(self.DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample24.rg.md.abra.printreads.bam") },
+            "bam": {"class": "File", "path": os.path.join(DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample24.rg.md.abra.printreads.bam") },
             "maf": {"class": "File", "path": self.maf},
-            "ref_fasta": {"class": "File", "path": self.DATA_SETS['Proj_08390_G']['REF_FASTA']},
+            "ref_fasta": {"class": "File", "path": DATA_SETS['Proj_08390_G']['REF_FASTA']},
             "sample_id": "Sample24"
         }
 

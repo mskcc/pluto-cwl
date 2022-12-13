@@ -5,13 +5,12 @@ unit tests for the annotate-maf-wrapper.cwl file
 """
 import os
 import sys
-import unittest
-
-
-
+from datasets import (
+    DATA_SETS,
+)
 from pluto import (
-    PlutoTestCase, 
-    CWLFile, 
+    PlutoTestCase,
+    CWLFile,
     TableReader,
     ENABLE_LARGE_TESTS,
     OFile,
@@ -26,8 +25,8 @@ class TestAnnotateMafWrapperCWL(PlutoTestCase):
         """
         Test case for running Facets maf annotation on a smaller demo maf file
         """
-        input_maf = os.path.join(self.DATA_SETS['demo']['MAF_DIR'], "Sample1.Sample2.muts.maf")
-        input_rds = os.path.join(self.DATA_SETS['demo']['FACETS_DIR'], "Sample1_hisens.rds")
+        input_maf = os.path.join(DATA_SETS['demo']['MAF_DIR'], "Sample1.Sample2.muts.maf")
+        input_rds = os.path.join(DATA_SETS['demo']['FACETS_DIR'], "Sample1_hisens.rds")
         self.input = {
             "maf_file": {
                 "path": input_maf,
@@ -62,13 +61,13 @@ class TestAnnotateMafWrapperCWL(PlutoTestCase):
         self.assertEqual(len(records), 41)
 
 
-    @unittest.skipIf(ENABLE_LARGE_TESTS!=True, "is a large test")
+    # @unittest.skipIf(ENABLE_LARGE_TESTS!=True, "is a large test")
     def test_run_facets_annotation_wrapper(self):
         """
         Test case for running Facets maf annotation
         """
-        input_maf = os.path.join(self.DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample1.Sample2.muts.maf")
-        input_rds = os.path.join(self.DATA_SETS['Proj_08390_G']['FACETS_SUITE_DIR'], "Sample1_hisens.rds")
+        input_maf = os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample1.Sample2.muts.maf")
+        input_rds = os.path.join(DATA_SETS['Proj_08390_G']['FACETS_SUITE_DIR'], "Sample1_hisens.rds")
         self.input = {
             "maf_file": {
                 "path": input_maf,
@@ -94,6 +93,3 @@ class TestAnnotateMafWrapperCWL(PlutoTestCase):
         ('basename', 'annotate_maf_stdout.txt', ['size', 'checksum'])
         ]
         self.assertCWLDictEqual(output_json, expected_output, related_keys = strip_related_keys)
-
-
-

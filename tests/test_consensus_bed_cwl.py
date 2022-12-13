@@ -5,11 +5,7 @@ Test case for the consensus bed cwl
 """
 import os
 import sys
-import unittest
 from collections import OrderedDict
-
-
-
 from pluto import (
     PlutoTestCase,
     CWLFile

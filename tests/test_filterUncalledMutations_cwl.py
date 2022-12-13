@@ -5,15 +5,13 @@ unit tests for the filterUncalledMutations.cwl
 """
 import os
 import sys
-import unittest
-
-
-
-from pluto import (
+from datasets import (
     DATA_SETS,
-    PlutoTestCase, 
+)
+from pluto import (
+    PlutoTestCase,
     CWLFile,
-    OFile, 
+    OFile,
     ODir
 )
 
@@ -51,7 +49,3 @@ class TestFilterUncalledMutations(PlutoTestCase):
 
         comments, mutations = self.load_mutations(output_data_mutations_uncalled, strip = True)
         self.assertEqual(len(mutations), 222)
-
-
-
-

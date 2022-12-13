@@ -5,16 +5,14 @@ unit tests for the fusion_filter.cwl
 """
 import os
 import sys
-import unittest
-
-
-
-from pluto import (
-    CWLFile, 
-    PlutoTestCase,
-    CWL_ARGS, 
-    DATA_SETS, 
+from datasets import (
+    DATA_SETS,
     KNOWN_FUSIONS_FILE,
+)
+from pluto import (
+    CWLFile,
+    PlutoTestCase,
+    CWL_ARGS,
     OFile
 )
 
@@ -45,6 +43,3 @@ class TestFusionFilter(PlutoTestCase):
             "output_file": OFile(name='data_fusions.txt', size=99, hash='c16f763b248813fcdde76f7486f1ddc4e9856038', dir = output_dir)
             }
         self.assertCWLDictEqual(output_json, expected_output)
-
-
-

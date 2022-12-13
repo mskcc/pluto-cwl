@@ -6,14 +6,12 @@ $ CWL_ENGINE=Toil PRINT_TESTNAME=T python3 tests/test_fillout_singleton_processi
 """
 import os
 import sys
-import unittest
-
-
-
-from pluto import (
-    PlutoTestCase, 
-    CWLFile,
+from datasets import (
     DATA_SETS,
+)
+from pluto import (
+    PlutoTestCase,
+    CWLFile,
     OFile
 )
 

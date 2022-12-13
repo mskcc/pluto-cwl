@@ -5,14 +5,12 @@ unit tests for the facets-workflow.cwl
 """
 import os
 import sys
-import unittest
-
-
-
-from pluto import (
-    PlutoTestCase, 
-    CWLFile,
+from datasets import (
     DATA_SETS,
+)
+from pluto import (
+    PlutoTestCase,
+    CWLFile,
     OFile,
     ODir
 )
@@ -93,22 +91,3 @@ class TestFacetsWorkflow(PlutoTestCase):
         }
 
         self.assertCWLDictEqual(output_json, expected_output)
-
-        # 'output_dir': ODir(name = 'facets', dir = output_dir, items = [
-        #     ODir(name = 'Sample24.Sample23', items = [
-        #         OFile(name = 'Sample24.Sample23_hisens.ccf.portal.maf', size = 11996607, hash = 'd91a8e15c66429b09f1b7db41bc38bdfa0b84c64'),
-        #         OFile(name = 'Sample24.arm_level.txt', size = 1824, hash = 'df37c54ae4969257e436a7a7a595c42ef19ecbb5'),
-        #         OFile(name = 'Sample24.txt', size = 529, hash = 'a0fb3df832efc18a66a8a54e5609666da5f4d7d7'),
-        #         OFile(name = 'Sample24.gene_level.txt', size = 148195, hash = '4e916a52458151007486bf536acfff539fdc2ecc'),
-        #         OFile(name = 'Sample24_hisens.cncf.txt', size = 5238, hash = 'db9131a33889a1cac82e3bd6b3f0e5e182c65105'),
-        #         OFile(name = 'Sample24_hisens.rds', size = 213986, hash = '6bfd6c7f29c49ec8ef538dd468a3b4626b05bda2'),
-        #         OFile(name = 'Sample24_hisens.seg', size = 1897, hash = '652f9c6d0245af49bac6ca67a089af7d4e46801b'),
-        #         OFile(name = 'Sample24_purity.rds', size = 213356, hash = 'dd8b967f84b191ff76214c6110db8d0e65f6514c'),
-        #         OFile(name = 'Sample24_purity.seg', size = 1285, hash = '591e6d8b432e1e910fe4fb4b1814508131f960c9'),
-        #         OFile(name = 'Sample24.qc.txt', size = 1339, hash = 'd4a36726a5fcb7b268aae02d97ce4e382e42d9f6'),
-        #         ])
-        #     ]),
-
-
-
-

@@ -5,13 +5,8 @@ unit tests for the add_af.cwl
 """
 import os
 import sys
-import json
-import unittest
-
-
-
 from pluto import (
-    PlutoTestCase, 
+    PlutoTestCase,
     CWLFile
 )
 

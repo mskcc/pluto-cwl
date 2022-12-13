@@ -19,12 +19,13 @@ $ LARGE_TESTS=True CWL_ENGINE=toil python tests/test_workflow_with_facets.py
 """
 import os
 import sys
-import unittest
-
-
-
+from datasets import (
+    DATA_SETS,
+    KNOWN_FUSIONS_FILE,
+    IMPACT_FILE,
+)
 from pluto import (
-    TableReader, 
+    TableReader,
     PlutoTestCase,
     ENABLE_LARGE_TESTS,
     OFile,
@@ -38,7 +39,7 @@ try:
 except ModuleNotFoundError:
     sys.path.insert(0, THIS_DIR)
     import fixtures_cBioPortal as fxt
-    
+
 
 
 class TestWorkflowWithFacets(PlutoTestCase):
@@ -48,15 +49,15 @@ class TestWorkflowWithFacets(PlutoTestCase):
         """
         Test case for using a single demo sample; tiny dataset
         """
-        data_clinical_file = os.path.join(self.DATA_SETS['demo']['INPUTS_DIR'], "demo_sample_data_clinical.txt")
-        sample_summary_file = os.path.join(self.DATA_SETS['demo']['QC_DIR'], "demo_SampleSummary.txt")
-        mutation_svs_txt_file = os.path.join(self.DATA_SETS['demo']['MAF_DIR'], "Sample1.Sample2.svs.pass.vep.portal.txt")
-        mutation_svs_maf = os.path.join(self.DATA_SETS['demo']['MAF_DIR'], "Sample1.Sample2.svs.pass.vep.maf")
-        pair_maf = os.path.join(self.DATA_SETS['demo']['MAF_DIR'], "Sample1.Sample2.muts.maf")
-        snp_pileup = os.path.join(self.DATA_SETS['demo']['SNP_PILEUP_DIR'], "Sample1.Sample2.snp_pileup.gz")
-        normal_bam = os.path.join(self.DATA_SETS['demo']['BAM_DIR'], "Sample2.bam")
-        tumor_bam = os.path.join(self.DATA_SETS['demo']['BAM_DIR'], "Sample1.bam")
-        microsatellites_file = self.DATA_SETS['demo']['microsatellites_file']
+        data_clinical_file = os.path.join(DATA_SETS['demo']['INPUTS_DIR'], "demo_sample_data_clinical.txt")
+        sample_summary_file = os.path.join(DATA_SETS['demo']['QC_DIR'], "demo_SampleSummary.txt")
+        mutation_svs_txt_file = os.path.join(DATA_SETS['demo']['MAF_DIR'], "Sample1.Sample2.svs.pass.vep.portal.txt")
+        mutation_svs_maf = os.path.join(DATA_SETS['demo']['MAF_DIR'], "Sample1.Sample2.svs.pass.vep.maf")
+        pair_maf = os.path.join(DATA_SETS['demo']['MAF_DIR'], "Sample1.Sample2.muts.maf")
+        snp_pileup = os.path.join(DATA_SETS['demo']['SNP_PILEUP_DIR'], "Sample1.Sample2.snp_pileup.gz")
+        normal_bam = os.path.join(DATA_SETS['demo']['BAM_DIR'], "Sample2.bam")
+        tumor_bam = os.path.join(DATA_SETS['demo']['BAM_DIR'], "Sample1.bam")
+        microsatellites_file = DATA_SETS['demo']['microsatellites_file']
 
         self.input = {
             "assay_coverage": "1000", # TODO: get this from an assay reference key
@@ -79,7 +80,7 @@ class TestWorkflowWithFacets(PlutoTestCase):
             "cbio_segment_data_filename": "Proj_08390_G_data_cna_hg19.seg",
             "helix_filter_version": "20.06.1",
             'IMPACT_gene_list': {
-                "path": self.IMPACT_FILE,
+                "path": IMPACT_FILE,
                 "class": "File"
             },
             "microsatellites_file": {
@@ -95,11 +96,11 @@ class TestWorkflowWithFacets(PlutoTestCase):
                 "class": "File"
             },
             "targets_list": {
-                "path": self.DATA_SETS['demo']["targets_list"],
+                "path": DATA_SETS['demo']["targets_list"],
                 "class": "File"
             },
             "known_fusions_file": {
-                "path": self.KNOWN_FUSIONS_FILE,
+                "path": KNOWN_FUSIONS_FILE,
                 "class": "File"
             },
             "mutation_svs_txt_files": [ { "path": mutation_svs_txt_file, "class": "File" } ],
@@ -228,23 +229,23 @@ class TestWorkflowWithFacets(PlutoTestCase):
         """
         Test case for two small demo datasets
         """
-        data_clinical_file = os.path.join(self.DATA_SETS['demo']['INPUTS_DIR'], "demo_sample_data_clinical.txt")
-        sample_summary_file = os.path.join(self.DATA_SETS['demo']['QC_DIR'], "demo_SampleSummary.txt")
-        microsatellites_file = self.DATA_SETS['demo']['microsatellites_file']
+        data_clinical_file = os.path.join(DATA_SETS['demo']['INPUTS_DIR'], "demo_sample_data_clinical.txt")
+        sample_summary_file = os.path.join(DATA_SETS['demo']['QC_DIR'], "demo_SampleSummary.txt")
+        microsatellites_file = DATA_SETS['demo']['microsatellites_file']
 
-        mutation_svs_txt_file1 = os.path.join(self.DATA_SETS['demo']['MAF_DIR'], "Sample1.Sample2.svs.pass.vep.portal.txt")
-        mutation_svs_maf1 = os.path.join(self.DATA_SETS['demo']['MAF_DIR'], "Sample1.Sample2.svs.pass.vep.maf")
-        pair_maf1 = os.path.join(self.DATA_SETS['demo']['MAF_DIR'], "Sample1.Sample2.muts.maf")
-        snp_pileup1 = os.path.join(self.DATA_SETS['demo']['SNP_PILEUP_DIR'], "Sample1.Sample2.snp_pileup.gz")
-        normal_bam1 = os.path.join(self.DATA_SETS['demo']['BAM_DIR'], "Sample2.bam")
-        tumor_bam1 = os.path.join(self.DATA_SETS['demo']['BAM_DIR'], "Sample1.bam")
+        mutation_svs_txt_file1 = os.path.join(DATA_SETS['demo']['MAF_DIR'], "Sample1.Sample2.svs.pass.vep.portal.txt")
+        mutation_svs_maf1 = os.path.join(DATA_SETS['demo']['MAF_DIR'], "Sample1.Sample2.svs.pass.vep.maf")
+        pair_maf1 = os.path.join(DATA_SETS['demo']['MAF_DIR'], "Sample1.Sample2.muts.maf")
+        snp_pileup1 = os.path.join(DATA_SETS['demo']['SNP_PILEUP_DIR'], "Sample1.Sample2.snp_pileup.gz")
+        normal_bam1 = os.path.join(DATA_SETS['demo']['BAM_DIR'], "Sample2.bam")
+        tumor_bam1 = os.path.join(DATA_SETS['demo']['BAM_DIR'], "Sample1.bam")
 
-        mutation_svs_txt_file2 = os.path.join(self.DATA_SETS['demo']['MAF_DIR'], "Sample4.Sample3.svs.pass.vep.portal.txt")
-        mutation_svs_maf2 = os.path.join(self.DATA_SETS['demo']['MAF_DIR'], "Sample4.Sample3.svs.pass.vep.maf")
-        pair_maf2 = os.path.join(self.DATA_SETS['demo']['MAF_DIR'], "Sample4.Sample3.muts.maf")
-        snp_pileup2 = os.path.join(self.DATA_SETS['demo']['SNP_PILEUP_DIR'], "Sample4.Sample3.snp_pileup.gz")
-        normal_bam2 = os.path.join(self.DATA_SETS['demo']['BAM_DIR'], "Sample3.bam")
-        tumor_bam2 = os.path.join(self.DATA_SETS['demo']['BAM_DIR'], "Sample4.bam")
+        mutation_svs_txt_file2 = os.path.join(DATA_SETS['demo']['MAF_DIR'], "Sample4.Sample3.svs.pass.vep.portal.txt")
+        mutation_svs_maf2 = os.path.join(DATA_SETS['demo']['MAF_DIR'], "Sample4.Sample3.svs.pass.vep.maf")
+        pair_maf2 = os.path.join(DATA_SETS['demo']['MAF_DIR'], "Sample4.Sample3.muts.maf")
+        snp_pileup2 = os.path.join(DATA_SETS['demo']['SNP_PILEUP_DIR'], "Sample4.Sample3.snp_pileup.gz")
+        normal_bam2 = os.path.join(DATA_SETS['demo']['BAM_DIR'], "Sample3.bam")
+        tumor_bam2 = os.path.join(DATA_SETS['demo']['BAM_DIR'], "Sample4.bam")
 
         self.input = {
             "assay_coverage": "1000", # TODO: get this from an assay reference key
@@ -267,7 +268,7 @@ class TestWorkflowWithFacets(PlutoTestCase):
             "cbio_segment_data_filename": "Proj_08390_G_data_cna_hg19.seg",
             "helix_filter_version": "20.06.1",
             'IMPACT_gene_list': {
-                "path": self.IMPACT_FILE,
+                "path": IMPACT_FILE,
                 "class": "File"
             },
             "microsatellites_file": {
@@ -283,11 +284,11 @@ class TestWorkflowWithFacets(PlutoTestCase):
                 "class": "File"
             },
             "targets_list": {
-                "path": self.DATA_SETS['demo']["targets_list"],
+                "path": DATA_SETS['demo']["targets_list"],
                 "class": "File"
             },
             "known_fusions_file": {
-                "path": self.KNOWN_FUSIONS_FILE,
+                "path": KNOWN_FUSIONS_FILE,
                 "class": "File"
             },
             "mutation_svs_txt_files": [
@@ -447,11 +448,11 @@ class TestWorkflowWithFacets(PlutoTestCase):
         """
         Test that the workflow works correctly when run with a single maf
         """
-        data_clinical_file = os.path.join(self.DATA_SETS['Proj_08390_G']['INPUTS_DIR'], "Proj_08390_G_sample_data_clinical.txt")
-        sample_summary_file = os.path.join(self.DATA_SETS['Proj_08390_G']['QC_DIR'], "Proj_08390_G_SampleSummary.txt")
-        microsatellites_file = self.DATA_SETS['demo']['microsatellites_file']
-        tumor_bam = os.path.join(self.DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample1.rg.md.abra.printreads.bam")
-        normal_bam = os.path.join(self.DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample2.rg.md.abra.printreads.bam")
+        data_clinical_file = os.path.join(DATA_SETS['Proj_08390_G']['INPUTS_DIR'], "Proj_08390_G_sample_data_clinical.txt")
+        sample_summary_file = os.path.join(DATA_SETS['Proj_08390_G']['QC_DIR'], "Proj_08390_G_SampleSummary.txt")
+        microsatellites_file = DATA_SETS['demo']['microsatellites_file']
+        tumor_bam = os.path.join(DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample1.rg.md.abra.printreads.bam")
+        normal_bam = os.path.join(DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample2.rg.md.abra.printreads.bam")
 
         self.input = {
             "assay_coverage": "10000000", # TODO: get this from an assay reference key
@@ -474,7 +475,7 @@ class TestWorkflowWithFacets(PlutoTestCase):
             "cbio_segment_data_filename": "Proj_08390_G_data_cna_hg19.seg",
             "helix_filter_version": "20.06.1",
             'IMPACT_gene_list': {
-                "path": self.IMPACT_FILE,
+                "path": IMPACT_FILE,
                 "class": "File"
             },
             "microsatellites_file": {
@@ -490,33 +491,33 @@ class TestWorkflowWithFacets(PlutoTestCase):
                 "class": "File"
             },
             "targets_list": {
-                "path": self.DATA_SETS['Proj_08390_G']["targets_list"],
+                "path": DATA_SETS['Proj_08390_G']["targets_list"],
                 "class": "File"
             },
             "known_fusions_file": {
-                "path": self.KNOWN_FUSIONS_FILE,
+                "path": KNOWN_FUSIONS_FILE,
                 "class": "File"
             },
             "mutation_svs_txt_files": [
                 {
-                    "path": os.path.join(self.DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample1.Sample2.svs.pass.vep.portal.txt"),
+                    "path": os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample1.Sample2.svs.pass.vep.portal.txt"),
                     "class": "File"
                 }
             ],
             "mutation_svs_maf_files": [
                 {
-                    "path": os.path.join(self.DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample1.Sample2.svs.pass.vep.maf"),
+                    "path": os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample1.Sample2.svs.pass.vep.maf"),
                     "class": "File"
                 }
             ],
             "pairs": [
                 {
                     "pair_maf": {
-                        "path": os.path.join(self.DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample1.Sample2.muts.maf"),
+                        "path": os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample1.Sample2.muts.maf"),
                         "class": "File"
                     },
                     "snp_pileup": {
-                         "path": os.path.join(self.DATA_SETS['Proj_08390_G']['FACETS_DIR'], "Sample2.rg.md.abra.printreads__Sample1.rg.md.abra.printreads.dat.gz"),
+                         "path": os.path.join(DATA_SETS['Proj_08390_G']['FACETS_DIR'], "Sample2.rg.md.abra.printreads__Sample1.rg.md.abra.printreads.dat.gz"),
                          "class": "File"
                     },
                     "pair_id": "Sample1.Sample2",
@@ -631,21 +632,21 @@ class TestWorkflowWithFacets(PlutoTestCase):
             os.path.join(output_dir, 'portal/data_clinical_sample.txt'),
             value_fieldname = "CMO_TMB_SCORE",
             expected_values = {
-            'Sample46': 'NA', 'Sample44': 'NA', 'Sample80': 'NA', 
-            'Sample20': 'NA', 'Sample38': 'NA', 'Sample26': 'NA', 
-            'Sample94': 'NA', 'Sample48': 'NA', 'Sample68': 'NA', 
-            'Sample90': 'NA', 'Sample18': 'NA', 'Sample54': 'NA', 
-            'Sample52': 'NA', 'Sample86': 'NA', 'Sample30': 'NA', 
-            'Sample78': 'NA', 'Sample84': 'NA', 'Sample82': 'NA', 
-            'Sample6': 'NA', 'Sample96': 'NA', 'Sample72': 'NA', 
-            'Sample56': 'NA', 'Sample64': 'NA', 'Sample58': 'NA', 
-            'Sample92': 'NA', 'Sample62': 'NA', 'Sample8': 'NA', 
-            'Sample24': 'NA', 'Sample12': 'NA', 'Sample16': 'NA', 
-            'Sample88': 'NA', 'Sample22': 'NA', 'Sample42': 'NA', 
-            'Sample76': 'NA', 'Sample28': 'NA', 'Sample74': 'NA', 
-            'Sample50': 'NA', 'Sample60': 'NA', 'Sample10': 'NA', 
-            'Sample36': 'NA', 'Sample34': 'NA', 'Sample40': 'NA', 
-            'Sample66': 'NA', 'Sample14': 'NA', 'Sample32': 'NA', 
+            'Sample46': 'NA', 'Sample44': 'NA', 'Sample80': 'NA',
+            'Sample20': 'NA', 'Sample38': 'NA', 'Sample26': 'NA',
+            'Sample94': 'NA', 'Sample48': 'NA', 'Sample68': 'NA',
+            'Sample90': 'NA', 'Sample18': 'NA', 'Sample54': 'NA',
+            'Sample52': 'NA', 'Sample86': 'NA', 'Sample30': 'NA',
+            'Sample78': 'NA', 'Sample84': 'NA', 'Sample82': 'NA',
+            'Sample6': 'NA', 'Sample96': 'NA', 'Sample72': 'NA',
+            'Sample56': 'NA', 'Sample64': 'NA', 'Sample58': 'NA',
+            'Sample92': 'NA', 'Sample62': 'NA', 'Sample8': 'NA',
+            'Sample24': 'NA', 'Sample12': 'NA', 'Sample16': 'NA',
+            'Sample88': 'NA', 'Sample22': 'NA', 'Sample42': 'NA',
+            'Sample76': 'NA', 'Sample28': 'NA', 'Sample74': 'NA',
+            'Sample50': 'NA', 'Sample60': 'NA', 'Sample10': 'NA',
+            'Sample36': 'NA', 'Sample34': 'NA', 'Sample40': 'NA',
+            'Sample66': 'NA', 'Sample14': 'NA', 'Sample32': 'NA',
             'Sample70': 'NA', 'Sample4': 'NA', 'Sample1': '1.7'
             })
 
@@ -680,15 +681,15 @@ class TestWorkflowWithFacets(PlutoTestCase):
         """
         Test that the workflow works correctly when run with two maf files
         """
-        data_clinical_file = os.path.join(self.DATA_SETS['Proj_08390_G']['INPUTS_DIR'], "Proj_08390_G_sample_data_clinical.txt")
-        sample_summary_file = os.path.join(self.DATA_SETS['Proj_08390_G']['QC_DIR'], "Proj_08390_G_SampleSummary.txt")
-        microsatellites_file = self.DATA_SETS['demo']['microsatellites_file']
+        data_clinical_file = os.path.join(DATA_SETS['Proj_08390_G']['INPUTS_DIR'], "Proj_08390_G_sample_data_clinical.txt")
+        sample_summary_file = os.path.join(DATA_SETS['Proj_08390_G']['QC_DIR'], "Proj_08390_G_SampleSummary.txt")
+        microsatellites_file = DATA_SETS['demo']['microsatellites_file']
 
-        tumor_bam1 = os.path.join(self.DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample1.rg.md.abra.printreads.bam")
-        normal_bam1 = os.path.join(self.DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample2.rg.md.abra.printreads.bam")
+        tumor_bam1 = os.path.join(DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample1.rg.md.abra.printreads.bam")
+        normal_bam1 = os.path.join(DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample2.rg.md.abra.printreads.bam")
 
-        tumor_bam2 = os.path.join(self.DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample4.rg.md.abra.printreads.bam")
-        normal_bam2 = os.path.join(self.DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample3.rg.md.abra.printreads.bam")
+        tumor_bam2 = os.path.join(DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample4.rg.md.abra.printreads.bam")
+        normal_bam2 = os.path.join(DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample3.rg.md.abra.printreads.bam")
 
         self.input = {
             "assay_coverage": "10000000", # TODO: get this from an assay reference key
@@ -711,7 +712,7 @@ class TestWorkflowWithFacets(PlutoTestCase):
             "cbio_segment_data_filename": "Proj_08390_G_data_cna_hg19.seg",
             "helix_filter_version": "20.06.1",
             'IMPACT_gene_list': {
-                "path": self.IMPACT_FILE,
+                "path": IMPACT_FILE,
                 "class": "File"
             },
             "microsatellites_file": {
@@ -727,41 +728,41 @@ class TestWorkflowWithFacets(PlutoTestCase):
                 "class": "File"
             },
             "targets_list": {
-                "path": self.DATA_SETS['Proj_08390_G']["targets_list"],
+                "path": DATA_SETS['Proj_08390_G']["targets_list"],
                 "class": "File"
             },
             "known_fusions_file": {
-                "path": self.KNOWN_FUSIONS_FILE,
+                "path": KNOWN_FUSIONS_FILE,
                 "class": "File"
             },
             "mutation_svs_txt_files": [
                 {
-                    "path": os.path.join(self.DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample1.Sample2.svs.pass.vep.portal.txt"),
+                    "path": os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample1.Sample2.svs.pass.vep.portal.txt"),
                     "class": "File"
                 },
                 {
-                    "path": os.path.join(self.DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample4.Sample3.svs.pass.vep.portal.txt"),
+                    "path": os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample4.Sample3.svs.pass.vep.portal.txt"),
                     "class": "File"
                 }
             ],
             "mutation_svs_maf_files": [
                 {
-                    "path": os.path.join(self.DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample1.Sample2.svs.pass.vep.maf"),
+                    "path": os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample1.Sample2.svs.pass.vep.maf"),
                     "class": "File"
                 },
                 {
-                    "path": os.path.join(self.DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample4.Sample3.svs.pass.vep.maf"),
+                    "path": os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample4.Sample3.svs.pass.vep.maf"),
                     "class": "File"
                 }
             ],
             "pairs": [
                 {
                     "pair_maf": {
-                        "path": os.path.join(self.DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample1.Sample2.muts.maf"),
+                        "path": os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample1.Sample2.muts.maf"),
                         "class": "File"
                     },
                     "snp_pileup": {
-                         "path": os.path.join(self.DATA_SETS['Proj_08390_G']['FACETS_DIR'], "Sample2.rg.md.abra.printreads__Sample1.rg.md.abra.printreads.dat.gz"),
+                         "path": os.path.join(DATA_SETS['Proj_08390_G']['FACETS_DIR'], "Sample2.rg.md.abra.printreads__Sample1.rg.md.abra.printreads.dat.gz"),
                          "class": "File"
                     },
                     "pair_id": "Sample1.Sample2",
@@ -770,11 +771,11 @@ class TestWorkflowWithFacets(PlutoTestCase):
                 },
                 {
                     "pair_maf": {
-                        "path": os.path.join(self.DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample4.Sample3.muts.maf"),
+                        "path": os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample4.Sample3.muts.maf"),
                         "class": "File"
                     },
                     "snp_pileup": {
-                         "path": os.path.join(self.DATA_SETS['Proj_08390_G']['FACETS_DIR'], "Sample3.rg.md.abra.printreads__Sample4.rg.md.abra.printreads.dat.gz"),
+                         "path": os.path.join(DATA_SETS['Proj_08390_G']['FACETS_DIR'], "Sample3.rg.md.abra.printreads__Sample4.rg.md.abra.printreads.dat.gz"),
                          "class": "File"
                     },
                     "pair_id": "Sample4.Sample3",
@@ -911,37 +912,37 @@ class TestWorkflowWithFacets(PlutoTestCase):
             os.path.join(output_dir, 'portal/data_clinical_sample.txt'),
             value_fieldname = "CMO_TMB_SCORE",
             expected_values = {
-            'Sample46': 'NA', 
-            'Sample44': 'NA', 
-            'Sample80': 'NA', 
-            'Sample20': 'NA', 
-            'Sample38': 'NA', 
-            'Sample26': 'NA', 
-            'Sample94': 'NA', 
-            'Sample48': 'NA', 
-            'Sample68': 'NA', 
-            'Sample90': 'NA', 
-            'Sample18': 'NA', 
-            'Sample54': 'NA', 
-            'Sample52': 'NA', 
-            'Sample86': 'NA', 
-            'Sample30': 'NA', 
-            'Sample78': 'NA', 
-            'Sample84': 'NA', 
-            'Sample82': 'NA', 
-            'Sample6': 'NA', 
-            'Sample96': 'NA', 
-            'Sample72': 'NA', 
-            'Sample56': 'NA', 
-            'Sample64': 'NA', 
-            'Sample58': 'NA', 
-            'Sample92': 'NA', 'Sample62': 'NA', 'Sample8': 'NA', 
-            'Sample24': 'NA', 'Sample12': 'NA', 'Sample16': 'NA', 
-            'Sample88': 'NA', 'Sample22': 'NA', 'Sample42': 'NA', 
-            'Sample76': 'NA', 'Sample28': 'NA', 'Sample74': 'NA', 
-            'Sample50': 'NA', 'Sample60': 'NA', 'Sample10': 'NA', 
-            'Sample36': 'NA', 'Sample34': 'NA', 'Sample40': 'NA', 
-            'Sample66': 'NA', 'Sample14': 'NA', 'Sample32': 'NA', 
+            'Sample46': 'NA',
+            'Sample44': 'NA',
+            'Sample80': 'NA',
+            'Sample20': 'NA',
+            'Sample38': 'NA',
+            'Sample26': 'NA',
+            'Sample94': 'NA',
+            'Sample48': 'NA',
+            'Sample68': 'NA',
+            'Sample90': 'NA',
+            'Sample18': 'NA',
+            'Sample54': 'NA',
+            'Sample52': 'NA',
+            'Sample86': 'NA',
+            'Sample30': 'NA',
+            'Sample78': 'NA',
+            'Sample84': 'NA',
+            'Sample82': 'NA',
+            'Sample6': 'NA',
+            'Sample96': 'NA',
+            'Sample72': 'NA',
+            'Sample56': 'NA',
+            'Sample64': 'NA',
+            'Sample58': 'NA',
+            'Sample92': 'NA', 'Sample62': 'NA', 'Sample8': 'NA',
+            'Sample24': 'NA', 'Sample12': 'NA', 'Sample16': 'NA',
+            'Sample88': 'NA', 'Sample22': 'NA', 'Sample42': 'NA',
+            'Sample76': 'NA', 'Sample28': 'NA', 'Sample74': 'NA',
+            'Sample50': 'NA', 'Sample60': 'NA', 'Sample10': 'NA',
+            'Sample36': 'NA', 'Sample34': 'NA', 'Sample40': 'NA',
+            'Sample66': 'NA', 'Sample14': 'NA', 'Sample32': 'NA',
             'Sample70': 'NA', 'Sample4': '1.0', 'Sample1': '1.7'
             })
 
@@ -949,42 +950,42 @@ class TestWorkflowWithFacets(PlutoTestCase):
             os.path.join(output_dir, 'portal/data_clinical_sample.txt'),
             value_fieldname = "MSI_SCORE",
             expected_values = {
-                'Sample46': 'NA', 'Sample44': 'NA', 'Sample80': 'NA', 
-                'Sample20': 'NA', 'Sample38': 'NA', 'Sample26': 'NA', 
-                'Sample94': 'NA', 'Sample48': 'NA', 'Sample68': 'NA', 
-                'Sample90': 'NA', 'Sample18': 'NA', 'Sample54': 'NA', 
-                'Sample52': 'NA', 'Sample86': 'NA', 'Sample30': 'NA', 
-                'Sample78': 'NA', 'Sample84': 'NA', 'Sample82': 'NA', 
-                'Sample6': 'NA', 'Sample96': 'NA', 'Sample72': 'NA', 
-                'Sample56': 'NA', 'Sample64': 'NA', 'Sample58': 'NA', 
-                'Sample92': 'NA', 'Sample62': 'NA', 'Sample8': 'NA', 
-                'Sample24': 'NA', 'Sample12': 'NA', 'Sample16': 'NA', 
-                'Sample88': 'NA', 'Sample22': 'NA', 'Sample42': 'NA', 
-                'Sample76': 'NA', 'Sample28': 'NA', 'Sample74': 'NA', 
-                'Sample50': 'NA', 'Sample60': 'NA', 'Sample10': 'NA', 
-                'Sample36': 'NA', 'Sample34': 'NA', 'Sample40': 'NA', 
-                'Sample66': 'NA', 'Sample14': 'NA', 'Sample32': 'NA', 
+                'Sample46': 'NA', 'Sample44': 'NA', 'Sample80': 'NA',
+                'Sample20': 'NA', 'Sample38': 'NA', 'Sample26': 'NA',
+                'Sample94': 'NA', 'Sample48': 'NA', 'Sample68': 'NA',
+                'Sample90': 'NA', 'Sample18': 'NA', 'Sample54': 'NA',
+                'Sample52': 'NA', 'Sample86': 'NA', 'Sample30': 'NA',
+                'Sample78': 'NA', 'Sample84': 'NA', 'Sample82': 'NA',
+                'Sample6': 'NA', 'Sample96': 'NA', 'Sample72': 'NA',
+                'Sample56': 'NA', 'Sample64': 'NA', 'Sample58': 'NA',
+                'Sample92': 'NA', 'Sample62': 'NA', 'Sample8': 'NA',
+                'Sample24': 'NA', 'Sample12': 'NA', 'Sample16': 'NA',
+                'Sample88': 'NA', 'Sample22': 'NA', 'Sample42': 'NA',
+                'Sample76': 'NA', 'Sample28': 'NA', 'Sample74': 'NA',
+                'Sample50': 'NA', 'Sample60': 'NA', 'Sample10': 'NA',
+                'Sample36': 'NA', 'Sample34': 'NA', 'Sample40': 'NA',
+                'Sample66': 'NA', 'Sample14': 'NA', 'Sample32': 'NA',
                 'Sample70': 'NA', 'Sample4': '11.76', 'Sample1': '28.00'})
 
         self.assertSampleValues(
             os.path.join(output_dir, 'portal/data_clinical_sample.txt'),
             value_fieldname = "MSI_STATUS",
             expected_values = {
-                'Sample46': 'NA', 'Sample44': 'NA', 'Sample80': 'NA', 
-                'Sample20': 'NA', 'Sample38': 'NA', 'Sample26': 'NA', 
-                'Sample94': 'NA', 'Sample48': 'NA', 'Sample68': 'NA', 
-                'Sample90': 'NA', 'Sample18': 'NA', 'Sample54': 'NA', 
-                'Sample52': 'NA', 'Sample86': 'NA', 'Sample30': 'NA', 
-                'Sample78': 'NA', 'Sample84': 'NA', 'Sample82': 'NA', 
-                'Sample6': 'NA', 'Sample96': 'NA', 'Sample72': 'NA', 
-                'Sample56': 'NA', 'Sample64': 'NA', 'Sample58': 'NA', 
-                'Sample92': 'NA', 'Sample62': 'NA', 'Sample8': 'NA', 
-                'Sample24': 'NA', 'Sample12': 'NA', 'Sample16': 'NA', 
-                'Sample88': 'NA', 'Sample22': 'NA', 'Sample42': 'NA', 
-                'Sample76': 'NA', 'Sample28': 'NA', 'Sample74': 'NA', 
-                'Sample50': 'NA', 'Sample60': 'NA', 'Sample10': 'NA', 
-                'Sample36': 'NA', 'Sample34': 'NA', 'Sample40': 'NA', 
-                'Sample66': 'NA', 'Sample14': 'NA', 'Sample32': 'NA', 
+                'Sample46': 'NA', 'Sample44': 'NA', 'Sample80': 'NA',
+                'Sample20': 'NA', 'Sample38': 'NA', 'Sample26': 'NA',
+                'Sample94': 'NA', 'Sample48': 'NA', 'Sample68': 'NA',
+                'Sample90': 'NA', 'Sample18': 'NA', 'Sample54': 'NA',
+                'Sample52': 'NA', 'Sample86': 'NA', 'Sample30': 'NA',
+                'Sample78': 'NA', 'Sample84': 'NA', 'Sample82': 'NA',
+                'Sample6': 'NA', 'Sample96': 'NA', 'Sample72': 'NA',
+                'Sample56': 'NA', 'Sample64': 'NA', 'Sample58': 'NA',
+                'Sample92': 'NA', 'Sample62': 'NA', 'Sample8': 'NA',
+                'Sample24': 'NA', 'Sample12': 'NA', 'Sample16': 'NA',
+                'Sample88': 'NA', 'Sample22': 'NA', 'Sample42': 'NA',
+                'Sample76': 'NA', 'Sample28': 'NA', 'Sample74': 'NA',
+                'Sample50': 'NA', 'Sample60': 'NA', 'Sample10': 'NA',
+                'Sample36': 'NA', 'Sample34': 'NA', 'Sample40': 'NA',
+                'Sample66': 'NA', 'Sample14': 'NA', 'Sample32': 'NA',
                 'Sample70': 'NA', 'Sample4': 'Instable', 'Sample1': 'Instable'})
 
 

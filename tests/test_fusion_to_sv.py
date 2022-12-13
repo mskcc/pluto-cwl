@@ -5,20 +5,17 @@ unit tests for the portal-workflow.cwl
 """
 import os
 import sys
-import unittest
-
-
-
+from datasets import (
+    DATA_SETS,
+    KNOWN_FUSIONS_FILE,
+)
 from pluto import (
-    CWLFile, 
+    CWLFile,
     PlutoTestCase,
-    DATA_SETS, 
-    KNOWN_FUSIONS_FILE, 
     ENABLE_LARGE_TESTS,
-    OFile, 
+    OFile,
     ODir
 )
-
 
 
 class TestFusionToSV(PlutoTestCase):
@@ -37,7 +34,7 @@ class TestFusionToSV(PlutoTestCase):
                 },
             "output_filename": "data_SV.txt"
 
-        }        
+        }
 
         output_json, output_dir = self.run_cwl()
 
@@ -45,7 +42,7 @@ class TestFusionToSV(PlutoTestCase):
             'output_file': OFile(
                 name='data_SV.txt', size=1103, hash='02fda70b7838931321544f6797de4782adaf1a46', dir=output_dir)
 
-            
+
         }
 
         self.maxDiff = None
@@ -53,8 +50,4 @@ class TestFusionToSV(PlutoTestCase):
         ('basename', 'report.html', ['size', 'checksum'])
         ]
         self.assertCWLDictEqual(output_json, expected_output, related_keys = strip_related_keys)
-
-       
-
-
 

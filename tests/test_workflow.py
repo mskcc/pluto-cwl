@@ -5,10 +5,11 @@ unit tests for the workflow.cwl
 """
 import os
 import sys
-import unittest
-
-
-
+from datasets import (
+    DATA_SETS,
+    KNOWN_FUSIONS_FILE,
+    IMPACT_FILE,
+)
 from pluto import (
     PlutoTestCase,
     OFile,
@@ -17,9 +18,6 @@ from pluto import (
     load_mutations,
     run_cwl,
     CWLFile,
-    DATA_SETS,
-    KNOWN_FUSIONS_FILE,
-    IMPACT_FILE
 )
 
 
@@ -310,6 +308,3 @@ class TestWorkflow(PlutoTestCase):
         header_parts = header.split()
         expected_header_parts = ['Hugo_Symbol', 's_C_VJ7F47_P001_d', 's_C_X50T9Y_P001_d']
         self.assertEqual(header_parts, expected_header_parts)
-
-
-

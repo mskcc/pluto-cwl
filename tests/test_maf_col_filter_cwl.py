@@ -5,11 +5,12 @@ unit tests for the maf_col_filter.cwl
 """
 import os
 import sys
-import unittest
 import fixtures_maf_col_filter_cwl as fxt
-from datasets import DATA_SETS
+from datasets import (
+    DATA_SETS,
+)
 from pluto import (
-    PlutoTestCase, 
+    PlutoTestCase,
     CWLFile,
     OFile
 )

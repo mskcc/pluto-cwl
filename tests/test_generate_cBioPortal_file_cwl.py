@@ -5,16 +5,12 @@ unit tests for the generate_cbioPortal_file.cwl file
 """
 import os
 import sys
-import unittest
-
-
-
+from datasets import (
+    DATA_SETS,
+)
 from pluto import (
-    run_cwl, 
-    write_table, 
-    CWLFile, 
+    CWLFile,
     PlutoTestCase,
-    DATA_SETS
 )
 
 
@@ -566,7 +562,7 @@ class TestGenerateCbioFilesCWL(PlutoTestCase):
         ['Hugo_Symbol', 'sample1', 'sample2_hisens'],
         ['ABL1', '3;1', '3;NA']
         ]
-        input_file = write_table(self.tmpdir, "data_CNA.txt", cna_lines)
+        input_file = self.write_table(self.tmpdir, "data_CNA.txt", cna_lines)
 
         self.input = {
             "subcommand": "clean_cna",

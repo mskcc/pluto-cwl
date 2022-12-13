@@ -5,14 +5,10 @@ Test case for the consensus_maf cwl
 """
 import os
 import sys
-import unittest
 from collections import OrderedDict
-
-
-
-from pluto.tools import (
-    PlutoTestCase, 
-    CWLFile, 
+from pluto import (
+    PlutoTestCase,
+    CWLFile,
     TableReader
 )
 

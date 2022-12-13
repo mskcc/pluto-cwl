@@ -5,15 +5,13 @@ unit tests for the copy_number.cwl
 """
 import os
 import sys
-import unittest
-
-
-
+from datasets import (
+    DATA_SETS,
+    PORTAL_CNA_FILE
+)
 from pluto import (
-    CWLFile, 
+    CWLFile,
     PlutoTestCase,
-    DATA_SETS, 
-    PORTAL_CNA_FILE,
     OFile
 )
 
@@ -89,6 +87,3 @@ class TestCopyNumber(PlutoTestCase):
         }
         self.maxDiff = None
         self.assertCWLDictEqual(output_json, expected_output)
-
-
-

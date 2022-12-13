@@ -5,16 +5,15 @@ Test case for the MSI analysis workflow cwl which uses multiple input samples
 """
 import os
 import sys
-import unittest
-
-
-
+from datasets import (
+    DATA_SETS,
+    MICROSATELLITES_LIST,
+)
 from pluto import (
-    PlutoTestCase, 
-    CWLFile, 
+    PlutoTestCase,
+    CWLFile,
     TableReader,
     ENABLE_LARGE_TESTS,
-    MICROSATELLITES_LIST,
     OFile,
 )
 
@@ -30,8 +29,8 @@ class TestMsiWorkflow(PlutoTestCase):
         """
         Test case for running the MSI workflow on single sample
         """
-        normal_bam = os.path.join(self.DATA_SETS['demo']['BAM_DIR'], "Sample2.bam")
-        tumor_bam  = os.path.join(self.DATA_SETS['demo']['BAM_DIR'], "Sample1.bam")
+        normal_bam = os.path.join(DATA_SETS['demo']['BAM_DIR'], "Sample2.bam")
+        tumor_bam  = os.path.join(DATA_SETS['demo']['BAM_DIR'], "Sample1.bam")
 
         self.input = {
             "threads": "16",
@@ -84,10 +83,10 @@ class TestMsiWorkflow(PlutoTestCase):
         Test case for running the MSI workflow on multiple samples
         """
         # data_clinical_file = self.write_table(self.tmpdir, filename = "data_clinical_sample.txt", lines = self.data_clinical_lines)
-        normal_bam = os.path.join(self.DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample23.rg.md.abra.printreads.bam")
-        tumor_bam  = os.path.join(self.DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample24.rg.md.abra.printreads.bam")
-        normal_bam2 = os.path.join(self.DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample35.rg.md.abra.printreads.bam")
-        tumor_bam2  = os.path.join(self.DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample36.rg.md.abra.printreads.bam")
+        normal_bam = os.path.join(DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample23.rg.md.abra.printreads.bam")
+        tumor_bam  = os.path.join(DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample24.rg.md.abra.printreads.bam")
+        normal_bam2 = os.path.join(DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample35.rg.md.abra.printreads.bam")
+        tumor_bam2  = os.path.join(DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample36.rg.md.abra.printreads.bam")
 
         self.input = {
             "microsatellites_file": {
@@ -164,8 +163,8 @@ class TestMsiWorkflow(PlutoTestCase):
         """
         Test case for running the MSI workflow on single sample
         """
-        normal_bam = os.path.join(self.DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample23.rg.md.abra.printreads.bam")
-        tumor_bam  = os.path.join(self.DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample24.rg.md.abra.printreads.bam")
+        normal_bam = os.path.join(DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample23.rg.md.abra.printreads.bam")
+        tumor_bam  = os.path.join(DATA_SETS['Proj_08390_G']['BAM_DIR'], "Sample24.rg.md.abra.printreads.bam")
 
         self.input = {
             "microsatellites_file": {
@@ -210,7 +209,3 @@ class TestMsiWorkflow(PlutoTestCase):
             ['21.97', 'Instable', 'Sample1-T']
             ]
         self.assertEqual(lines, expected_lines)
-
-
-
-

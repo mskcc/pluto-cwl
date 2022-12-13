@@ -5,14 +5,12 @@ unit tests for the run-facets-wrapper.cwl file
 """
 import os
 import sys
-import unittest
-
-
-
-from pluto import (
-    PlutoTestCase, 
-    CWLFile,
+from datasets import (
     DATA_SETS,
+)
+from pluto import (
+    PlutoTestCase,
+    CWLFile,
     OFile
 )
 

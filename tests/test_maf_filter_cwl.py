@@ -5,16 +5,13 @@ unit tests for the maf_filter.cwl
 """
 import os
 import sys
-import unittest
-
-
-
+from datasets import (
+    DATA_SETS,
+    ARGOS_VERSION_STRING, # why do we even need this
+)
 from pluto import (
-    CWLFile, 
+    CWLFile,
     PlutoTestCase,
-    DATA_SETS, 
-    ARGOS_VERSION_STRING, 
-    IS_IMPACT,
     OFile
 )
 

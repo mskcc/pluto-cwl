@@ -5,14 +5,13 @@ Test case for the maf2vcf_gz cwl
 """
 import os
 import sys
-import unittest
 from collections import OrderedDict
-
-
-
+from datasets import (
+    DATA_SETS,
+)
 from pluto import (
-    PlutoTestCase, 
-    CWLFile, 
+    PlutoTestCase,
+    CWLFile,
     TableReader
 )
 
@@ -26,8 +25,8 @@ class TestMaf2VcfGz(PlutoTestCase):
         """
         self.maxDiff = None
         self.input = {
-            "maf_file": {"class": "File", "path": os.path.join(self.DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample4.Sample3.muts.maf") },
-            "ref_fasta": {"class": "File", "path": self.DATA_SETS['Proj_08390_G']['REF_FASTA']},
+            "maf_file": {"class": "File", "path": os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample4.Sample3.muts.maf") },
+            "ref_fasta": {"class": "File", "path": DATA_SETS['Proj_08390_G']['REF_FASTA']},
         }
 
         output_json, output_dir = self.run_cwl()
@@ -58,7 +57,3 @@ class TestMaf2VcfGz(PlutoTestCase):
                 'path': os.path.join(output_dir,'variants.vcf.gz') }}
 
         self.assertCWLDictEqual(output_json, expected_output)
-
-
-
-

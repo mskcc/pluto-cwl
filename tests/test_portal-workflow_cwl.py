@@ -5,20 +5,17 @@ unit tests for the portal-workflow.cwl
 """
 import os
 import sys
-import unittest
-
-
-
+from datasets import (
+    DATA_SETS,
+    KNOWN_FUSIONS_FILE
+)
 from pluto import (
-    CWLFile, 
-    PlutoTestCase, 
-    DATA_SETS, 
-    KNOWN_FUSIONS_FILE, 
-    ENABLE_LARGE_TESTS, 
-    OFile, 
+    CWLFile,
+    PlutoTestCase,
+    ENABLE_LARGE_TESTS,
+    OFile,
     ODir
 )
-
 
 
 class TestPortalWorkflow(PlutoTestCase):
@@ -159,80 +156,80 @@ class TestPortalWorkflow(PlutoTestCase):
             os.path.join(output_dir, 'data_clinical_sample.txt'),
             value_fieldname = "CMO_TMB_SCORE",
             expected_values = {
-            'Sample46': 'NA', 
-            'Sample44': 'NA', 
-            'Sample80': 'NA', 
-            'Sample20': 'NA', 
-            'Sample38': 'NA', 
-            'Sample26': 'NA', 
-            'Sample94': 'NA', 
-            'Sample48': 'NA', 
-            'Sample68': 'NA', 
-            'Sample90': 'NA', 
-            'Sample18': 'NA', 
-            'Sample54': 'NA', 
-            'Sample52': 'NA', 
-            'Sample86': 'NA', 
-            'Sample30': 'NA', 
-            'Sample78': 'NA', 
-            'Sample84': 'NA', 
-            'Sample82': 'NA', 
-            'Sample6': 'NA', 
-            'Sample96': 'NA', 
-            'Sample72': 'NA', 
-            'Sample56': 'NA', 
-            'Sample64': 'NA', 
-            'Sample58': 'NA', 
-            'Sample92': 'NA', 'Sample62': 'NA', 'Sample8': 'NA', 
-            'Sample24': 'NA', 'Sample12': 'NA', 'Sample16': 'NA', 
-            'Sample88': 'NA', 'Sample22': 'NA', 'Sample42': 'NA', 
-            'Sample76': 'NA', 'Sample28': 'NA', 'Sample74': 'NA', 
-            'Sample50': 'NA', 'Sample60': 'NA', 'Sample10': 'NA', 
-            'Sample36': 'NA', 'Sample34': 'NA', 'Sample40': 'NA', 
-            'Sample66': 'NA', 'Sample14': 'NA', 'Sample32': 'NA', 
+            'Sample46': 'NA',
+            'Sample44': 'NA',
+            'Sample80': 'NA',
+            'Sample20': 'NA',
+            'Sample38': 'NA',
+            'Sample26': 'NA',
+            'Sample94': 'NA',
+            'Sample48': 'NA',
+            'Sample68': 'NA',
+            'Sample90': 'NA',
+            'Sample18': 'NA',
+            'Sample54': 'NA',
+            'Sample52': 'NA',
+            'Sample86': 'NA',
+            'Sample30': 'NA',
+            'Sample78': 'NA',
+            'Sample84': 'NA',
+            'Sample82': 'NA',
+            'Sample6': 'NA',
+            'Sample96': 'NA',
+            'Sample72': 'NA',
+            'Sample56': 'NA',
+            'Sample64': 'NA',
+            'Sample58': 'NA',
+            'Sample92': 'NA', 'Sample62': 'NA', 'Sample8': 'NA',
+            'Sample24': 'NA', 'Sample12': 'NA', 'Sample16': 'NA',
+            'Sample88': 'NA', 'Sample22': 'NA', 'Sample42': 'NA',
+            'Sample76': 'NA', 'Sample28': 'NA', 'Sample74': 'NA',
+            'Sample50': 'NA', 'Sample60': 'NA', 'Sample10': 'NA',
+            'Sample36': 'NA', 'Sample34': 'NA', 'Sample40': 'NA',
+            'Sample66': 'NA', 'Sample14': 'NA', 'Sample32': 'NA',
             'Sample70': 'NA', 'Sample4': 'NA', 'Sample1': '1.7'
             })
-        
+
         self.assertSampleValues(
             os.path.join(output_dir, 'data_clinical_sample.txt'),
             value_fieldname = "MSI_SCORE",
             expected_values = {
-                'Sample46': 'NA', 'Sample44': 'NA', 'Sample80': 'NA', 
-                'Sample20': 'NA', 'Sample38': 'NA', 'Sample26': 'NA', 
-                'Sample94': 'NA', 'Sample48': 'NA', 'Sample68': 'NA', 
-                'Sample90': 'NA', 'Sample18': 'NA', 'Sample54': 'NA', 
-                'Sample52': 'NA', 'Sample86': 'NA', 'Sample30': 'NA', 
-                'Sample78': 'NA', 'Sample84': 'NA', 'Sample82': 'NA', 
-                'Sample6': 'NA', 'Sample96': 'NA', 'Sample72': 'NA', 
-                'Sample56': 'NA', 'Sample64': 'NA', 'Sample58': 'NA', 
-                'Sample92': 'NA', 'Sample62': 'NA', 'Sample8': 'NA', 
-                'Sample24': 'NA', 'Sample12': 'NA', 'Sample16': 'NA', 
-                'Sample88': 'NA', 'Sample22': 'NA', 'Sample42': 'NA', 
-                'Sample76': 'NA', 'Sample28': 'NA', 'Sample74': 'NA', 
-                'Sample50': 'NA', 'Sample60': 'NA', 'Sample10': 'NA', 
-                'Sample36': 'NA', 'Sample34': 'NA', 'Sample40': 'NA', 
-                'Sample66': 'NA', 'Sample14': 'NA', 'Sample32': 'NA', 
+                'Sample46': 'NA', 'Sample44': 'NA', 'Sample80': 'NA',
+                'Sample20': 'NA', 'Sample38': 'NA', 'Sample26': 'NA',
+                'Sample94': 'NA', 'Sample48': 'NA', 'Sample68': 'NA',
+                'Sample90': 'NA', 'Sample18': 'NA', 'Sample54': 'NA',
+                'Sample52': 'NA', 'Sample86': 'NA', 'Sample30': 'NA',
+                'Sample78': 'NA', 'Sample84': 'NA', 'Sample82': 'NA',
+                'Sample6': 'NA', 'Sample96': 'NA', 'Sample72': 'NA',
+                'Sample56': 'NA', 'Sample64': 'NA', 'Sample58': 'NA',
+                'Sample92': 'NA', 'Sample62': 'NA', 'Sample8': 'NA',
+                'Sample24': 'NA', 'Sample12': 'NA', 'Sample16': 'NA',
+                'Sample88': 'NA', 'Sample22': 'NA', 'Sample42': 'NA',
+                'Sample76': 'NA', 'Sample28': 'NA', 'Sample74': 'NA',
+                'Sample50': 'NA', 'Sample60': 'NA', 'Sample10': 'NA',
+                'Sample36': 'NA', 'Sample34': 'NA', 'Sample40': 'NA',
+                'Sample66': 'NA', 'Sample14': 'NA', 'Sample32': 'NA',
                 'Sample70': 'NA', 'Sample4': 'NA', 'Sample1': '28.00'})
 
         self.assertSampleValues(
             os.path.join(output_dir, 'data_clinical_sample.txt'),
             value_fieldname = "MSI_STATUS",
             expected_values = {
-                'Sample46': 'NA', 'Sample44': 'NA', 'Sample80': 'NA', 
-                'Sample20': 'NA', 'Sample38': 'NA', 'Sample26': 'NA', 
-                'Sample94': 'NA', 'Sample48': 'NA', 'Sample68': 'NA', 
-                'Sample90': 'NA', 'Sample18': 'NA', 'Sample54': 'NA', 
-                'Sample52': 'NA', 'Sample86': 'NA', 'Sample30': 'NA', 
-                'Sample78': 'NA', 'Sample84': 'NA', 'Sample82': 'NA', 
-                'Sample6': 'NA', 'Sample96': 'NA', 'Sample72': 'NA', 
-                'Sample56': 'NA', 'Sample64': 'NA', 'Sample58': 'NA', 
-                'Sample92': 'NA', 'Sample62': 'NA', 'Sample8': 'NA', 
-                'Sample24': 'NA', 'Sample12': 'NA', 'Sample16': 'NA', 
-                'Sample88': 'NA', 'Sample22': 'NA', 'Sample42': 'NA', 
-                'Sample76': 'NA', 'Sample28': 'NA', 'Sample74': 'NA', 
-                'Sample50': 'NA', 'Sample60': 'NA', 'Sample10': 'NA', 
-                'Sample36': 'NA', 'Sample34': 'NA', 'Sample40': 'NA', 
-                'Sample66': 'NA', 'Sample14': 'NA', 'Sample32': 'NA', 
+                'Sample46': 'NA', 'Sample44': 'NA', 'Sample80': 'NA',
+                'Sample20': 'NA', 'Sample38': 'NA', 'Sample26': 'NA',
+                'Sample94': 'NA', 'Sample48': 'NA', 'Sample68': 'NA',
+                'Sample90': 'NA', 'Sample18': 'NA', 'Sample54': 'NA',
+                'Sample52': 'NA', 'Sample86': 'NA', 'Sample30': 'NA',
+                'Sample78': 'NA', 'Sample84': 'NA', 'Sample82': 'NA',
+                'Sample6': 'NA', 'Sample96': 'NA', 'Sample72': 'NA',
+                'Sample56': 'NA', 'Sample64': 'NA', 'Sample58': 'NA',
+                'Sample92': 'NA', 'Sample62': 'NA', 'Sample8': 'NA',
+                'Sample24': 'NA', 'Sample12': 'NA', 'Sample16': 'NA',
+                'Sample88': 'NA', 'Sample22': 'NA', 'Sample42': 'NA',
+                'Sample76': 'NA', 'Sample28': 'NA', 'Sample74': 'NA',
+                'Sample50': 'NA', 'Sample60': 'NA', 'Sample10': 'NA',
+                'Sample36': 'NA', 'Sample34': 'NA', 'Sample40': 'NA',
+                'Sample66': 'NA', 'Sample14': 'NA', 'Sample32': 'NA',
                 'Sample70': 'NA', 'Sample4': 'NA', 'Sample1': 'Instable'})
 
 
@@ -1001,6 +998,3 @@ class TestPortalWorkflow(PlutoTestCase):
             "ASCN.ASCN_INTEGER_COPY_NUMBER"
         ]
         self.assertMutHeadersContain(os.path.join(output_dir, 'data_mutations_extended.txt'), some_required_colnames)
-
-
-

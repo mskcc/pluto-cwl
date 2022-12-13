@@ -5,14 +5,13 @@ unit tests for the add_is_in_impact.cwl
 """
 import os
 import sys
-import unittest
 from datasets import (
-    DATA_SETS
+    DATA_SETS,
+    IMPACT_FILE
 )
 from pluto import (
-    PlutoTestCase, 
+    PlutoTestCase,
     CWLFile,
-    IMPACT_FILE,
     OFile
 )
 

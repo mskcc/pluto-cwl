@@ -5,12 +5,11 @@ Test case for the TMB analysis workflow cwl which uses multiple input samples
 """
 import os
 import sys
-import unittest
-
-
-
+from datasets import (
+    DATA_SETS,
+)
 from pluto import (
-    PlutoTestCase, 
+    PlutoTestCase,
     CWLFile,
     OFile
 )
@@ -29,95 +28,95 @@ class TestTmbWorkflow(PlutoTestCase):
             "pairs": [
                 {
                     "pair_id": "Sample10.Sample9", "tumor_id": "Sample10", "normal_id": "Sample9",
-                    "pair_maf": {"path": os.path.join(self.DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample10.Sample9.muts.maf"), "class": "File"}
+                    "pair_maf": {"path": os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample10.Sample9.muts.maf"), "class": "File"}
                 },
                 {
                     "pair_id": "Sample12.Sample11", "tumor_id": "Sample12", "normal_id": "Sample11",
-                    "pair_maf": {"path": os.path.join(self.DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample12.Sample11.muts.maf"), "class": "File"}
+                    "pair_maf": {"path": os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample12.Sample11.muts.maf"), "class": "File"}
                 },
                 {
                     "pair_id": "Sample14.Sample13", "tumor_id": "Sample14", "normal_id": "Sample13",
-                    "pair_maf": {"path": os.path.join(self.DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample14.Sample13.muts.maf"), "class": "File"}
+                    "pair_maf": {"path": os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample14.Sample13.muts.maf"), "class": "File"}
                 },
                 {
                     "pair_id": "Sample16.Sample15", "tumor_id": "Sample16", "normal_id": "Sample15",
-                    "pair_maf": {"path": os.path.join(self.DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample16.Sample15.muts.maf"), "class": "File"}
+                    "pair_maf": {"path": os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample16.Sample15.muts.maf"), "class": "File"}
                 },
                 {
                     "pair_id": "Sample18.Sample17", "tumor_id": "Sample18", "normal_id": "Sample17",
-                    "pair_maf": {"path": os.path.join(self.DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample18.Sample17.muts.maf"), "class": "File"}
+                    "pair_maf": {"path": os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample18.Sample17.muts.maf"), "class": "File"}
                 },
                 {
                     "pair_id": "Sample20.Sample19", "tumor_id": "Sample20", "normal_id": "Sample19",
-                    "pair_maf": {"path": os.path.join(self.DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample20.Sample19.muts.maf"), "class": "File"}
+                    "pair_maf": {"path": os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample20.Sample19.muts.maf"), "class": "File"}
                 },
                 {
                     "pair_id": "Sample22.Sample21", "tumor_id": "Sample22", "normal_id": "Sample21",
-                    "pair_maf": {"path": os.path.join(self.DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample22.Sample21.muts.maf"), "class": "File"}
+                    "pair_maf": {"path": os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample22.Sample21.muts.maf"), "class": "File"}
                 },
                 {
                     "pair_id": "Sample24.Sample23", "tumor_id": "Sample24", "normal_id": "Sample23",
-                    "pair_maf": {"path": os.path.join(self.DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample24.Sample23.muts.maf"), "class": "File"}
+                    "pair_maf": {"path": os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample24.Sample23.muts.maf"), "class": "File"}
                 },
                 {
                     "pair_id": "Sample26.Sample25", "tumor_id": "Sample26", "normal_id": "Sample25",
-                    "pair_maf": {"path": os.path.join(self.DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample26.Sample25.muts.maf"), "class": "File"}
+                    "pair_maf": {"path": os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample26.Sample25.muts.maf"), "class": "File"}
                 },
                 {
                     "pair_id": "Sample28.Sample27", "tumor_id": "Sample28", "normal_id": "Sample27",
-                    "pair_maf": {"path": os.path.join(self.DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample28.Sample27.muts.maf"), "class": "File"}
+                    "pair_maf": {"path": os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample28.Sample27.muts.maf"), "class": "File"}
                 },
                 {
                     "pair_id": "Sample30.Sample29", "tumor_id": "Sample30", "normal_id": "Sample29",
-                    "pair_maf": {"path": os.path.join(self.DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample30.Sample29.muts.maf"), "class": "File"}
+                    "pair_maf": {"path": os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample30.Sample29.muts.maf"), "class": "File"}
                 },
                 {
                     "pair_id": "Sample32.Sample31", "tumor_id": "Sample32", "normal_id": "Sample31",
-                    "pair_maf": {"path": os.path.join(self.DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample32.Sample31.muts.maf"), "class": "File"}
+                    "pair_maf": {"path": os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample32.Sample31.muts.maf"), "class": "File"}
                 },
                 {
                     "pair_id": "Sample34.Sample33", "tumor_id": "Sample34", "normal_id": "Sample33",
-                    "pair_maf": {"path": os.path.join(self.DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample34.Sample33.muts.maf"), "class": "File"}
+                    "pair_maf": {"path": os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample34.Sample33.muts.maf"), "class": "File"}
                 },
                 {
                     "pair_id": "Sample50.Sample49", "tumor_id": "Sample50", "normal_id": "Sample49",
-                    "pair_maf": {"path": os.path.join(self.DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample50.Sample49.muts.maf"), "class": "File"}
+                    "pair_maf": {"path": os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample50.Sample49.muts.maf"), "class": "File"}
                 },
                 {
                     "pair_id": "Sample52.Sample51", "tumor_id": "Sample52", "normal_id": "Sample51",
-                    "pair_maf": {"path": os.path.join(self.DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample52.Sample51.muts.maf"), "class": "File"}
+                    "pair_maf": {"path": os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample52.Sample51.muts.maf"), "class": "File"}
                 },
                 {
                     "pair_id": "Sample54.Sample53", "tumor_id": "Sample54", "normal_id": "Sample53",
-                    "pair_maf": {"path": os.path.join(self.DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample54.Sample53.muts.maf"), "class": "File"}
+                    "pair_maf": {"path": os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample54.Sample53.muts.maf"), "class": "File"}
                 },
                 {
                     "pair_id": "Sample62.Sample61", "tumor_id": "Sample62", "normal_id": "Sample61",
-                    "pair_maf": {"path": os.path.join(self.DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample62.Sample61.muts.maf"), "class": "File"}
+                    "pair_maf": {"path": os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample62.Sample61.muts.maf"), "class": "File"}
                 },
                 {
                     "pair_id": "Sample70.Sample69", "tumor_id": "Sample70", "normal_id": "Sample69",
-                    "pair_maf": {"path": os.path.join(self.DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample70.Sample69.muts.maf"), "class": "File"}
+                    "pair_maf": {"path": os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample70.Sample69.muts.maf"), "class": "File"}
                 },
                 {
                     "pair_id": "Sample74.Sample73", "tumor_id": "Sample74", "normal_id": "Sample73",
-                    "pair_maf": {"path": os.path.join(self.DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample74.Sample73.muts.maf"), "class": "File"}
+                    "pair_maf": {"path": os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample74.Sample73.muts.maf"), "class": "File"}
                 },
                 {
                     "pair_id": "Sample80.Sample79", "tumor_id": "Sample80", "normal_id": "Sample79",
-                    "pair_maf": {"path": os.path.join(self.DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample80.Sample79.muts.maf"), "class": "File"}
+                    "pair_maf": {"path": os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample80.Sample79.muts.maf"), "class": "File"}
                 },
                 {
                     "pair_id": "Sample84.Sample83", "tumor_id": "Sample84", "normal_id": "Sample83",
-                    "pair_maf": {"path": os.path.join(self.DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample84.Sample83.muts.maf"), "class": "File"}
+                    "pair_maf": {"path": os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample84.Sample83.muts.maf"), "class": "File"}
                 },
                 {
                     "pair_id": "Sample90.Sample89", "tumor_id": "Sample90", "normal_id": "Sample89",
-                    "pair_maf": {"path": os.path.join(self.DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample90.Sample89.muts.maf"), "class": "File"}
+                    "pair_maf": {"path": os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample90.Sample89.muts.maf"), "class": "File"}
                 },
                 {
                     "pair_id": "Sample92.Sample91", "tumor_id": "Sample92", "normal_id": "Sample91",
-                    "pair_maf": {"path": os.path.join(self.DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample92.Sample91.muts.maf"), "class": "File"}
+                    "pair_maf": {"path": os.path.join(DATA_SETS['Proj_08390_G']['MAF_DIR'], "Sample92.Sample91.muts.maf"), "class": "File"}
                 },
                 ]
             }
@@ -276,6 +275,3 @@ class TestTmbWorkflow(PlutoTestCase):
             )
 
         self.assertDictEqual(values, expected_values)
-
-
-

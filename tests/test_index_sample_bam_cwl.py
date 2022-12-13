@@ -5,14 +5,12 @@ Test case for the index_sample_bam cwl
 """
 import os
 import sys
-import unittest
-
-
-
-from pluto import (
-    PlutoTestCase, 
-    CWLFile,
+from datasets import (
     DATA_SETS,
+)
+from pluto import (
+    PlutoTestCase,
+    CWLFile,
     OFile
 )
 
@@ -52,7 +50,3 @@ class TestIndexSampleBam(PlutoTestCase):
             },
         }
         self.assertCWLDictEqual(output_json, expected_output)
-
-
-
-

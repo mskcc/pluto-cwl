@@ -8,16 +8,14 @@ $ CWL_ENGINE=Toil PRINT_TESTNAME=T python3 tests/test_samples_fillout_index_batc
 """
 import os
 import sys
-import unittest
 from typing import Dict, Tuple
-
-
-
+from datasets import (
+    DATA_SETS,
+)
 from pluto import (
     CWLFile,
     PlutoTestCase,
     PlutoPreRunTestCase,
-    DATA_SETS,
     OFile
 )
 
@@ -37,9 +35,9 @@ sample5_bam = os.path.join(DATA_SETS['Fillout01']['BAM_DIR'], 'Sample5.UnitTest0
 
 
 class TestSamplesFilloutIndexBatch1Group(PlutoPreRunTestCase):
-    
+
     cwl_file = CWLFile('samples_fillout_index_batch_workflow.cwl')
-    
+
     def setUp(self):
         super().setUp()
         self.runner_args['use_cache'] = False # do not use cache for samples fillout workflow it breaks on split_vcf_to_mafs
@@ -75,13 +73,13 @@ class TestSamplesFilloutIndexBatch1Group(PlutoPreRunTestCase):
         self.input = {
             "sample_groups": [sample_group1],
             "fillout_output_fname": 'output.maf',
-            "ref_fasta": {"class": "File", "path": self.DATA_SETS['Proj_08390_G']['REF_FASTA']},
+            "ref_fasta": {"class": "File", "path": DATA_SETS['Proj_08390_G']['REF_FASTA']},
         }
 
         output_json, output_dir = self.run_cwl()
 
         return(output_json, output_dir)
-    
+
     def getExpected(self, output_dir):
         return({
             'output_file': OFile(name = 'output.maf', dir = output_dir),
@@ -89,7 +87,7 @@ class TestSamplesFilloutIndexBatch1Group(PlutoPreRunTestCase):
             'portal_file': OFile(name = 'data_mutations_extended.txt', dir = output_dir),
             'uncalled_file': OFile(name = 'data_mutations_uncalled.txt', dir = output_dir),
         })
-    
+
     # # # # # # # # # # #
     # # # # # # # # # # #
 
@@ -105,8 +103,8 @@ class TestSamplesFilloutIndexBatch1Group(PlutoPreRunTestCase):
         ('basename', 'data_mutations_uncalled.txt', ['size', 'checksum'])
         ]
         self.assertCWLDictEqual(
-                self.res.output, 
-                self.res.expected, 
+                self.res.output,
+                self.res.expected,
                 related_keys = strip_related_keys)
 
     def test_output_file_num_muts(self):
@@ -114,7 +112,7 @@ class TestSamplesFilloutIndexBatch1Group(PlutoPreRunTestCase):
 
     def test_output_file_muts_hash(self):
         self.assertMutationsHash(OFile.init_dict(self.res.output['output_file']).path, "4732e626d2859e4c2e8a7d4eeca0e0f4")
-    
+
 
     def test_filtered_file_num_muts(self):
         self.assertNumMutations(OFile.init_dict(self.res.output['filtered_file']).path, 96)
@@ -136,9 +134,9 @@ class TestSamplesFilloutIndexBatch1Group(PlutoPreRunTestCase):
 
     def test_portal_output_path_num_muts(self):
         self.assertEqualNumMutations([
-            OFile.init_dict(self.res.output['portal_file']).path, 
-            OFile.init_dict(self.res.output['uncalled_file']).path, 
-            ], 
+            OFile.init_dict(self.res.output['portal_file']).path,
+            OFile.init_dict(self.res.output['uncalled_file']).path,
+            ],
             OFile.init_dict(self.res.output['filtered_file']).path)
 
     def test_output_file_fields(self):
@@ -158,9 +156,9 @@ class TestSamplesFilloutIndexBatch1Group(PlutoPreRunTestCase):
 
 
 class TestSamplesFilloutIndexBatch2Group(PlutoPreRunTestCase):
-    
+
     cwl_file = CWLFile('samples_fillout_index_batch_workflow.cwl')
-    
+
     def setUp(self):
         super().setUp()
         self.runner_args['use_cache'] = False # do not use cache for samples fillout workflow it breaks on split_vcf_to_mafs
@@ -197,13 +195,13 @@ class TestSamplesFilloutIndexBatch2Group(PlutoPreRunTestCase):
         self.input = {
             "sample_groups": [sample_group1, sample_group2],
             "fillout_output_fname": 'output.maf',
-            "ref_fasta": {"class": "File", "path": self.DATA_SETS['Proj_08390_G']['REF_FASTA']},
+            "ref_fasta": {"class": "File", "path": DATA_SETS['Proj_08390_G']['REF_FASTA']},
         }
 
         output_json, output_dir = self.run_cwl()
 
         return(output_json, output_dir)
-    
+
     def getExpected(self, output_dir):
         return({
             'output_file': OFile(name = 'output.maf', dir = output_dir),
@@ -211,10 +209,10 @@ class TestSamplesFilloutIndexBatch2Group(PlutoPreRunTestCase):
             'portal_file': OFile(name = 'data_mutations_extended.txt', dir = output_dir),
             'uncalled_file': OFile(name = 'data_mutations_uncalled.txt', dir = output_dir),
         })
-    
+
     # # # # # # # # # # #
     # # # # # # # # # # #
-    
+
     def test_CWLDictEqual(self):
         """
         Test case for running the fillout workflow on a number of samples, each with a bam and maf
@@ -227,8 +225,8 @@ class TestSamplesFilloutIndexBatch2Group(PlutoPreRunTestCase):
         ('basename', 'data_mutations_uncalled.txt', ['size', 'checksum'])
         ]
         self.assertCWLDictEqual(
-                self.res.output, 
-                self.res.expected, 
+                self.res.output,
+                self.res.expected,
                 related_keys = strip_related_keys)
 
     def test_output_file_num_muts(self):
@@ -236,7 +234,7 @@ class TestSamplesFilloutIndexBatch2Group(PlutoPreRunTestCase):
 
     def test_output_file_muts_hash(self):
         self.assertMutationsHash(OFile.init_dict(self.res.output['output_file']).path, "89b2574c5a8ae02ac44e0bbe897a4bf3")
-    
+
 
     def test_filtered_file_num_muts(self):
         self.assertNumMutations(OFile.init_dict(self.res.output['filtered_file']).path, 68)
@@ -258,9 +256,9 @@ class TestSamplesFilloutIndexBatch2Group(PlutoPreRunTestCase):
 
     def test_portal_output_path_num_muts(self):
         self.assertEqualNumMutations([
-            OFile.init_dict(self.res.output['portal_file']).path, 
-            OFile.init_dict(self.res.output['uncalled_file']).path, 
-            ], 
+            OFile.init_dict(self.res.output['portal_file']).path,
+            OFile.init_dict(self.res.output['uncalled_file']).path,
+            ],
             OFile.init_dict(self.res.output['filtered_file']).path)
 
     def test_output_file_fields(self):
@@ -280,9 +278,9 @@ class TestSamplesFilloutIndexBatch2Group(PlutoPreRunTestCase):
 
 
 class TestSamplesFilloutIndexBatch2Group2(PlutoPreRunTestCase):
-    
+
     cwl_file = CWLFile('samples_fillout_index_batch_workflow.cwl')
-    
+
     def setUp(self):
         super().setUp()
         self.runner_args['use_cache'] = False # do not use cache for samples fillout workflow it breaks on split_vcf_to_mafs
@@ -337,13 +335,13 @@ class TestSamplesFilloutIndexBatch2Group2(PlutoPreRunTestCase):
         self.input = {
             "sample_groups": [sample_group1, sample_group2],
             "fillout_output_fname": 'output.maf',
-            "ref_fasta": {"class": "File", "path": self.DATA_SETS['Proj_08390_G']['REF_FASTA']},
+            "ref_fasta": {"class": "File", "path": DATA_SETS['Proj_08390_G']['REF_FASTA']},
         }
 
         output_json, output_dir = self.run_cwl()
 
         return(output_json, output_dir)
-    
+
     def getExpected(self, output_dir):
         return({
             'output_file': OFile(name = 'output.maf', dir = output_dir),
@@ -351,7 +349,7 @@ class TestSamplesFilloutIndexBatch2Group2(PlutoPreRunTestCase):
             'portal_file': OFile(name = 'data_mutations_extended.txt', dir = output_dir),
             'uncalled_file': OFile(name = 'data_mutations_uncalled.txt', dir = output_dir),
         })
-    
+
     # # # # # # # # # # #
     # # # # # # # # # # #
 
@@ -367,15 +365,15 @@ class TestSamplesFilloutIndexBatch2Group2(PlutoPreRunTestCase):
         ('basename', 'data_mutations_uncalled.txt', ['size', 'checksum'])
         ]
         self.assertCWLDictEqual(
-                self.res.output, 
-                self.res.expected, 
+                self.res.output,
+                self.res.expected,
                 related_keys = strip_related_keys)
 
     def test_output_file_num_muts(self):
         self.assertNumMutations(OFile.init_dict(self.res.output['output_file']).path, 235)
 
     def test_output_file_muts_hash(self):
-        self.assertMutationsHash(OFile.init_dict(self.res.output['output_file']).path, "4e4c91ef129a853a35b86f7fa6f1268a")    
+        self.assertMutationsHash(OFile.init_dict(self.res.output['output_file']).path, "4e4c91ef129a853a35b86f7fa6f1268a")
 
     def test_filtered_file_num_muts(self):
         self.assertNumMutations(OFile.init_dict(self.res.output['filtered_file']).path, 150)
@@ -397,9 +395,9 @@ class TestSamplesFilloutIndexBatch2Group2(PlutoPreRunTestCase):
 
     def test_portal_output_path_num_muts(self):
         self.assertEqualNumMutations([
-            OFile.init_dict(self.res.output['portal_file']).path, 
-            OFile.init_dict(self.res.output['uncalled_file']).path, 
-            ], 
+            OFile.init_dict(self.res.output['portal_file']).path,
+            OFile.init_dict(self.res.output['uncalled_file']).path,
+            ],
             OFile.init_dict(self.res.output['filtered_file']).path)
 
     def test_output_file_fields(self):
@@ -419,9 +417,9 @@ class TestSamplesFilloutIndexBatch2Group2(PlutoPreRunTestCase):
 
 
 class TestSamplesFilloutIndexBatch3Group(PlutoPreRunTestCase):
-    
+
     cwl_file = CWLFile('samples_fillout_index_batch_workflow.cwl')
-    
+
     def setUp(self):
         super().setUp()
         self.runner_args['use_cache'] = False # do not use cache for samples fillout workflow it breaks on split_vcf_to_mafs
@@ -480,13 +478,13 @@ class TestSamplesFilloutIndexBatch3Group(PlutoPreRunTestCase):
         self.input = {
             "sample_groups": [sample_group1, sample_group2, sample_group3],
             "fillout_output_fname": 'output.maf',
-            "ref_fasta": {"class": "File", "path": self.DATA_SETS['Proj_08390_G']['REF_FASTA']},
+            "ref_fasta": {"class": "File", "path": DATA_SETS['Proj_08390_G']['REF_FASTA']},
         }
 
         output_json, output_dir = self.run_cwl()
 
         return(output_json, output_dir)
-    
+
     def getExpected(self, output_dir):
         return({
             'output_file': OFile(name = 'output.maf', dir = output_dir),
@@ -494,7 +492,7 @@ class TestSamplesFilloutIndexBatch3Group(PlutoPreRunTestCase):
             'portal_file': OFile(name = 'data_mutations_extended.txt', dir = output_dir),
             'uncalled_file': OFile(name = 'data_mutations_uncalled.txt', dir = output_dir),
         })
-    
+
     # # # # # # # # # # #
     # # # # # # # # # # #
 
@@ -510,15 +508,15 @@ class TestSamplesFilloutIndexBatch3Group(PlutoPreRunTestCase):
         ('basename', 'data_mutations_uncalled.txt', ['size', 'checksum'])
         ]
         self.assertCWLDictEqual(
-                self.res.output, 
-                self.res.expected, 
+                self.res.output,
+                self.res.expected,
                 related_keys = strip_related_keys)
 
     def test_output_file_num_muts(self):
         self.assertNumMutations(OFile.init_dict(self.res.output['output_file']).path, 144)
 
     def test_output_file_muts_hash(self):
-        self.assertMutationsHash(OFile.init_dict(self.res.output['output_file']).path, "85abef967b1d43112da6a026e80f5cea")    
+        self.assertMutationsHash(OFile.init_dict(self.res.output['output_file']).path, "85abef967b1d43112da6a026e80f5cea")
 
     def test_filtered_file_num_muts(self):
         self.assertNumMutations(OFile.init_dict(self.res.output['filtered_file']).path, 144)
@@ -540,9 +538,9 @@ class TestSamplesFilloutIndexBatch3Group(PlutoPreRunTestCase):
 
     def test_portal_output_path_num_muts(self):
         self.assertEqualNumMutations([
-            OFile.init_dict(self.res.output['portal_file']).path, 
-            OFile.init_dict(self.res.output['uncalled_file']).path, 
-            ], 
+            OFile.init_dict(self.res.output['portal_file']).path,
+            OFile.init_dict(self.res.output['uncalled_file']).path,
+            ],
             OFile.init_dict(self.res.output['filtered_file']).path)
 
     def test_output_file_fields(self):
@@ -562,9 +560,9 @@ class TestSamplesFilloutIndexBatch3Group(PlutoPreRunTestCase):
 
 
 class TestSamplesFilloutIndexBatch4Group(PlutoPreRunTestCase):
-    
+
     cwl_file = CWLFile('samples_fillout_index_batch_workflow.cwl')
-    
+
     def setUp(self):
         super().setUp()
         self.runner_args['use_cache'] = False # do not use cache for samples fillout workflow it breaks on split_vcf_to_mafs
@@ -625,12 +623,12 @@ class TestSamplesFilloutIndexBatch4Group(PlutoPreRunTestCase):
         self.input = {
             "sample_groups": [sample_group1, sample_group2, sample_group3, sample_group4],
             "fillout_output_fname": 'output.maf',
-            "ref_fasta": {"class": "File", "path": self.DATA_SETS['Proj_08390_G']['REF_FASTA']},
+            "ref_fasta": {"class": "File", "path": DATA_SETS['Proj_08390_G']['REF_FASTA']},
         }
         output_json, output_dir = self.run_cwl()
 
         return(output_json, output_dir)
-    
+
     def getExpected(self, output_dir):
         return({
             'output_file': OFile(name = 'output.maf', dir = output_dir),
@@ -638,7 +636,7 @@ class TestSamplesFilloutIndexBatch4Group(PlutoPreRunTestCase):
             'portal_file': OFile(name = 'data_mutations_extended.txt', dir = output_dir),
             'uncalled_file': OFile(name = 'data_mutations_uncalled.txt', dir = output_dir),
         })
-    
+
     # # # # # # # # # # #
     # # # # # # # # # # #
 
@@ -654,15 +652,15 @@ class TestSamplesFilloutIndexBatch4Group(PlutoPreRunTestCase):
         ('basename', 'data_mutations_uncalled.txt', ['size', 'checksum'])
         ]
         self.assertCWLDictEqual(
-                self.res.output, 
-                self.res.expected, 
+                self.res.output,
+                self.res.expected,
                 related_keys = strip_related_keys)
 
     def test_output_file_num_muts(self):
         self.assertNumMutations(OFile.init_dict(self.res.output['output_file']).path, 222)
 
     def test_output_file_muts_hash(self):
-        self.assertMutationsHash(OFile.init_dict(self.res.output['output_file']).path, "610d91b05a37b371a6b1b1615042dcc3")    
+        self.assertMutationsHash(OFile.init_dict(self.res.output['output_file']).path, "610d91b05a37b371a6b1b1615042dcc3")
 
     def test_filtered_file_num_muts(self):
         self.assertNumMutations(OFile.init_dict(self.res.output['filtered_file']).path, 222)
@@ -684,9 +682,9 @@ class TestSamplesFilloutIndexBatch4Group(PlutoPreRunTestCase):
 
     def test_portal_output_path_num_muts(self):
         self.assertEqualNumMutations([
-            OFile.init_dict(self.res.output['portal_file']).path, 
-            OFile.init_dict(self.res.output['uncalled_file']).path, 
-            ], 
+            OFile.init_dict(self.res.output['portal_file']).path,
+            OFile.init_dict(self.res.output['uncalled_file']).path,
+            ],
             OFile.init_dict(self.res.output['filtered_file']).path)
 
     def test_output_file_fields(self):

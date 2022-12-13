@@ -5,29 +5,30 @@ Test case for the samples_fillout_workflow cwl
 """
 import os
 import sys
-import unittest
-
-
-
+from datasets import (
+    DATA_SETS,
+)
+from fixtures_fillout import rows
 from pluto import (
-    PlutoTestCase, 
-    CWLFile, 
-    TableReader, 
+    PlutoTestCase,
+    CWLFile,
+    TableReader,
     md5_obj,
     ENABLE_LARGE_TESTS,
-    DATA_SETS,
     OFile
 )
 
+sample1_maf = os.path.join(DATA_SETS['Fillout01']['MAF_DIR'], 'Sample1.FillOutUnitTest01.muts.maf')
+sample2_maf = os.path.join(DATA_SETS['Fillout01']['MAF_DIR'], 'Sample2.FillOutUnitTest01.muts.maf')
+sample3_maf = os.path.join(DATA_SETS['Fillout01']['MAF_DIR'], 'Sample3.FillOutUnitTest01.muts.maf')
+sample4_maf = os.path.join(DATA_SETS['Fillout01']['MAF_DIR'], 'Sample4.FillOutUnitTest01.muts.maf')
+sample5_maf = os.path.join(DATA_SETS['Fillout01']['MAF_DIR'], 'Sample5.FillOutUnitTest01.muts.maf')
 
-# handle for errors arising from python3 -m unittest ...
-try:
-    from fixtures_fillout import rows
-except ModuleNotFoundError:
-    sys.path.insert(0, THIS_DIR)
-    from fixtures_fillout import rows
-    
-
+sample1_bam = os.path.join(DATA_SETS['Fillout01']['BAM_DIR'], 'Sample1.UnitTest01.bam')
+sample2_bam =os.path.join(DATA_SETS['Fillout01']['BAM_DIR'], 'Sample2.UnitTest01.bam')
+sample3_bam =os.path.join(DATA_SETS['Fillout01']['BAM_DIR'], 'Sample3.UnitTest01.bam')
+sample4_bam =os.path.join(DATA_SETS['Fillout01']['BAM_DIR'], 'Sample4.UnitTest01.bam')
+sample5_bam =os.path.join(DATA_SETS['Fillout01']['BAM_DIR'], 'Sample5.UnitTest01.bam')
 
 class TestSamplesFillout(PlutoTestCase):
     cwl_file = CWLFile('samples_fillout_workflow.cwl')
@@ -44,19 +45,6 @@ class TestSamplesFillout(PlutoTestCase):
         self.runner_args['use_cache'] = False # do not use cache because it breaks for some reason
         self.runner_args['debug'] = True
         self.runner_args['js_console'] = True
-
-        sample1_maf = os.path.join(DATA_SETS['Fillout01']['MAF_DIR'], 'Sample1.FillOutUnitTest01.muts.maf')
-        sample2_maf = os.path.join(DATA_SETS['Fillout01']['MAF_DIR'], 'Sample2.FillOutUnitTest01.muts.maf')
-        sample3_maf = os.path.join(DATA_SETS['Fillout01']['MAF_DIR'], 'Sample3.FillOutUnitTest01.muts.maf')
-        sample4_maf = os.path.join(DATA_SETS['Fillout01']['MAF_DIR'], 'Sample4.FillOutUnitTest01.muts.maf')
-        sample5_maf = os.path.join(DATA_SETS['Fillout01']['MAF_DIR'], 'Sample5.FillOutUnitTest01.muts.maf')
-
-        sample1_bam = os.path.join(DATA_SETS['Fillout01']['BAM_DIR'], 'Sample1.UnitTest01.bam')
-        sample2_bam =os.path.join(DATA_SETS['Fillout01']['BAM_DIR'], 'Sample2.UnitTest01.bam')
-        sample3_bam =os.path.join(DATA_SETS['Fillout01']['BAM_DIR'], 'Sample3.UnitTest01.bam')
-        sample4_bam =os.path.join(DATA_SETS['Fillout01']['BAM_DIR'], 'Sample4.UnitTest01.bam')
-        sample5_bam =os.path.join(DATA_SETS['Fillout01']['BAM_DIR'], 'Sample5.UnitTest01.bam')
-
         self.input = {
             "samples": [
                 {
@@ -95,7 +83,7 @@ class TestSamplesFillout(PlutoTestCase):
                     "bam_file": { "class": "File", "path": sample5_bam }
                 },
             ],
-            "ref_fasta": {"class": "File", "path": self.DATA_SETS['Proj_08390_G']['REF_FASTA']}
+            "ref_fasta": {"class": "File", "path": DATA_SETS['Proj_08390_G']['REF_FASTA']}
         }
         output_json, output_dir = self.run_cwl()
         output_path = os.path.join(output_dir,'output.maf')
@@ -128,7 +116,7 @@ class TestSamplesFillout(PlutoTestCase):
         # should be no empty values in column
         self.assertMutFieldDoesntContain(portal_output_path, "Amino_Acid_Change", [""])
         self.assertMutFieldDoesntContain(uncalled_output_path, "Amino_Acid_Change", [""])
-        
+
 
 
     def test_Nick_testcase_2(self):
@@ -145,18 +133,6 @@ class TestSamplesFillout(PlutoTestCase):
         self.runner_args['use_cache'] = False # do not use cache because it breaks for some reason
         self.runner_args['debug'] = True
         self.runner_args['js_console'] = True
-
-        sample1_maf = os.path.join(DATA_SETS['Fillout01']['MAF_DIR'], 'Sample1.FillOutUnitTest01.muts.maf')
-        sample2_maf = os.path.join(DATA_SETS['Fillout01']['MAF_DIR'], 'Sample2.FillOutUnitTest01.muts.maf')
-        sample3_maf = os.path.join(DATA_SETS['Fillout01']['MAF_DIR'], 'Sample3.FillOutUnitTest01.muts.maf')
-        sample4_maf = os.path.join(DATA_SETS['Fillout01']['MAF_DIR'], 'Sample4.FillOutUnitTest01.muts.maf')
-        sample5_maf = os.path.join(DATA_SETS['Fillout01']['MAF_DIR'], 'Sample5.FillOutUnitTest01.muts.maf')
-
-        sample1_bam = os.path.join(DATA_SETS['Fillout01']['BAM_DIR'], 'Sample1.UnitTest01.bam')
-        sample2_bam =os.path.join(DATA_SETS['Fillout01']['BAM_DIR'], 'Sample2.UnitTest01.bam')
-        sample3_bam =os.path.join(DATA_SETS['Fillout01']['BAM_DIR'], 'Sample3.UnitTest01.bam')
-        sample4_bam =os.path.join(DATA_SETS['Fillout01']['BAM_DIR'], 'Sample4.UnitTest01.bam')
-        sample5_bam =os.path.join(DATA_SETS['Fillout01']['BAM_DIR'], 'Sample5.UnitTest01.bam')
 
         self.input = {
             "samples": [
@@ -196,7 +172,7 @@ class TestSamplesFillout(PlutoTestCase):
                     "bam_file": { "class": "File", "path": sample5_bam }
                 },
             ],
-            "ref_fasta": {"class": "File", "path": self.DATA_SETS['Proj_08390_G']['REF_FASTA']}
+            "ref_fasta": {"class": "File", "path": DATA_SETS['Proj_08390_G']['REF_FASTA']}
         }
         output_json, output_dir = self.run_cwl()
         output_path = os.path.join(output_dir,'output.maf')
@@ -228,6 +204,3 @@ class TestSamplesFillout(PlutoTestCase):
         self.assertEqualNumMutations([portal_output_path, uncalled_output_path], filtered_output_path)
         self.assertMutFieldDoesntContain(portal_output_path, "Amino_Acid_Change", [""])
         self.assertMutFieldDoesntContain(uncalled_output_path, "Amino_Acid_Change", [""])
-
-
-
