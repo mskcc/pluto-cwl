@@ -19,8 +19,10 @@ types:
       doc: sample's alignment file
       type: File
       secondaryFiles:
-          - ^.bai
-          - .bai
+        - .bai # Sample.bam.bai
+        # - ^.bai # Sample.bai
+        # NOTE: need to figure out how to make .bai and .bam.bai both work at once;
+        # if I add them as separate entries here then the CWL requires that BOTH be present but we only have one
     # These files get added during downstream processing
     - name: unfiltered_vcf
       type: File?
