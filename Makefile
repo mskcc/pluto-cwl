@@ -267,6 +267,7 @@ update-container-tags:
 test:
 	. "$(ENVSH)" toil && \
 	source conda/bin/activate && \
+	export CWL_ENGINE=Toil ; \
 	nice pytest \
 	-n auto \
 	--ignore tests/test_workflow_with_facets.xl.py \
