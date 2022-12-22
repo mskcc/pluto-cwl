@@ -16,17 +16,11 @@ import unittest
 
 from fixtures import WORKFLOW_WITH_FACETS_XL_JSON
 from pluto import (
-      OFile, 
+      OFile,
       ODir,
       PlutoTestCase,
       ENABLE_INTEGRATION_TESTS
 )
-
-# THIS_DIR = os.path.dirname(os.path.realpath(__file__))
-# PARENT_DIR = os.path.dirname(THIS_DIR)
-# 
-# 
-
 
 class TestWorkflowWithFacetsXL(PlutoTestCase):
     cwl_file = 'workflow_with_facets.cwl'

@@ -13,7 +13,6 @@ from pluto import (
     CWLFile
 )
 
-
 class TestTMBVariantFilter(PlutoTestCase):
     cwl_file = CWLFile('tmb_variant_filter.cwl')
 
