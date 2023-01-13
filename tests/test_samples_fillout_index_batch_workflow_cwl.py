@@ -3,8 +3,16 @@
 """
 Test case for the samples_fillout_index_batch_workflow cwl
 
-example command:
+example commands:
+run all tests in parallel;
+
 $ CWL_ENGINE=Toil PRINT_COMMAND=T KEEP_TMP=T pytest -n 8 -s tests/test_samples_fillout_index_batch_workflow_cwl.py
+
+run just one set of tests, pwd is tests/ dir;
+$ CWL_ENGINE=Toil KEEP_TMP=T PRINT_COMMAND=T PYTHONPATH=../pluto nice pytest -s test_samples_fillout_workflow_cwl.py -k TestSamplesFilloutMixedGroup1
+
+the same as above but from parent dir;
+$ CWL_ENGINE=Toil KEEP_TMP=T PRINT_COMMAND=T nice pytest -s tests/test_samples_fillout_workflow_cwl.py -k TestSamplesFilloutMixedGroup1
 """
 import os
 import sys
