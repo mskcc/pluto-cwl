@@ -17,10 +17,10 @@ requirements:
   - $import: types.yml
 
 inputs:
-  samples: "types.yml#FilloutSample[]"
+  samples: "types.yml#FilloutNoMafsample[]"
   fillout_vcf:
     type: File
-    doc: the merged multi-sample .vcf file with all the mutations to be processed in the workflow, MUST contain all of the sample_ids from samples entry!
+    doc: the multi-sample .vcf file with all the mutations to be processed in the workflow, MUST contain all of the sample_ids from samples entry!
   clinical_sample_ids:
     type: string[]
     doc: a list of the sample ID's inside the fillout_vcf that are for clinical samples
@@ -132,7 +132,7 @@ steps:
                 --tumor-id "\${sample_id}" \\
                 --normal-id "\${normal_id}"
       inputs:
-        sample: "types.yml#FilloutSample"
+        sample: "types.yml#FilloutNoMafsample"
         ref_fasta:
           type: File
           secondaryFiles:
@@ -156,7 +156,7 @@ steps:
           outputBinding:
             glob: $(inputs.sample['sample_id']).fillout.filtered.maf
         sample:
-          type: "types.yml#FilloutSample"
+          type: "types.yml#FilloutNoMafsample"
           outputBinding:
             # set the unfiltered_maf for the sample
             outputEval: ${

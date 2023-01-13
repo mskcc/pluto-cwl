@@ -91,13 +91,13 @@ requirements:
           cp "\${split_vcf_unfiltered}" "\${unfiltered_vcf}"
 
 inputs:
-  sample: "types.yml#FilloutSample"
-  clinical_sample_ids: 
+  sample: "types.yml#FilloutNoMafsample"
+  clinical_sample_ids:
     type: string[]
-    doc: 
-  fillout_vcf: 
+    doc:
+  fillout_vcf:
     type: File
-    doc: 
+    doc:
 
 outputs:
   unfiltered_vcf:
@@ -109,7 +109,7 @@ outputs:
     outputBinding:
       glob: $(inputs.sample['sample_id']).filtered.vcf
   sample:
-    type: "types.yml#FilloutSample"
+    type: "types.yml#FilloutNoMafsample"
     outputBinding:
       # set the unfiltered_vcf to the unfiltered_vcf
       outputEval: ${

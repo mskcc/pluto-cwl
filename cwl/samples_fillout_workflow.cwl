@@ -16,7 +16,7 @@ requirements:
   - $import: types.yml
 
 inputs:
-  samples: "types.yml#FilloutSample[]" # type: array
+  samples: "types.yml#FilloutMafOptionalSample[]"
   output_fname:
     type: [ 'null', string ]
     default: "output.maf"
@@ -45,11 +45,87 @@ inputs:
   #     path: /juno/work/ci/resources/vep/cache
 
 steps:
+  # Check for samples that lack a .maf file
+  get_samples_with_without_maf:
+    doc: separate the samples list into samples with and without .maf files
+    in:
+      samples: samples
+    out: [ samples_with_maf, samples_without_maf ]
+    run:
+      class: ExpressionTool
+      inputs:
+        samples:
+          type: "types.yml#FilloutMafOptionalSample[]"
+      outputs:
+        samples_with_maf: "types.yml#FilloutSample[]"
+        samples_without_maf: "types.yml#FilloutNoMafsample[]"
+      expression: |
+        ${
+          console.log(">>> inputs:");
+          console.log(inputs);
+
+          var samples_with_maf = [];
+          var samples_without_maf = [];
+
+          for ( var i in inputs.samples ){
+            var sample = inputs.samples[i];
+
+            if (sample["maf_file"] == null ) {
+              samples_without_maf.push(sample);
+            } else {
+              samples_with_maf.push(sample);
+            };
+
+          };
+
+          var res = {
+              "samples_with_maf": samples_with_maf,
+              "samples_without_maf": samples_without_maf
+            };
+
+          console.log(">>> res:");
+          console.log(res);
+
+          return res;
+        }
+
+  get_bam_and_ids_from_samples_without_maf:
+    doc:
+    in:
+      samples: get_samples_with_without_maf/samples_without_maf
+    out: [ sample_ids, bam_files ]
+    run:
+      class: ExpressionTool
+      inputs:
+        samples:
+          type: "types.yml#FilloutNoMafsample[]"
+      outputs:
+        sample_ids: string[]
+        bam_files: File[]
+      expression: |
+        ${
+          var sample_ids = [];
+          var bam_files = [];
+
+          for ( var i in inputs.samples ){
+            sample_ids.push(inputs.samples[i]['sample_id']);
+            bam_files.push(inputs.samples[i]['bam_file']);
+          };
+
+          var res = {
+              "sample_ids": sample_ids,
+              "bam_files": bam_files
+            };
+
+          return res;
+        }
+
+
   # PRE-PROCESSING
   fillout_pre_processing:
     run: fillout_pre_processing.cwl
     in:
-      samples: samples
+      samples: get_samples_with_without_maf/samples_with_maf
       ref_fasta: ref_fasta
     out:
       [ sample_ids, clinical_sample_ids, bam_files, vcf_gz_files, merged_vcf, merged_vcf_gz ]
@@ -61,8 +137,12 @@ steps:
   gbcms:
     doc: run GetBaseCountsMultiSample on all the bam files against the target regions (the merged vcf from all samples)
     in:
-      sample_ids: fillout_pre_processing/sample_ids
-      bam_files: fillout_pre_processing/bam_files
+      sample_ids:
+        source: [ fillout_pre_processing/sample_ids,  get_bam_and_ids_from_samples_without_maf/sample_ids ]
+        linkMerge: merge_flattened
+      bam_files:
+        source: [ fillout_pre_processing/bam_files, get_bam_and_ids_from_samples_without_maf/bam_files ]
+        linkMerge: merge_flattened
       targets_vcf: fillout_pre_processing/merged_vcf
       ref_fasta: ref_fasta
     out: [ output_file ]
@@ -207,33 +287,89 @@ steps:
           secondaryFiles:
             - .tbi
       outputs:
-        fillout_sources_vcf:
+        fillout_sources_vcf: # this is used as the fillout_vcf downstream
           type: File
           outputBinding:
             glob: fillout.merged.sources.vcf
 
 
-  # FILLOUT POST-PROCESSING STARTS HERE
+
+  # # FILLOUT POST-PROCESSING STARTS HERE
+  # we do not need the input .maf files anymore so convert all samples to FilloutNoMafsample format
+  convert_all_to_FilloutNoMafsample:
+    in:
+      samples_with_maf: get_samples_with_without_maf/samples_with_maf
+      samples_without_maf: get_samples_with_without_maf/samples_without_maf
+    out: [ samples ]
+    run:
+      class: ExpressionTool
+      inputs:
+        samples_with_maf: "types.yml#FilloutSample[]"
+        samples_without_maf: "types.yml#FilloutNoMafsample[]"
+      outputs:
+        samples: "types.yml#FilloutNoMafsample[]"
+      expression: |
+        ${
+          var samples = [];
+
+          for ( var i in inputs.samples_without_maf ){
+            samples.push(inputs.samples_without_maf[i]);
+          };
+
+          for ( var i in inputs.samples_with_maf ){
+            var sample = {
+              "sample_id": inputs.samples_with_maf[i]["sample_id"],
+              "normal_id": inputs.samples_with_maf[i]["normal_id"],
+              "sample_type": inputs.samples_with_maf[i]["sample_type"],
+              "bam_file": inputs.samples_with_maf[i]["bam_file"],
+            };
+            samples.push(sample);
+          };
+
+          var res = {
+              "samples": samples,
+            };
+
+          return res;
+        }
+
   fillout_post_processing:
+    doc: run post processing on the files based on the metadata bundled in with the samples
     run: fillout_post_processing.cwl
     in:
-      samples: samples
+      samples: convert_all_to_FilloutNoMafsample/samples
       fillout_vcf: fix_labels_and_merge_vcfs/fillout_sources_vcf
       clinical_sample_ids: fillout_pre_processing/clinical_sample_ids
       ref_fasta: ref_fasta
       exac_filter: exac_filter
     out: [ output_file, filtered_file, portal_file, uncalled_file ]
 
+
+
+
+
 outputs:
+  merged_vcf:
+    doc: all the input maf files merged together and converted back to vcf with duplicate variants removed
+    type: File
+    outputSource: fillout_pre_processing/merged_vcf
+  fillout_sources_vcf:
+    doc: the GetBaseCountsMultiSample output file with the SRC originating sample labels added for each variant entry
+    type: File
+    outputSource: fix_labels_and_merge_vcfs/fillout_sources_vcf
   output_file:
+    doc: the primary output maf file with all filled out variants
     type: File
     outputSource: fillout_post_processing/output_file
   filtered_file:
+    doc: the output file after applying some filter criteria
     type: File
     outputSource: fillout_post_processing/filtered_file
   portal_file:
+    doc: the filtered file after applying cBioPortal formatting
     type: File
     outputSource: fillout_post_processing/portal_file # called_file
   uncalled_file:
+    doc: the mutations that were removed from the portal file
     type: File
     outputSource: fillout_post_processing/uncalled_file
