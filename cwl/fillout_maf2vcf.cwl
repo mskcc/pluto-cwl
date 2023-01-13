@@ -7,7 +7,7 @@ label: fillout_maf2vcf
 doc: converts all maf input files back to vcf for downstream processing
 # NOTE: This is important; do NOT try to do complex manipulations on maf format file, do it on vcf format instead
 
-baseCommand: ['bash', 'run.sh']
+baseCommand: ['bash', 'fillout_maf2vcf.run.sh']
 requirements:
   - class: InlineJavascriptRequirement
   - class: DockerRequirement
@@ -16,7 +16,7 @@ requirements:
     listing:
     # NOTE: might need dos2unix for some that give errors ERROR: Your MAF uses CR line breaks, which we can't support. Please use LF or CRLF.
     # NOTE: might also need sanity check that maf has >1 line
-    - entryname: run.sh
+    - entryname: fillout_maf2vcf.run.sh
       entry: |-
         set -eu
         fasta="${ return inputs.ref_fasta.path; }"
