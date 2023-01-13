@@ -103,8 +103,6 @@ class TestSamplesFilloutMixedGroup1(PlutoPreRunTestCase):
         ('basename', 'data_mutations_extended.txt', ['size', 'checksum']),
         ('basename', 'data_mutations_uncalled.txt', ['size', 'checksum'])
         ]
-        print(self.res.output)
-        print(self.res.expected)
         self.assertCWLDictEqual(
                 self.res.output,
                 self.res.expected,
@@ -163,21 +161,20 @@ class TestSamplesFilloutMixedGroup1(PlutoPreRunTestCase):
 
 
 
-class TestSamplesFillout(PlutoTestCase):
+class TestSamplesFillout1(PlutoPreRunTestCase):
+    """
+    test_Nick_testcase
+    Test case using Nick's custom made maf and bam files for fillout testing
+
+    This test cases uses the germline filter to exclude some mutations in the output
+
+    Takes about 10min to run
+    """
     cwl_file = CWLFile('samples_fillout_workflow.cwl')
-
-    def test_Nick_testcase(self):
+    def setUpRun(self):
         """
-        Test case using Nick's custom made maf and bam files for fillout testing
-
-        This test cases uses the germline filter to exclude some mutations in the output
-
-        Takes about 10min to run
+        Run the workflow and return the results; output accessible under self.res.output in downstream 'test_' methods
         """
-        self.maxDiff = None
-        self.runner_args['use_cache'] = False # do not use cache because it breaks for some reason
-        self.runner_args['debug'] = True
-        self.runner_args['js_console'] = True
         self.input = {
             "samples": [
                 {
@@ -218,55 +215,111 @@ class TestSamplesFillout(PlutoTestCase):
             ],
             "ref_fasta": {"class": "File", "path": DATA_SETS['Proj_08390_G']['REF_FASTA']}
         }
-        output_json, output_dir = self.run_cwl()
-        output_path = os.path.join(output_dir,'output.maf')
-        filtered_output_path = os.path.join(output_dir,'output.filtered.maf')
-        portal_output_path = os.path.join(output_dir,'data_mutations_extended.txt')
-        uncalled_output_path = os.path.join(output_dir,'data_mutations_uncalled.txt')
 
-        expected_output = {
+        output_json, output_dir = self.run_cwl()
+
+        return(output_json, output_dir)
+
+    def getExpected(self, output_dir):
+        """
+        Return the expected CWL workflow output with the tmpdir output dir path included
+        Accessible in downstream 'test_' methods under self.res.expected
+        """
+        return({
+            "merged_vcf": OFile(name = "merged.vcf", dir = output_dir),
             'output_file': OFile(name = 'output.maf', dir = output_dir),
+            "fillout_sources_vcf": OFile(name = "fillout.merged.sources.vcf", dir = output_dir),
             'filtered_file': OFile(name = 'output.filtered.maf', dir = output_dir),
             'portal_file': OFile(name = 'data_mutations_extended.txt', dir = output_dir),
             'uncalled_file': OFile(name = 'data_mutations_uncalled.txt', dir = output_dir),
-        }
+        })
 
-        # file contenst are inconsistent so strip some keys from the output dict
+    def test_CWLDictEqual(self):
+        """
+        Test case for running the fillout workflow on a number of samples, each with a bam and maf
+        """
+        # file contents are inconsistent so strip some keys from the output dict
         strip_related_keys = [
+        ('basename', "fillout.merged.sources.vcf", ['size', 'checksum']),
+        ('basename', 'merged.vcf', ['size', 'checksum']),
         ('basename', 'output.maf', ['size', 'checksum']),
         ('basename', 'output.filtered.maf', ['size', 'checksum']),
         ('basename', 'data_mutations_extended.txt', ['size', 'checksum']),
         ('basename', 'data_mutations_uncalled.txt', ['size', 'checksum'])
         ]
-        self.assertCWLDictEqual(output_json, expected_output, related_keys = strip_related_keys)
-        # all_effects field is variable and changes bytes and checksum
-        # need to check number of variant outputs instead
-        self.assertNumMutationsHash(output_path, 475, 'd041bc641d85761b60c6b7ef8606bab2')
-        self.assertNumMutationsHash(filtered_output_path, 230, 'c9cde01507d1b2470057c5d120eaab68')
-        self.assertNumMutationsHash(portal_output_path, 163, '2bdb5afc25d0f4af2fb53cb9edfdc03f')
-        self.assertNumMutationsHash(uncalled_output_path, 67, '42f32ce8b3c4ffff4a8d26bd9e3bb900')
-        self.assertEqualNumMutations([portal_output_path, uncalled_output_path], filtered_output_path)
-        # should be no empty values in column
-        self.assertMutFieldDoesntContain(portal_output_path, "Amino_Acid_Change", [""])
-        self.assertMutFieldDoesntContain(uncalled_output_path, "Amino_Acid_Change", [""])
+        self.assertCWLDictEqual(
+                self.res.output,
+                self.res.expected,
+                related_keys = strip_related_keys)
+
+    def test_output_file_num_muts(self):
+        self.assertNumMutations(OFile.init_dict(self.res.output['output_file']).path, 475)
+
+    def test_output_file_muts_hash(self):
+        self.assertMutationsHash(OFile.init_dict(self.res.output['output_file']).path, "d041bc641d85761b60c6b7ef8606bab2")
+
+
+    def test_filtered_file_num_muts(self):
+        self.assertNumMutations(OFile.init_dict(self.res.output['filtered_file']).path, 230)
+
+    def test_filtered_file_muts_hash(self):
+        self.assertMutationsHash(OFile.init_dict(self.res.output['filtered_file']).path, "c9cde01507d1b2470057c5d120eaab68")
+
+    def test_portal_file_num_muts(self):
+        self.assertNumMutations(OFile.init_dict(self.res.output['portal_file']).path, 163)
+
+    def test_portal_file_muts_hash(self):
+        self.assertMutationsHash(OFile.init_dict(self.res.output['portal_file']).path, "2bdb5afc25d0f4af2fb53cb9edfdc03f")
+
+    def test_uncalled_file_num_muts(self):
+        self.assertNumMutations(OFile.init_dict(self.res.output['uncalled_file']).path, 67)
+
+    def test_uncalled_file_muts_hash(self):
+        self.assertMutationsHash(OFile.init_dict(self.res.output['uncalled_file']).path, "42f32ce8b3c4ffff4a8d26bd9e3bb900")
+
+    def test_portal_output_path_num_muts(self):
+        self.assertEqualNumMutations([
+            OFile.init_dict(self.res.output['portal_file']).path,
+            OFile.init_dict(self.res.output['uncalled_file']).path,
+            ],
+            OFile.init_dict(self.res.output['filtered_file']).path)
+
+    def test_output_file_fields(self):
+        self.assertMutFieldContains(
+            OFile.init_dict(self.res.output['output_file']).path,
+            "Tumor_Sample_Barcode", ["Sample1", "Sample2", "Sample3", 'Sample4', 'Sample5'], containsAll = True)
+
+    def test_portal_output_path_fields(self):
+        self.assertMutFieldDoesntContain(
+            OFile.init_dict(self.res.output['portal_file']).path,
+            "Amino_Acid_Change", [""])
+
+    def test_uncalled_output_path_fields(self):
+        self.assertMutFieldDoesntContain(
+            OFile.init_dict(self.res.output['uncalled_file']).path,
+            "Amino_Acid_Change", [""])
 
 
 
-    def test_Nick_testcase_2(self):
+
+class TestSamplesFillout2(PlutoPreRunTestCase):
+    """
+    test_Nick_testcase_2
+    Test case using Nick's custom made maf and bam files for fillout testing
+
+    This test cases uses the germline filter to exclude some mutations in the output
+
+    This test case uses only research samples
+
+    Takes about 10min to run
+
+    """
+    cwl_file = CWLFile('samples_fillout_workflow.cwl')
+    cwl_file = CWLFile('samples_fillout_workflow.cwl')
+    def setUpRun(self):
         """
-        Test case using Nick's custom made maf and bam files for fillout testing
-
-        This test cases uses the germline filter to exclude some mutations in the output
-
-        This test case uses only research samples
-
-        Takes about 10min to run
+        Run the workflow and return the results; output accessible under self.res.output in downstream 'test_' methods
         """
-        self.maxDiff = None
-        self.runner_args['use_cache'] = False # do not use cache because it breaks for some reason
-        self.runner_args['debug'] = True
-        self.runner_args['js_console'] = True
-
         self.input = {
             "samples": [
                 {
@@ -307,33 +360,86 @@ class TestSamplesFillout(PlutoTestCase):
             ],
             "ref_fasta": {"class": "File", "path": DATA_SETS['Proj_08390_G']['REF_FASTA']}
         }
-        output_json, output_dir = self.run_cwl()
-        output_path = os.path.join(output_dir,'output.maf')
-        filtered_output_path = os.path.join(output_dir,'output.filtered.maf')
-        portal_output_path = os.path.join(output_dir,'data_mutations_extended.txt')
-        uncalled_output_path = os.path.join(output_dir,'data_mutations_uncalled.txt')
 
-        expected_output = {
+        output_json, output_dir = self.run_cwl()
+
+        return(output_json, output_dir)
+
+    def getExpected(self, output_dir):
+        """
+        Return the expected CWL workflow output with the tmpdir output dir path included
+        Accessible in downstream 'test_' methods under self.res.expected
+        """
+        return({
+            "merged_vcf": OFile(name = "merged.vcf", dir = output_dir),
             'output_file': OFile(name = 'output.maf', dir = output_dir),
+            "fillout_sources_vcf": OFile(name = "fillout.merged.sources.vcf", dir = output_dir),
             'filtered_file': OFile(name = 'output.filtered.maf', dir = output_dir),
             'portal_file': OFile(name = 'data_mutations_extended.txt', dir = output_dir),
             'uncalled_file': OFile(name = 'data_mutations_uncalled.txt', dir = output_dir),
-        }
+        })
 
-        # file contenst are inconsistent so strip some keys from the output dict
+    def test_CWLDictEqual(self):
+        """
+        Test case for running the fillout workflow on a number of samples, each with a bam and maf
+        """
+        # file contents are inconsistent so strip some keys from the output dict
         strip_related_keys = [
+        ('basename', "fillout.merged.sources.vcf", ['size', 'checksum']),
+        ('basename', 'merged.vcf', ['size', 'checksum']),
         ('basename', 'output.maf', ['size', 'checksum']),
         ('basename', 'output.filtered.maf', ['size', 'checksum']),
         ('basename', 'data_mutations_extended.txt', ['size', 'checksum']),
         ('basename', 'data_mutations_uncalled.txt', ['size', 'checksum'])
         ]
-        self.assertCWLDictEqual(output_json, expected_output, related_keys = strip_related_keys)
-        # all_effects field is variable and changes bytes and checksum
-        # need to check number of variant outputs instead
-        self.assertNumMutationsHash(output_path, 475, 'd041bc641d85761b60c6b7ef8606bab2')
-        self.assertNumMutationsHash(filtered_output_path, 475, 'd041bc641d85761b60c6b7ef8606bab2')
-        self.assertNumMutationsHash(portal_output_path, 408, '0bcea8598de4d5816aa44aa63c6790ca')
-        self.assertNumMutationsHash(uncalled_output_path, 67, '42f32ce8b3c4ffff4a8d26bd9e3bb900')
-        self.assertEqualNumMutations([portal_output_path, uncalled_output_path], filtered_output_path)
-        self.assertMutFieldDoesntContain(portal_output_path, "Amino_Acid_Change", [""])
-        self.assertMutFieldDoesntContain(uncalled_output_path, "Amino_Acid_Change", [""])
+        self.assertCWLDictEqual(
+                self.res.output,
+                self.res.expected,
+                related_keys = strip_related_keys)
+
+    def test_output_file_num_muts(self):
+        self.assertNumMutations(OFile.init_dict(self.res.output['output_file']).path, 475)
+
+    def test_output_file_muts_hash(self):
+        self.assertMutationsHash(OFile.init_dict(self.res.output['output_file']).path, "d041bc641d85761b60c6b7ef8606bab2")
+
+
+    def test_filtered_file_num_muts(self):
+        self.assertNumMutations(OFile.init_dict(self.res.output['filtered_file']).path, 475)
+
+    def test_filtered_file_muts_hash(self):
+        self.assertMutationsHash(OFile.init_dict(self.res.output['filtered_file']).path, "d041bc641d85761b60c6b7ef8606bab2")
+
+    def test_portal_file_num_muts(self):
+        self.assertNumMutations(OFile.init_dict(self.res.output['portal_file']).path, 408)
+
+    def test_portal_file_muts_hash(self):
+        self.assertMutationsHash(OFile.init_dict(self.res.output['portal_file']).path, "0bcea8598de4d5816aa44aa63c6790ca")
+
+    def test_uncalled_file_num_muts(self):
+        self.assertNumMutations(OFile.init_dict(self.res.output['uncalled_file']).path, 67)
+
+    def test_uncalled_file_muts_hash(self):
+        self.assertMutationsHash(OFile.init_dict(self.res.output['uncalled_file']).path, "42f32ce8b3c4ffff4a8d26bd9e3bb900")
+
+    def test_portal_output_path_num_muts(self):
+        self.assertEqualNumMutations([
+            OFile.init_dict(self.res.output['portal_file']).path,
+            OFile.init_dict(self.res.output['uncalled_file']).path,
+            ],
+            OFile.init_dict(self.res.output['filtered_file']).path)
+
+    def test_output_file_fields(self):
+        self.assertMutFieldContains(
+            OFile.init_dict(self.res.output['output_file']).path,
+            "Tumor_Sample_Barcode", ["Sample1", "Sample2", "Sample3", 'Sample4', 'Sample5'], containsAll = True)
+
+    def test_portal_output_path_fields(self):
+        self.assertMutFieldDoesntContain(
+            OFile.init_dict(self.res.output['portal_file']).path,
+            "Amino_Acid_Change", [""])
+
+    def test_uncalled_output_path_fields(self):
+        self.assertMutFieldDoesntContain(
+            OFile.init_dict(self.res.output['uncalled_file']).path,
+            "Amino_Acid_Change", [""])
