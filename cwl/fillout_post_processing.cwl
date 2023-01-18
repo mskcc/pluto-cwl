@@ -68,7 +68,7 @@ steps:
       class: CommandLineTool
       id: vcf_to_maf
       label: vcf_to_maf
-      baseCommand: [ "sh", "run.sh" ]
+      baseCommand: [ "sh", "run.vcf_to_maf.sh" ]
       requirements:
         ResourceRequirement:
           coresMin: 8
@@ -78,7 +78,7 @@ steps:
           listing:
             - $(inputs.sample['unfiltered_vcf'])
             - $(inputs.sample['filtered_vcf'])
-            - entryname: run.sh
+            - entryname: run.vcf_to_maf.sh
               entry: |-
                 set -eu
                 # convert the multi-sample annotated fillout vcf back into individual sample maf files
@@ -178,13 +178,13 @@ steps:
       class: CommandLineTool
       id: concat_with_comments
       label: concat_with_comments
-      baseCommand: [ "bash", "run.sh" ]
+      baseCommand: [ "bash", "run.concat_with_comments.sh" ]
       requirements:
         DockerRequirement:
           dockerPull: mskcc/helix_filters_01:21.7.1
         InitialWorkDirRequirement:
           listing:
-            - entryname: run.sh
+            - entryname: run.concat_with_comments.sh
               entry: |-
                 set -eux
                 # get a space-delim string of file paths

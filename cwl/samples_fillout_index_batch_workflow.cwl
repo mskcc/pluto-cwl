@@ -21,7 +21,7 @@ inputs:
       type: array
       items:
         type: array
-        items: "types.yml#FilloutIndexSample"
+        items: "types.yml#FilloutMafOptionalNoIndexSample" # "types.yml#FilloutMafOptionalSample" # "types.yml#FilloutIndexSample"
   ref_fasta:
     type: File
     secondaryFiles:
@@ -43,7 +43,6 @@ inputs:
   is_impact:
     type: boolean
     default: True
-
   argos_version_string:
     type: [ "null", string ]
     default: "Unspecified"
@@ -67,9 +66,9 @@ steps:
             type: array
             items:
               type: array
-              items: "types.yml#FilloutIndexSample"
+              items: "types.yml#FilloutMafOptionalNoIndexSample" # "types.yml#FilloutMafOptionalSample" # "types.yml#FilloutIndexSample"
       outputs:
-        singleton_samples: "types.yml#FilloutIndexSample[]"
+        singleton_samples: "types.yml#FilloutMafOptionalNoIndexSample[]" # "types.yml#FilloutMafOptionalSample[]" # "types.yml#FilloutIndexSample[]"
         singleton_mafs: File[]
         num_singletons: int
         sample_groups:
@@ -77,7 +76,7 @@ steps:
             type: array
             items:
               type: array
-              items: "types.yml#FilloutIndexSample"
+              items: "types.yml#FilloutMafOptionalNoIndexSample" # "types.yml#FilloutMafOptionalSample" # "types.yml#FilloutIndexSample"
       expression: |
         ${
           var sample_groups = [];
@@ -96,8 +95,8 @@ steps:
             };
           };
 
-        var res = { 'sample_groups': sample_groups, 
-          "singleton_mafs": singleton_mafs, 
+        var res = { "sample_groups": sample_groups,
+          "singleton_mafs": singleton_mafs,
           "singleton_samples": singleton_samples,
           "num_singletons": singleton_samples.length };
 
@@ -123,7 +122,7 @@ steps:
       label: run_samples_fillout_index_workflow
       inputs:
         samples:
-          type: "types.yml#FilloutIndexSample[]"
+          type: "types.yml#FilloutMafOptionalNoIndexSample[]" # "types.yml#FilloutMafOptionalSample[]" # "types.yml#FilloutIndexSample[]"
         ref_fasta:
           type: File
           secondaryFiles:
@@ -249,20 +248,20 @@ steps:
     when: $( inputs.num_singletons > 0 )
     # all outputs will be null if this step is skipped
     out: [ output_file, filtered_file, portal_file, uncalled_file ]
-  
+
   concat_singleton_files:
     in:
-      output_mafs: 
-        source: [ concat_output_files/output_file, singleton_processing/output_file ] 
+      output_mafs:
+        source: [ concat_output_files/output_file, singleton_processing/output_file ]
         pickValue: all_non_null
-      filtered_mafs: 
-        source: [ concat_filtered_file/output_file, singleton_processing/filtered_file ] 
+      filtered_mafs:
+        source: [ concat_filtered_file/output_file, singleton_processing/filtered_file ]
         pickValue: all_non_null
-      portal_mafs: 
-        source: [ concat_portal_file/output_file, singleton_processing/portal_file ] 
+      portal_mafs:
+        source: [ concat_portal_file/output_file, singleton_processing/portal_file ]
         pickValue: all_non_null
-      uncalled_mafs: 
-        source: [ concat_uncalled_file/output_file, singleton_processing/uncalled_file ] 
+      uncalled_mafs:
+        source: [ concat_uncalled_file/output_file, singleton_processing/uncalled_file ]
         pickValue: all_non_null
     out: [ output_maf, filtered_maf, portal_maf, uncalled_maf ]
     run:
@@ -270,7 +269,7 @@ steps:
       id: concat_singleton_files
       label: concat_singleton_files
       baseCommand: ["bash", "run.concat_singleton_files.sh"]
-      requirements: 
+      requirements:
         - class: DockerRequirement
           dockerPull: mskcc/helix_filters_01:21.4.1
         - class: InitialWorkDirRequirement
@@ -282,33 +281,33 @@ steps:
                 num_filtered_mafs="${ return inputs.filtered_mafs.length; }"
                 num_portal_mafs="${ return inputs.portal_mafs.length; }"
                 num_uncalled_mafs="${ return inputs.uncalled_mafs.length; }"
-                if [ \${num_output_mafs} -gt 0 ]; then 
+                if [ \${num_output_mafs} -gt 0 ]; then
                   # # get a space-delim string of file paths
                   output_mafs="${ return inputs.output_mafs.map((a) => a.path).join(' ') }"
                   concat-tables.py -o "output.maf" --no-carriage-returns --comments --na-str '' \${output_mafs}
-                else 
+                else
                   # idk what to do here really ???
                   touch output.maf
                 fi
 
-                if [ \${num_filtered_mafs} -gt 0 ]; then 
+                if [ \${num_filtered_mafs} -gt 0 ]; then
                   filtered_mafs="${ return inputs.filtered_mafs.map((a) => a.path).join(' ') }"
                   concat-tables.py -o "output.filtered.maf" --no-carriage-returns --comments --na-str '' \${filtered_mafs}
-                else 
+                else
                   touch output.filtered.maf
                 fi
 
-                if [ \${num_portal_mafs} -gt 0 ]; then 
+                if [ \${num_portal_mafs} -gt 0 ]; then
                   portal_mafs="${ return inputs.portal_mafs.map((a) => a.path).join(' ') }"
                   concat-tables.py -o "data_mutations_extended.txt" --no-carriage-returns --comments --na-str '' \${portal_mafs}
-                else 
+                else
                   touch data_mutations_extended.txt
                 fi
 
-                if [ \${num_uncalled_mafs} -gt 0 ]; then 
+                if [ \${num_uncalled_mafs} -gt 0 ]; then
                   uncalled_mafs="${ return inputs.uncalled_mafs.map((a) => a.path).join(' ') }"
                   concat-tables.py -o "data_mutations_uncalled.txt" --no-carriage-returns --comments --na-str '' \${uncalled_mafs}
-                else 
+                else
                   touch data_mutations_uncalled.txt
                 fi
       inputs:

@@ -2,7 +2,7 @@ class: SchemaDefRequirement
 types:
 
 - name: FilloutMafOptionalSample
-  doc: A tumor sample record for variant fillout that might lack a .maf file but has a .bam file
+  doc: A tumor sample record for variant fillout that might lack a .maf file but HAS a .bam file
   type: record
   fields:
     - name: sample_id
@@ -90,6 +90,7 @@ types:
       type: File?
       doc: fillout maf that has had extra filters applied such as germline filtering
 
+# TODO: rename this to "FilloutNoIndexSample"
 - name: FilloutIndexSample
   doc: A FilloutSample needs .bam indexing and prefiltering applied
   type: record
@@ -112,9 +113,48 @@ types:
       type: File
       doc: bam file that needs a .bai file generated
 
+- name: FilloutMafOptionalNoIndexSample
+  doc: A tumor sample record for variant fillout that might lack a .maf file but HAS a .bam file without a .bai index file
+  type: record
+  fields:
+    - name: sample_id
+      type: string
+      doc: sample identifier must match the ID used inside the maf file
+    - name: normal_id
+      type: string
+    - name: sample_type
+      type: string
+      doc: should be one of "research" or "clinical"
+    - name: maf_file
+      type: File?
+      doc: an optional input .maf file
+    - name: bam_file
+      doc: sample's alignment file
+      type: File
+
+- name: FilloutMafOptionalIndexedSample
+  doc: A tumor sample record for variant fillout that might lack a .maf file but HAS a .bam file and a .bai index file
+  type: record
+  fields:
+    - name: sample_id
+      type: string
+      doc: sample identifier must match the ID used inside the maf file
+    - name: normal_id
+      type: string
+    - name: sample_type
+      type: string
+      doc: should be one of "research" or "clinical"
+    - name: maf_file
+      type: File?
+      doc: an optional input .maf file
+    - name: bam_file
+      doc: sample's alignment file
+      type: File
+      secondaryFiles:
+        - .bai
 
 - name: FilloutIndexedSample
-  doc: A FilloutIndexSample that had its .bam indexed and prefiltering applied
+  doc: A fillout sample that HAS a pre-filtered .maf file and HAS an indexed .bam file
   type: record
   fields:
     - name: sample_id
@@ -135,7 +175,6 @@ types:
       type: File
       doc: bam file that needs a .bai file generated
       secondaryFiles:
-          # - ^.bai
           - .bai
 
 - name: TNMafPileupPair

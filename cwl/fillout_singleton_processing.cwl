@@ -16,7 +16,9 @@ requirements:
   - $import: types.yml
 
 inputs:
-  samples: "types.yml#FilloutIndexSample[]"
+  samples:
+    type: "types.yml#FilloutMafOptionalNoIndexSample[]" # "types.yml#FilloutIndexSample[]"
+    doc: a list of samples that were previously the only sample in their group
   ref_fasta:
     type: File
     secondaryFiles:
@@ -48,12 +50,18 @@ steps:
       samples: samples
       is_impact: is_impact
       argos_version_string: argos_version_string
-    out: [ samples ] # "types.yml#FilloutSample[]"
+    out: [ samples ]
+
+  get_samples_with_without_maf:
+    in:
+      samples: fillout_index_prefilter/samples
+    out: [ samples_with_maf, samples_without_maf ]
+    run: fillout_get_samples_with_without_maf.cwl
 
   fillout_pre_processing:
     run: fillout_pre_processing.cwl
     in:
-      samples: fillout_index_prefilter/samples
+      samples: get_samples_with_without_maf/samples_with_maf # fillout_index_prefilter/samples
       ref_fasta: ref_fasta
     out:
       [ sample_ids, clinical_sample_ids, bam_files, vcf_gz_files, merged_vcf, merged_vcf_gz ]
@@ -145,11 +153,51 @@ steps:
             glob: updated.vcf
 
 
+  # we do not need the input .maf files anymore so convert all samples to FilloutNoMafsample format
+  convert_all_to_FilloutNoMafsample:
+    in:
+      samples_with_maf: get_samples_with_without_maf/samples_with_maf
+      samples_without_maf: get_samples_with_without_maf/samples_without_maf
+    out: [ samples ]
+    run:
+      class: ExpressionTool
+      inputs:
+        samples_with_maf: "types.yml#FilloutSample[]"
+        samples_without_maf: "types.yml#FilloutNoMafsample[]"
+      outputs:
+        samples: "types.yml#FilloutNoMafsample[]"
+      expression: |
+        ${
+          var samples = [];
+
+          for ( var i in inputs.samples_without_maf ){
+            samples.push(inputs.samples_without_maf[i]);
+          };
+
+          for ( var i in inputs.samples_with_maf ){
+            var sample = {
+              "sample_id": inputs.samples_with_maf[i]["sample_id"],
+              "normal_id": inputs.samples_with_maf[i]["normal_id"],
+              "sample_type": inputs.samples_with_maf[i]["sample_type"],
+              "bam_file": inputs.samples_with_maf[i]["bam_file"],
+            };
+            samples.push(sample);
+          };
+
+          var res = {
+              "samples": samples,
+            };
+
+          return res;
+        }
+
+
+
 
   fillout_post_processing:
     run: fillout_post_processing.cwl
     in:
-      samples: fillout_index_prefilter/samples
+      samples: convert_all_to_FilloutNoMafsample/samples
       fillout_vcf: fix_labels_and_merge_vcfs/vcf
       clinical_sample_ids: fillout_pre_processing/clinical_sample_ids
       ref_fasta: ref_fasta

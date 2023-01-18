@@ -19,7 +19,7 @@ requirements:
 
 inputs:
   samples:
-    type: "types.yml#FilloutIndexSample[]"
+    type: "types.yml#FilloutMafOptionalNoIndexSample[]" # "types.yml#FilloutIndexSample[]"
   # these are needed for the filter script
   is_impact:
     type: boolean
@@ -60,10 +60,10 @@ steps:
                 cp "\${default_bai}" "\${extra_bai}"
 
       inputs:
-        sample: "types.yml#FilloutIndexSample"
+        sample: "types.yml#FilloutMafOptionalNoIndexSample" # "types.yml#FilloutIndexSample"
       outputs:
         sample:
-          type: "types.yml#FilloutIndexedSample"
+          type: "types.yml#FilloutMafOptionalIndexedSample"
           outputBinding:
             outputEval: ${
               var ret = inputs.sample;
@@ -80,19 +80,21 @@ steps:
       class: ExpressionTool
       inputs:
         samples:
-          type: "types.yml#FilloutIndexedSample[]"
+          type: "types.yml#FilloutMafOptionalIndexedSample[]"
       outputs:
         samples_need_filter:
           type: "types.yml#FilloutIndexedSample[]"
         samples_no_filter:
-          type: "types.yml#FilloutIndexedSample[]"
+          type: "types.yml#FilloutMafOptionalIndexedSample[]"
       # also consider: String(x).toLowerCase() == "true"
-      expression: "${
+      expression: |
+        ${
         var samples_no_filter = [];
         var samples_need_filter = [];
 
         for ( var i in inputs.samples ){
-          if ( inputs.samples[i]['prefilter'] === true ) {
+          // if it has a maf file and prefilter is true
+          if ( inputs.samples[i]["prefilter"] === true && inputs.samples[i]["maf_file"] != null) {
               samples_need_filter.push(inputs.samples[i]);
             } else {
               samples_no_filter.push(inputs.samples[i]);
@@ -103,8 +105,7 @@ steps:
             'samples_need_filter': samples_need_filter,
             'samples_no_filter': samples_no_filter
           };
-        }"
-
+        }
 
   prefilter_workflow:
     doc: apply the prefiltering steps to applicable samples (usually Argos sample mafs since clinical mafs are often filtered already)
@@ -167,30 +168,40 @@ steps:
   convert_sample_types:
     doc: Convert the CWL sample objects from FilloutIndexedSample type to FilloutSample for downstream processes
     in:
-      samples:
-        source: [ split_sample_groups/samples_no_filter, prefilter_workflow/sample ]
-        linkMerge: merge_flattened
+      # samples:
+      #   source: [ split_sample_groups/samples_no_filter, prefilter_workflow/sample ]
+      #   linkMerge: merge_flattened
+      samples_no_filter: split_sample_groups/samples_no_filter
+      samples_filtered: prefilter_workflow/sample
     out: [ samples ]
     run:
       class: ExpressionTool
       inputs:
-        samples:
-          type: "types.yml#FilloutIndexedSample[]"
+        samples_no_filter: "types.yml#FilloutMafOptionalIndexedSample[]"
+        samples_filtered: "types.yml#FilloutIndexedSample[]"
       outputs:
         samples:
-          type: "types.yml#FilloutSample[]"
+          type: "types.yml#FilloutMafOptionalSample[]" # "types.yml#FilloutSample[]"
       expression: |
         ${
           var new_samples = [];
-          for ( var i in inputs.samples ){
-            var d = inputs.samples[i];
+
+          for ( var i in inputs.samples_no_filter ){
+            var d = inputs.samples_no_filter[i];
             delete d['prefilter'];
             new_samples.push(d);
           }
+
+          for ( var i in inputs.samples_filtered ){
+            var d = inputs.samples_filtered[i];
+            delete d['prefilter'];
+            new_samples.push(d);
+          }
+
         return { 'samples': new_samples };
         }
 
 outputs:
   samples:
-    type: "types.yml#FilloutSample[]"
+    type: "types.yml#FilloutMafOptionalSample[]" # "types.yml#FilloutSample[]"
     outputSource: convert_sample_types/samples

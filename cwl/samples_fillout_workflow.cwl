@@ -51,43 +51,7 @@ steps:
     in:
       samples: samples
     out: [ samples_with_maf, samples_without_maf ]
-    run:
-      class: ExpressionTool
-      inputs:
-        samples:
-          type: "types.yml#FilloutMafOptionalSample[]"
-      outputs:
-        samples_with_maf: "types.yml#FilloutSample[]"
-        samples_without_maf: "types.yml#FilloutNoMafsample[]"
-      expression: |
-        ${
-          console.log(">>> inputs:");
-          console.log(inputs);
-
-          var samples_with_maf = [];
-          var samples_without_maf = [];
-
-          for ( var i in inputs.samples ){
-            var sample = inputs.samples[i];
-
-            if (sample["maf_file"] == null ) {
-              samples_without_maf.push(sample);
-            } else {
-              samples_with_maf.push(sample);
-            };
-
-          };
-
-          var res = {
-              "samples_with_maf": samples_with_maf,
-              "samples_without_maf": samples_without_maf
-            };
-
-          console.log(">>> res:");
-          console.log(res);
-
-          return res;
-        }
+    run: fillout_get_samples_with_without_maf.cwl
 
   get_bam_and_ids_from_samples_without_maf:
     doc:
