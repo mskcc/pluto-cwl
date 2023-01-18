@@ -53,6 +53,7 @@ steps:
     out: [ samples ]
 
   get_samples_with_without_maf:
+    doc: separate the samples with and without mafs, if a singleton does not have a maf then theres no point in using it downstream
     in:
       samples: fillout_index_prefilter/samples
     out: [ samples_with_maf, samples_without_maf ]

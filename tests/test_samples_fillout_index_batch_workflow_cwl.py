@@ -173,7 +173,7 @@ class TestSamplesFilloutIndexBatch1Group(PlutoPreRunTestCase):
             "Amino_Acid_Change", [""])
 
 
-class TestSamplesFilloutIndexBatch2Group(PlutoPreRunTestCase):
+class TestSamplesFilloutIndexBatch2Group0(PlutoPreRunTestCase):
 
     cwl_file = CWLFile('samples_fillout_index_batch_workflow.cwl')
 
@@ -188,7 +188,7 @@ class TestSamplesFilloutIndexBatch2Group(PlutoPreRunTestCase):
                 "normal_id": "FROZENPOOLEDNORMAL_IMPACT505_V2",
                 "sample_type": "research",
                 "prefilter": True,
-                "maf_file": { "class": "File", "path": sample1_maf },
+                # "maf_file": { "class": "File", "path": sample1_maf }, # this one is missing a maf file
                 "bam_file": { "class": "File", "path": sample1_bam }
             },
             {
@@ -199,6 +199,8 @@ class TestSamplesFilloutIndexBatch2Group(PlutoPreRunTestCase):
                 "maf_file": { "class": "File", "path": sample2_maf },
                 "bam_file": { "class": "File", "path": sample2_bam }
             }]
+        #                 run.fix_labels_and_merge_vcfs.sh
+        # The tag "INFO/AC" is not defined in /var/lib/cwl/stgbe8a35cd-cb43-4543-b0fe-c0ef2d9f1648/Sample2.sorted.vcf.gz
         sample_group2 = [
             {
                 "sample_id": "Sample3",
