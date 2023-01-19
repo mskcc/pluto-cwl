@@ -159,6 +159,129 @@ class TestSamplesFilloutMixedGroup1(PlutoPreRunTestCase):
 
 
 
+class TestSamplesFilloutMixedGroup2(PlutoPreRunTestCase):
+    """
+    Test that it runs when two samples are provided and one is lacking a maf because that triggers some of the singleton handling logic that we need to make sure works
+    This test is super important!!
+    """
+    cwl_file = CWLFile('samples_fillout_workflow.cwl')
+    def setUpRun(self):
+        """
+        Run the workflow and return the results; output accessible under self.res.output in downstream 'test_' methods
+        """
+        sample_group1 = [
+            {
+                # THIS ONE LACKS A MAF FILE
+                "sample_id": "Sample1",
+                "normal_id": "FROZENPOOLEDNORMAL_IMPACT505_V2",
+                "sample_type": "research",
+                "prefilter": True,
+                # "maf_file": { "class": "File", "path": sample1_maf },
+                "bam_file": { "class": "File", "path": sample1_bam }
+            },
+            {
+                "sample_id": "Sample2",
+                "normal_id": "FROZENPOOLEDNORMAL_IMPACT505_V2",
+                "sample_type": "research",
+                "prefilter": True,
+                "maf_file": { "class": "File", "path": sample2_maf },
+                "bam_file": { "class": "File", "path": sample2_bam }
+            },
+        ]
+
+        self.input = {
+            "samples": sample_group1,
+            "fillout_output_fname": 'output.maf',
+            "ref_fasta": {"class": "File", "path": DATA_SETS['Proj_08390_G']['REF_FASTA']},
+        }
+
+        output_json, output_dir = self.run_cwl()
+
+        return(output_json, output_dir)
+
+    def getExpected(self, output_dir):
+        """
+        Return the expected CWL workflow output with the tmpdir output dir path included
+        Accessible in downstream 'test_' methods under self.res.expected
+        """
+        return({
+            "merged_vcf": OFile(name = "Sample2.sorted.vcf", dir = output_dir),
+            "fillout_sources_vcf": OFile(name = "fillout.merged.sources.vcf", dir = output_dir),
+            'output_file': OFile(name = 'output.maf', dir = output_dir),
+            'filtered_file': OFile(name = 'output.filtered.maf', dir = output_dir),
+            'portal_file': OFile(name = 'data_mutations_extended.txt', dir = output_dir),
+            'uncalled_file': OFile(name = 'data_mutations_uncalled.txt', dir = output_dir),
+        })
+
+    def test_CWLDictEqual(self):
+        """
+        Test case for running the fillout workflow on a number of samples, each with a bam and maf
+        """
+        # file contents are inconsistent so strip some keys from the output dict
+        strip_related_keys = [
+        ('basename', "fillout.merged.sources.vcf", ['size', 'checksum']),
+        ('basename', 'Sample2.sorted.vcf', ['size', 'checksum']),
+        ('basename', 'output.maf', ['size', 'checksum']),
+        ('basename', 'output.filtered.maf', ['size', 'checksum']),
+        ('basename', 'data_mutations_extended.txt', ['size', 'checksum']),
+        ('basename', 'data_mutations_uncalled.txt', ['size', 'checksum'])
+        ]
+        self.assertCWLDictEqual(
+                self.res.output,
+                self.res.expected,
+                related_keys = strip_related_keys)
+
+    def test_output_file_num_muts(self):
+        self.assertNumMutations(OFile.init_dict(self.res.output['output_file']).path, 132)
+
+    def test_output_file_muts_hash(self):
+        self.assertMutationsHash(OFile.init_dict(self.res.output['output_file']).path, "1cbf98a55bb79e2b304ed8966e7282d1")
+
+
+    def test_filtered_file_num_muts(self):
+        self.assertNumMutations(OFile.init_dict(self.res.output['filtered_file']).path, 132)
+
+    def test_filtered_file_muts_hash(self):
+        self.assertMutationsHash(OFile.init_dict(self.res.output['filtered_file']).path, "1cbf98a55bb79e2b304ed8966e7282d1")
+
+    def test_portal_file_num_muts(self):
+        self.assertNumMutations(OFile.init_dict(self.res.output['portal_file']).path, 132)
+
+    def test_portal_file_muts_hash(self):
+        self.assertMutationsHash(OFile.init_dict(self.res.output['portal_file']).path, "c54e74773a7203e4823ca47ed344e4e6")
+
+    def test_uncalled_file_num_muts(self):
+        self.assertNumMutations(OFile.init_dict(self.res.output['uncalled_file']).path, 0)
+
+    def test_uncalled_file_muts_hash(self):
+        self.assertMutationsHash(OFile.init_dict(self.res.output['uncalled_file']).path, "d751713988987e9331980363e24189ce")
+
+    def test_portal_output_path_num_muts(self):
+        self.assertEqualNumMutations([
+            OFile.init_dict(self.res.output['portal_file']).path,
+            OFile.init_dict(self.res.output['uncalled_file']).path,
+            ],
+            OFile.init_dict(self.res.output['filtered_file']).path)
+
+    def test_output_file_fields(self):
+        self.assertMutFieldContains(
+            OFile.init_dict(self.res.output['output_file']).path,
+            "Tumor_Sample_Barcode", ["Sample1", "Sample2"], containsAll = True)
+
+    def test_portal_output_path_fields(self):
+        self.assertMutFieldDoesntContain(
+            OFile.init_dict(self.res.output['portal_file']).path,
+            "Amino_Acid_Change", [""])
+
+    def test_uncalled_output_path_fields(self):
+        self.assertMutFieldDoesntContain(
+            OFile.init_dict(self.res.output['uncalled_file']).path,
+            "Amino_Acid_Change", [""])
+
+
+
+
+
 
 
 class TestSamplesFillout1(PlutoPreRunTestCase):

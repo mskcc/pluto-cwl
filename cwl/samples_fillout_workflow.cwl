@@ -188,7 +188,10 @@ steps:
                 # need to rename some conflicting sample INFO tags; prepend FL for "fillout"
                 # change these tags: DP:RD:AD:VF:DPP:DPN:RDP:RDN:ADP:ADN
                 # pre-pend them all with 'FL_' for fillout so they do not collide with downstream labels
+
+                # input file: fillout.vcf
                 fillout_vcf="${ return inputs.fillout_vcf.path; }"
+
                 fillout_relabel_vcf="fillout.relabel.vcf"
                 fillout_relabel_vcf_gz="fillout.relabel.vcf.gz"
                 sed -e 's|\\([=[:space:]]\\)DP\\([,:[:space:]]\\)|\\1FL_DP\\2|' \\
@@ -204,14 +207,44 @@ steps:
                 "\${fillout_vcf}" > "\${fillout_relabel_vcf}"
                 bgzip -c "\${fillout_relabel_vcf}" > "\${fillout_relabel_vcf_gz}"
                 tabix "\${fillout_relabel_vcf_gz}"
+
+
                 # combine the two sets of vcfs
                 # pull off the merge vcf header and create an annotations file
+
+                # input file: merged.vcf
                 merged_vcf="${ return inputs.merged_vcf.path }"
+                # should contain these lines;
+                ##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+                ##FORMAT=<ID=AD,Number=R,Type=Integer,Description="Allelic Depths of REF and ALT(s) in the order listed">
+                ##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Read Depth">
+                ##INFO=<ID=AC,Number=A,Type=Integer,Description="Allele count in genotypes">
+                ##INFO=<ID=AN,Number=1,Type=Integer,Description="Total number of alleles in called genotypes">
+
+                # singleton Sample2.sorted.vcf has these lines;
+                ##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+                ##FORMAT=<ID=AD,Number=R,Type=Integer,Description="Allelic Depths of REF and ALT(s) in the order listed">
+                ##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Read Depth">
+
                 merged_vcf_header="merged.header.txt"
                 merged_vcf_gz="${ return inputs.merged_vcf_gz.path }"
                 fillout_merged_vcf="fillout.merged.vcf"
+
+                # pull off the input vcf header for annotating
                 grep -E '##FORMAT|##INFO' "\${merged_vcf}" > "\${merged_vcf_header}"
+
+                # need to check that these header lines exist because they tend to not exist if the input was a singleton sample
+                if ! grep -q ID=AC "\${merged_vcf_header}"; then
+                echo '##INFO=<ID=AC,Number=A,Type=Integer,Description="Allele count in genotypes">' >> "\${merged_vcf_header}"
+                fi
+
+                if ! grep -q ID=AN "\${merged_vcf_header}"; then
+                echo '##INFO=<ID=AN,Number=1,Type=Integer,Description="Total number of alleles in called genotypes">' >> "\${merged_vcf_header}"
+                fi
+
+                # apply the annotations from the merged vcf to the fillout vcf
                 bcftools annotate --header-lines "\${merged_vcf_header}" --annotations "\${merged_vcf_gz}" --columns 'FORMAT/GT,FORMAT/AD,FORMAT/DP,INFO/AC,INFO/AN' --output "\${fillout_merged_vcf}" --output-type v "\${fillout_relabel_vcf_gz}"
+
                 # label each variant with its source samples; samples with '.' empty AD value weren't present in sample originally
                 # create a new annotations file that has the samples listed for each variant in a new INFO field labeled SRC
                 fillout_merged_vcf_header="fillout.merged.header.txt"
@@ -228,14 +261,17 @@ steps:
                 grep '##' "\${fillout_merged_vcf}" > "\${fillout_merged_vcf_header}"
                 # add a new line
                 echo '##INFO=<ID=SRC,Type=String,Number=.,Description="Source samples for the variant">' >> "\${fillout_merged_vcf_header}"
+
                 # start the annotation file header
                 # NOTE: 'ALT' column is misspelled here!! Need to fix this!!
                 echo '#CHROM\tPOS\tREF\tAL\tINFO' > "\${fillout_merged_annotation}"
+
                 # get all the variant sample labels for variants with AD>0;
                 # this means they were from the sample originally and not from fillout
                 bcftools query -f '%CHROM\\t%POS\\t%REF\\t%ALT\\t[%SAMPLE,]\\n' -i 'AD>0' "\${fillout_merged_vcf}" >> "\${fillout_merged_annotation}"
                 bgzip -c "\${fillout_merged_annotation}" > "\${fillout_merged_annotation_gz}"
                 tabix -p vcf "\${fillout_merged_annotation_gz}"
+
                 # re-annotate the final file with the new header lines from the fillout file
                 bcftools annotate --header-lines "\${fillout_merged_vcf_header}" \\
                 --annotations "\${fillout_merged_annotation_gz}" \\

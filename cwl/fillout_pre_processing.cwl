@@ -16,7 +16,7 @@ requirements:
   - $import: types.yml
 
 inputs:
-  samples: "types.yml#FilloutSample[]" # must be a list of samples; list must have at  least one entry 
+  samples: "types.yml#FilloutSample[]" # must be a list of samples; list must have at  least one entry
   ref_fasta:
     type: File
     secondaryFiles:
@@ -49,7 +49,7 @@ steps:
       expression: |
         ${
         var sample_ids = [];
-        var num_samples = 0; // need to output the number of samples because I dont know how to check the list length in the CWL when statement
+        var num_samples = 0;
         for ( var i in inputs.samples ){
             sample_ids.push(inputs.samples[i]['sample_id']);
           };
@@ -156,7 +156,7 @@ steps:
                 bgzip -c "\${merged_vcf}" > "\${merged_vcf_gz}"
                 tabix "\${merged_vcf_gz}"
       inputs:
-        sample_ids: 
+        sample_ids:
           type: string[]
           doc: sample id's MUST match what are used in the header columns in the .vcf files!
         vcf_gz_files:
@@ -209,7 +209,7 @@ steps:
 
 
 
-outputs: 
+outputs:
   sample_ids:
     type: string[]
     outputSource: create_samples_list/sample_ids

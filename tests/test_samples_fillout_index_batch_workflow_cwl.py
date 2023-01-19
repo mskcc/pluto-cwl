@@ -199,8 +199,6 @@ class TestSamplesFilloutIndexBatch2Group0(PlutoPreRunTestCase):
                 "maf_file": { "class": "File", "path": sample2_maf },
                 "bam_file": { "class": "File", "path": sample2_bam }
             }]
-        #                 run.fix_labels_and_merge_vcfs.sh
-        # The tag "INFO/AC" is not defined in /var/lib/cwl/stgbe8a35cd-cb43-4543-b0fe-c0ef2d9f1648/Sample2.sorted.vcf.gz
         sample_group2 = [
             {
                 "sample_id": "Sample3",
@@ -253,20 +251,20 @@ class TestSamplesFilloutIndexBatch2Group0(PlutoPreRunTestCase):
         self.assertNumMutations(OFile.init_dict(self.res.output['output_file']).path, 68)
 
     def test_output_file_muts_hash(self):
-        self.assertMutationsHash(OFile.init_dict(self.res.output['output_file']).path, "89b2574c5a8ae02ac44e0bbe897a4bf3")
+        self.assertMutationsHash(OFile.init_dict(self.res.output['output_file']).path, "7adbbd22006179fe407128b0a2fcbfae")
 
 
     def test_filtered_file_num_muts(self):
         self.assertNumMutations(OFile.init_dict(self.res.output['filtered_file']).path, 68)
 
     def test_filtered_file_muts_hash(self):
-        self.assertMutationsHash(OFile.init_dict(self.res.output['filtered_file']).path, "89b2574c5a8ae02ac44e0bbe897a4bf3")
+        self.assertMutationsHash(OFile.init_dict(self.res.output['filtered_file']).path, "7adbbd22006179fe407128b0a2fcbfae")
 
     def test_portal_file_num_muts(self):
         self.assertNumMutations(OFile.init_dict(self.res.output['portal_file']).path, 68)
 
     def test_portal_file_muts_hash(self):
-        self.assertMutationsHash(OFile.init_dict(self.res.output['portal_file']).path, "615c2bb7c266ae2c2c66f91daf745983")
+        self.assertMutationsHash(OFile.init_dict(self.res.output['portal_file']).path, "da306fe0cad18b307105f6a330fc2545")
 
     def test_uncalled_file_num_muts(self):
         self.assertNumMutations(OFile.init_dict(self.res.output['uncalled_file']).path, 0)
