@@ -263,13 +263,15 @@ update-container-tags:
 
 # $ KEEP_TMP=1 pytest tests/test_workflow_with_facets.py -k test_demo_dataset1 -s
 # 106 passed, 5 skipped in 1613.98s (0:26:53)
+# 1 failed, 221 passed, 4 skipped, 2 errors in 7574.89s (2:06:14)
 # NOTE: run with `$ LARGE_TESTS=True ... ` to enable large test cases
+# NOTE: dont use -n auto here because you might hit error RuntimeError: can't start new thread
 test:
 	. "$(ENVSH)" toil && \
 	source conda/bin/activate && \
 	export CWL_ENGINE=Toil ; \
 	nice pytest \
-	-n auto \
+	-n 16 \
 	--ignore tests/test_workflow_with_facets.xl.py \
 	--ignore tests/test_workflow_with_facets_xl.py \
 	--ignore tests/test_workflow_with_facets.medium.py \
@@ -282,7 +284,7 @@ integration-pytest:
 	. "$(ENVSH)" toil && \
 	source conda/bin/activate && \
 	nice pytest \
-	-n auto \
+	-n 16 \
 	tests/test_workflow_with_facets_xl.py \
 	tests/test_workflow_with_facets_medium.py
 
