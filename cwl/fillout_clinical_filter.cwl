@@ -10,7 +10,7 @@ NOTE: maybe dont do that for ... reasons <- having single multi-sample vcf is ac
 NOTE: requires AD and FL_VF FORMAT fields in the vcf!!
 "
 
-baseCommand: [ "bash", "run.sh" ]
+baseCommand: [ "bash", "run.fillout_clinical_filter.sh" ]
 
 requirements:
   - $import: types.yml
@@ -20,7 +20,7 @@ requirements:
   - class: InitialWorkDirRequirement
     listing:
       - $(inputs.fillout_vcf)
-      - entryname: run.sh
+      - entryname: run.fillout_clinical_filter.sh
         entry: |-
           set -eu
           # INPUTS:

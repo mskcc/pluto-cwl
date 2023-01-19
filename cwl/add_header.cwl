@@ -1,12 +1,12 @@
 #!/usr/bin/env cwl-runner
 cwlVersion: v1.0
 class: CommandLineTool
-baseCommand: ["bash", "add_header.sh"]
+baseCommand: ["bash", "run.add_header.sh"]
 stdout: output.txt
 requirements:
   InitialWorkDirRequirement:
     listing:
-      - entryname: add_header.sh
+      - entryname: run.add_header.sh
         entry: |-
           echo "$1"
           cat "$2"

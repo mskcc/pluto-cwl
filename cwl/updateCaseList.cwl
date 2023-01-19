@@ -2,14 +2,14 @@
 
 cwlVersion: v1.2
 class: CommandLineTool
-baseCommand: ['bash', 'run.sh']
+baseCommand: ['bash', 'run.updateCaseList.sh']
 requirements:
   InlineJavascriptRequirement: {}
   DockerRequirement:
     dockerPull: mskcc/helix:21.5.1
   InitialWorkDirRequirement:
     listing:
-      - entryname: run.sh
+      - entryname: run.updateCaseList.sh
         entry: |-
           set -eu
           # get a comma-delim string of the sample names ; returns an empty string if there are no sample id's ; updateCaseList ignores empty strings

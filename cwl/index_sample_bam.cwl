@@ -2,7 +2,7 @@
 cwlVersion: v1.2
 class: CommandLineTool
 doc: index a Fillout sample .bam file
-baseCommand: [ "bash", "run.sh" ]
+baseCommand: [ "bash", "run.index_sample_bam.sh" ]
 requirements:
   - $import: types.yml
   - class: InlineJavascriptRequirement
@@ -13,7 +13,7 @@ requirements:
   - class: InitialWorkDirRequirement
     listing:
       - $(inputs.sample['bam_file']) # NOTE: why are we doing this?? # NOTE: I think this is causing all input bam files to get copied when using Toil??
-      - entryname: run.sh
+      - entryname: run.index_sample_bam.sh
         entry: |-
           set -eu
           # sample.bam

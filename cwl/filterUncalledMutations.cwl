@@ -9,14 +9,14 @@
 
 cwlVersion: v1.2
 class: CommandLineTool
-baseCommand: ['bash', 'run.sh']
+baseCommand: ['bash', 'run.filterUncalledMutations.sh']
 requirements:
   InlineJavascriptRequirement: {}
   DockerRequirement:
     dockerPull: mskcc/helix:21.5.3
   InitialWorkDirRequirement:
     listing:
-      - entryname: run.sh
+      - entryname: run.filterUncalledMutations.sh
         entry: |-
           set -eu
           input_file="${ return inputs.input_file.path ; }"

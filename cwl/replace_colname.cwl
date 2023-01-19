@@ -1,12 +1,12 @@
 #!/usr/bin/env cwl-runner
 cwlVersion: v1.0
 class: CommandLineTool
-baseCommand: ["bash", "run.sh"]
+baseCommand: ["bash", "run.replace_colname.sh"]
 
 requirements:
   InitialWorkDirRequirement:
     listing:
-      - entryname: run.sh
+      - entryname: run.replace_colname.sh
         entry: |-
           set -eu
           old="$1"

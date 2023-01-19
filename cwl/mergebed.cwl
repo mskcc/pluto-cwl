@@ -2,7 +2,7 @@
 
 cwlVersion: v1.0
 class: CommandLineTool
-baseCommand: [ "bash", "run.sh" ]
+baseCommand: [ "bash", "run.mergebed.sh" ]
 
 requirements:
   InlineJavascriptRequirement: {}
@@ -13,7 +13,7 @@ requirements:
       - entryname: inputs_dir
         writable: true
         entry: "$({class: 'Directory', listing: inputs.bed_files})"
-      - entryname: run.sh
+      - entryname: run.mergebed.sh
         # parallel --jobs 1 --xargs bedops -m {} ">" merged.{#}.bed ; <- chunks to largest size the system can handle but hit this error;
         # https://github.com/bedops/bedops/issues/249
         # so chunk it in groups of 1000 instead

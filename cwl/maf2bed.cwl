@@ -2,12 +2,12 @@
 
 cwlVersion: v1.0
 class: CommandLineTool
-baseCommand: [ "bash", "run.sh" ]
+baseCommand: [ "bash", "run.maf2bed.sh" ]
 
 requirements:
   InitialWorkDirRequirement:
     listing:
-      - entryname: run.sh
+      - entryname: run.maf2bed.sh
         # need a unique filename so that we can merge them later in a work dir without the names colliding. but also need parts of the name that are static so we can glob against it. but those static parts also need to be unique enough that we shouldnt have an input file matching that name
         # also we are just going to assume that input maf format has comments, a header starting with 'Hugo_Symbol', and ordered columns
         # NOTE: do not need to use the UUID here anymore since we can now rename files on staging

@@ -1,7 +1,7 @@
 #!/usr/bin/env cwl-runner
 cwlVersion: v1.0
 class: CommandLineTool
-baseCommand: [ "bash", "run.sh" ]
+baseCommand: [ "bash", "run.deduplicate_maf.sh" ]
 doc: "Remove duplicate lines from the maf file
 
 Expected columns are in this order;
@@ -32,7 +32,7 @@ requirements:
     dockerPull: mskcc/helix_filters_01:21.4.1
   InitialWorkDirRequirement:
     listing:
-      - entryname: run.sh
+      - entryname: run.deduplicate_maf.sh
         # need to get comments
         # then get header
         # then sort the maf rows

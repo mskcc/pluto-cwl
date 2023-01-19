@@ -88,13 +88,13 @@ steps:
       class: CommandLineTool
       id: fix_labels_and_merge_vcfs
       label: fix_labels_and_merge_vcfs
-      baseCommand: [ "bash", "run.sh" ]
+      baseCommand: [ "bash", "run.fix_labels_and_merge_vcfs.sh" ]
       requirements:
         - class: DockerRequirement
           dockerPull: mskcc/helix_filters_01:21.4.1
         - class: InitialWorkDirRequirement
           listing:
-            - entryname: run.sh
+            - entryname: run.fix_labels_and_merge_vcfs.sh
               entry: |-
                 set -eux
                 touch fix_labels_and_merge_vcfs

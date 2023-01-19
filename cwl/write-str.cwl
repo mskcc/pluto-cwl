@@ -2,14 +2,14 @@
 
 cwlVersion: v1.0
 class: CommandLineTool
-baseCommand: [ "bash", "run.sh" ]
+baseCommand: [ "bash", "run.write_str.sh" ]
 
 stdout: output.txt
 
 requirements:
   InitialWorkDirRequirement:
     listing:
-      - entryname: run.sh
+      - entryname: run.write_str.sh
         entry: |-
           echo "$1"
 
