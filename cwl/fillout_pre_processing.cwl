@@ -223,6 +223,7 @@ outputs:
     type: File[]
     outputSource: maf2vcf/output_file
   merged_vcf:
+    doc: all the mutations from all the input samples de-duplicated
     type: File
     outputSource: [ merge_vcfs/merged_vcf, pass_singleton_vcf/output_vcf ]
     pickValue: first_non_null
