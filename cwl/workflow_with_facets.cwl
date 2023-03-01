@@ -81,11 +81,13 @@ output
     ├── data_CNA.ascna.txt
     ├── data_CNA.scna.txt
     ├── data_CNA.txt
+    ├── data_sv.txt
     ├── data_fusions.txt
     ├── data_mutations_extended.txt
     ├── meta_clinical_patient.txt
     ├── meta_clinical_sample.txt
     ├── meta_CNA.txt
+    ├── meta_sv.txt
     ├── meta_fusions.txt
     ├── meta_mutations_extended.txt
     ├── meta_study.txt
@@ -236,11 +238,11 @@ inputs:
     doc: ""
   cbio_sv_data_filename:
     type: string
-    default: data_SV.txt
+    default: data_sv.txt
     doc: ""
   cbio_meta_sv_filename:
     type: string
-    default: meta_SV.txt
+    default: meta_sv.txt
     doc: ""
   mutation_svs_txt_files:
     type: File[]
