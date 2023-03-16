@@ -580,7 +580,6 @@ steps:
       portal_hisens_segs: run_portal_workflow/portal_hisens_segs # # <project_id>_data_cna_hg19.seg
       portal_fusions_data_file: run_portal_workflow/portal_fusions_data_file # data_fusions.txt
       portal_case_list_dir: run_portal_workflow/portal_case_list_dir
-      portal_report: run_portal_workflow/portal_report
       output_directory_name:
         valueFrom: ${ return "portal"; }
       files:
@@ -602,7 +601,6 @@ steps:
           inputs.portal_hisens_segs,
           inputs.portal_fusions_data_file,
           inputs.portal_case_list_dir,
-          inputs.portal_report
           ]}
     out: [ directory ]
 
@@ -630,6 +628,19 @@ steps:
       files:
         valueFrom: ${return [
           inputs.tmb_tsvs
+          ]}
+    out: [ directory ]
+
+  make_reports_dir:
+    doc:
+    run: put_DirFileList_in_dir.cwl
+    in:
+      portal_report: run_portal_workflow/portal_report
+      output_directory_name:
+        valueFrom: ${ return "reports"; }
+      files:
+        valueFrom: ${return [
+          inputs.portal_report
           ]}
     out: [ directory ]
 
@@ -709,3 +720,7 @@ outputs:
   tmb_dir:
     type: Directory
     outputSource: make_tmb_dir/directory
+
+  reports_dir:
+      type: Directory
+      outputSource: make_reports_dir/directory
