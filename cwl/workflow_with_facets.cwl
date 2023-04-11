@@ -334,6 +334,11 @@ steps:
             hisens_segs.push(inputs.pairs[i].hisens_seg)
           };
 
+          annotated_mafs = annotated_mafs.filter(function(elem){return elem; });
+          facets_txts = facets_txts.filter(function(elem){return elem; });
+          hisens_cncf_txts = hisens_cncf_txts.filter(function(elem){return elem; });
+          hisens_segs = hisens_segs.filter(function(elem){return elem; });
+
           return {
             "annotated_mafs": annotated_mafs,
             "facets_txts": facets_txts,
