@@ -152,7 +152,7 @@ steps:
         purity_png:
           type:
             type: array
-            items: [File]
+            items: ['null', File]
         purity_seg:
           type:
             type: array
@@ -160,7 +160,7 @@ steps:
         hisens_png:
           type:
             type: array
-            items: [File]
+            items: ['null', File]
         hisens_seg:
           type:
             type: array
@@ -281,7 +281,7 @@ steps:
             purity_png:
               type:
                 type: array
-                items: [File]
+                items: ['null', File]
             purity_seg:
               type:
                 type: array
@@ -289,7 +289,7 @@ steps:
             hisens_png:
               type:
                 type: array
-                items: [File]
+                items: ['null', File]
             hisens_seg:
               type:
                 type: array
@@ -338,7 +338,7 @@ steps:
             purity_png:
               type:
                 type: array
-                items: [File]
+                items: ['null', File]
             purity_seg:
               type:
                 type: array
@@ -346,7 +346,7 @@ steps:
             hisens_png:
               type:
                 type: array
-                items: [File]
+                items: ['null', File]
             hisens_seg:
               type:
                 type: array
