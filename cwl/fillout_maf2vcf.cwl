@@ -80,14 +80,14 @@ inputs:
   maf_file: File
   ref_fasta:
     type: File
-    #secondaryFiles:
-    #  - .amb
-    #  - .ann
-    #  - .bwt
-    #  - .pac
-    #  - .sa
-    #  - .fai
-    #  - ^.dict
+    secondaryFiles:
+      - .amb
+      - .ann
+      - .bwt
+      - .pac
+      - .sa
+      - .fai
+      - ^.dict
 outputs:
   output_file:
     doc: .vcf.gz file with .tbi index
