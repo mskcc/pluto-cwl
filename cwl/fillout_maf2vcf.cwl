@@ -26,7 +26,7 @@ requirements:
         vcf_sorted_gz="${ return inputs.sample_id + '.sorted.vcf.gz' }"
         sample_id="${ return inputs.sample_id }"
         # convert maf to vcf
-        num_lines=num_lines="\$(wc -l < \${input_maf})"
+        num_lines="\$(wc -l < \${input_maf})"
         more_than_five="\$(( \${num_lines} > 5))"
         if [ "\${more_than_five}" == "1" ]
         then
