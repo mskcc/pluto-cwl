@@ -133,7 +133,12 @@ steps:
                   var args2 = args1.map( (a) => "--bam " + a )
                   return args2.join(" ") ;
                   }'
-                sample_ids="${ return inputs.sample_ids.join("\t"); }"
+                header_line='${
+                  var headers = ["CHROM","POS","ID","REF","ALT","QUAL","FILTER","INFO","FORMAT"]
+                  var sample_ids = inputs.sample_ids
+                  var header_list = headers.concat(sample_ids)
+                  return header_list.join("\t");
+                }'
                 fasta="${ return inputs.ref_fasta.path; }"
                 vcf="${ return inputs.targets_vcf.path }"
                 fillout_vcf="fillout.vcf"
@@ -158,7 +163,7 @@ steps:
                 ##FORMAT=<ID=DPF,Number=1,Type=Integer,Description="Total fragment depth">
                 ##FORMAT=<ID=RDF,Number=1,Type=Float,Description="Fragment depth matching reference (REF) allele">
                 ##FORMAT=<ID=ADF,Number=1,Type=Float,Description="Fragment depth matching alternate (ALT) allele">
-                #CHROM  POS     ID      REF     ALT     QUAL    FILTER  INFO    FORMAT  P-\${sample_ids}
+                #\${header_line}
                 EOF
                 fi
       inputs:
