@@ -137,7 +137,7 @@ steps:
                 fasta="${ return inputs.ref_fasta.path; }"
                 vcf="${ return inputs.targets_vcf.path }"
                 fillout_vcf="fillout.vcf"
-                num_lines="\$(grep -v '^[#]' \${input_maf} | wc -l)"
+                num_lines="\$(grep -v '^[#]' \${vcf} | wc -l)"
                 more_than_zero="\$(( \${num_lines} > 0))"
                 if [ "\${more_than_zero}" == "1" ]
                 then
