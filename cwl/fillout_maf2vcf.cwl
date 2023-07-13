@@ -26,9 +26,9 @@ requirements:
         vcf_sorted_gz="${ return inputs.sample_id + '.sorted.vcf.gz' }"
         sample_id="${ return inputs.sample_id }"
         # convert maf to vcf
-        num_lines=num_lines="\$(wc -l < \${input_maf})"
-        more_than_five="\$(( \${num_lines} > 5))"
-        if [ "\${more_than_five}" == "1" ]
+        num_lines="\$(grep -v '^[#]' \${input_maf} | wc -l)"
+        more_than_one="\$(( \${num_lines} > 1))"
+        if [ "\${more_than_one}" == "1" ]
         then
           maf2vcf.pl --output-dir . --input-maf "\${input_maf}" --output-vcf "\${vcf}" --ref-fasta "\${fasta}"
         else
