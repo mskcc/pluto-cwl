@@ -11,6 +11,9 @@ requirements:
   InlineJavascriptRequirement: {}
   DockerRequirement:
     dockerPull: mskcc/helix_filters_01:21.4.1
+  ResourceRequirement:
+    ramMin: 8000
+    coresMin: 3
 
 # echo ${return item['path'] for item in inputs.input_files}
 inputs:

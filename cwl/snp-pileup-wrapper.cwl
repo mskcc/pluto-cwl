@@ -13,6 +13,9 @@ baseCommand: ['snp-pileup-wrapper.R']
 requirements:
   DockerRequirement:
     dockerPull: mskcc/helix_filters_01:facets-suite-2.0.6
+  ResourceRequirement:
+    ramMin: 8000
+    coresMin: 3
 
 inputs:
   snps_vcf:

@@ -6,6 +6,9 @@ baseCommand: [ "full-outer-join.R" ]
 requirements:
   DockerRequirement:
     dockerPull: mskcc/helix_filters_01:R-3.5.1
+  ResourceRequirement:
+    ramMin: 8000
+    coresMin: 3
 inputs:
   table1:
     type: File

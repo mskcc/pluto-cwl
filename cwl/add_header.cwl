@@ -10,7 +10,9 @@ requirements:
         entry: |-
           echo "$1"
           cat "$2"
-
+  ResourceRequirement:
+    ramMin: 8000
+    coresMin: 3
 inputs:
   header_str:
     type: string

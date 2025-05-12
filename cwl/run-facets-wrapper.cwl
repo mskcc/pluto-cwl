@@ -23,6 +23,9 @@ requirements:
   InlineJavascriptRequirement: {}
   DockerRequirement:
     dockerPull: mskcc/helix_filters_01:facets-suite-2.0.6
+  ResourceRequirement:
+    ramMin: 16000
+    coresMin: 4
 
 inputs:
   snp_pileup:

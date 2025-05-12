@@ -20,6 +20,9 @@ requirements:
   InlineJavascriptRequirement: {}
   DockerRequirement:
     dockerPull: mskcc/helix_filters_01:igv-reports-1.0.1
+  ResourceRequirement:
+    ramMin: 8000
+    coresMin: 3
 
 arguments:
   - valueFrom: ${ return inputs.vcf_gz_files.map((a) => a.path).join(' ') + ' ' + inputs.bam_files.map((a) => a.path).join(' '); }

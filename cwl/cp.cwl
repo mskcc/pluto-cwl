@@ -6,6 +6,9 @@ baseCommand: cp
 requirements:
   DockerRequirement:
     dockerPull: mskcc/helix_filters_01:21.4.1
+  ResourceRequirement:
+    ramMin: 8000
+    coresMin: 3
 inputs:
   input_file:
     type: File

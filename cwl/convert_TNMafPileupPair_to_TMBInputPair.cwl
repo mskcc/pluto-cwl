@@ -4,6 +4,7 @@ class: ExpressionTool
 requirements:
 - $import: types.yml
 
+
 inputs:
   pairs: "types.yml#TNMafPileupPair[]"
 

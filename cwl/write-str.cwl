@@ -12,6 +12,9 @@ requirements:
       - entryname: run.write_str.sh
         entry: |-
           echo "$1"
+  ResourceRequirement:
+    ramMin: 8000
+    coresMin: 3
 
 inputs:
   str:

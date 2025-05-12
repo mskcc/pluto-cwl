@@ -22,6 +22,7 @@ baseCommand: [
 requirements:
   InlineJavascriptRequirement: {}
   ResourceRequirement:
+    ramMin: 8000
     coresMin: 4
   DockerRequirement:
     dockerPull: mskcc/helix_filters_01:getbasecountsmultisample-1.2.2

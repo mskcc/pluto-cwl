@@ -8,7 +8,7 @@ label: cmo-index
 requirements:
   ResourceRequirement:
     ramMin: 16000
-    coresMin: 1
+    coresMin: 2
   DockerRequirement:
     dockerPull: mskcc/roslin-variant-cmo-utils:1.9.15
   InitialWorkDirRequirement:

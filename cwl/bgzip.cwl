@@ -7,6 +7,9 @@ baseCommand: [ "bgzip" ]
 requirements:
   DockerRequirement:
     dockerPull: mskcc/helix_filters_01:igv-reports-1.0.1
+  ResourceRequirement:
+    ramMin: 8000
+    coresMin: 3
 
 stdout: $(inputs.output_filename)
 

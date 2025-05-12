@@ -7,6 +7,9 @@ requirements:
   InlineJavascriptRequirement: {}
   DockerRequirement:
     dockerPull: mskcc/helix:21.5.1
+  ResourceRequirement:
+    ramMin: 8000
+    coresMin: 3
   InitialWorkDirRequirement:
     listing:
       - entryname: run.updateCaseList.sh
