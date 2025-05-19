@@ -19,6 +19,9 @@ requirements:
     dockerPull: mskcc/roslin-variant-facets:1.6.3
     # TODO: switch to this container when it is working;
     # dockerPull: mskcc/helix_filters_01:facets-1.6.3
+  ResourceRequirement:
+    ramMin: 8000
+    coresMin: 3
 
 inputs:
   output_cna_filename:

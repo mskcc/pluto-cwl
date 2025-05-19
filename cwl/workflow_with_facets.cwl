@@ -81,11 +81,13 @@ output
     ├── data_CNA.ascna.txt
     ├── data_CNA.scna.txt
     ├── data_CNA.txt
+    ├── data_sv.txt
     ├── data_fusions.txt
     ├── data_mutations_extended.txt
     ├── meta_clinical_patient.txt
     ├── meta_clinical_sample.txt
     ├── meta_CNA.txt
+    ├── meta_sv.txt
     ├── meta_fusions.txt
     ├── meta_mutations_extended.txt
     ├── meta_study.txt
@@ -236,11 +238,11 @@ inputs:
     doc: ""
   cbio_sv_data_filename:
     type: string
-    default: data_SV.txt
+    default: data_sv.txt
     doc: ""
   cbio_meta_sv_filename:
     type: string
-    default: meta_SV.txt
+    default: meta_sv.txt
     doc: ""
   mutation_svs_txt_files:
     type: File[]
@@ -331,6 +333,11 @@ steps:
             hisens_cncf_txts.push(inputs.pairs[i].hisens_cncf_txt)
             hisens_segs.push(inputs.pairs[i].hisens_seg)
           };
+
+          annotated_mafs = annotated_mafs.filter(function(elem){return elem; });
+          facets_txts = facets_txts.filter(function(elem){return elem; });
+          hisens_cncf_txts = hisens_cncf_txts.filter(function(elem){return elem; });
+          hisens_segs = hisens_segs.filter(function(elem){return elem; });
 
           return {
             "annotated_mafs": annotated_mafs,
@@ -521,11 +528,13 @@ steps:
       portal_meta_fusions_file, # meta_fusions.txt
       portal_meta_mutations_extended_file, # meta_mutations_extended.txt
       portal_meta_cna_segments_file, # <project_id>_meta_cna_hg19_seg.txt
+      portal_meta_sv_file, # meta_SV.txt
       portal_cna_data_file, # data_CNA.txt
       portal_cna_ascna_file, # data_CNA.ascna.txt
       portal_muts_file, # data_mutations_extended.txt
       portal_hisens_segs, # <project_id>_data_cna_hg19.seg
       portal_fusions_data_file, # data_fusions.txt
+      portal_sv_data_file, # data_SV.txt
       portal_case_list_dir,
       portal_report
       ]
@@ -570,7 +579,9 @@ steps:
       portal_meta_fusions_file: run_portal_workflow/portal_meta_fusions_file # meta_fusions.txt
       portal_meta_mutations_extended_file: run_portal_workflow/portal_meta_mutations_extended_file # meta_mutations_extended.txt
       portal_meta_cna_segments_file: run_portal_workflow/portal_meta_cna_segments_file  # <project_id>_meta_cna_hg19_seg.txt
+      portal_meta_sv_file: run_portal_workflow/portal_meta_sv_file # meta_SV.txt
       portal_cna_data_file: run_portal_workflow/portal_cna_data_file # data_CNA.txt
+      portal_sv_data_file: run_portal_workflow/portal_sv_data_file # data_SV.txt
       portal_cna_ascna_file: run_portal_workflow/portal_cna_ascna_file # data_CNA.ascna.txt
       portal_muts_file: merge_maf/output_file # data_mutations_extended.txt
       portal_hisens_segs: run_portal_workflow/portal_hisens_segs # # <project_id>_data_cna_hg19.seg
@@ -590,6 +601,8 @@ steps:
           inputs.portal_meta_fusions_file,
           inputs.portal_meta_mutations_extended_file,
           inputs.portal_meta_cna_segments_file,
+          inputs.portal_meta_sv_file,
+          inputs.portal_sv_data_file,
           inputs.portal_cna_data_file,
           inputs.portal_cna_ascna_file,
           inputs.portal_muts_file,

@@ -14,6 +14,9 @@ requirements:
           input_file="$3"
           output_file="$4"
           awk -v old="\${old}" -v new="\${new}" 'NR==1 { gsub(old, new, $0); quit };1' "\${input_file}" > "\${output_file}"
+  ResourceRequirement:
+    ramMin: 8000
+    coresMin: 3
 
 inputs:
   old_name:

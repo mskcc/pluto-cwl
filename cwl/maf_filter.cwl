@@ -10,6 +10,9 @@ baseCommand: ['maf_filter.py']
 requirements:
   DockerRequirement:
     dockerPull: mskcc/helix_filters_01:21.4.1
+  ResourceRequirement:
+    ramMin: 8000
+    coresMin: 3
 
 inputs:
   maf_file:

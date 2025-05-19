@@ -6,6 +6,9 @@ baseCommand: ["fusion_to_sv_converter.py"]
 requirements:
   DockerRequirement:
     dockerPull: mskcc/helix_filters_01:21.6.0
+  ResourceRequirement:
+    ramMin: 8000
+    coresMin: 3
 inputs:
   fusion_file:
     type: File

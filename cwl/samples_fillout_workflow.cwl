@@ -133,10 +133,39 @@ steps:
                   var args2 = args1.map( (a) => "--bam " + a )
                   return args2.join(" ") ;
                   }'
+                header_line='${
+                  var headers = ["CHROM","POS","ID","REF","ALT","QUAL","FILTER","INFO","FORMAT"]
+                  var sample_ids = inputs.sample_ids
+                  var header_list = headers.concat(sample_ids)
+                  return header_list.join("\t");
+                }'
                 fasta="${ return inputs.ref_fasta.path; }"
                 vcf="${ return inputs.targets_vcf.path }"
                 fillout_vcf="fillout.vcf"
-                GetBaseCountsMultiSample --fasta "\${fasta}" --vcf "\${vcf}" --maq 20 --baq 20 --filter_improper_pair 0 --thread 8 --output "\${fillout_vcf}" \${bams_arg}
+                num_lines="\$(grep -v '^[#]' \${vcf} | wc -l)"
+                more_than_zero="\$(( \${num_lines} > 0))"
+                if [ "\${more_than_zero}" == "1" ]
+                then
+                  GetBaseCountsMultiSample --fasta "\${fasta}" --vcf "\${vcf}" --maq 20 --baq 20 --filter_improper_pair 0 --thread 8 --output "\${fillout_vcf}" \${bams_arg}
+                else
+                  cat << EOF > "\${fillout_vcf}"
+                ##fileformat=VCFv4.2
+                ##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Total depth">
+                ##FORMAT=<ID=RD,Number=1,Type=Integer,Description="Depth matching reference (REF) allele">
+                ##FORMAT=<ID=AD,Number=1,Type=Integer,Description="Depth matching alternate (ALT) allele">
+                ##FORMAT=<ID=VF,Number=1,Type=Float,Description="Variant frequence (AD/DP)">
+                ##FORMAT=<ID=DPP,Number=1,Type=Integer,Description="Depth on postitive strand">
+                ##FORMAT=<ID=DPN,Number=1,Type=Integer,Description="Depth on negative strand">
+                ##FORMAT=<ID=RDP,Number=1,Type=Integer,Description="Reference depth on postitive strand">
+                ##FORMAT=<ID=RDN,Number=1,Type=Integer,Description="Reference depth on negative strand">
+                ##FORMAT=<ID=ADP,Number=1,Type=Integer,Description="Alternate depth on postitive strand">
+                ##FORMAT=<ID=ADN,Number=1,Type=Integer,Description="Alternate depth on negative strand">
+                ##FORMAT=<ID=DPF,Number=1,Type=Integer,Description="Total fragment depth">
+                ##FORMAT=<ID=RDF,Number=1,Type=Float,Description="Fragment depth matching reference (REF) allele">
+                ##FORMAT=<ID=ADF,Number=1,Type=Float,Description="Fragment depth matching alternate (ALT) allele">
+                #\${header_line}
+                EOF
+                fi
       inputs:
         sample_ids: string[]
         ref_fasta:

@@ -5,6 +5,16 @@ class: Workflow
 doc: "
 Wrapper to run bam indexing on all bams before submitting for samples fillout
 Also includes steps to pre-filter some maf input files
+
+NOTE: each sample in a sample_group must have a .bam file,
+and there must be a minumum of 1 .maf file amoungst samples in the same sample_group
+this means that for each sample in the sample_group, a .bam is required but a .maf is optional
+as long as one sample in the group has a .maf
+this also means that singleton sample groups, or a sample group with only one sample, MUST
+include a .maf file; singletons cannot lack a .maf
+
+NOTE: all .maf files must be valid, at a minimum they must have a header and at least one variant
+if a sample has no variants in its .maf file, or has an empty .maf file, then it should NOT have a maf_file entry associated with it
 "
 requirements:
   - class: MultipleInputFeatureRequirement

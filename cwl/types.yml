@@ -1,301 +1,298 @@
 class: SchemaDefRequirement
 types:
+  - name: FilloutMafOptionalSample
+    doc: A tumor sample record for variant fillout that might lack a .maf file but HAS a .bam file
+    type: record
+    fields:
+      - name: sample_id
+        type: string
+        doc: sample identifier must match the ID used inside the maf file
+      - name: normal_id
+        type: string
+      - name: sample_type
+        type: string
+        doc: should be one of "research" or "clinical"
+      - name: maf_file
+        type: File?
+        doc: an optional input .maf file
+      - name: bam_file
+        doc: sample's alignment file
+        type: File
+        secondaryFiles:
+          - .bai # Sample.bam.bai
 
-- name: FilloutMafOptionalSample
-  doc: A tumor sample record for variant fillout that might lack a .maf file but HAS a .bam file
-  type: record
-  fields:
-    - name: sample_id
-      type: string
-      doc: sample identifier must match the ID used inside the maf file
-    - name: normal_id
-      type: string
-    - name: sample_type
-      type: string
-      doc: should be one of "research" or "clinical"
-    - name: maf_file
-      type: File?
-      doc: an optional input .maf file
-    - name: bam_file
-      doc: sample's alignment file
-      type: File
-      secondaryFiles:
-        - .bai # Sample.bam.bai
+  - name: FilloutNoMafsample
+    doc: A tumor sample record for variant fillout does NOT have a .maf file
+    type: record
+    fields:
+      - name: sample_id
+        type: string
+        doc: sample identifier must match the ID used inside the maf file
+      - name: normal_id
+        type: string
+      - name: sample_type
+        type: string
+        doc: should be one of "research" or "clinical"
+      - name: bam_file
+        doc: sample's alignment file
+        type: File
+        secondaryFiles:
+          - .bai # Sample.bam.bai
+      # These files get added during downstream processing
+      - name: unfiltered_vcf
+        type: File?
+        doc: fillout vcf file produced for the sample with no filtering applied
+      - name: filtered_vcf
+        type: File?
+        doc: fillout vcf that has had extra filters applied such as germline filtering
+      - name: unfiltered_maf
+        type: File?
+        doc: fillout maf file produced for the sample
+      - name: filtered_maf
+        type: File?
+        doc: fillout maf that has had extra filters applied such as germline filtering
 
-- name: FilloutNoMafsample
-  doc: A tumor sample record for variant fillout does NOT have a .maf file
-  type: record
-  fields:
-    - name: sample_id
-      type: string
-      doc: sample identifier must match the ID used inside the maf file
-    - name: normal_id
-      type: string
-    - name: sample_type
-      type: string
-      doc: should be one of "research" or "clinical"
-    - name: bam_file
-      doc: sample's alignment file
-      type: File
-      secondaryFiles:
-        - .bai # Sample.bam.bai
-    # These files get added during downstream processing
-    - name: unfiltered_vcf
-      type: File?
-      doc: fillout vcf file produced for the sample with no filtering applied
-    - name: filtered_vcf
-      type: File?
-      doc: fillout vcf that has had extra filters applied such as germline filtering
-    - name: unfiltered_maf
-      type: File?
-      doc: fillout maf file produced for the sample
-    - name: filtered_maf
-      type: File?
-      doc: fillout maf that has had extra filters applied such as germline filtering
+  - name: FilloutSample
+    doc: A tumor sample record to be used for variant fillout which MUST have a .maf file and indexed .bam file
+    type: record
+    fields:
+      - name: sample_id
+        type: string
+        doc: sample identifier must match the ID used inside the maf file
+      - name: normal_id
+        type: string
+      - name: sample_type
+        type: string
+        doc: should be one of "research" or "clinical"
+      - name: maf_file
+        type: File
+        doc: the sample's input .maf file
+      - name: bam_file
+        doc: sample's alignment file
+        type: File
+        secondaryFiles:
+          - .bai # Sample.bam.bai
+          # - ^.bai # Sample.bai
+          # NOTE: need to figure out how to make .bai and .bam.bai both work at once;
+          # if I add them as separate entries here then the CWL requires that BOTH be present but we only have one
+      # These files get added during downstream processing
+      - name: unfiltered_vcf
+        type: File?
+        doc: fillout vcf file produced for the sample with no filtering applied
+      - name: filtered_vcf
+        type: File?
+        doc: fillout vcf that has had extra filters applied such as germline filtering
+      - name: unfiltered_maf
+        type: File?
+        doc: fillout maf file produced for the sample
+      - name: filtered_maf
+        type: File?
+        doc: fillout maf that has had extra filters applied such as germline filtering
 
-- name: FilloutSample
-  doc: A tumor sample record to be used for variant fillout which MUST have a .maf file and indexed .bam file
-  type: record
-  fields:
-    - name: sample_id
-      type: string
-      doc: sample identifier must match the ID used inside the maf file
-    - name: normal_id
-      type: string
-    - name: sample_type
-      type: string
-      doc: should be one of "research" or "clinical"
-    - name: maf_file
-      type: File
-      doc: the sample's input .maf file
-    - name: bam_file
-      doc: sample's alignment file
-      type: File
-      secondaryFiles:
-        - .bai # Sample.bam.bai
-        # - ^.bai # Sample.bai
-        # NOTE: need to figure out how to make .bai and .bam.bai both work at once;
-        # if I add them as separate entries here then the CWL requires that BOTH be present but we only have one
-    # These files get added during downstream processing
-    - name: unfiltered_vcf
-      type: File?
-      doc: fillout vcf file produced for the sample with no filtering applied
-    - name: filtered_vcf
-      type: File?
-      doc: fillout vcf that has had extra filters applied such as germline filtering
-    - name: unfiltered_maf
-      type: File?
-      doc: fillout maf file produced for the sample
-    - name: filtered_maf
-      type: File?
-      doc: fillout maf that has had extra filters applied such as germline filtering
+  # TODO: rename this to "FilloutNoIndexSample"
+  - name: FilloutIndexSample
+    doc: A FilloutSample needs .bam indexing and prefiltering applied
+    type: record
+    fields:
+      - name: sample_id
+        type: string
+        doc: sample identifier must match the ID used inside the maf file
+      - name: normal_id
+        type: string
+      - name: sample_type
+        type: string
+        doc: should be one of "research" or "clinical"
+      - name: prefilter
+        type: boolean
+        doc: if the sample maf file needs to be pre-filtered (true) or not (false)
+      - name: maf_file
+        type: File
+        doc: the sample's input .maf file
+      - name: bam_file
+        type: File
+        doc: bam file that needs a .bai file generated
 
-# TODO: rename this to "FilloutNoIndexSample"
-- name: FilloutIndexSample
-  doc: A FilloutSample needs .bam indexing and prefiltering applied
-  type: record
-  fields:
-    - name: sample_id
-      type: string
-      doc: sample identifier must match the ID used inside the maf file
-    - name: normal_id
-      type: string
-    - name: sample_type
-      type: string
-      doc: should be one of "research" or "clinical"
-    - name: prefilter
-      type: boolean
-      doc: if the sample maf file needs to be pre-filtered (true) or not (false)
-    - name: maf_file
-      type: File
-      doc: the sample's input .maf file
-    - name: bam_file
-      type: File
-      doc: bam file that needs a .bai file generated
+  - name: FilloutMafOptionalNoIndexSample
+    doc: A tumor sample record for variant fillout that might lack a .maf file but HAS a .bam file without a .bai index file
+    type: record
+    fields:
+      - name: sample_id
+        type: string
+        doc: sample identifier must match the ID used inside the maf file
+      - name: normal_id
+        type: string
+      - name: sample_type
+        type: string
+        doc: should be one of "research" or "clinical"
+      - name: maf_file
+        type: File?
+        doc: an optional input .maf file
+      - name: bam_file
+        doc: sample's alignment file
+        type: File
 
-- name: FilloutMafOptionalNoIndexSample
-  doc: A tumor sample record for variant fillout that might lack a .maf file but HAS a .bam file without a .bai index file
-  type: record
-  fields:
-    - name: sample_id
-      type: string
-      doc: sample identifier must match the ID used inside the maf file
-    - name: normal_id
-      type: string
-    - name: sample_type
-      type: string
-      doc: should be one of "research" or "clinical"
-    - name: maf_file
-      type: File?
-      doc: an optional input .maf file
-    - name: bam_file
-      doc: sample's alignment file
-      type: File
-
-- name: FilloutMafOptionalIndexedSample
-  doc: A tumor sample record for variant fillout that might lack a .maf file but HAS a .bam file and a .bai index file
-  type: record
-  fields:
-    - name: sample_id
-      type: string
-      doc: sample identifier must match the ID used inside the maf file
-    - name: normal_id
-      type: string
-    - name: sample_type
-      type: string
-      doc: should be one of "research" or "clinical"
-    - name: maf_file
-      type: File?
-      doc: an optional input .maf file
-    - name: bam_file
-      doc: sample's alignment file
-      type: File
-      secondaryFiles:
-        - .bai
-
-- name: FilloutIndexedSample
-  doc: A fillout sample that HAS a pre-filtered .maf file and HAS an indexed .bam file
-  type: record
-  fields:
-    - name: sample_id
-      type: string
-      doc: sample identifier must match the ID used inside the maf file
-    - name: normal_id
-      type: string
-    - name: sample_type
-      type: string
-      doc: should be one of "research" or "clinical"
-    - name: prefilter
-      type: boolean
-      doc: if the sample maf file needs to be pre-filtered (true) or not (false)
-    - name: maf_file
-      type: File
-      doc: the sample's input .maf file
-    - name: bam_file
-      type: File
-      doc: bam file that needs a .bai file generated
-      secondaryFiles:
+  - name: FilloutMafOptionalIndexedSample
+    doc: A tumor sample record for variant fillout that might lack a .maf file but HAS a .bam file and a .bai index file
+    type: record
+    fields:
+      - name: sample_id
+        type: string
+        doc: sample identifier must match the ID used inside the maf file
+      - name: normal_id
+        type: string
+      - name: sample_type
+        type: string
+        doc: should be one of "research" or "clinical"
+      - name: maf_file
+        type: File?
+        doc: an optional input .maf file
+      - name: bam_file
+        doc: sample's alignment file
+        type: File
+        secondaryFiles:
           - .bai
 
-- name: TNMafPileupPair
-  doc: a tumor normal sample pair with .maf and snp pileup files
-  type: record
-  fields:
-    - name: tumor_id
-      type: string
-    - name: normal_id
-      type: string
-    - name: pair_id
-      type: string
-    - name: snp_pileup
-      type: File
-    - name: pair_maf
-      type: File
+  - name: FilloutIndexedSample
+    doc: A fillout sample that HAS a pre-filtered .maf file and HAS an indexed .bam file
+    type: record
+    fields:
+      - name: sample_id
+        type: string
+        doc: sample identifier must match the ID used inside the maf file
+      - name: normal_id
+        type: string
+      - name: sample_type
+        type: string
+        doc: should be one of "research" or "clinical"
+      - name: prefilter
+        type: boolean
+        doc: if the sample maf file needs to be pre-filtered (true) or not (false)
+      - name: maf_file
+        type: File
+        doc: the sample's input .maf file
+      - name: bam_file
+        type: File
+        doc: bam file that needs a .bai file generated
+        secondaryFiles:
+          - .bai
 
-- name: TMBInputPair
-  doc: a tumor normal pair for input to Tumor Mutation Burden analysis
-  type: record
-  fields:
-    - name: tumor_id
-      type: string
-    - name: normal_id
-      type: string
-    - name: pair_id
-      type: string
-    - name: pair_maf
-      type: File
+  - name: TNMafPileupPair
+    doc: a tumor normal sample pair with .maf and snp pileup files
+    type: record
+    fields:
+      - name: tumor_id
+        type: string
+      - name: normal_id
+        type: string
+      - name: pair_id
+        type: string
+      - name: snp_pileup
+        type: File
+      - name: pair_maf
+        type: File
 
-- name: TMBOutputPair
-  doc: a tumor normal pair for input to Tumor Mutation Burden analysis
-  type: record
-  fields:
-    - name: tumor_id
-      type: string
-    - name: normal_id
-      type: string
-    - name: pair_id
-      type: string
-    - name: tmb_maf
-      type: File
-      doc: filtered mutations used for TMB calculation
-    - name: tmb_tsv
-      type: File
-      doc: table with TMB values for the sample pair
+  - name: TMBInputPair
+    doc: a tumor normal pair for input to Tumor Mutation Burden analysis
+    type: record
+    fields:
+      - name: tumor_id
+        type: string
+      - name: normal_id
+        type: string
+      - name: pair_id
+        type: string
+      - name: pair_maf
+        type: File
 
-- name: MSIInputPair
-  doc: a tumor normal sample pair to be used for microsatellite instability analysis
-  type: record
-  fields:
-    - name: tumor_id
-      type: string
-    - name: normal_id
-      type: string
-    - name: pair_id
-      type: string
+  - name: TMBOutputPair
+    doc: a tumor normal pair for input to Tumor Mutation Burden analysis
+    type: record
+    fields:
+      - name: tumor_id
+        type: string
+      - name: normal_id
+        type: string
+      - name: pair_id
+        type: string
+      - name: tmb_maf
+        type: File
+        doc: filtered mutations used for TMB calculation
+      - name: tmb_tsv
+        type: File
+        doc: table with TMB values for the sample pair
 
-- name: MSIOutputPair
-  doc: a tumor normal sample pair that has undergone microsatellite instability analysis
-  type: record
-  fields:
-    - name: tumor_id
-      type: string
-    - name: normal_id
-      type: string
-    - name: pair_id
-      type: string
-    - name: msi_tsv
-      doc: parsed output from msisensor
-      type: File
+  - name: MSIInputPair
+    doc: a tumor normal sample pair to be used for microsatellite instability analysis
+    type: record
+    fields:
+      - name: tumor_id
+        type: string
+      - name: normal_id
+        type: string
+      - name: pair_id
+        type: string
 
-- name: FacetsPair
-  doc: a tumor normal sample pair used in Facets
-  type: record
-  fields:
-    - name: tumor_id
-      type: string
-      doc: ...
-    - name: normal_id
-      type: string
-    - name: pair_id
-      type: string
-    - name: purity_png
-      type: File
-      doc: ...
-    - name: purity_seg
-      type: File
-      doc: Tumor1.Normal1_purity.seg
-    - name: hisens_png
-      type: File
-      doc: ...
-    - name: hisens_seg
-      type: File
-      doc: Tumor1.Normal1_hisens.seg
-    - name: qc_txt
-      type: File
-      doc: Tumor1.Normal1.qc.txt
-    - name: gene_level_txt
-      type: File
-      doc: Tumor1.Normal1.gene_level.txt
-    - name: arm_level_txt
-      type: File
-      doc: Tumor2.Normal2.arm_level.txt
-    - name: facets_txt
-      type: File
-      doc: Tumor1.Normal1.txt
-    - name: purity_rds
-      type: File
-      doc: Tumor1.Normal1_purity.rds
-    - name: hisens_rds
-      type: File
-      doc: Tumor1.Normal1_hisens.rds
-    - name: annotated_maf
-      type: File
-      doc: Tumor1.Normal1_hisens.ccf.maf
-    - name: hisens_cncf_txt
-      type: File
-      doc: Tumor1.Normal1_hisens.cncf.txt (from legacy facets output)
+  - name: MSIOutputPair
+    doc: a tumor normal sample pair that has undergone microsatellite instability analysis
+    type: record
+    fields:
+      - name: tumor_id
+        type: string
+      - name: normal_id
+        type: string
+      - name: pair_id
+        type: string
+      - name: msi_tsv
+        doc: parsed output from msisensor
+        type: File
 
-
+  - name: FacetsPair
+    doc: a tumor normal sample pair used in Facets
+    type: record
+    fields:
+      - name: tumor_id
+        type: string
+        doc: ...
+      - name: normal_id
+        type: string
+      - name: pair_id
+        type: string
+      - name: purity_png
+        type: File?
+        doc: ...
+      - name: purity_seg
+        type: File?
+        doc: Tumor1.Normal1_purity.seg
+      - name: hisens_png
+        type: File?
+        doc: ...
+      - name: hisens_seg
+        type: File?
+        doc: Tumor1.Normal1_hisens.seg
+      - name: qc_txt
+        type: File?
+        doc: Tumor1.Normal1.qc.txt
+      - name: gene_level_txt
+        type: File?
+        doc: Tumor1.Normal1.gene_level.txt
+      - name: arm_level_txt
+        type: File?
+        doc: Tumor2.Normal2.arm_level.txt
+      - name: facets_txt
+        type: File?
+        doc: Tumor1.Normal1.txt
+      - name: purity_rds
+        type: File?
+        doc: Tumor1.Normal1_purity.rds
+      - name: hisens_rds
+        type: File?
+        doc: Tumor1.Normal1_hisens.rds
+      - name: annotated_maf
+        type: File?
+        doc: Tumor1.Normal1_hisens.ccf.maf
+      - name: hisens_cncf_txt
+        type: File?
+        doc: Tumor1.Normal1_hisens.cncf.txt (from legacy facets output)
 # TODO: get this working; right now only record types are supported here not File types
 # - name: RefFasta
 #   doc: reference genome .fasta file

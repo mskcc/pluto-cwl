@@ -42,6 +42,7 @@ steps:
       requirements:
         ResourceRequirement:
           coresMin: 4
+          ramMin: 8000
         DockerRequirement:
           dockerPull: mskcc/helix_filters_01:samtools-1.9
         InitialWorkDirRequirement:

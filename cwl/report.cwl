@@ -6,6 +6,9 @@ baseCommand: [ "compile.R" ]
 requirements:
   DockerRequirement:
     dockerPull: mskcc/helix_filters_01:reporting
+  ResourceRequirement:
+    ramMin: 8000
+    coresMin: 3
 
 arguments:
 - valueFrom: "$(runtime.tmpdir)"

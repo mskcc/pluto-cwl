@@ -6,6 +6,9 @@ doc: separate the samples list into samples with and without .maf files
 requirements:
   - class: InlineJavascriptRequirement
   - $import: types.yml
+  - class: ResourceRequirement
+    ramMin: 8000
+    coresMin: 3
 
 inputs:
   samples:
