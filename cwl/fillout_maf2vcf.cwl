@@ -12,6 +12,9 @@ requirements:
   - class: InlineJavascriptRequirement
   - class: DockerRequirement
     dockerPull: mskcc/helix_filters_01:21.4.1
+  - class: ResourceRequirement
+    ramMin: 8000
+    coresMin: 3
   - class: InitialWorkDirRequirement
     listing:
     # NOTE: might need dos2unix for some that give errors ERROR: Your MAF uses CR line breaks, which we can't support. Please use LF or CRLF.

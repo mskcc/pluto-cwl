@@ -71,6 +71,7 @@ steps:
       baseCommand: [ "sh", "run.vcf_to_maf.sh" ]
       requirements:
         ResourceRequirement:
+          ramMin: 8000
           coresMin: 8
         DockerRequirement:
           dockerPull: mskcc/roslin-variant-vcf2maf:1.6.17

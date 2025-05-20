@@ -10,6 +10,9 @@ requirements:
       - entryname: sleep.sh
         entry: |-
           sleep 5
+  ResourceRequirement:
+    ramMin: 8000
+    coresMin: 3
 
 inputs:
   dummy_input:

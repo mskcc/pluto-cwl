@@ -5,6 +5,9 @@ class: CommandLineTool
 baseCommand: [ "bash", "run.maf2bed.sh" ]
 
 requirements:
+  ResourceRequirement:
+    ramMin: 8000
+    coresMin: 3
   InitialWorkDirRequirement:
     listing:
       - entryname: run.maf2bed.sh

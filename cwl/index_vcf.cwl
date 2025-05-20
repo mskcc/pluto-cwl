@@ -7,6 +7,9 @@ baseCommand: [ "tabix", "-p", "vcf" ]
 requirements:
   DockerRequirement:
     dockerPull: mskcc/helix_filters_01:igv-reports-1.0.1
+  ResourceRequirement:
+    ramMin: 8000
+    coresMin: 3
   # tabix does not work unless you stage the input file here
   InitialWorkDirRequirement:
     listing: [ $(inputs.input_file) ]

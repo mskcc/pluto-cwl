@@ -17,6 +17,9 @@ requirements:
   - class: InlineJavascriptRequirement
   - class: DockerRequirement
     dockerPull: mskcc/helix_filters_01:21.4.1
+  - class: ResourceRequirement
+    ramMin: 8000
+    coresMin: 3
   - class: InitialWorkDirRequirement
     listing:
       - $(inputs.fillout_vcf)

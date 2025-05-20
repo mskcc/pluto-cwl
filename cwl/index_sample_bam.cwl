@@ -7,6 +7,7 @@ requirements:
   - $import: types.yml
   - class: InlineJavascriptRequirement
   - class: ResourceRequirement
+    ramMin: 16000
     coresMin: 4 # make sure this matches what is in the command below!
   - class: DockerRequirement
     dockerPull: mskcc/helix_filters_01:samtools-1.9
